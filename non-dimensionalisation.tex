@@ -1,0 +1,117 @@
+
+\section{Non-dimensionalisation}
+\label{sec:normalisations-appendix}
+
+%??ds talk about why?
+
+% no unecessary (for the maths) parameters
+% improves accuracy by minimising round off error
+
+\subsection{The Landau-Lifshitz-Gilbert equation}
+
+We start from the Landau--Lifshitz--Gilbert equation with the magnetostatic, applied, exchange and magnetocrystalline (effective) fields (see Section~\ref{sec:cont-micromag}):
+
+\begin{align}
+  \pd{\Mv^*}{t^*} &= - \gymagc \Mv^* \times \Hv^* + \frac{\alpha}{M_s} \Mv^* \times \pd{\Mv^*}{t^*}, \label{eqn:llgnd} \\
+  \Hv^* &= \Happ^* - \nabla^* \phi^* + J \nabla^{*2} \mv + K (\mv \cdot \ev) \ev.
+  \label{eqn:effnd} \\
+  \nabla^{*2} \phi^* &= \nabla^* \cdot \Mv^* \label{eqn:phind}
+\end{align}
+where we use $^*$ to denote dimensional variables and operators.
+
+Let the conversion between dimensional and non-dimensional variables be given by
+\begin{align}
+  \Mv^* &= M_s \mv, \notag \\
+  \phi^* &= \Phi \phi, \notag \\
+  \Hv^* &= \nH \hv,
+  \label{eqn:nddefs}
+\end{align}
+where $\mv$ is a unit vector .
+
+Also let the conversion factors for time and each space direction be
+\begin{align}
+  t^* &= \frac{1}{\gymagc \nH} t, \notag \\
+  x_i^* &= l x_i \quad (\text{so } \nabla^* = \frac{1}{l} \nabla \text{ etc.}).
+  \label{eqn:nddimsdefs}
+\end{align}
+
+Combining equation~\eqref{eqn:llgnd} with the definitions~\eqref{eqn:nddefs} and~\eqref{eqn:nddimsdefs} gives
+\begin{equation}
+  \notag
+  \dmdt \gymagc M_s \nH =
+  - \gymagc M_s \nH (\mv \times \hv) + \frac{\alpha}{M_s} \gymagc M_s^2 \nH (\mv \times \dmdt),
+\end{equation}
+
+cancelling the various constants results in the non-dimensionalised Landau--Lifshitz--Gilbert equation
+\begin{equation}
+  \label{eq:53}
+  \dmdt = - (\mv \times \hv) + \alpha (\mv \times \dmdt).
+\end{equation}
+
+Similarly for equation~\eqref{eqn:phind}
+\begin{align}
+  \frac{1}{l^2} \Phi \nabla^{2} \phi &= \frac{1}{l} M_s \nabla \cdot \mv, \notag \\
+  \frac{\Phi}{M_s l} \nabla^{2} \phi &= \nabla \cdot \mv.
+\end{align}
+
+Letting $\Phi = M_s l$ we obtain
+\begin{equation}
+  \label{eq:57}
+  \nabla^2 \phi = \nabla \cdot \mv.
+\end{equation}
+
+Repeating the substitution again for equation~\eqref{eqn:effnd} gives
+\begin{align}
+  \nH \hv &= \Happ - \frac{\Phi}{l} \nabla \phi + \frac{J}{l^2} \nabla^2 \mv + K (\mv \cdot \ev) \ev, \notag \\
+  \hv &= \happ - \frac{M_s}{\nH} \nabla \phi + \frac{J}{l^2 \nH} \nabla^2 \mv + \frac{K}{\nH} (\mv \cdot \ev) \ev,
+\end{align}
+where $\happ = \frac{\Happ}{\nH}$.
+
+The parameters for length, $l$, and field $\nH$ are still free to be chosen. Useful possibilities for the length are the exchange length or a unit on the length scale of a dimension of the magnetic material being modelled (typically $\sim1-100$nm). For models which involve only a single magnetic material $\nH$ can be set to {\tt max}$(\Happ,\, M_s,\, \frac{J}{l^2}, \, K)$ for simplicity.
+
+For models with more than one type of magnetic material $\nH$ must be set to some consistent value across all materials. Similarly the non-dimensionalisation of $\Mv$ must be consistent so $M_s$ probably cannot be as the conversion factor for $\Mv$ and $\mv$ will no long be a unit vector.
+
+\subsection{Extension to the hybrid method}
+\label{sec:extens-hybr-met}
+
+\subsection{Energy equations}
+
+We repeat the process to get a set of non-dimensionalised energy equations, starting from the equations given in Section~\ref{sec:cont-micromag}):
+
+\begin{equation}
+  F_\text{ex}^* =  \frac{\Exchc}{M_s^{*2}} \int_{\magd} (\nabla^* M_x^*)^2  + (\nabla^* M_y^*)^2  + (\nabla^* M_z^*)^2 \d \magd^*,
+\end{equation}
+\begin{equation}
+  F_\text{ms}^* =  \frac{-\mu_0}{2} \int_{\magd} \Mv^* \cdot \Hms^* \d \magd^*,
+\end{equation}
+\begin{equation}
+  F_\text{ap}^* = - \mu_0 \int_{\magd} \Mv^* \cdot \Happ^* \d \magd^*,
+\end{equation}
+\begin{equation}
+  F_\text{ca}^* = \int_\magd K_u \Big( 1 - \frac{(\Mv^* \cdot \ev)^2}{\mu_0^2 M_s^2} \Big) \d \magd^*.
+\end{equation}
+
+We let $F_\text{...}^* = \nF f_\text{...}$, then after subsitution of definitions~\eqref{eqn:nddefs} and~\eqref{eqn:nddimsdefs} we have
+\begin{equation}
+  f_\text{ex} =  \frac{\Exchc l^{d-2}}{\nF} \int_{\magd} (\nabla m_x)^2  + (\nabla m_y)^2  + (\nabla m_z)^2 \d \magd,
+\end{equation}
+\begin{equation}
+  f_\text{ms} = \frac{-\mu_0 M_s \nH l^d}{2\nF} \int_{\magd} \mv \cdot \hms \d \magd,
+\end{equation}
+\begin{equation}
+  f_\text{ap} = \frac{- \mu_0 M_s \nH l^d}{\nF} \int_{\magd} \mv \cdot \happ \d \magd,
+\end{equation}
+\begin{equation}
+  f_\text{ca} = \frac{l^d K_u}{\nF} \int_\magd \Big( 1 - \frac{(\mv \cdot \ev)^2}{\mu_0^2} \Big) \d \magd.
+\end{equation}
+
+where $d$ denotes the number of spatial dimensions and we have used 
+\begin{equation} 
+  \d \magd^* = \d x^{*d} = l^d \d x^d = l^d \d \magd.
+\end{equation}
+
+
+%%% Local Variables:
+%%% mode: latex
+%%% TeX-master: "main"
+%%% End:

@@ -1,0 +1,308 @@
+\section{Galerkin's Method for the Landau--Lifshitz--Gilbert Equation}
+\label{sec:galerk-meth-llg}
+
+\subsection{Initial Equations}
+
+Our labelling of the domains is shown in Figure~\ref{fig:domain_labels}. We label the region of magnetisable material as $\magd$, it's boundary as $\boundd$ and the external domain as $\extd$.
+
+\begin{figure}[!ht]
+  \center
+  \begin{tikzpicture}
+    \draw[line width=0.5mm,fill=paleblue,draw=solidblue] (0,0) ellipse (3cm and 1.5cm);
+    \draw (0,0) node {\Large{$\magd$}};
+    \draw (2.8,0.8) node[anchor=west] {\Large{$\boundd$}};
+    \draw (-6,1) node[anchor=north] {\Large{$\extd$}};
+  \end{tikzpicture}
+  \caption{The domain labels used: $\magd$ is the magnetic material, $\boundd$ is the boundary and $\extd$ is the (infinite) external region.} \label{fig:domain_labels}
+\end{figure}
+
+We start with the Gilbert form of the Landau--Lifshitz--Gilbert equation~\eqref{eq:Gilbert}, the sum of effective fields \eqref{eq:Heff}, the exchange field \eqref{eq:Hex} and the potential method for calculating the magnetostatic field \eqref{eq:Hms} \& \eqref{eq:nnphim}. Note that for simplicity from now on we do not explicitly specify when things are functions of $\xv$ and $t$.
+
+We choose the Gilbert form of the Landau--Lifshitz--Gilbert equation even though it is less immediately intuitive because it greatly reduces the complexity of all derivatations - the Landau--Lifshitz form contains a double cross product and has two terms containing the potentially complicated total field. A side effect of this choice is that explict timestepping schemes cannot be used (since the time dependence is defined implicitly), but as discussed in Section~\ref{sec:model-conclusions} we ill always use implicit timestepping schemes anyway.
+
+The applied field $\Happ$ is known. The crystalline anisotropy field $\Hca$ depends on the type of anisotropy in the magnetic material but it is always just an algebraic function of $\Mv$. For example the most commonly used case of perpendicular anisotropy (caused by hexagonal crystalline structure) gives equation~\eqref{eq:Hca}.
+
+For now we consider the magnetostatic potential only within the magnetic domain, $\magd$, with Neumann or Dirichlet boundary conditions on the boundary, $\boundd$ (see Section~\ref{sec:hybr-finit-elem} for details of the extension to include the external region). We define $\boundd_D$ to represent the region of the boundary domain where a Dirichlet condition is imposed on the magnetostatic potential. Similarly we define $\boundd_\Neu$ to be the region of the boundary where a Neumann condition is imposed. So $ \nabla \phim(\xv) \cdot \nv = g_\Neu(\xv) \; \forall \xv \in \boundd_\Neu$ and $\phim(\xv) = g_D(\xv) \; \forall \xv \in \boundd_D$. Typically we will have either $\boundd_D = \boundd$ or $\boundd_\Neu = \boundd$. We also define the following function spaces for convenience
+\begin{align}
+  \label{eq:037}
+  \Dfs & = \{ v \st v(\xv) \text{ satisfies the b.c. s } \; \forall \xv \in \boundd_D \}, \\
+  \Dfs_0 &= \{ v \st v(\xv) = 0 \; \forall \xv \in \boundd_D \}.
+\end{align}
+
+\subsection{Normalisation}
+\label{sec:normalisation}
+
+For efficient and accurate numerical modelling it is essential to ensure that computed values remain close to unity. As such we actually work in terms of:
+\begin{itemize}
+\item $\mv = \frac{\Mv}{M_s}$ (non-dimensional)
+\item $\hv_{\Box} = \frac{\Hv_\Box}{H_k} = \Hv_\Box \frac{\mu_0 M_s}{2 K_1}$ (non-dimensional), for the applied, exchange and magnetocrystalline anisotropy fields.
+\item $t' = \frac{t}{\gymagc H_k}$ (units of .. ??ds)
+\end{itemize}
+The coefficient of the exchange effective field becomes $\exchc = \frac{2A}{\mu_0 M_s} \cdot \frac{\mu_0 M_s}{2 K_1} = \frac{A}{K_1}$. Both $A$ and $K_1$ have units of energy density\cite{Kronmuller2003} so $\exchc$ is non-dimensional. However this normalisation scheme fails for the case of $K_1 = 0$ (i.e. no magnetocrystalline anisotropy), in this case we use $H_A = \frac{2A}{\mu_0 M_s}$ instead.
+
+Now our system of equations is:
+\begin{equation}
+  \label{eq:llg}
+  \dmdt = - \mxh + \dampc \left( \mv \times \dmdt \right),
+\end{equation}
+\begin{equation}
+  \label{eq:heff}
+  \hv = \happ + \hca + \hex +  \hms,
+\end{equation}
+
+\begin{equation}
+  \label{eq:hex}
+  \hex = \exchc \nabla^2 \mv,
+\end{equation}
+\begin{align}
+  \hms = - \nabla \phim, \label{eq:hms} \\
+  \nabla^2 \phim = \nabla \cdot \mv. \label{eq:phim}
+\end{align}
+
+
+
+
+
+\subsection{Conversion to Weak Form Residuals}
+
+We convert some of the above equations into their residual weak forms as described in Section~\ref{Derivation-of-weighted-residuals}. Each residual equation used increases the complexity of our system of equations, hence we do not rewrite the simple equations for crystalline anisotropy effective field or for the magnetostatic field (in terms of $\phim$) as residuals.
+
+
+\subsubsection{Magnetostatic Field Residuals}
+\label{sec:magn-field-resid}
+
+The equation for the magnetostatic potential becomes \eqref{eq:phim} becomes:
+\begin{gather}
+  \text{given $\mv \in \sob^1(\magd)$, find $\phim \in \sob^2(\magd) \cap \Dfs$ such that:} \notag \\
+  r_{\phim} = \int_\magd (\nabla^2 \phim) v  \d \magd
+  - \int_\magd (\nabla \cdot \mv) v \d \magd = 0,
+  \quad \forall v \in \sob^0(\magd) \cap \Dfs_0. \label{eqn:phires1}
+\end{gather}
+
+The above equation for calculating $\phim$ contains second order derivatives.
+We would like to reduce the order of these derivatives as discussed in Section~\ref{Derivation-of-weighted-residuals} to relieve the smoothness requirements on our solution.
+We do this by ``transferring'' the derivatives onto the test functions \cite{HowardElmanDavidSilvester2006}.
+
+First we need the following identity\footnote{This can be easily derived by applying the product rule to $\nabla \cdot (v \nabla \phim)$.}
+\begin{equation}
+  (\nabla^2 \phim) v =
+  \nabla \cdot (v \nabla \phim)
+  - \nabla \phim \cdot \nabla v.
+  \label{eq:20}
+\end{equation}
+Then integrating over the magnetic domain $\magd$ and applying the divergence theorem gives
+\begin{equation}
+  \int_\magd (\nabla^2 \phim) v \d \magd =
+  \int_{\boundd} v (\nabla \phim \cdot \nv) \d \boundd
+  - \int_\magd \nabla \phim \cdot \nabla v \d \magd.
+  \label{eqn:identitygauss}
+\end{equation}
+
+We now substitute \eqref{eqn:identitygauss} into \eqref{eqn:phires1}, giving
+\begin{gather}
+   \text{given $\mv \in \sob^1(\magd)$, find $\phim \in \sob^1(\magd) \cap \Dfs$ such that:} \notag \\
+  r_{\phim} = \int_{\boundd} v (\nabla \phim \cdot \nv) \d \boundd
+  - \int_\magd \nabla v \cdot \nabla \phim \d \magd
+  - \int_\magd (\nabla \cdot \mv) v \d \magd = 0
+  , \notag \\
+  \forall v \in \sob^1(\magd) \cap \Dfs_0. \notag
+\end{gather}
+This contains only first order derivatives so the solution space for $\phim$ is relaxed to $\sob^1(\magd) \cap \Dfs$. However, all first partial derivatives of the test functions are now required to be integrable, i.e. $v \in \sob^1(\magd)$ instead of $v \in \sob^0(\magd)$.
+
+Note that the boundary integral is always zero on the Dirichlet region of the boundary by our definition of the test functions. Hence the boundary integral is only non-zero over $\boundd_{\Neu}$ where we know $(\nabla \phim \cdot \nv) = g_{\Neu}$. Hence we have
+\begin{gather}
+   \text{given $\mv \in \sob^1(\magd)$, find $\phim \in \sob^1(\magd) \cap \Dfs$ such that:} \notag \\
+  r_{\phim} = \int_{\boundd_\Neu} v g_\Neu \d \boundd
+  - \int_\magd \nabla v \cdot \nabla \phim \d \magd
+  - \int_\magd (\nabla \cdot \mv) v \d \magd = 0
+  , \label{res:contphi} \\
+  \forall v \in \sob^1(\magd) \cap \Dfs_0. \notag
+\end{gather}
+
+% We can also remove the gradient operator from $\mv$ in the second term of \eqref{eqn:phires1} using a similar identity\footnote{Derived by applying the product rule to $\nabla \cdot (\mv v)$ then integrating, multiplying by $4 \pi$ and applying the Divergence theorem.} to \eqref{eqn:identitygauss}
+% \begin{equation}
+%   - \int_\magd 4 \pi (\nabla \cdot \mv) v \d \magd =
+%   4 \pi \int_\magd \mv \cdot (\nabla v) \d \magd
+%   - 4 \pi \int_{\boundd} v \mv \cdot \nv \d \boundd.
+% \end{equation}
+
+% Substituting this into \eqref{eqn:phires2} leaves us with
+% \begin{gather}
+%      \text{given $\mv \in \sob^1(\magd)$, find $\phim \in \sob^1(\magd) \cap \Dfs$ such that:} \notag \\
+%   r_{\phim} = - \int_\magd \nabla v \cdot \nabla \phim \d \magd
+%   + 4 \pi \int_\magd \mv \cdot (\nabla v) \d \magd
+%   - 4 \pi \int_{\boundd} v \mv \cdot \nv \d \boundd
+%   , \\
+%   \forall v \in \sob^1(\magd) \cap \Dfs_0. \notag
+% \end{gather}
+
+% \subsubsection{Exchange Field Residuals}
+% \label{sec:exch-field-resid}
+
+% The exchange effective field equation~\eqref{eq:hex} becomes:
+% \begin{gather}
+%    \text{given $\mv \in \sob^2(\magd)$, find $\hex \in \sob^0(\magd)$ such that:} \notag \\
+%   \mathbf{r}_{\text{ex}} = \int_\magd \Big( \hex - \exchc \nabla^2 \mv \Big) v \d\magd
+%   = 0,
+%   \quad \forall v \in \sob^0(\magd).
+% \end{gather}
+
+% A similar substitution to \eqref{eqn:identitygauss} can be applied to the residuals for $\hex$. Considering only the $i$th component of $\mathbf{r}_{\text{ex}}$ we have
+% \begin{equation}
+%   r_{\text{ex},i} = \int_\magd \Big( h_{\text{ex},i} - \exchc \nabla^2 m_i \Big) v \d \magd,
+%   \quad \forall v \in \sob^0(\magd).
+%   \label{eqn:exresi}
+% \end{equation}
+% By replacing $\phim$ with $M_i$ in identity \eqref{eqn:identitygauss} and substituting the result into \eqref{eqn:exresi} we obtain
+% \begin{gather}
+%    \text{given $\mv \in \sob^1(\magd)$, find $\hex \in \sob^0(\magd)$ such that:} \notag
+%    \\
+%   \mathbf{r}_{\text{ex}} = \int_\magd \hex v \d \magd
+%   + \exchc \int_\magd \nabla \mv \cdot \nabla v \d \magd
+%   - \exchc \int_{\boundd} v (\nabla \mv \cdot \nv) \d \boundd
+%   = 0,
+%   \label{res:conthex}
+%   \\
+%   \forall v \in \sob^1(\magd). \notag
+% \end{gather}
+
+\subsubsection{Landau--Lifshitz--Gilbert Equation Residuals}
+
+For the Landau--Lifshitz--Gilbert equation~\eqref{eq:llg} we have a set of three residuals per test function. For now we sidestep the details of time discretisation by assuming $\dmdt$ to be just another function of $\xv$ that we can solve for.
+\begin{gather}
+  \text{given $\hv \in \sob^0(\magd)$ and $\mv \in \sob^1(\magd)$ find $\dmdt \in \sob^1(\magd)$ such that:} \notag
+  \\
+  \mathbf{r}_{\text{llg}} = \int_\magd \Big( \dmdt
+  + (\mv \times \hca) + (\mv \times \happ) \\
+  - (\mv \times \nabla \phi) + \exchc(\mv \times \nabla^2 \mv)
+  - \dampc \left( \mv \times \dmdt \right)
+  \Big)  v \d\magd
+  = 0, \label{res:contllg}
+  \\
+  \forall v \in \sob^0(\magd). \notag
+\end{gather}
+
+We again wish to reduce the order of the derivatives, this time on $\mv$ in
+\begin{equation}
+ I = \int_\magd (\mv \times \nabla^2 \mv) v \d\magd.
+ \label{eq:46}
+\end{equation}
+It can be shown that this is equivalent to
+\begin{equation}
+  \label{eq:49}
+  I = - \int_\magd  \mv \times \threevec{\nabla v \cdot \nabla m_1}{\nabla v \cdot \nabla m_2}{\nabla v \cdot \nabla m_2} \d\magd + \int_\boundd (\mv \times \pd{\mv}{\nv}) v \d\boundd,
+\end{equation}
+using similar techniques to those in Section~\ref{sec:magn-field-resid}. %??ds derivation in appendix? I've written it down in notebook begining 22/9/11 near the end.
+
+??ds can we assume $(\mv \times \pd{\mv}{\nv}) = 0$? Others do... will do for now
+
+\subsection{Spatial Discretisation}
+\label{sec:spat-discr-resi}
+
+The next step is to discretise the residuals in space. As in Section~\ref{Derivation-of-weighted-residuals} and \ref{sub:Actual-Finite-Elements} we replace continuous variables and functions by a basis representation using a finite space of shape functions. We also replace the infinite spaces of test functions used so far by finite dimensional approximations.
+
+We choose the solution space to be the same as the test function space (except for boundary conditions), this choice makes our method a Galerkin method. We also choose the shape/test functions to be the same for all residuals/unknowns. So the infinite dimensional space used for all shape and test functions is $\sob^1(\magd)$ with appropriate boundary conditions.
+
+We then replace the space $\sob^1(\magd)$ by the $N$-dimensional approximation $\ts \subset \sob^1(\magd)$. In this approximation the unknowns $\mv$, $\hex$ and $\phim$ can be represented anywhere in the domain as a sum over the nodal values multiplied by the shape function, $\sk \in \ts$, for that node:
+\begin{gather} % \sk = shapefn_k
+  \mv = \sum_{k = 0}^{N} \sk \, \mv_k, \quad
+  \hex = \sum_{k = 0}^{N} \sk \, \hex_{,k}, \quad
+  \phim = \sum_{k = 0}^{N} \sk \, \phim_{,k}.
+  \label{eq:unknowns-basis}
+\end{gather}
+Similarly the test functions can be approximated by a sum over the test basis functions, $\tn \in \ts$, as
+\begin{equation}
+  \label{eq:47}
+  v = \sum_{\ndi = 0}^{N} \tn \, a_\ndi.
+\end{equation}
+Note that in our method $\sbf_k \equiv \tbf_k$, but we continue to write the two functions differently for generality. Also the basis functions for the space of test functions are often simply refered to as the test functions since they are used equivalently.
+
+So substituting the basis representations, \eqref{eq:unknowns-basis} and \eqref{eq:47} into the residuals we obtain a spatially discretised version of the problem. Out of necessity we have used Einstein summation notation below - two terms with a matching index multiplied together indicates a sum over all values of that index.
+\begin{gather}
+  \label{res:tintro}
+  \text{Given $\happ(\xv,t)$ and $\hca(\xv,t)$, $\forall k$, $\forall \ndi$ find} \notag \\
+  \phim_{,k} \in \ts \cap \Dfs, \quad
+  \mv_{k} \in \ts \text{ and }
+  \pd{\mv_k(t)}{t} \in \ts \notag
+\end{gather}
+such that
+\begin{align}
+  r_{\phim, \ndi} =
+  & - \int_{\magd} (\nabla \tn \cdot \nabla \sk) \phim_{,k} \d \magd \notag
+  - \int_{\magd} (\nabla \cdot (\mv_{k} \sk) ) \tn \d \magd \\
+  & + \int_{\boundd_{\Neu}} \tn g_\Neu \d \boundd = 0,
+  \label{res:tphi}
+\end{align}
+% \begin{align}
+%   \mathbf{r}_{\text{ex},\ndi} =  & \int_{\magd} \tn \sk \hex_{,k} \d \magd
+%   \quad + \exchc \int_{\magd} (\nabla \sk \cdot \nabla \tn) \mv_{k} \d \magd \notag \\
+%   &- \exchc \int_{\boundd} \tn (\nabla \sk \cdot \nv) \mv_{k} \d \boundd  = 0,
+% \label{res:thex}
+% \end{align}
+\begin{align}
+ \mathbf{r}_{\text{llg},\ndi} &=
+ \mathbf{r}_{\text{llgexch},\ndi} +  \int_{\magd} \tn \sk \pd{\mv_k}{t} \d \magd \notag \\ %??ds no
+  &- \int_{\magd} (\mv_k \sk) \times ( \phim_{,k} \nabla \sk) \tn \d \magd \notag \\
+  &+ \int_{\magd} (\mv_k \sk) \times ( \hca(\mv_k\sk) + \happ) \tn \d \magd \notag \\
+ % &+ \dampc \int_{\magd}  (\mv_k\sk) \times \Big( (\mv_k \sk) \times (\hv_k \sk) \Big)  \tn \d \magd = 0,
+  &- \dampc \int_{\magd}  (\mv_k\sk) \times \left( \sk \pd{\mv_k}{t} \right) \tn \d \magd = 0,
+  \label{res:tllg}
+ % \text{where } \hv_k &= \hex_{,k} - \nabla \phim_{,k} + \happ + \hca. \notag
+\end{align}
+
+\begin{equation}
+  \mathbf{r}_{\text{llgexch},\ndi} = - \int_\magd (\mv_k \sk) \times
+  \threevec{\nabla \tn \cdot (m_{1,k} \nabla \sk)}{\nabla \tn \cdot (m_{2,k} \nabla \sk)}{\nabla \tn \cdot (m_{3,k} \nabla \sk)} \d\magd
+\end{equation}
+
+Note that we could move the discretised values of the unknowns outside of the integrals because they are constant in space. However we prefer to evaluate values at points within the elements where possible (by integrating using Gaussian quadrature) since some quantities are discontinous at the nodes.\footnote{For example if the basis functions are linear then derivatives are discontinous at the nodes.}
+
+Also note that we have $7N$ equations in $7N$ unknowns and each of the integrals in the equations can be evaluated only in terms of the shape/test functions, their derivatives, the outward unit normal vector and the Neumann boundary condition. Hence we have a system of algebraic equations which we can solve.
+
+As described in Section~\ref{sub:Actual-Finite-Elements} we can convert this ``global'' representation into a number of ``local'' representations -- one on each element. We first split the domain into $N_e$ elements. We then define the basis functions such that they are only non-zero on elements in which they are contained (i.e. we are using a finite element method). Then the global residuals can be split into the local contributions each element which are easy to calculate since they only depend on nodes within the element.\footnote{Unfortunately this property will be lost to some extent when we introduce the hybrid FEM/BEM in Section~\ref{sec:hybr-finit-elem}.}
+
+Let $\magd_\eli$ represent the volume of element $e$, let $\boundd_\eli$ represent any part of the boundary of the element which is on $\boundd$ (nothing for most elements). Then the contribution of element $\eli$ to the residuals at node $\ndi$ is exactly as given in equations~\eqref{res:tintro}-\eqref{res:tllg} except that the integrations are performed over $\magd_\eli$ and $\boundd_\eli$ rather than $\magd$ and $\boundd$. Also note that the sums only need to consider values of $k$ such that node $k$ is in element $\eli$ and that residual contributions only need to be calculated for nodes $\ndi$ such that node $\ndi$ is in element $\eli$.
+
+% \begin{align}
+%   r_{\phim, \ndi, \eli} = \sum_{k} \Bigg[ &
+%   - \phim_{,k} \int_{\magd_\eli} \nabla \tn \cdot \nabla \sk \d \magd \notag
+%   - \mv_{k} \int_{\magd_\eli} (\nabla \cdot \sk ) \tn \d \magd \Bigg] \\
+%   &+ \int_{\boundd_{\Neu,\eli}} \tn g_\Neu \d \boundd,
+%      \label{res:tphi}
+%      \\
+%   \mathbf{r}_{\text{ex}, \ndi, \eli} = \sum_k \Bigg[ & \hex_{,k} \int_{\magd_\eli} \sk \tn \d \magd
+%   \quad + \exchc \mv_{k} \int_{\magd_\eli} \nabla \sk \cdot \nabla \tn \d \magd \notag \\
+%    &- \exchc \mv_{k} \int_{\boundd_\eli} \tn (\nabla \sk \cdot \nv) \d \boundd \Bigg],
+%    \label{res:thex}
+%    \\
+%   \mathbf{r}_{\text{llg}, \ndi, \eli} = \sum_k \Bigg[ &
+%   \pd{\mv_k}{t} \int_{\magd_\eli} \sk \tn \d \magd
+%   \quad +(\mv_k \times \hv_k) \int_{\magd_\eli} \sk^2 \tn \d \magd \notag \\
+%   &+ \dampc \Big( \mv_k \times (\mv_k \times \hv_k) \Big) \int_{\magd_\eli} \sk^3 \tn \d \magd \Bigg] , \label{res:tllg}
+%   \\
+%   \text{where } \hv_k &= \hex_{,k} - \nabla \phim_{,k} + \happ + \hca.
+% \end{align}
+
+\subsection{Time Discretisation}
+\label{sec:time-discretisation-resi}
+
+To deal with the time derivative in equation~\eqref{res:tllg} we must apply a time discretisation scheme. As discussed in Section~\ref{sec:model-conclusions} we aim to use the mid-point method in our model, however so far the backwards difference method has been used for implementation convenience.
+
+Let $h$ be the time-step, let $\mv_k^\tl$ denote the value of $\mv_k$ at the $\tl$-th time-step, and consider only the value of $\mv_k$ at a single node. Then the mid-point method is defined by d'Aquino\cite{DAquino2005} as
+\begin{equation}
+  \label{eq:mid-point-scheme}
+  \dmdt \left( \frac{\mv_k^{\tl+1} + \mv_k^\tl}{2} \right) = \frac{\mv_k^{\tl+1} - \mv_k^l}{ h}.
+\end{equation}
+So by substituting equation~\eqref{eq:mid-point-scheme} into equation~\eqref{res:tllg} with $\mv_k = \frac{\mv_k^{\tl+1} + \mv^\tl_k}{2}$ we obtain a fully discretised system of equations for $\mv_k^{\tl+1}$ in terms of $\mv_k^\tl$.
+
+The second order backwards difference method is defined as\cite{Atkinson2009}
+\begin{equation}
+  \label{eq:bdf2-scheme}
+  \dmdt(\mv_k^{\tl+1}) = \frac{3 \mv_k^{\tl+1} - 4 \mv_k^{\tl} + \mv_k^{\tl-1}}{2h},
+\end{equation}
+which can similarly be substituted into equation~\eqref{res:tllg} with $\mv_k = \mv_k^{\tl+1}$ to obtain a fully discretised system of equations for $\mv_k^{\tl+1}$ in terms of $\mv_k^\tl$ and $\mv_k^{\tl-1}$.
+
+%%% Local Variables:
+%%% mode: latex
+%%% TeX-master: "main"
+%%% End:

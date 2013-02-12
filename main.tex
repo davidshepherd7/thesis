@@ -1,0 +1,295 @@
+\documentclass[11pt,a4paper,pdftex]{article}
+%% use book eventually? - lets us have chapters
+
+%General packages
+%===============================================================================
+\usepackage{amsmath,amssymb,amsfonts}	%Add maths commands, symbols and fonts
+\usepackage{url}		%Support for urls
+\usepackage{hyperref}	%Urls can be hyperlinks
+\usepackage[utf8]{inputenc} % Support for UTF8
+
+
+%Page Layout
+%===============================================================================
+\usepackage{fancyhdr}
+\pagestyle{fancy}
+\fancyhf{}
+
+\rhead{}	%Set right header contents
+\cfoot{\thepage}	%Page number in centre footer
+
+% These 3 commands set the left header to display the current section
+\renewcommand{\sectionmark}[1]{\markboth{#1}{}}
+\lhead{\leftmark}
+\setlength{\headheight}{15.2pt}
+
+\usepackage[top=1in, bottom=1in, left=1.4in, right=1.2in]{geometry}	%Set up border widths
+
+%\usepackage{titling} 	%Reduce spacing before title
+%\setlength{\droptitle}{-6em}	%-6em reduces to ~normal margins
+
+% Paragraphs use a vertical space rather than tabbing
+\setlength{\parskip}{\medskipamount}
+\setlength{\parindent}{0pt}
+\usepackage[hang,flushmargin]{footmisc} % same for footnotes
+
+% Adds a landscape enviroment
+\usepackage{lscape}
+
+% Figure Tweaks
+%===============================================================================
+\usepackage[pdftex]{graphicx}	%Needed to include pictures
+
+% positioning tweaks
+\renewcommand{\topfraction}{0.85}
+\renewcommand{\textfraction}{0.1}
+\renewcommand{\floatpagefraction}{0.75}
+
+% Italic captions
+\usepackage[labelfont=it,textfont=it]{caption}
+
+
+% Equations/maths
+%===============================================================================
+\numberwithin{equation}{section} % Number equations by "<section>.<number>".
+
+% % Prevent line break in the middle of maths except in extreme cases (increse numbers to make line breaking even more unlikely)
+% \relpenalty=3000
+% \binoppenalty=5000
+
+% Bibliograpy Tweaks
+%===============================================================================
+
+% Natbib package, make citations square bracketed superscripts [1]
+\usepackage[super,sort&compress,square,numbers]{natbib}
+
+
+% Flow charts
+%===============================================================================
+\usepackage{tikz} % Package for drawing flow charts
+\usetikzlibrary{shapes,arrows}
+
+\definecolor{paleblue}{RGB}{239,242,255}
+\definecolor{solidblue}{RGB}{43,0,229}
+
+% Define a rectangle shape and an arrow
+\tikzstyle{block} = [rectangle, draw, fill=paleblue, thick,
+    text width=4.3cm, text centered, rounded corners, minimum height=1cm]
+\tikzstyle{line} = [draw, -]
+
+
+% Define new commands:
+%===============================================================================
+
+% General Latex commands
+%========================================
+% New way to define commands that allows multiple subscripts
+\makeatletter
+\newcommand\newsubcommand[3]{\newcommand#1{#2\sc@sub{#3}}}
+\def\sc@sub#1{\def\sc@thesub{#1}\@ifnextchar_{\sc@mergesubs}{_{\sc@thesub}}}
+\def\sc@mergesubs_#1{_{\sc@thesub#1}}
+\makeatother
+
+% The LyX greyedout annotation environment
+\usepackage{color}
+\definecolor{note_fontcolor}{rgb}{0.80078125, 0.80078125, 0.80078125}
+\newenvironment{lyxgreyedout}
+  {\textcolor{note_fontcolor}\bgroup\ignorespaces}
+  {\ignorespacesafterend\egroup}
+
+
+% General maths commands
+%========================================
+\newcommand{\pd}[2]{\frac{\partial #1}{\partial #2}} % partial deriv
+\newcommand{\E}[1]{\times 10^{#1}} % powers of 10
+\newcommand{\st}{\,|\,} % such that in sets (vertical line with spacing)
+\renewcommand{\d}{{\; \text{d}}} % d for the end of integrals (e.g. dx) with correct spacing and non-italic
+\newcommand{\gv}{{\mathbf{g}}}% Some generic vector functions
+\newcommand{\fv}{{\mathbf{f}}}
+
+\newcommand{\threevec}[3]{\left( \begin{array}{c} #1 \\ #2 \\ #3 \end{array} \right)}
+
+\newcommand{\order}[1]{\text{O} \left( #1 \right)}
+
+% Spaces, domains and geometrical labels
+%========================================
+% Domain labels used
+\newcommand{\magd}{\Omega}
+\newcommand{\boundd}{{\Gamma}}
+\newcommand{\fulld}{{\real^d}}
+\newcommand{\extd}{{\Omega^c}}
+
+%Interior/exterior labels
+\newcommand{\inte}{\text{int}}
+\newcommand{\exte}{\text{ext}}
+
+\newcommand{\real}{\mathbb{R}} % real numbers
+\newcommand{\complex}{\mathbb{C}} % complex numbers
+\newcommand{\sob}{\mathcal{H}} % Sobelov spaces
+\newcommand{\Dfs}{\mathcal{D}} % Set of functions that obey Dirichlet boundaries
+\newcommand{\Neu}{{\scriptscriptstyle{\mathcal{N}}}} % Neumann
+
+
+% Magnetics
+%========================================
+% Define \M,\Hv,\x, \iv as vectors (i.e. bold) and easier subscripting (iv and Hv because \i and \H are already used for other commands).
+\newcommand{\xv}{\mathbf{x}}
+\newcommand{\yv}{\mathbf{y}}
+\newcommand{\Mv}{\mathbf{M}}
+\newcommand{\Hv}{\mathbf{H}}
+\newcommand{\Bv}{\mathbf{B}}
+\newcommand{\iv}[1]{\mathbf{\hat{i}}_{\text{#1}}}
+\newcommand{\ev}{\mathbf{\hat{e}}}
+\newcommand{\nv}{\mathbf{\hat{n}}}
+
+% polar coords
+\newcommand{\ruv}{\mathbf{\hat{r}}} % r unit vector
+\newcommand{\phiv}{\mathbf{\hat{\phi}}}
+\newcommand{\thetav}{\mathbf{\hat{\theta}}}
+\newcommand{\rv}{\mathbf{r}} % r vector
+
+
+% Define some common types of H-field.
+% if changing these beware of components of H which are not defined here.
+\newsubcommand{\Happ}{\mathbf{H}}{{\text{ap}}} %applied
+\newsubcommand{\Hms}{\mathbf{H}}{\text{ms}} % magnetostatic/demag
+\newsubcommand{\phim}{\phi}{\text{m}} % magnetostatic potential
+\newsubcommand{\Hex}{\mathbf{H}}{\text{ex}} % exchange
+\newsubcommand{\Hca}{\mathbf{H}}{\text{ca}} % crystalline ansiotropy
+\newsubcommand{\Hthm}{\mathbf{H}}{\text{th}} % thermal
+
+% Normalised versions of the above fields (and M)
+\newcommand{\mv}{\mathbf{m}}
+\newcommand{\hv}{\mathbf{h}}
+\newsubcommand{\happ}{\mathbf{h}}{{\text{ap}}} %applied
+\newsubcommand{\hms}{\mathbf{h}}{\text{ms}} % magnetostatic/demag
+\newsubcommand{\hex}{\mathbf{h}}{\text{ex}} % exchange
+\newsubcommand{\hca}{\mathbf{h}}{\text{ca}} % crystalline ansiotropy
+\newsubcommand{\hthm}{\mathbf{h}}{\text{th}} % thermal
+\newcommand{\nH}{H_{\mathbb{n}}} % A "magnitude" of H for normalisation 
+\newcommand{\nF}{F_{\mathbb{n}}} % A "magnitude" of energy for normalisation
+
+% Magnetic constants
+\newcommand{\Exchc}{\text{A}}
+\newcommand{\exchc}{\mathcal{A}}
+\newcommand{\dampc}{\alpha}
+\newcommand{\gymagc}{{|\gamma_{\text{\tiny{L}}}|}}
+
+% SI magnetic units (Kronmuller2003)
+\newcommand{\Mu}{{\text{Am}^{-1}}}
+\newcommand{\Hu}{{\text{Am}^{-1}}}
+\newcommand{\phiu}{{\text{A}}} % magnetic potentials
+\newcommand{\Bu}{{\text{T}}}
+\newcommand{\gymagu}{{\text{A}(\text{ms})^{-1}}}
+
+% Define the LLG equation (in parts then all together)
+\newcommand{\dMdt}{\pd{\Mv}{t}} % define dM/dt
+\newcommand{\dmdt}{\pd{\mv}{t}}
+\newcommand{\MxH}{\Mv \times \Hv} % define M x H
+\newcommand{\mxh}{\mv \times \hv}
+
+% Finite elements/numerical models
+%========================================
+% Define the test and shape functions
+\newcommand{\tbf}{\varphi}
+\newcommand{\sbf}{\psi}
+\newcommand{\ts}{{\mathcal{H}^1_h(\magd)}} % my test/shape fn space
+\newcommand{\sk}{{\sbf_k}}
+\newcommand{\tn}{{\tbf_\ndi}}
+
+% Indices
+\newcommand{\ndi}{n} % nodal index, not sure what to have it as...
+\newcommand{\eli}{e} % element index
+\newcommand{\tl}{l} % time-step index
+
+% Green's functions - general form and main parts of 2/3D Green's functions for the laplacian operator
+\newcommand{\Green}[1][]{G(\xv_{#1},\yv)}
+\newcommand{\Gtwod}[1][]{\ln|\xv_{#1} - \yv|}
+\newcommand{\Gthreed}[1][]{\frac{1}{|\xv_{#1} - \yv|}}
+
+% Boundary matrix
+\newcommand{\bm}{{\mathbf{G}}}
+
+% subscripts used
+\newcommand{\ibasis}{{i}}
+\newcommand{\ibasisb}{{j}}
+\newcommand{\ibasisc}{{k}}
+
+
+
+
+% Beginning of main document
+%================================================================================
+
+% Include only some sections while working on them, remove before final
+%\includeonly{first_year_progress}
+
+
+% \title{First Year Progress Report}
+
+% \author{David Shepherd}
+% \date{30 March 2012}
+
+\begin{document}
+
+\input{./title.tex}
+
+\include{./listofsymbols}
+
+\setcounter{tocdepth}{2} % Set contents to only go down to subsection level
+\tableofcontents
+
+\include{./introduction}
+
+\include{./trilemma}
+
+\include{./perp_recording}
+
+\include{./continuous_micromagnetics}
+
+\include{./modelling_basics}
+
+\include{./finite_ele_diff}
+
+\include{./derivations}
+
+\include{./boundary_elements}
+
+%\include{./quadrature/quadrature}
+
+%  preconditioners:
+% (very) basicis
+% what have people done before?
+
+%  LLB/ heat flow modelling
+% very basics
+% what have people done before?
+
+\appendix
+\include{llg-signs}
+\include{non-dimensionalisation}
+
+\begin{landscape}
+  \begin{table}
+    \centering
+    \input{./other_models}
+    \caption{Some key features of micromagnetic codes. The entry for oomph-lib (1) lists the features that are already available in the library (except mid-point method will be implemented). Codes (2-4) are currently available open source micromagnetics models, while numbers 5-6 are commercial, closed source packages.}
+    \label{fig:other-models}
+  \end{table}
+\end{landscape}
+
+%\bibliographystyle{amsalpha} %use codes instead of numbers
+\bibliographystyle{amsplain}
+
+% Make sure websites is before the Mendeley library as website entries needed to
+% be manually adjusted but may be overridden if the Mendeley library is first in
+% the list.
+\bibliography{/home/david/Documents/websites,/home/david/Documents/library}
+
+\end{document}
+
+
+%%% Local Variables:
+%%% mode: latex
+%%% TeX-master: t
+%%% End:
