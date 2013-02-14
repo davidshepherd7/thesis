@@ -1,0 +1,59 @@
+\section{Analytical solutions of the Landau-Lifshitz-Gilbert equation}
+
+When testing numerical solvers for differential equations it is very
+helpful to be able to check the results against analytical solutions for
+some special cases. This section contains some solutions useful for this
+purpose.
+Unfortunately it appears to be very difficult to find solutions to the LLG equation with exchange coupling (i.e. spatially dependant/spatially non-constant).
+
+\subsection{Solution due to Mallinson}
+
+In a 2000 paper\cite{Mallinson2000} Mallinson gives an analytical equation for the time taken for magnetisation to ``switch'' from one polar angle (angle to the field axis) to another.
+He also gives the azimuthal angle (the angle around the field axis) rotated through during this switching.
+
+The conditions for this model to apply are:
+\begin{enumerate}
+\item Constant applied field.
+\item No exchange field.
+\item Uniaxial anisotropy.
+\item Magnetostatic field (prolate ellipsoidal particles only).
+\item All effective fields must lie along the same axis.
+\end{enumerate}
+
+Let $\theta_1$, $\theta_2$ be the starting and endingangles between the field axis and the magnetisation (i.e. polar angles). Let $H_k$ be the combined anisotropy field: $H_k = \frac{2 K}{M_s} + M_s(N_\perp - N_\parallel)$ where $N$ is the demagnetisation tensor of the ellipsoid. All other symbols have their usual meanings. Then the time taken to switch from $\theta_1$ to $\theta_2$ is
+
+\begin{equation}
+  \tau = \frac{\dampc^2 +1}{\gymagc \dampc} \frac{1}{H^2 - H_k^2}
+  \left[ H \ln \left( \frac{\tan(\theta_2/2)}{\tan(\theta_1/2)} \right)
+       + H_k \ln \left( \frac{H - H_k \cos\theta_1}{H - H_k \cos\theta_2} \right)
+       + H_k \ln \left( \frac{\sin\theta_2}{\sin\theta_1} \right)
+    \right].
+\end{equation}
+
+The azimuthal angle precessed through during this switching is
+\begin{equation}
+  \phi = \frac{-1}{\dampc} \ln \left( \frac{\tan(\theta_2/2)}{\tan(\theta_1/2)} \right).
+\end{equation}
+
+Note that this is not really a true ``solution'' to the Landau-Lifshitz-Gilbert equation.
+It gives the switching time and azimuthal angle as a function of polar angle rather than the magnetisation direction as a function of time.
+
+\subsection{Solution due to ??ds}
+
+A similar solution has been given by ... for the case when the field is applied at a right angle to the easy axis.
+
+
+...
+
+
+
+\subsection{Constant field solution}
+
+...
+
+
+\subsection{Solution with exchange}
+
+It turns out to be possible to write down a solution to the Landau-Lifshitz-Gilbert equation even with the exchange term included as long as the physical boundary condition ??ds is ignored.
+
+??ds don't remember the solution...

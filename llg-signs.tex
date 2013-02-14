@@ -2,7 +2,9 @@
 \section{A note on the signs of the Landau--Lifshitz--Gilbert equation}
 \label{sec:note-signs-llg}
 
-In the recent republication of Gilbert's derivation (in his thesis) of the Landau--Lifshitz--Gilbert equation he gives the following equivalent equations:
+In the recent republication of Gilbert's derivation of the
+Landau--Lifshitz--Gilbert equation\cite{Gilbert2004} (originally from his
+thesis) he gives the following equivalent equations:
 \begin{equation}
   \pd{\Mv}{t} = - |\gamma| \Mv \times \big[ \Hv - \eta \pd{\Mv}{t} \big],
 \end{equation}
@@ -11,21 +13,22 @@ and
   \pd{\Mv}{t} = - |\gamma| \Mv \times \Hv - \frac{\alpha}{M_s} \Mv \times \pd{\Mv}{t}.
   \label{eq:llg-vedamping}
 \end{equation}
-Where $\alpha = \eta \gamma M_s$ and $\gamma < 0$. However the sign of $\eta$ is not given, hence the sign of $\alpha$ is not certain. Conventionally the sign of $\alpha$ is positive. However since Gilbert's paper was probably the first to use that constant he may have used a different convention.
+Where $\alpha = \eta \gamma M_s$ and $\gamma < 0$. However the sign of $\eta$ is not given, hence the sign of $\alpha$ is not certain. Conventionally the sign of $\alpha$ is positive but since Gilbert's paper was probably the first to use that constant he may have used a different convention.
 
 Another potential source of confusion is the sign of $\gamma$. Physically the gyromagnetic constant for an electron is negative. However some authors use $\gamma$ to represent $|\gamma|$, thus reversing some signs.
 
-However some more recent sources\cite{Fidler2000}\cite{nmag-manual}\cite{Lopez-Diaz2012} give
+Many more recent sources\cite{Fidler2000}\cite{nmag-manual}\cite{Lopez-Diaz2012} give the Landau-Lifshitz-Gilbert equation as
 \begin{equation}
   \pd{\Mv}{t} = - |\gamma| \Mv \times \Hv + \frac{\alpha}{M_s} \Mv \times \pd{\Mv}{t},
   \label{eq:llg+vedamping}
 \end{equation}
-
 note the opposite sign on the second term. I think this discrepancy is due to opposite conventions in the sign of $\alpha$.
+
+Additionally Mallinson notes in his paper on Damped Gyromagnetic Switching\cite{Mallinson2000} that ``a certain degree of confusion exists concerning what are the correct algebraic signs to be used in [the LLG] equation''. He asserts that equation \eqref{eq:llg+vedamping} is correct and notes that many of his previous papers used the incorrect sign.\footnote{Unfortunately this same paper contains a misprint in its statement of the LLG, a factor of $\bar{H}_f$, along with some other errors all given in a later errata.}
+
 
 Hence we will use equation \eqref{eq:llg+vedamping}.
 
-Note however that there are other recent papers using different signs so I am still not entirely sure which is correct.
 
 
 
