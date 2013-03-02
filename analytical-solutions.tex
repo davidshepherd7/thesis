@@ -38,22 +38,57 @@ The azimuthal angle precessed through during this switching is
 Note that this is not really a true ``solution'' to the Landau-Lifshitz-Gilbert equation.
 It gives the switching time and azimuthal angle as a function of polar angle rather than the magnetisation direction as a function of time.
 
-\subsection{Solution due to ??ds}
+\subsection{Solution due to Serpico et. al.}
 
-A similar solution has been given by ... for the case when the field is applied at a right angle to the easy axis.
+Serpico et. al. \cite{Serpico2003} give a complete solution for the \emph{undamped} spatially constant Landau-Lifshitz equation.
 
-
-...
 
 
 
 \subsection{Constant field solution}
 
-...
+Another analytical solution based on the non-Gilbert form of the Landau-Lifshitz-Gilbert equation is given by Jiang et. al.\cite{Jiang2001}
+
+\begin{align*}
+  \phi(t) &= \gamma' H t, \\
+  \cos \theta(t) &= \tanh (\gamma' \dampc H (t - t_0)), \\
+  \sin \theta(t) &= \left[ \cosh (\gamma' \dampc H (t - t_0)) \right]^{-1}, \\
+\end{align*}
+where $\gamma' = \frac{\gymagc}{1 + \alpha^2}$ and
+\begin{equation}
+  t_0 = \frac{1}{\gamma' \dampc H} \log \left( \frac{\sin \theta_0}{1 + \cos \theta_0} \right)
+\end{equation}
 
 
-\subsection{Solution with exchange}
+??ds note on use as a semi-analytical time integrator
 
-It turns out to be possible to write down a solution to the Landau-Lifshitz-Gilbert equation even with the exchange term included as long as the physical boundary condition ??ds is ignored.
+\subsection{Stationary states of the LLG with exchange}
 
-??ds don't remember the solution...
+It is also fairly easy to construct stationary solutions to the Landau-Lifshitz-Gilbert equation with exchange field included.
+The full equation for this case is
+\begin{equation}
+  \dmdt = - \left( \mv \times \nabla^2 \mv \right) + \dampc \left( \mv \times \dmdt \right).
+\end{equation}
+
+When $\dmdt = 0$, i.e. a steady state, this reduces to
+\begin{equation}
+   \left( \mv \times \nabla^2 \mv \right) = 0.
+\end{equation}
+
+One case when this is true is
+\begin{equation}
+  \nabla^2 \mv \propto \mv,
+  \label{eq:steadystatecond}
+\end{equation}
+(also when $\nabla^2 \mv = 0$ or $\mv = 0$ but these are not useful for testing).
+We can construct an $\mv$ situation where \eqref{eq:steadystatecond} holds from combinations of, for example, $\cos(x)$ and $\sin(x)$.
+An example of a complete solution is
+\begin{equation}
+  \mv = \left[
+    \begin{array}{c}
+      sin(x) + cos(y) \\ cos(x) + sin(y) \\ cos(z)
+    \end{array}
+    \right].
+\end{equation}
+
+Then $\nabla^2 \mv = - \mv$ as required.

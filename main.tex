@@ -1,16 +1,16 @@
 \documentclass[11pt,a4paper,pdftex]{article}
 %% use book eventually? - lets us have chapters
 
-%General packages
-%===============================================================================
+%% General packages
+%% ============================================================
 \usepackage{amsmath,amssymb,amsfonts}   %Add maths commands, symbols and fonts
 \usepackage{url}                %Support for urls
-\usepackage{hyperref}   %Urls can be hyperlinks
+%% \usepackage{hyperref}   %Urls can be hyperlinks
 \usepackage[utf8]{inputenc} % Support for UTF8
 
 
-%Page Layout
-%===============================================================================
+%% Page Layout
+%% ============================================================
 \usepackage{fancyhdr}
 \pagestyle{fancy}
 \fancyhf{}
@@ -36,8 +36,8 @@
 % Adds a landscape enviroment
 \usepackage{lscape}
 
-% Figure Tweaks
-%===============================================================================
+%% Figure Tweaks
+%% ============================================================
 \usepackage[pdftex]{graphicx}   %Needed to include pictures
 
 % positioning tweaks
@@ -49,23 +49,24 @@
 \usepackage[labelfont=it,textfont=it]{caption}
 
 
-% Equations/maths
-%===============================================================================
+%% Equations/maths
+%% ============================================================
 \numberwithin{equation}{section} % Number equations by "<section>.<number>".
 %\usepackage{nath}
 % % Prevent line break in the middle of maths except in extreme cases (increse numbers to make line breaking even more unlikely)
 % \relpenalty=3000
 % \binoppenalty=5000
 
-% Bibliograpy Tweaks
-%===============================================================================
+
+%% Bibliograpy Tweaks
+%% ============================================================
 
 % Natbib package, make citations square bracketed superscripts [1]
 \usepackage[super,sort&compress,square,numbers]{natbib}
 
 
-% Flow charts
-%===============================================================================
+%% Flow charts
+%% ============================================================
 \usepackage{tikz} % Package for drawing flow charts
 \usetikzlibrary{shapes,arrows}
 
@@ -78,11 +79,11 @@
 \tikzstyle{line} = [draw, -]
 
 
-% Define new commands:
-%===============================================================================
+%% Define new commands:
+%% ============================================================
 
-% General Latex commands
-%========================================
+%% General Latex commands
+%% ------------------------------
 % New way to define commands that allows multiple subscripts
 \makeatletter
 \newcommand\newsubcommand[3]{\newcommand#1{#2\sc@sub{#3}}}
@@ -98,8 +99,8 @@
   {\ignorespacesafterend\egroup}
 
 
-% General maths commands
-%========================================
+%% General maths commands
+%% ------------------------------
 \newcommand{\pd}[2]{\frac{\partial #1}{\partial #2}} % partial deriv
 \newcommand{\E}[1]{\times 10^{#1}} % powers of 10
 \newcommand{\st}{\,|\,} % such that in sets (vertical line with spacing)
@@ -111,8 +112,8 @@
 
 \newcommand{\order}[1]{\text{O} \left( #1 \right)}
 
-% Spaces, domains and geometrical labels
-%========================================
+%% Spaces, domains and geometrical labels
+%% ------------------------------
 % Domain labels used
 \newcommand{\magd}{\Omega}
 \newcommand{\boundd}{{\Gamma}}
@@ -130,8 +131,8 @@
 \newcommand{\Neu}{{\scriptscriptstyle{\mathcal{N}}}} % Neumann
 
 
-% Magnetics
-%========================================
+%% Magnetics
+%% ------------------------------
 % Define \M,\Hv,\x, \iv as vectors (i.e. bold) and easier subscripting (iv and Hv because \i and \H are already used for other commands).
 \newcommand{\xv}{\mathbf{x}}
 \newcommand{\yv}{\mathbf{y}}
@@ -191,8 +192,8 @@
 \newcommand{\MxH}{\Mv \times \Hv} % define M x H
 \newcommand{\mxh}{\mv \times \hv}
 
-% Finite elements/numerical models
-%========================================
+%% Finite elements/numerical models
+%% ------------------------------
 % Define the test and shape functions
 \newcommand{\tbf}{\varphi}
 \newcommand{\sbf}{\psi}
@@ -221,14 +222,12 @@
 
 
 
-% Beginning of main document
-%================================================================================
+%% Beginning of main document
+%% =============================================================
 
 % Include only some sections while working on them, remove before final
 %\includeonly{first_year_progress}
 
-
-% \title{First Year Progress Report}
 
 % \author{David Shepherd}
 % \date{30 March 2012}
@@ -244,9 +243,9 @@
 
 \include{./introduction}
 
-\include{./trilemma}
+%% \include{./trilemma}
 
-\include{./perp_recording}
+%% \include{./perp_recording}
 
 \include{./continuous_micromagnetics}
 
@@ -259,6 +258,8 @@
 \include{./boundary_elements}
 
 %\include{./quadrature/quadrature}
+
+\include{./midpoint}
 
 %  preconditioners:
 % (very) basicis
@@ -288,7 +289,7 @@
 % Make sure websites is before the Mendeley library as website entries needed to
 % be manually adjusted but may be overridden if the Mendeley library is first in
 % the list.
-\bibliography{/home/david/Documents/websites,/home/david/Documents/library}
+\bibliography{./websites,./library}
 
 \end{document}
 

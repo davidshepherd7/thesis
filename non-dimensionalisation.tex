@@ -83,7 +83,7 @@ This can be further simplified by choosing
 
 leaving
 \begin{equation}
-  \hv &= \happ - \nabla \phi + \exchc \nabla^2 \mv + \kone (\mv \cdot \ev) \ev.
+  \hv = \happ - \nabla \phi + \exchc \nabla^2 \mv + \kone (\mv \cdot \ev) \ev.
 \end{equation}
 
 The parameter for length, $l$ is still free to be chosen. Useful possibilities are the exchange length or a unit on the length scale of a dimension of the magnetic material being modelled (typically $\sim1-100$nm).
@@ -93,53 +93,53 @@ Note that for models with more than one type of magnetic material then $M_s$ can
 %% \subsection{Extension to the hybrid method}
 %% \label{sec:extens-hybr-met}
 
-\subsection{Energy equations}
+%% \subsection{Energy equations}
 
-??ds I gave up on this because I didn't need it, might be wrong...
+%% ??ds I gave up on this because I didn't need it, might be wrong...
 
 
-We repeat the process to get a set of non-dimensionalised energy equations, starting from the equations given in Section~\ref{sec:cont-micromag}):
+%% We repeat the process to get a set of non-dimensionalised energy equations, starting from the equations given in Section~\ref{sec:cont-micromag}):
 
-\begin{equation}
-  F_\text{ex}^* =  \frac{\Exchc^*}{M_s^2} \int_{\magd} (\nabla^* M_x^*)^2  + (\nabla^* M_y^*)^2  + (\nabla^* M_z^*)^2 \d \magd^*,
-\end{equation}
-\begin{equation}
-  F_\text{ms}^* =  \frac{-\mu_0}{2} \int_{\magd} \Mv^* \cdot \Hms^* \d \magd^*,
-\end{equation}
-\begin{equation}
-  F_\text{ap}^* = - \mu_0 \int_{\magd} \Mv^* \cdot \Happ^* \d \magd^*,
-\end{equation}
-\begin{equation}
-  F_\text{ca}^* = \int_\magd \Kone^* (\mv \cdot \ev) \d \magd^*.
-\end{equation}
-
-%% From the rescaling of energy given in equation~\eqref{eqn:unitdefs} we have
 %% \begin{equation}
-%%   F_\text{...}^* = \mu_0 M_s^2 l^3 f_\text{...}
-%%   \label{eqn:energynd}
+%%   F_\text{ex}^* =  \frac{\Exchc^*}{M_s^2} \int_{\magd} (\nabla^* M_x^*)^2  + (\nabla^* M_y^*)^2  + (\nabla^* M_z^*)^2 \d \magd^*,
+%% \end{equation}
+%% \begin{equation}
+%%   F_\text{ms}^* =  \frac{-\mu_0}{2} \int_{\magd} \Mv^* \cdot \Hms^* \d \magd^*,
+%% \end{equation}
+%% \begin{equation}
+%%   F_\text{ap}^* = - \mu_0 \int_{\magd} \Mv^* \cdot \Happ^* \d \magd^*,
+%% \end{equation}
+%% \begin{equation}
+%%   F_\text{ca}^* = \int_\magd \Kone^* (\mv \cdot \ev) \d \magd^*.
 %% \end{equation}
 
-After subsitution of definitions~\eqref{eqn:nddefs} and using $F^* = \Fnorm f$
+%% %% From the rescaling of energy given in equation~\eqref{eqn:unitdefs} we have
+%% %% \begin{equation}
+%% %%   F_\text{...}^* = \mu_0 M_s^2 l^3 f_\text{...}
+%% %%   \label{eqn:energynd}
+%% %% \end{equation}
 
-%??ds does this work in lower dimensions?
+%% After subsitution of definitions~\eqref{eqn:nddefs} and using $F^* = \Fnorm f$
 
-\begin{equation}
-  f_\text{ex} =  \frac{\exchc l^2 M_s l^d}{l^2\Fnorm} \int_{\magd} (\nabla m_x)^2  + (\nabla m_y)^2  + (\nabla m_z)^2 \d \magd,
-\end{equation}
-\begin{equation}
-  f_\text{ms} = \frac{-\mu_0 M_s^2 l^d}{2\Fnorm} \int_{\magd} \mv \cdot \hms \d \magd,
-\end{equation}
-\begin{equation}
-  f_\text{ap} = \frac{- \mu_0 M_s^2 l^d}{\Fnorm} \int_{\magd} \mv \cdot \happ \d \magd,
-\end{equation}
-\begin{equation}
-  f_\text{ca} = \frac{ - \kone M_s l^d}{\Fnorm} \int_\magd (\mv \cdot \ev)^2 \d \magd.
-\end{equation}
+%% %??ds does this work in lower dimensions?
 
-where $d$ denotes the number of spatial dimensions and we have used 
-\begin{equation} 
-  \d \magd^* = \d x^{*d} = l^d \d x^d = l^d \d \magd.
-\end{equation}
+%% \begin{equation}
+%%   f_\text{ex} =  \frac{\exchc l^2 M_s l^d}{l^2\Fnorm} \int_{\magd} (\nabla m_x)^2  + (\nabla m_y)^2  + (\nabla m_z)^2 \d \magd,
+%% \end{equation}
+%% \begin{equation}
+%%   f_\text{ms} = \frac{-\mu_0 M_s^2 l^d}{2\Fnorm} \int_{\magd} \mv \cdot \hms \d \magd,
+%% \end{equation}
+%% \begin{equation}
+%%   f_\text{ap} = \frac{- \mu_0 M_s^2 l^d}{\Fnorm} \int_{\magd} \mv \cdot \happ \d \magd,
+%% \end{equation}
+%% \begin{equation}
+%%   f_\text{ca} = \frac{ - \kone M_s l^d}{\Fnorm} \int_\magd (\mv \cdot \ev)^2 \d \magd.
+%% \end{equation}
+
+%% where $d$ denotes the number of spatial dimensions and we have used 
+%% \begin{equation} 
+%%   \d \magd^* = \d x^{*d} = l^d \d x^d = l^d \d \magd.
+%% \end{equation}
 
 
 %%% Local Variables:
