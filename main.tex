@@ -6,8 +6,13 @@
 \usepackage{amsmath,amssymb,amsfonts}   %Add maths commands, symbols and fonts
 \usepackage{url}                %Support for urls
 %% \usepackage{hyperref}   %Urls can be hyperlinks
-\usepackage[utf8]{inputenc} % Support for UTF8
 
+
+% Language
+% ============================================================
+\usepackage[utf8]{inputenc} % Support for UTF8
+\usepackage{csquotes} % Commonly recommend, not sure what it does
+\usepackage[UKenglish]{babel} % same...
 
 %% Page Layout
 %% ============================================================
@@ -61,8 +66,29 @@
 %% Bibliograpy Tweaks
 %% ============================================================
 
-% Natbib package, make citations square bracketed superscripts [1]
-\usepackage[super,sort&compress,square,numbers]{natbib}
+% biblatex setup
+\usepackage[]{biblatex}
+\addbibresource{websites.bib}
+\addbibresource{library.bib}
+
+% A superscript ciation command
+\DeclareCiteCommand{\supercite}[\mkbibsuperscript]
+  {\iffieldundef{prenote}
+     {}
+     {\BibliographyWarning{Ignoring prenote argument}}%
+   \iffieldundef{postnote}
+     {}
+     {\BibliographyWarning{Ignoring postnote argument}}}
+  {\usebibmacro{citeindex}%
+   \bibopenbracket\usebibmacro{cite}\bibclosebracket}
+  {\supercitedelim}
+  {}
+
+% Use superscript cite instead of normal ones
+\let\cite=\supercite
+
+%% %% Natbib package, make citations square bracketed superscripts [1]
+%% \usepackage[super,sort&compress,square,numbers]{natbib}
 
 
 %% Flow charts
@@ -284,12 +310,15 @@
 \end{landscape}
 
 %\bibliographystyle{amsalpha} %use codes instead of numbers
-\bibliographystyle{amsplain}
+%% \bibliographystyle{amsplain}
 
 % Make sure websites is before the Mendeley library as website entries needed to
 % be manually adjusted but may be overridden if the Mendeley library is first in
 % the list.
-\bibliography{./websites,./library}
+%% \bibliography{./websites,./library}
+
+% Does what it says (using biblatex package)
+\printbibliography
 
 \end{document}
 
