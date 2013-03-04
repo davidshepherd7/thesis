@@ -100,11 +100,11 @@ where $\nabla'$ denotes the grad operator with respect to the $\xv'$ coordinate.
 % \end{equation}
 % where $\ruv_i$ is the unit vector pointing from $\xv_i$ to $\xv$.
 
-After the application of a discretisation scheme the integrals in equation~\eqref{eq:Hmsint} become a sum over all nodes. The naive way to calculate the magnetostatic fields would then be to work through the list of nodes calculating the field at each of them. Then for each node a contribution from all other nodes needs to be calculated. Hence this results in an algorithm complexity that scales as $O(N^2)$ (where $N$ is the number of points used in the space discretisation) which is usually unacceptably slow.
+After the application of a discretisation scheme the integrals in equation~\eqref{eq:Hmsint} become a sum over all nodes. The naive way to calculate the magnetostatic fields would then be to work through the list of nodes calculating the field at each of them. Then for each node a contribution from all other nodes needs to be calculated. Hence this results in an algorithm complexity that scales as $\order{N^2}$ (where $N$ is the number of points used in the space discretisation) which is usually unacceptably slow.
 
 \subsubsection{Fast Fourier Transform Methods}
 
-If the individual magnetic charges are on a regular lattice (or approximated by a regular lattice) and the boundary conditions are periodic, then the redundancy can be exploited to speed up the magnetostatic field calculations. The calculation of $\Hms$ in equation~\eqref{eq:Hmsint} can be thought of as applying a convolution operator $D$ (\ie $\Hms = D \big[\Mv\big]$). The matrix corresponding to this operator  is only dependant on geometry, hence it can be precomputed, Fourier transformed and stored for use in the main simulation. Then all that is needed to calculate the magnetostatic field is to apply a Fourier transform to $\Mv$, compute the convolution and transform the result back into the time domain by applying the inverse Fourier transform. Because of the regularity, applying the convolution in the frequency domain is very fast and hence the complexity of the calculation is limited by the complexity of a fast Fourier transform, which is $O(N \log(N))$.\cite{Jones1997}
+If the individual magnetic charges are on a regular lattice (or approximated by a regular lattice) and the boundary conditions are periodic, then the redundancy can be exploited to speed up the magnetostatic field calculations. The calculation of $\Hms$ in equation~\eqref{eq:Hmsint} can be thought of as applying a convolution operator $D$ (\ie $\Hms = D \big[\Mv\big]$). The matrix corresponding to this operator  is only dependant on geometry, hence it can be precomputed, Fourier transformed and stored for use in the main simulation. Then all that is needed to calculate the magnetostatic field is to apply a Fourier transform to $\Mv$, compute the convolution and transform the result back into the time domain by applying the inverse Fourier transform. Because of the regularity, applying the convolution in the frequency domain is very fast and hence the complexity of the calculation is limited by the complexity of a fast Fourier transform, which is $\order{N \log(N)}$.\cite{Jones1997}
 
 The downside of this method is that points to be calculated must be on a regular lattice, similar to the finite difference method. Hence, it is most suited for use in combination with models using a finite difference spatial discretisation. Alternatively it may be used in less regular macrospin models by approximating the the macrospins as being on a regular lattice.\cite{Jones1997}
 
@@ -119,7 +119,7 @@ For the field calculation at a specific point, $\xv$, the full calculation is on
 
 The trick for quickly calculating fields at a large number of points is to pre-calculate the multipole approximations for a range of accuracies over all space. Then the calculation of a field at a single point only requires the full calculation of effects from a few nearby points and from the appropriate multipoles.\cite{Beatson}
 
-One advantage of this method over the fast Fourier transform is that it allows for arbitrary geometries. Also the complexity of the method is $O(N)$, where $N$ is the number of magnetic charges (equivalent to the number of nodes/cells/macrospins after spatial discretisation).\cite{Chang2011}
+One advantage of this method over the fast Fourier transform is that it allows for arbitrary geometries. Also the complexity of the method is $\order{N}$, where $N$ is the number of magnetic charges (equivalent to the number of nodes/cells/macrospins after spatial discretisation).\cite{Chang2011}
 
 The fast multipole method is used, with massive parallelisation for GPUs, to quickly calculate magnetostatic fields in FastMag.\cite{Chang2011} %??ds milan: how is load balencing performed?
 
@@ -164,7 +164,7 @@ A comparison by Bottauscio\cite{Bottauscio2008} found that using the hybrid meth
 
 One downside is an increase in the difficulty of creating the model since some parts of the boundary element method are mathematically different to the finite element method. For example singular integrals occur in the boundary element method and more advanced integration methods are needed. Also the hybrid method requires an additional dense matrix-vector multiplication for the calculation of boundary conditions.
 
-The speed (and memory usage) of calculation of the boundary values in the method is limited by the dense matrix multiplication which is $O(N_b^2)$, where $N_b$ is the number of boundary nodes. The use of hierarchical matrix techniques can reduce this to $O(N_b \log(N_b))$.\cite{Knittel2009} Hence the speed of the hybrid method depends on the geometry. For example in 3D structures which are roughly spherical $N_b = O(N^{2/3})$ which gives optimal computation speed\footnote{With hierarchical matrix techniques the speed is $O(N^{2/3}\log(N^{2/3}))$ but $\log(x) << x^{1/2}$ for large $x$, hence $O(N^{2/3}\log(N^{2/3})) << O(N)$, \ie optimal computation speed scaling.} but for extremely flat structures it can be as bad as $N_b = O(N)$.
+The speed (and memory usage) of calculation of the boundary values in the method is limited by the dense matrix multiplication which is $\order{N_b^2}$, where $N_b$ is the number of boundary nodes. The use of hierarchical matrix techniques can reduce this to $\order{N_b \log(N_b)}$.\cite{Knittel2009} Hence the speed of the hybrid method depends on the geometry. For example in 3D structures which are roughly spherical $N_b = \order{N^{2/3}}$ which gives optimal computation speed\footnote{With hierarchical matrix techniques the speed is $\order{N^{2/3}\log(N^{2/3})}$ but $\log(x) << x^{1/2}$ for large $x$, hence $\order{N^{2/3}\log(N^{2/3})} << \order{N}$, \ie optimal computation speed scaling.} but for extremely flat structures it can be as bad as $N_b = \order{N}$.
 
 The hybrid method was first applied to the computation of magnetostatic fields by Fredkin and Koehler.\cite{Fredkin1990}
 
@@ -245,7 +245,7 @@ The backwards differences schemes are a simple and commonly used example. The fi
   y(t_{n+1}) = y(t_n) + hf(t_{n+1}, y(t_{n+1})).
 \end{equation}
 
-Because a system of equations must be solved at each step a \emph{preconditioner} may be needed to ensure the system can be solved in optimal time (\ie $O(N)$). Magnetostatic field calculation by the hybrid method can cause difficulties in the solution of the system of equations because it adds a dense sub-block to the otherwise sparse system.
+Because a system of equations must be solved at each step a \emph{preconditioner} may be needed to ensure the system can be solved in optimal time (\ie $\order{N}$). Magnetostatic field calculation by the hybrid method can cause difficulties in the solution of the system of equations because it adds a dense sub-block to the otherwise sparse system.
 
 Micromagnetics models commonly use BDF schemes of various order\cite{Suess2002} for the modelling of stiff systems. The midpoint method is another possible choice.\cite{DAquino2005}
 

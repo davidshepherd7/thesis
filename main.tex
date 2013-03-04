@@ -140,6 +140,7 @@
 %% General maths commands
 %% ------------------------------
 \newcommand{\pd}[2]{\frac{\partial #1}{\partial #2}} % partial deriv
+\newcommand{\spd}[2]{\frac{\partial^2 #1}{\partial {#2}^2}} % partial deriv
 \newcommand{\E}[1]{\times 10^{#1}} % powers of 10
 \newcommand{\st}{\,|\,} % such that in sets (vertical line with spacing)
 \renewcommand{\d}{{\; \text{d}}} % d for the end of integrals (e.g. dx) with correct spacing and non-italic
@@ -148,9 +149,8 @@
 
 \newcommand{\threevec}[3]{\left( \begin{array}{c} #1 \\ #2 \\ #3 \end{array} \right)}
 
-\newcommand{\order}[1]{\text{O} \left( #1 \right)}
+\newcommand{\order}[1]{\text{O}(#1)}
 
-\newcommand{\dt}[1]{\Delta_{#1}}
 
 %% Spaces, domains and geometrical labels
 %% ------------------------------
@@ -262,6 +262,20 @@
 \newcommand{\ibasisb}{{j}}
 \newcommand{\ibasisc}{{k}}
 
+%% Midpoint method
+%% ------------------------------
+
+%% \newcommand{\dt}{\dtx{}}
+\newcommand{\dtn}{\dtx{n}}
+\newcommand{\dtx}[1]{\Delta_{#1}}
+
+% Getting bold greek requires a hack because mathbf sees it as a "symbol"
+% and so doesn't change it. This uses the direct TeX solution (from google!)
+\newcommand{\dyn}{\dyx{n}}
+\newcommand{\dyx}[1]{\mbox{\boldmath$\delta$}_{#1}}
+
+%% \newcommand{\thf}{t_{n+\frac{1}{2}}}
+\newcommand{\thf}{\hat{t}_n}
 
 
 

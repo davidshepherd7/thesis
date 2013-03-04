@@ -38,26 +38,26 @@ is defined as
 
 Using $a=x_{i}$ and $x=x_{i+1}$ we get
 \begin{equation}
-  y(x_{i+1})=y(x_{i})+hy'(x_{i})+\dfrac{h^{2}}{2}y''(x_{i})+\dfrac{h^{3}}{3!}y'''(a)+O(h^{4}),
+  y(x_{i+1})=y(x_{i})+hy'(x_{i})+\dfrac{h^{2}}{2}y''(x_{i})+\dfrac{h^{3}}{3!}y'''(a)+\order{h^{4}},
   \label{eq:taylor1}
 \end{equation}
-where $O(h^{4})$ is the residual. Similarly for $x=x_{i-1}$
+where $\order{h^{4}}$ is the residual. Similarly for $x=x_{i-1}$
 \begin{equation}
-  y(x_{i-1})=y(x_{i})-hy'(x_{i})+\dfrac{h^{2}}{2}y''(x_{i})-\dfrac{h^{3}}{3!}y'''(a)+O(h^{4}).
+  y(x_{i-1})=y(x_{i})-hy'(x_{i})+\dfrac{h^{2}}{2}y''(x_{i})-\dfrac{h^{3}}{3!}y'''(a)+\order{h^{4}}.
   \label{eq:taylor2}
 \end{equation}
 
 Adding equations~\eqref{eq:taylor1} and \eqref{eq:taylor2} gives
 \begin{equation*}
-  y(x_{i+1})+y(x_{i-1})=2y(x_{i})+h^{2}y''(x_{i})+O(h^{4}).
+  y(x_{i+1})+y(x_{i-1})=2y(x_{i})+h^{2}y''(x_{i})+\order{h^{4}}.
 \end{equation*}
 We then rearrange to get an expression for $y''(x_{i})$ in terms of $y$:
 \begin{equation*}
-  y''(x_{i})=\dfrac{1}{h^{2}}\Big[y(x_{i+1})+y(x_{i-1})-2y(x_{i})\Big]+O(h^{4}).
+  y''(x_{i})=\dfrac{1}{h^{2}}\Big[y(x_{i+1})+y(x_{i-1})-2y(x_{i})\Big]+\order{h^{4}}.
   % Milan says error is O(h^{4}) but I can't see why it's not O(h^{2})...
 \end{equation*}
 
-We now drop the $O(h^{4})$ term leaving an approximation for $y''(x_{i})$
+We now drop the $\order{h^{4}}$ term leaving an approximation for $y''(x_{i})$
 \begin{equation}
   y''(x_{i})=\dfrac{1}{h^{2}}\Big[y(x_{i+1})+y(x_{i-1})-2y(x_{i})\Big],
   \label{eq:y''approx}
