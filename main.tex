@@ -67,7 +67,13 @@
 %% ============================================================
 
 % biblatex setup
-\usepackage[backend=biber]{biblatex}
+\usepackage[backend=biber,
+  citestyle=numeric,
+  firstinits=true, % Only print initials of first names
+  isbn=false,
+  doi=false,
+  %% dashed=false % never replace repeated author names by _____
+]{biblatex}
 \addbibresource{websites.bib}
 \addbibresource{library.bib}
 
