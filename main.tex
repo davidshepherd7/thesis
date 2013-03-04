@@ -97,6 +97,7 @@
 %% \usepackage[super,sort&compress,square,numbers]{natbib}
 
 
+
 %% Flow charts
 %% ============================================================
 \usepackage{tikz} % Package for drawing flow charts
@@ -130,6 +131,11 @@
   {\textcolor{note_fontcolor}\bgroup\ignorespaces}
   {\ignorespacesafterend\egroup}
 
+% ie and eg
+\newcommand{\ie}{\textit{i.e.} }
+\newcommand{\cf}{\textit{c.f.} }
+\newcommand{\eg}{\textit{e.g.} }
+
 
 %% General maths commands
 %% ------------------------------
@@ -143,6 +149,8 @@
 \newcommand{\threevec}[3]{\left( \begin{array}{c} #1 \\ #2 \\ #3 \end{array} \right)}
 
 \newcommand{\order}[1]{\text{O} \left( #1 \right)}
+
+\newcommand{\dt}[1]{\Delta_{#1}}
 
 %% Spaces, domains and geometrical labels
 %% ------------------------------
@@ -223,6 +231,9 @@
 \newcommand{\dmdt}{\pd{\mv}{t}}
 \newcommand{\MxH}{\Mv \times \Hv} % define M x H
 \newcommand{\mxh}{\mv \times \hv}
+\newcommand{\MxdMdt}{\Mv \times \dMdt}
+\newcommand{\mxdmdt}{\mv \times \dmdt}
+\newcommand{\llg}{\dmdt = -(\mxh) + \dampc (\mxdmdt)}
 
 %% Finite elements/numerical models
 %% ------------------------------

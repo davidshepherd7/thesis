@@ -1,1 +1,61 @@
+
+
+
 \section{An adaptive midpoint method time integrator}
+
+%** intro
+
+%*** other names?
+
+%*** Banas' work
+
+%** midpoint vs bdf2 vs trapazoid rule in micromagnetics
+
+%** Adaptive scheme types, total error, spatial errors, LTE
+
+%** The maths (standard rule, definitions)
+
+Let $\yv(t)$ be a vector function of time, let $\yv_n$ denote a vector of estimates to $\yv(t)$ with $t = t_n$.
+Let $\dt{n} = t_{n+1} - t_n$ be the time step.
+Then given a system of equations of the form
+\begin{equation}
+  \pd{\yv(t)}{t} = \fv(t, \yv(t)),
+\end{equation}
+the midpoint method is given by
+\begin{equation}
+  \yv_{n+1} = \yv_n + \dt{n} \fv(\frac{t_n + t_{n+1}}{2}, \frac{\yv_n + \yv_{n+1}}{2}).
+  \label{eq:basic-midpoint}
+\end{equation}
+Note that this is valid for both constant and non-constant times (\cf BDF2, AB2 which change).
+
+However, commonly we wish to solve a system of equations where $ \pd{\yv(t)}{t}$ is only given implicitly. For example the Gilbert form of the Landau-Lifshitz-Gilbert equation is given by
+\begin{equation}
+  \llg
+\end{equation}
+ In this case the equivalent to \eqref{eq:basic-midpoint} is to substitute by the following
+\begin{align}
+  \pd{\yv(t)}{t} & \simeq \frac{(\yv_{n+1} - \yv_n)}{\dt{n}}, \\
+  \yv(t) & \simeq \frac{\yv_n + \yv_{n+1}}{2}, \notag \\
+  t & \simeq \frac{t_n + t_{n+1}}{2}, \notag
+\end{align}
+\ie the derivative is estimated using standard finite differences and everything else is evaluated at the ``midpoint''. This results in a system of equations which can be solved for $\yv_{n+1}$.
+
+%** Derivation of an adaptive scheme
+
+%*** How to derive LTE errors in general
+
+%*** Details
+
+%*** Why dfdy is ok
+
+%** Testing
+
+%*** Conservation properties
+
+%*** stiffness
+
+%*** Adaptivity effectiveness
+
+%** Future work
+
+%*** Does adaptivity trail off eventually like trapazoid?
