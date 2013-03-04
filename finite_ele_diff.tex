@@ -19,7 +19,7 @@ equation in one spatial dimension. Find\footnote{A function $g\in C^{k}(0,1)$ if
 We start with the equation~\eqref{eq:poisson1} and subdivide this interval into
 $N$ sub intervals each of length $h = \frac{1}{N}$ as shown in Figure
 \ref{fig:The-subdivision}. The points $x_{i}$ are the points where we will
-approximate $y(x)$ (i.e. we will compute a discrete solution $y(x_{i})$ for
+approximate $y(x)$ (\ie we will compute a discrete solution $y(x_{i})$ for
 $i=0, \, \ldots \, ,N$).
 
 \begin{figure}[!ht]
@@ -218,7 +218,7 @@ and the spectral method.
 
 For simplicity we start, as before, with the one-dimensional Poisson equation
 \eqref{eq:poisson1}, with homogeneous Dirichlet boundary conditions
-(i.e. $y_{a}=y_{b}=0$).
+(\ie $y_{a}=y_{b}=0$).
 
 % \footnote{The functions must be Lipschitz continous (a stronger form
 %   of continuity than standard). Lipschitz continuity is defined as the
@@ -249,7 +249,7 @@ The space $V_{s}$ is the solution space
   V_{s}=\{y:[0,1]\rightarrow\mathbb{R}\, \st \, y \in \sob^2(0,1),\,
   y(0) = y_{a},\, y(1) = y_{b}\},
 \end{equation*}
- i.e. the space of functions that are sufficiently smooth for the integrals to be finite and that satisfy the boundary conditions.
+ \ie the space of functions that are sufficiently smooth for the integrals to be finite and that satisfy the boundary conditions.
 
 To see that the weak form is equivalent consider the case when the error or \emph{residual} $f(x) -y(x)''$ is non-zero for some $x \in [0,1]$. Since equation~\eqref{eq:26} must hold for all functions $v$ we can come up with a function which is non-zero at $x$ and hence the equality in \eqref{eq:26} fails. We call this the method of weighted residuals because we use a weighted integral of the residual to approximate the true equation.\cite{Zeinkiewicz1967}%pg 210,214
 
@@ -264,7 +264,7 @@ applied to the left hand side of equation~\eqref{eq:26}. Let $p=y'$ and $q=v$, t
 \end{equation}
 
 We now introduce a second constraint to the test functions: $v=0$
-at the boundaries (i.e. $v_a=v_b=0$), so the bracketed term in \eqref{eq:29} is
+at the boundaries (\ie $v_a=v_b=0$), so the bracketed term in \eqref{eq:29} is
 zero and we are left with
 \begin{equation*}
   -\int_{0}^{1}y''v\, dx=\int_{0}^{1}y'v'\, dx.
@@ -283,7 +283,7 @@ test and solution spaces are the same.
 
 Equation~\eqref{eq:symmetric-weak-poisson} is still inapplicable as a
 computational method since the test (and solution) space is infinite dimensional
-(i.e. the problem is still continuous). So for the next step we approximate
+(\ie the problem is still continuous). So for the next step we approximate
 $V_{T}'$ by a finite dimensional function space $V_{T}^{h}\subset V_{T}'$ such
 that
 \begin{equation}
@@ -317,7 +317,7 @@ gives
 \end{equation}
 
 Since $y_{h}\in V_{S}^{h}$ we can also replace $y_{h}$ by a linear combination
-of the spanning functions, i.e.
+of the spanning functions, \ie
 \begin{equation}
   y_{h}=\sum_{l=0}^{N_l}c_{l}\sbf_{l},
   \label{eq:y-spans}
@@ -366,7 +366,7 @@ This definition results in the following useful properties of $L_{\ndi}(x)$
 since at each $x_{\ndi}$ with $k \neq \ndi$ one of the numerators is zero and at
 $x_{\ndi}$ all of the numerators are equal to the corresponding denominator.
 
-Polynomials are chosen because they are easy to manipulate computationally, for example differentiation and integration are simple. Also an arbitrary level of accuracy can be achieved when approximating the a smooth function by piecewise polynomials, provided that the polynomials are only non-zero on a sufficiently small area (i.e. after sufficient mesh refinement).
+Polynomials are chosen because they are easy to manipulate computationally, for example differentiation and integration are simple. Also an arbitrary level of accuracy can be achieved when approximating the a smooth function by piecewise polynomials, provided that the polynomials are only non-zero on a sufficiently small area (\ie after sufficient mesh refinement).
 
 We now consider the simple case where we approximate the function at two points
 $x_{0}$ and $x_{1}$ (linear interpolation). Then the Lagrange basis
@@ -392,8 +392,8 @@ functions over the entire domain.
 
 In one dimension the boundary of each element consists of two points, one at
 each end. In the local scheme it is natural to label these points by the element
-number $e$ and a local node number, i.e. $x_{0}^{(e)}$ and $x_{1}^{(e)}$. In the
-global scheme each node is labelled by a unique node number, i.e. $x_{\ndi}$ for
+number $e$ and a local node number, \ie $x_{0}^{(e)}$ and $x_{1}^{(e)}$. In the
+global scheme each node is labelled by a unique node number, \ie $x_{\ndi}$ for
 $\ndi=0,\ldots,N$. The concept is best illustrated by a diagram, see Figure
 \ref{fig:local-global-numbering}.
 
@@ -435,7 +435,7 @@ The $\ndi$th global basis function is then defined as:
     finite element model.\label{fig:local_global_functions}}
 \end{figure}
 
-The global basis functions for are clearly integrable (i.e. in $L^2[0,1]$) since
+The global basis functions for are clearly integrable (\ie in $L^2[0,1]$) since
 they are just a combination of local basis functions and they satisfy the boundary conditions by definition. So the global basis functions are members of $V_T^h$ and $V_S^h$.
 
 To calculate the matrix $A$ and the vector $\mathbf{b}$ from equation

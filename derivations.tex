@@ -38,7 +38,7 @@ For efficient and accurate numerical modelling it is essential to ensure that co
 \item $\hv_{\Box} = \frac{\Hv_\Box}{H_k} = \Hv_\Box \frac{\mu_0 M_s}{2 K_1}$ (non-dimensional), for the applied, exchange and magnetocrystalline anisotropy fields.
 \item $t' = \frac{t}{\gymagc H_k}$ (units of .. ??ds)
 \end{itemize}
-The coefficient of the exchange effective field becomes $\exchc = \frac{2A}{\mu_0 M_s} \cdot \frac{\mu_0 M_s}{2 K_1} = \frac{A}{K_1}$. Both $A$ and $K_1$ have units of energy density\cite{Kronmuller2003} so $\exchc$ is non-dimensional. However this normalisation scheme fails for the case of $K_1 = 0$ (i.e. no magnetocrystalline anisotropy), in this case we use $H_A = \frac{2A}{\mu_0 M_s}$ instead.
+The coefficient of the exchange effective field becomes $\exchc = \frac{2A}{\mu_0 M_s} \cdot \frac{\mu_0 M_s}{2 K_1} = \frac{A}{K_1}$. Both $A$ and $K_1$ have units of energy density\cite{Kronmuller2003} so $\exchc$ is non-dimensional. However this normalisation scheme fails for the case of $K_1 = 0$ (\ie no magnetocrystalline anisotropy), in this case we use $H_A = \frac{2A}{\mu_0 M_s}$ instead.
 
 Now our system of equations is:
 \begin{equation}
@@ -107,7 +107,7 @@ We now substitute \eqref{eqn:identitygauss} into \eqref{eqn:phires1}, giving
   , \notag \\
   \forall v \in \sob^1(\magd) \cap \Dfs_0. \notag
 \end{gather}
-This contains only first order derivatives so the solution space for $\phim$ is relaxed to $\sob^1(\magd) \cap \Dfs$. However, all first partial derivatives of the test functions are now required to be integrable, i.e. $v \in \sob^1(\magd)$ instead of $v \in \sob^0(\magd)$.
+This contains only first order derivatives so the solution space for $\phim$ is relaxed to $\sob^1(\magd) \cap \Dfs$. However, all first partial derivatives of the test functions are now required to be integrable, \ie $v \in \sob^1(\magd)$ instead of $v \in \sob^0(\magd)$.
 
 Note that the boundary integral is always zero on the Dirichlet region of the boundary by our definition of the test functions. Hence the boundary integral is only non-zero over $\boundd_{\Neu}$ where we know $(\nabla \phim \cdot \nv) = g_{\Neu}$. Hence we have
 \begin{gather}
@@ -259,7 +259,7 @@ Note that we could move the discretised values of the unknowns outside of the in
 
 Also note that we have $7N$ equations in $7N$ unknowns and each of the integrals in the equations can be evaluated only in terms of the shape/test functions, their derivatives, the outward unit normal vector and the Neumann boundary condition. Hence we have a system of algebraic equations which we can solve.
 
-As described in Section~\ref{sub:Actual-Finite-Elements} we can convert this ``global'' representation into a number of ``local'' representations -- one on each element. We first split the domain into $N_e$ elements. We then define the basis functions such that they are only non-zero on elements in which they are contained (i.e. we are using a finite element method). Then the global residuals can be split into the local contributions each element which are easy to calculate since they only depend on nodes within the element.\footnote{Unfortunately this property will be lost to some extent when we introduce the hybrid FEM/BEM in Section~\ref{sec:hybr-finit-elem}.}
+As described in Section~\ref{sub:Actual-Finite-Elements} we can convert this ``global'' representation into a number of ``local'' representations -- one on each element. We first split the domain into $N_e$ elements. We then define the basis functions such that they are only non-zero on elements in which they are contained (\ie we are using a finite element method). Then the global residuals can be split into the local contributions each element which are easy to calculate since they only depend on nodes within the element.\footnote{Unfortunately this property will be lost to some extent when we introduce the hybrid FEM/BEM in Section~\ref{sec:hybr-finit-elem}.}
 
 Let $\magd_\eli$ represent the volume of element $e$, let $\boundd_\eli$ represent any part of the boundary of the element which is on $\boundd$ (nothing for most elements). Then the contribution of element $\eli$ to the residuals at node $\ndi$ is exactly as given in equations~\eqref{res:tintro}-\eqref{res:tllg} except that the integrations are performed over $\magd_\eli$ and $\boundd_\eli$ rather than $\magd$ and $\boundd$. Also note that the sums only need to consider values of $k$ such that node $k$ is in element $\eli$ and that residual contributions only need to be calculated for nodes $\ndi$ such that node $\ndi$ is in element $\eli$.
 
