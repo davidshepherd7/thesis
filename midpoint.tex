@@ -1,6 +1,10 @@
+\newcommand{\porder}[1]{\quad + \order{#1}}
+%% \newcommand{\yvhfestx}[1]{\bar{\yv}_{#1}}
+%% \newcommand{\yvhfest}{\yvhfestx{n}}
+\newcommand{\dfdyhfx}[1]{\hat{\dfdy_{#1}}}
+\newcommand{\dfdyhf}{\dfdyhfx{n}}
 
-
-\section{An adaptive implicit midpoint method time integrator}
+\section{An adaptive implicit-midpoint-method time-integrator}
 
 %** intro
 
@@ -19,12 +23,13 @@
 To make the following derivations more readable we write:
 \begin{align}
   \thf &= \frac{t_n + t_{n+1}}{2}, \notag\\
-  \yhf &= \yv(\thf),
+  \yvhf &= \yv(\thf), %\notag\\
+  %% \yvhfest &= \frac{\yv_{n+1} + \yv_n}{2},
 \end{align}
 and we denote derivatives of $\yv$ by $\yv'$ etc.
 
 
-\subsection{Constant time-step implicit midpoint method}
+\subsection{Non-adaptive implicit midpoint method}
 
 Let $\yv(t)$ be a vector function of time, let $\yv_n$ denote a vector of estimates to $\yv(t)$ with $t = t_n$.
 Let $\dtn = t_{n+1} - t_n$ be the time-step.
@@ -34,11 +39,227 @@ Then given a system of equations of the form
   \label{eq:43}
 \end{equation}
 the midpoint method is given by
-\begin{equation}
-  \yv_{n+1} = \yv_n + \dtn \fv(\thf, \frac{\yv_n + \yv_{n+1}}{2}).
+\begin{align}
+  \yv_{n+1} &= \yv_n + \dtn \fv(\frac{t_{n+1} + t_n}{2}, \frac{\yv_n + \yv_{n+1}}{2}), \notag\\
+  &= \yv_n + \dtn \fv(\thf, \frac{\yv_n + \yv_{n+1}}{2}).
   \label{eq:basic-midpoint}
+\end{align}
+
+Note that unlike multistep methods (\eg BDF2, AB2) this is valid for both constant and variable time-step sizes.
+
+
+\subsection{Derivation of local truncation errors}
+
+The local truncation error (LTE) of a time integration scheme is the error due a single step of time integration.
+It can be calculated by substituting the exact value for $\yv$ at the current time-step into the approximation and subtracting the result from a Taylor series expansion of the exact solution at the next time-step.
+An example calculation for the forward Euler method is commonly given in basic textbooks but the calculation for the midpoint method is much more involved and so is given in full here.
+
+The local truncation error of the midpoint method is
+\begin{align}
+  \lte^\MP &= \yv(t_{n+1}) - \yv_{n+1}^\MP, \notag\\
+  &= \yv(t_{n+1}) - \yv(t_n) - \dtn \fv\left( \thf, \frac{\yv(t_n) + \yv_{n+1}}{2} \right).
+  \label{eq:trunc-start}
+\end{align}
+
+We choose to Taylor expand everything about the midpoint, $\thf$, because it greatly reduces the complexity of the final result.
+If we chose to expand about $t_n$ the $\fv$ term would require expansion in both $t$ and $\yv$.
+This would be problematic because the time derivative of $\fv$ is complicated because $\yv$ is also a function of time.
+
+We assume throughout that $\yv(t)$ is ``sufficiently smooth'' to have a Taylor series expansion. Then its Taylor series expansion at $t_{n+1}$ about $\thf$ is given by
+\begin{equation}
+  \yv(t_{n+1}) = \yv(\thf + \frac{\dtn}{2}) = \yvhf + \frac{\dtn}{2} \yvhf' + \frac{\dtn^2}{8} \yvhf'' + \frac{\dtn^3}{48} \yvhf''' \porder{\dtn^4}.
+  \label{eq:taylornp1}
 \end{equation}
-Note that this is valid for both constant and variable time-steps (\cf BDF2, AB2 which change).
+%% It is well known that the local truncation error of the midpoint method is $\order{\dtn^3}$ (\ie it is second order)\cite{??ds}, so we can safely ignore $\order{\dtn^4}$ terms.
+Similarly the expansion at $t_n$ is
+\begin{equation}
+  \yv(t_n) = \yv(\thf - \frac{\dtn}{2}) = \yvhf - \frac{\dtn}{2} \yvhf' + \frac{\dtn^2}{8} \yvhf'' - \frac{\dtn^3}{48} \yvhf''' \porder{\dtn^4}.
+  \label{eq:taylorn}
+\end{equation}
+
+Substituting equations~\eqref{eq:taylornp1} and \eqref{eq:taylorn} into equation~\eqref{eq:trunc-start} gives
+\begin{equation}
+  \lte^\MP = \dtn \yvhf' + \frac{\dtn^3}{24} \yvhf'''
+  - \dtn \fv\left( \thf, \frac{\yv(t_n) + \yv_{n+1}}{2} \right)  \porder{\dtn^4}.
+  \label{eq:trunc-mid}
+\end{equation}
+
+In order to be able to cancel terms we now need to Taylor expand $\fv\left( \thf, \frac{\yv(t_n) + \yv_{n+1}}{2} \right)$ in $\yv$ about $\yvhf$.
+Hence we need an expansion of the form
+\begin{align}
+ \fv(\thf, \frac{\yv(t_n) + \yv_{n+1}}{2}) &= \fv(\thf, \yvhf + \dyn),
+ \notag \\
+ &= \fv(\thf, \yvhf) + \dfdyhf \cdot \dyn  \porder{\dyn^2}
+ \label{eq:f-taylor}
+\end{align}
+where $\dfdyhf = \dfdy(\thf, \yvhf)$ is a \emph{matrix} of partial derivatives of each element of $\fv$ with respect to each element of the vector $\yv$ (\ie almost a Jacobian, except without the time derivative).
+We use~'$\cdot$' here to denote matrix vector multiplication for clarity.
+Note that the $\fv$ term is multiplied by an additional factor of $\dtn$ in \eqref{eq:trunc-start}, so for this part of the derivation we can drop terms of higher order than $\order{\dtn^2}$ and still retain the same overall accuracy.
+
+We now derive the required $\dyn$.
+From equation~\eqref{eq:f-taylor} we have
+\begin{equation}
+  \dyn = \frac{\yv(t_n) + \yv_{n+1}}{2} - \yvhf.
+  \label{eq:51}
+\end{equation}
+However we cannot expand $\yv_{n+1}$ to get $\dyn$ in terms of only values at the midpoint.
+So we use the LTE of the midpoint method to rewrite equation~\eqref{eq:51} as
+\begin{equation}
+   \dyn = \frac{\yv(t_n) + \yv(t_{n+1}) - \lte^\MP}{2} - \yvhf.
+\end{equation}
+Substituting in the Taylor expansions for $\yv(t_n)$ and $\yv(t_{n+1})$ about $\thf$ (from equations~\eqref{eq:taylornp1} and \eqref{eq:taylorn}) gives
+\begin{align}
+  \dyn &= \yvhf + \frac{\dtn^2}{8} \yvhf'' - \yvhf - \frac{1}{2} \lte^\MP \porder{\dtn^4} \notag\\
+  &= \frac{\dtn^2}{8} \yvhf'' - \frac{1}{2} \lte^\MP \porder{\dtn^4}
+  \label{eq:dy-value}
+\end{align}
+
+Substituting the above value for $\dyn$ into the Taylor series expansion of $\fv$ from \eqref{eq:f-taylor} gives
+\begin{equation}
+  \fv(\thf, \frac{\yv(t_n) + \yv_{n+1}}{2}) = \yvhf'
+  + \frac{\dtn^2}{8} \dfdyhf \cdot \yvhf'' - \frac{1}{2} \dfdyhf \lte^\MP \porder{\dtn^4}
+  . \label{eq:fy-taylor}
+\end{equation}
+and using \eqref{eq:fy-taylor} in \eqref{eq:trunc-mid} gives the local truncation error
+\begin{align}
+  (I + \frac{\dtn}{2}\dfdyhf)\lte^\MP
+  &= \dtn \yvhf' + \frac{\dtn^3}{24} \yvhf'''
+  - \dtn \yvhf'
+  - \frac{\dtn^3}{8} \dfdyhf \cdot \yvhf'' \porder{\dtn^4}
+  \notag \\
+  &= \frac{\dtn^3}{24} \left[\yvhf''' - 3 \dfdyhf \cdot \yvhf'' \right]
+  \porder{\dtn^4}.
+  \label{eq:trunc-implicit-form}
+\end{align}
+
+Using a geometric series representation we can show that if all eigenvalues of  $-\frac{\dtn}{2}\dfdyhf$ are s.t. $|\lambda| < 1$\cite{??ds} (which will always be true for some ``small enough'' $\dtn$) then
+??ds can we divide by the largest eigenvalue somewhere to do this?
+\begin{equation}
+  (I + \frac{\dtn}{2}\dfdyhf)^{-1} = I - \frac{\dtn \dfdyhf}{2}  \porder{\dtn^2},
+\end{equation}
+and so\footnote{Assuming that $\dfdyhf$ is not inversely proportional to $\dtn$.}
+\begin{equation}
+   \lte^\MP = \frac{\dtn^3}{24} \left[\yvhf''' - 3 \dfdyhf \cdot \yvhf'' \right]
+   \quad +\order{\dtn^4}.
+  \label{eq:trunc-final}
+\end{equation}
+
+\subsection{Construction of an adaptive scheme}
+
+In order to construct an adaptive time integration scheme we must find an easy to compute approximate to the local truncation error.
+In this section we use a second order Adams-Bashforth method as a ``predictor'' in order to eliminate the difficult-to-estimate $\yvhf'''$ term.\cite[p.707]{Gresho-Sani}
+We also show that $\dfdy$ can be written in terms of the Jacobian of a Newton method applied to the problem.
+
+\subsubsection{Elimination of the third derivative by a predictor}
+The second-order variable time-step Adams-Bashforth method is\cite[p.267]{Gresho-Sani}
+\begin{equation}
+  \yv_{n+1}^{\AB} = \yv_n + \frac{\dtn}{2} \left[
+    \left (2 + \frac{\dtn}{\dtx{n-1}} \right) \yv'_n
+    - \frac{\dtn}{\dtx{n-1}} \yv'_{n-1}
+    \right],
+  \label{eq:AB2}
+\end{equation}
+and its local truncation error is\cite[p.267]{Gresho-Sani}
+\begin{equation}
+  \lte^{\AB} = \yv_{n+1}^{\AB} - \yv(t_{n+1})
+  = - \left( 2 + \frac{3 \dtx{n-1}}{\dtn} \right) \frac{\dtn^3}{12} \yv'''(t_n)
+  \porder{\dtn^4}.
+  \label{eq:AB2LTE}
+\end{equation}
+
+%% This can be rearranged to give
+%% \begin{equation}
+%%   \frac{\dtn^3}{24} \yv'''_n = \left(1 + \frac{3 \dtx{n-1}}{2\dtn} \right)^{-1}
+%%   \left( \yv(t_{n+1}) - \yv_{n+1}^{\AB}) \right) \porder{\dtn^4}.
+%% \label{eq:50}
+%% \end{equation}
+
+There are two problems with immediately attempting to use this equation to eliminate $\yv'''_n$:
+\begin{itemize}
+\item Equation~\eqref{eq:trunc-final} involves $\yvhf''' = \yv'''([t_n +t_{n+1}]/2)$ whereas equation~\eqref{eq:AB2LTE} involves $\yv'''(t_n)$.
+\item The calculation of the Adams-Bashforth solution requires derivatives at time-steps $n$ and $n-1$ but the implicit midpoint method calculates derivatives in the middle of time-steps (\ie $n+ 1/2$ and $n - 1/2$).
+  Hence we would need to calculate additional derivatives which could be expensive.
+\end{itemize}
+
+Both of these problems can be avoided by ``offsetting'' the Adams-Bashforth time-steps with respect to the midpoint method.
+In particular we choose
+\begin{align}
+  t_{n+1}^\AB &= t_{n+1}, \notag\\
+  t_n^\AB &= \thf = (t_{n} + t_{n+1})/2 &(\dtn^\AB = \frac{\dtn}{2}), \notag \\
+  t_{n-1}^\AB &= t_{n - 1/2} = (t_{n-1} + t_n)/2  &(\dtx{n-1}^\AB = \dtx{n-1}).
+  \label{eq:ab2-ts}
+\end{align}
+With these times equation~\eqref{eq:AB2} becomes
+\begin{equation}
+   \yv_{n+1}^{\AB} = \yvhf + \frac{\dtn}{4} \left[
+     \left (2 + \frac{\dtn}{2\dtx{n-1}} \right) \yvhf'
+     - \frac{\dtn}{2\dtx{n-1}} \yvhfx{n-1}'
+     \right].
+   \label{eq:AB2-mid}
+\end{equation}
+Note that $\yvhf'$ and $\yvhfx{n-1}'$ can be calculated from the midpoint method values at the endpoints using equation~\eqref{eq:implicit-f-midpoint}. Also of use here is a rearrangement of equations~\eqref{eq:51} and \eqref{eq:dy-value}
+\begin{equation}
+  \yvhf = \frac{\yv(t_n) + \yv_{n+1}}{2} -\frac{\dtn^2}{8} \yvhf' \porder{\dtn^3 + \lte^\MP},
+\end{equation}
+which gives the final value needed to calculate $\yv_{n+1}^\AB$ from equation~\eqref{eq:AB2-mid}.
+
+??ds do we lose any (extra) accuracy by doing these subs?
+
+Using the time-steps in \eqref{eq:ab2-ts} equation~\eqref{eq:AB2LTE} becomes
+\begin{equation}
+  \lte^\AB = \yv_{n+1}^{\AB} - \yv(t_{n+1})
+  = - \left( 2 + \frac{6 \dtx{n-1}}{\dtn} \right) \frac{\dtn^3}{96} \yvhf'''
+  \porder{\dtn^4}.
+\label{eq:AB2-mid-LTE}
+\end{equation}
+
+We can eliminate the unknown $\yv(t_{n+1})$ term by subtracting the Adams-Bashforth LTE from the midpoint method LTE, $\eqref{eq:trunc-final} - \eqref{eq:AB2-mid-LTE}$
+\begin{equation}
+ \yv_{n+1}^{\MP} - \yv_{n+1}^{\AB} =
+  - \frac{\dtn^3}{8} \dfdyhf \cdot \yvhf''
+  + \left( 10 + \frac{6 \dtx{n-1}}{\dtn} \right) \frac{\dtn^3}{96} \yvhf'''
+  \porder{\dtn^4}.
+\end{equation}
+Rearranging gives us an expression for $\yvhf'''(t_n)$
+\begin{equation}
+  \yvhf'''(t_n) \simeq
+  \left( 10 + \frac{6 \dtx{n-1}}{\dtn} \right)^{-1} \frac{96}{\dtn^3}
+  \left[
+    (\yv_{n+1}^{\MP} - \yv_{n+1}^{\AB} + \frac{\dtn^3}{8} \dfdyhf \cdot \yvhf'')
+    \right].
+\end{equation}
+Note that all the values needed (except for $\dfdy$, see the next section) can be written in terms of the values and time-steps from the midpoint method via equations~\eqref{eq:implicit-f-midpoint} and~\eqref{eq:AB2-mid}.
+
+
+\subsubsection{Calculation of $\dfdy \cdot \yv'$}
+
+Newton's method is commonly used to solve non-linear ODEs.\cite{??ds}
+In this method a residual is minimised using the Jacobian of the residual (the matrix of derivatives of the residual with respect to $\yv$).
+For the case of equation~\eqref{eq:43} the residual can be defined as\cite{??ds}
+\begin{equation}
+  \rv_n(\yv) = \fv(\thf, \frac{\yv + \yv_n}{2}) - \frac{\yv - \yv_{n}}{\dtn},
+\end{equation}
+so that when $\rv_n(\yv) =0$, $\yv = \yv_{n+1}$.
+The Jacobian is then
+\begin{equation}
+  J_n(\yv) = \frac{1}{2}F(\thf, \frac{\yv + \yv_n}{2}) - \frac{1}{\dtn}I.
+\end{equation}
+
+We let $\yv = 2 \yvhf - \yv_n$, giving
+\begin{equation}
+  \dfdyhf \cdot \yvhf'' = 2 J(\thf, 2 \yvhf - \yv_n) \cdot \yvhf'' + \frac{2}{\dtn} \yvhf''.
+\end{equation}
+
+Caveats:
+\begin{itemize}
+\item Some methods don't use Jacobians.
+\item The Jacobian may be fairly inaccurate, especially if the Newton method converged in a single step? But if so it was ``good enough'' to converge so probably good enough for an error estimate.
+\item Is $\yv_{n+1} = 2 \yvhf - \yv_n$ close enough?
+\item Implicit ODEs??
+\end{itemize}
+
+
+\subsection{Extension to implicit ODEs}
 
 We sometimes wish to solve a system of equations where $\yv'(t)$ only given implicitly,\footnote{This use of ``implicit'' is unrelated to the notion of implicitness in the time integration scheme.} in this case equation~\eqref{eq:43} becomes
 \begin{equation}
@@ -68,184 +289,7 @@ So the obvious equivalent to try is
 %% \ie the derivative is estimated using standard finite differences and everything else is evaluated at the ``midpoint''.
 %% This results in a system of equations which can be solved for $\yv_{n+1}$.
 
-??ds how valid is the following for implicit cases?
-
-\subsection{Derivation of local truncation errors}
-
-The local truncation error (LTE) of a time integration scheme is the error due a single step of time integration.
-It can be calculated by substituting the exact value for $\yv$ at the current time-step into the approximation and subtracting the result from a Taylor series expansion of the exact solution at the next time-step.
-An example calculation for the forward Euler method is commonly given in basic textbooks but the calculation for the midpoint method is much more involved and so is given in full here.
-
-The local truncation error of the midpoint method is
-\begin{align}
-  \lte &= \yv(t_{n+1}) - \yv_{n+1}^\MP, \notag\\
-  &= \yv(t_{n+1}) - \yv(t_n) - \dtn \fv\left( \thf, \frac{\yv(t_n) + \yv_{n+1}}{2} \right).
-  \label{eq:trunc-start}
-\end{align}
-
-We assume throughout that $\yv(t)$ is ``sufficiently smooth'' to have a Taylor series expansion. Then its Taylor series expansion at $t_{n+1}$ about $\thf$ is given by
-\begin{equation}
-  \yv(t_{n+1}) = \yv(\thf + \frac{\dtn}{2}) = \yhf + \frac{\dtn}{2} \yhf' + \frac{\dtn^2}{8} \yhf'' + \frac{\dtn^3}{48} \yhf''' + \order{\dtn^4}.
-  \label{eq:taylornp1}
-\end{equation}
-It is well known that the local truncation error of the midpoint method is $\order{\dtn^3}$ (\ie it is second order)\cite{??ds}, so we can safely ignore $\order{\dtn^4}$ terms.
-Similarly the expansion at $t_n$ is
-\begin{equation}
-  \yv(t_n) = \yv(\thf - \frac{\dtn}{2}) = \yhf - \frac{\dtn}{2} \yhf' + \frac{\dtn^2}{8} \yhf'' - \frac{\dtn^3}{48} \yhf''' + \order{\dtn^4}.
-  \label{eq:taylorn}
-\end{equation}
-
-Substituting equations~\eqref{eq:taylornp1} and \eqref{eq:taylorn} into equation~\eqref{eq:trunc-start} gives
-\begin{equation}
-  \lte = \dtn \yhf' + \frac{\dtn^3}{24} \yhf'''
-  - \dtn \fv\left( \thf, \frac{\yv(t_n) + \yv_{n+1}}{2} \right)  + \order{\dtn^4}.
-  \label{eq:trunc-mid}
-\end{equation}
-
-Next we need to Taylor expand $\fv\left( \thf, \frac{\yv(t_n) + \yv_{n+1}}{2} \right)$ in $\yv$ about $\yhf$.
-By definition $\fv(\thf, \yhf) = \yhf'$ so this will allow us to cancel terms.
-Hence we need an expansion of the form
-\begin{align}
- \fv(\thf, \frac{\yv(t_n) + \yv_{n+1}}{2}) &= \fv(\thf, \yhf + \dyn),
- \notag \\
- &= \fv(\thf, \yhf) + \dfdy(\thf, \yhf) \cdot \dyn  + \order{\dyn^2}
- \label{eq:f-taylor}
-\end{align}
-where $\dfdy$ is a \emph{matrix} of partial derivatives of each element of $\fv$ with respect to each element of the vector $\yv$ (\ie almost a Jacobian, except without the time derivative).
-We use~'$\cdot$' here to denote matrix vector multiplication for clarity.
-Note that the $\fv$ term is multiplied by an additional factor of $\dtn$ in \eqref{eq:trunc-start}, so for this part of the derivation we can drop terms of higher order than $\order{\dtn^2}$.
-
-We now derive the required $\dyn$.
-From equation~\eqref{eq:f-taylor} we have
-\begin{equation}
-  \dyn = \frac{\yv(t_n) + \yv_{n+1}}{2} - \yhf.
-  \label{eq:51}
-\end{equation}
-However we cannot expand $\yv_{n+1}$ to get $\dyn$ in terms of only values at the midpoint.
-So we use the LTE of the midpoint method to rewrite equation~\eqref{eq:51} as
-\begin{equation}
-   \dyn = \frac{\yv(t_n) + \yv(t_{n+1}) - \lte}{2} - \yhf.
-\end{equation}
-Substituting in the Taylor expansions for $\yv(t_n)$ and $\yv(t_{n+1})$ about $\thf$ (from equations~\eqref{eq:taylornp1} and \eqref{eq:taylorn}) gives
-\begin{align}
-  \dyn &= \yhf + \frac{\dtn^2}{8} \yhf' - \yhf + \order{\dtn^3+ \lte} \notag\\
-  &= \frac{\dtn^2}{8} \yhf' + \order{\dtn^3 + \lte}
-\end{align}
-
-Substituting this into Taylor series expansion of $\fv$ from \eqref{eq:f-taylor} gives
-\begin{equation}
-  \fv(\thf, \yhf + \dyn) = \yhf'
-  + \frac{\dtn^2}{8} \dfdy(\thf, \yhf) \cdot \yhf' + \order{\dtn^3 + \lte}
-  . \label{eq:fy-taylor}
-\end{equation}
-and using \eqref{eq:fy-taylor} in \eqref{eq:trunc-mid} gives the local truncation error
-\begin{align}
-  \lte &= \dtn \yhf' + \frac{\dtn^3}{24} \yhf'''
-  - \dtn \yhf'
-  - \frac{\dtn^3}{8} \dfdy(\thf, \yhf) \yhf' + \order{\dtn^4 + \dtn\lte} \notag \\
-  &= \frac{\dtn^3}{24} \left[\yhf''' - 3 \dfdy(\thf, \yhf) \cdot \yhf' \right]
-  + \order{\dtn^4 + \dtn\lte}.
-  \label{eq:trunc-implicit-form}
-\end{align}
-
-Clearly an error of order $\dtn \lte$ cannot affect the leading order term of $\lte$ and so it can be combined into the $\order{\dtn^4}$ term, leaving
-\begin{equation}
-   \lte = \frac{\dtn^3}{24} \left[\yhf''' - 3 \dfdy(\thf, \yhf) \cdot \yhf' \right]
-   \quad +\order{\dtn^4}.
-  \label{eq:trunc-final}
-\end{equation}
-
-\subsection{Construction of an adaptive scheme}
-
-In order to construct an adaptive time integration scheme we must find an easy to compute approximate to the local truncation error.
-In this section we use a second order Adams-Bashforth method as a ``predictor'' in order to eliminate the difficult-to-estimate $\yhf'''$ term.\cite[p.707]{Gresho-Sani}
-We also show that $\dfdy$ can be written in terms of the Jacobian of a Newton method applied to the problem.
-
-\subsubsection{Elimination of the third derivative}
-The second-order variable time-step Adams-Bashforth method is\cite[p.267]{Gresho-Sani}
-\begin{equation}
-  \yv_{n+1}^{\AB} = \yv_n + \frac{\dtn}{2} \left[
-    \left (2 + \frac{\dtn}{\dtx{n-1}} \right) \yv'_n
-    - \frac{\dtn}{\dtx{n-1}} \yv'_{n-1}
-    \right],
-  \label{eq:AB2}
-\end{equation}
-and its local truncation error is\cite[p.267]{Gresho-Sani}
-\begin{equation}
-  \lte^{\AB} = \yv_{n+1}^{\AB} - \yv(t_{n+1})
-  = - \left( 2 + \frac{3 \dtx{n-1}}{\dtn} \right) \frac{\dtn^3}{12} \yv'''(t_n)
-  + \order{\dtn^4}.
-  \label{eq:AB2LTE}
-\end{equation}
-
-%% This can be rearranged to give
-%% \begin{equation}
-%%   \frac{\dtn^3}{24} \yv'''_n = \left(1 + \frac{3 \dtx{n-1}}{2\dtn} \right)^{-1}
-%%   \left( \yv(t_{n+1}) - \yv_{n+1}^{\AB}) \right) + \order{\dtn^4}.
-%% \label{eq:50}
-%% \end{equation}
-
-There are two problems with immediately attempting to use this equation to eliminate $\yv'''_n$:
-\begin{itemize}
-\item Equation~\eqref{eq:trunc-final} involves $\yhf''' = \yv'''([t_n +t_{n+1}]/2)$ whereas equation~\eqref{eq:AB2LTE} involves $\yv'''(t_n)$.
-\item The calculation of the Adams-Bashforth solution requires derivatives at time-steps $n$ and $n-1$ but the implicit midpoint method calculates derivatives in the middle of time-steps (\ie $n+ 1/2$ and $n - 1/2$).
-  Hence we would additionally need to calculate the derivatives which could be expensive if it is only given implicitly.
-\end{itemize}
-
-Both of these problems can be avoided by ``offsetting'' the Adams-Bashforth time-steps with respect to the midpoint method.
-In particular we choose
-\begin{align}
-  t_{n+1}^\AB &= t_{n+1}, \notag\\
-  t_n^\AB &= \thf = (t_{n} + t_{n+1})/2 &(\dtn^\AB = \frac{\dtn}{2}), \notag \\
-  t_{n-1}^\AB &= t_{n - 1/2} = (t_{n-1} + t_n)/2  &(\dtx{n-1}^\AB = \dtx{n-1}).
-  \label{eq:ab2-ts}
-\end{align}
-With these times equation~\eqref{eq:AB2} becomes
-\begin{equation}
-   \yv_{n+1}^{\AB} = \yhf + \frac{\dtn}{4} \left[
-     \left (2 + \frac{\dtn}{2\dtx{n-1}} \right) \yhf'
-     - \frac{\dtn}{2\dtx{n-1}} \yhfnp'
-     \right].
-   \label{eq:AB2-mid}
-\end{equation}
-Note that $\yhf$ and $\yhf'$ can be trivially calculated from the midpoint method values at the endpoints using equations~\eqref{eq:implicit-f-midpoint}.
-??ds do we lose any (extra) accuracy by doing that?
-
-%% Equation~\eqref{eq:50} becomes
-%% \begin{equation}
-%%    \frac{\dtn^3}{24} \yhf''' = \left(1 + \frac{3 \dtx{n-1}}{\dtn} \right)^{-1}
-%%   \left( \yv(t_{n+1}) - \yv_{n+1}^{\AB}) \right) + \order{\dtn^4}.
-%% \end{equation}
-
-Using the times in \eqref{eq:ab2-ts} equation~\eqref{eq:AB2LTE} becomes
-\begin{equation}
-  \lte^\AB = \yv_{n+1}^{\AB} - \yv(t_{n+1})
-  = - \left( 2 + \frac{6 \dtx{n-1}}{\dtn} \right) \frac{\dtn^3}{96} \yhf'''
-  + \order{\dtn^4}.
-\label{eq:AB2-mid-LTE}
-\end{equation}
-
-We can eliminate the unknown $\yv(t_{n+1})$ term by subtracting the Adams-Bashforth LTE from the midpoint method LTE, $\eqref{eq:trunc-final} - \eqref{eq:AB2-mid-LTE}$
-\begin{equation}
- \yv_{n+1}^{\MP} - \yv_{n+1}^{\AB} =
-  - \frac{\dtn^3}{8} \dfdy(\thf, \yhf) \cdot \yhf'
-  + \left( 10 + \frac{6 \dtx{n-1}}{\dtn} \right) \frac{\dtn^3}{96} \yhf'''
-  + \order{\dtn^4}.
-\end{equation}
-Rearranging gives us an expression for $\yhf'''(t_n)$
-\begin{equation}
-  \yhf'''(t_n) =
-  \left( 10 + \frac{6 \dtx{n-1}}{\dtn} \right)^{-1} \frac{96}{\dtn^3}
-  \left[
-    (\yv_{n+1}^{\MP} - \yv_{n+1}^{\AB} + \frac{\dtn^3}{8} \dfdy(\thf, \yhf) \cdot \yhf')
-    \right].
-\end{equation}
-Note that all the values needed (except for $\dfdy$, see the next section) can be written in terms of the values and time-steps from the midpoint method via equations~\eqref{eq:implicit-f-midpoint} and~\eqref{eq:AB2-mid}.
-
-
-\subsubsection{Calculation of $\dfdy \cdot \yv'$}
-% Why dfdy is ok
-
+??ds fill in...
 
 \subsection{Testing}
 
