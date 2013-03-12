@@ -1,3 +1,9 @@
+
+\newcommand{\skewop}{\text{\Large{$\Lambda$}}}
+\newcommand{\skewm}[1]{\skewop\left[ #1 \right]}
+\newcommand{\crossop}[2]{\skewm{#1} \cdot \left( #2 \right)}
+
+
 \section{Galerkin's Method for the Landau--Lifshitz--Gilbert Equation}
 \label{sec:galerk-meth-llg}
 
@@ -217,7 +223,7 @@ Similarly the test functions can be approximated by a sum over the test basis fu
 \end{equation}
 Note that in our method $\sbf_k \equiv \tbf_k$, but we continue to write the two functions differently for generality. Also the basis functions for the space of test functions are often simply refered to as the test functions since they are used equivalently.
 
-So substituting the basis representations, \eqref{eq:unknowns-basis} and \eqref{eq:47} into the residuals we obtain a spatially discretised version of the problem. Out of necessity we have used Einstein summation notation below - two terms with a matching index multiplied together indicates a sum over all values of that index.
+So substituting the basis representations, \eqref{eq:unknowns-basis} and \eqref{eq:47} into the residuals we obtain a spatially discretised version of the problem.
 \begin{gather}
   \label{res:tintro}
   \text{Given $\happ(\xv,t)$ and $\hca(\xv,t)$, $\forall k$, $\forall \ndi$ find} \notag \\
@@ -228,32 +234,26 @@ So substituting the basis representations, \eqref{eq:unknowns-basis} and \eqref{
 such that
 \begin{align}
   r_{\phim, \ndi} =
-  & - \int_{\magd} (\nabla \tn \cdot \nabla \sk) \phim_{,k} \d \magd \notag
-  - \int_{\magd} (\nabla \cdot (\mv_{k} \sk) ) \tn \d \magd \\
+  & - \int_{\magd} \sum_k (\nabla \tn \cdot \nabla \sk) \phim_{,k} \d \magd \notag
+  - \int_{\magd} (\nabla \cdot (\sum_k \mv_k \sk) ) \tn \d \magd \\
   & + \int_{\boundd_{\Neu}} \tn g_\Neu \d \boundd = 0,
   \label{res:tphi}
 \end{align}
-% \begin{align}
-%   \mathbf{r}_{\text{ex},\ndi} =  & \int_{\magd} \tn \sk \hex_{,k} \d \magd
-%   \quad + \exchc \int_{\magd} (\nabla \sk \cdot \nabla \tn) \mv_{k} \d \magd \notag \\
-%   &- \exchc \int_{\boundd} \tn (\nabla \sk \cdot \nv) \mv_{k} \d \boundd  = 0,
-% \label{res:thex}
-% \end{align}
-\begin{align}
- \mathbf{r}_{\text{llg},\ndi} &=
- \mathbf{r}_{\text{llgexch},\ndi} +  \int_{\magd} \tn \sk \pd{\mv_k}{t} \d \magd \notag \\ %??ds no
-  &- \int_{\magd} (\mv_k \sk) \times ( \phim_{,k} \nabla \sk) \tn \d \magd \notag \\
-  &+ \int_{\magd} (\mv_k \sk) \times ( \hca(\mv_k\sk) + \happ) \tn \d \magd \notag \\
- % &+ \dampc \int_{\magd}  (\mv_k\sk) \times \Big( (\mv_k \sk) \times (\hv_k \sk) \Big)  \tn \d \magd = 0,
-  &- \dampc \int_{\magd}  (\mv_k\sk) \times \left( \sk \pd{\mv_k}{t} \right) \tn \d \magd = 0,
-  \label{res:tllg}
- % \text{where } \hv_k &= \hex_{,k} - \nabla \phim_{,k} + \happ + \hca. \notag
-\end{align}
+and
+\begin{align*}
+  %% \tag{res:tllg}
+  \mathbf{r}_{\text{llg},\ndi} &=
+  \int_{\magd} \tn \left(\sum_k \sk \pd{\mv_k}{t} \right)
+  \\
+  &- \exchc\crossop{\sum_k \mv_k \sk}{\sum_k \nabla \tn \mv_k (\nabla \sk)^T}
+  \\
+  &- \crossop{\sum_k \mv_k \sk}{\sum_k \phim_{,k} \nabla \sk} \tn
+  \\
+  &+ \crossop{\sum_k \mv_k \sk}{\hca(\sum_k \mv_k \sk) + \happ} \tn
+  \\
+  &- \dampc \crossop{\sum_k \mv_k \sk} {\sum_k \sk \pd{\mv_k}{t}} \tn \d \magd = 0,
+\end{align*}
 
-\begin{equation}
-  \mathbf{r}_{\text{llgexch},\ndi} = - \int_\magd (\mv_k \sk) \times
-  \threevec{\nabla \tn \cdot (m_{1,k} \nabla \sk)}{\nabla \tn \cdot (m_{2,k} \nabla \sk)}{\nabla \tn \cdot (m_{3,k} \nabla \sk)} \d\magd
-\end{equation}
 
 Note that we could move the discretised values of the unknowns outside of the integrals because they are constant in space. However we prefer to evaluate values at points within the elements where possible (by integrating using Gaussian quadrature) since some quantities are discontinous at the nodes.\footnote{For example if the basis functions are linear then derivatives are discontinous at the nodes.}
 
@@ -263,25 +263,63 @@ As described in Section~\ref{sub:Actual-Finite-Elements} we can convert this ``g
 
 Let $\magd_\eli$ represent the volume of element $e$, let $\boundd_\eli$ represent any part of the boundary of the element which is on $\boundd$ (nothing for most elements). Then the contribution of element $\eli$ to the residuals at node $\ndi$ is exactly as given in equations~\eqref{res:tintro}-\eqref{res:tllg} except that the integrations are performed over $\magd_\eli$ and $\boundd_\eli$ rather than $\magd$ and $\boundd$. Also note that the sums only need to consider values of $k$ such that node $k$ is in element $\eli$ and that residual contributions only need to be calculated for nodes $\ndi$ such that node $\ndi$ is in element $\eli$.
 
-% \begin{align}
-%   r_{\phim, \ndi, \eli} = \sum_{k} \Bigg[ &
-%   - \phim_{,k} \int_{\magd_\eli} \nabla \tn \cdot \nabla \sk \d \magd \notag
-%   - \mv_{k} \int_{\magd_\eli} (\nabla \cdot \sk ) \tn \d \magd \Bigg] \\
-%   &+ \int_{\boundd_{\Neu,\eli}} \tn g_\Neu \d \boundd,
-%      \label{res:tphi}
-%      \\
-%   \mathbf{r}_{\text{ex}, \ndi, \eli} = \sum_k \Bigg[ & \hex_{,k} \int_{\magd_\eli} \sk \tn \d \magd
-%   \quad + \exchc \mv_{k} \int_{\magd_\eli} \nabla \sk \cdot \nabla \tn \d \magd \notag \\
-%    &- \exchc \mv_{k} \int_{\boundd_\eli} \tn (\nabla \sk \cdot \nv) \d \boundd \Bigg],
-%    \label{res:thex}
-%    \\
-%   \mathbf{r}_{\text{llg}, \ndi, \eli} = \sum_k \Bigg[ &
-%   \pd{\mv_k}{t} \int_{\magd_\eli} \sk \tn \d \magd
-%   \quad +(\mv_k \times \hv_k) \int_{\magd_\eli} \sk^2 \tn \d \magd \notag \\
-%   &+ \dampc \Big( \mv_k \times (\mv_k \times \hv_k) \Big) \int_{\magd_\eli} \sk^3 \tn \d \magd \Bigg] , \label{res:tllg}
-%   \\
-%   \text{where } \hv_k &= \hex_{,k} - \nabla \phim_{,k} + \happ + \hca.
-% \end{align}
+\subsection{Jacobian calculation}
+\label{sec:jacobian-calculation}
+
+To solve this system by a Newton method we also need to know the Jacobian of the residuals.
+
+Let $J_{\text{llg},n,l}$ be the block of the Jacobian that represents the derivative of LLG residuals at the $n$th node with respect to the $\mv$ values at the $l$th node.
+
+First we state some identities used
+\begin{equation}
+  \skewm{\av} = \text{skew}(\av) =
+  \begin{pmatrix}
+    0 & -a_3 & a_2 \\
+    a_3 & 0 & -a_1 \\
+    -a_2 & a_1 & 0
+  \end{pmatrix}
+\end{equation}
+\begin{equation}
+  \pd{}{x} \skewm{\av} = \skewm{ \pd{\av}{x} }
+\end{equation}
+\begin{equation}
+  \skewm{\av + \alpha \bv} = \skewm{\av} + \alpha \skewm{\bv}
+\end{equation}
+
+\begin{equation}
+  \pd{}{\mv_l} \left( \sum_k \mv_k \sk \right) = \sbf_l \text{I}_3
+\end{equation}
+\begin{equation}
+  \pd{}{\mv_l} \skewm{ \sum_k \mv_k \sk } = \sbf_l
+  \threevec{\skewm{\iv}}{\skewm{\jv}}{\skewm{\kv}}
+\end{equation}
+
+Denote (tensor)
+\[
+\skewm{I_3} = \threevec{\skewm{\iv}}{\skewm{\jv}}{\skewm{\kv}}.
+\]
+
+\begin{align}
+  J_{\text{llg},n,l} &= \int_{\magd} \sk \tn J_\text{time} \\
+  &- \skewm{\sum_k \mv_k \sk} \cdot \left( \grad \tn (\grad \sbf_l)^T I_3 \right) \\
+  &- \sbf_l \skewm{I_3} \cdot \left( \sum_k \grad \tn \mv_k (\grad \sk)^T \right) \\
+  &+ \text{applied field term} \\
+  &+ \text{mag static field term} \\
+  \d \magd.
+\end{align}
+
+??ds TODO
+\begin{itemize}
+\item explain skew operator earlier
+\item Check exchange term -- seems too simple
+\item exchange term
+\item tensor stuff? Or get it out?
+\item time jacobian + give examples for midpoint and bdf2
+\item explain differentiating by vector, abuse of notation..
+\item how related to blocked Jacobian
+\end{itemize}
+
+
 
 \subsection{Time Discretisation}
 \label{sec:time-discretisation-resi}

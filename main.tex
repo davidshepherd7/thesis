@@ -63,6 +63,7 @@
 % \binoppenalty=5000
 
 
+
 %% Bibliograpy Tweaks
 %% ============================================================
 
@@ -140,16 +141,43 @@
 %% General maths commands
 %% ------------------------------
 \newcommand{\pd}[2]{\frac{\partial #1}{\partial #2}} % partial deriv
-\newcommand{\spd}[2]{\frac{\partial^2 #1}{\partial {#2}^2}} % partial deriv
+\newcommand{\spd}[2]{\frac{\partial^2 #1}{\partial {#2}^2}} % 2nd partial deriv
 \newcommand{\E}[1]{\times 10^{#1}} % powers of 10
-\newcommand{\st}{\,|\,} % such that in sets (vertical line with spacing)
-\renewcommand{\d}{{\; \text{d}}} % d for the end of integrals (e.g. dx) with correct spacing and non-italic
-\newcommand{\gv}{{\mathbf{g}}}% Some generic vector functions
+\newcommand{\st}{\,|\,} % ``such that'' operator in sets (vertical line with spacing)
+
+% d for the end of integrals (e.g. dx) with correct spacing and non-italic
+\renewcommand{\d}{{\; \text{d}}}
+
+% Some generic vector functions
+\newcommand{\gv}{{\mathbf{g}}}
 \newcommand{\fv}{{\mathbf{f}}}
 
-\newcommand{\threevec}[3]{\left( \begin{array}{c} #1 \\ #2 \\ #3 \end{array} \right)}
+% Some vectors
+\newcommand{\av}{{\mathbf{a}}}
+\newcommand{\bv}{{\mathbf{b}}}
 
+\newcommand{\ev}{\mathbf{\hat{e}}}
+\newcommand{\nv}{\mathbf{\hat{n}}}
+
+\newcommand{\xv}{\mathbf{x}}
+\newcommand{\yv}{\mathbf{y}}
+
+\newcommand{\unitv}[1]{{\hat{#1}}}
+\newcommand{\iv}{\unitv{i}}
+\newcommand{\jv}{\unitv{j}}
+\newcommand{\kv}{\unitv{k}}
+
+
+\newcommand{\threevec}[3]{\begin{pmatrix} #1 \\ #2 \\ #3 \end{pmatrix} }
+
+% Big O notation
 \newcommand{\order}[1]{\text{O}(#1)}
+
+% Differential operators
+%% \newcommand{\div}{\nabla \cdot}
+\newcommand{\grad}{\nabla}
+\newcommand{\lap}{\nabla^2}
+\newcommand{\curl}{\nabla \cross}
 
 
 %% Spaces, domains and geometrical labels
@@ -173,15 +201,11 @@
 
 %% Magnetics
 %% ------------------------------
-% Define \M,\Hv,\x, \iv as vectors (i.e. bold) and easier subscripting (iv and Hv because \i and \H are already used for other commands).
-\newcommand{\xv}{\mathbf{x}}
-\newcommand{\yv}{\mathbf{y}}
+% Define M, H, B vectors (i.e. bold)
 \newcommand{\Mv}{\mathbf{M}}
 \newcommand{\Hv}{\mathbf{H}}
 \newcommand{\Bv}{\mathbf{B}}
-\newcommand{\iv}[1]{\mathbf{\hat{i}}_{\text{#1}}}
-\newcommand{\ev}{\mathbf{\hat{e}}}
-\newcommand{\nv}{\mathbf{\hat{n}}}
+
 
 % polar coords
 \newcommand{\ruv}{\mathbf{\hat{r}}} % r unit vector
