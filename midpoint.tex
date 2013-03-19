@@ -1,8 +1,27 @@
-\newcommand{\porder}[1]{\quad + \order{#1}}
+
+% Notation for midpoint method stuff
+% ============================================================
+
+% notation for "at midpoint"
+\newcommand{\valueatmidpoint}[1]{\hat{#1}}
+
+% t at midpoint
+\newcommand{\thfx}[1]{\valueatmidpoint{t}_{#1}}
+\newcommand{\thf}{\thfx{n}}
+
+% exact y of t at midpoint
+\newcommand{\yvhfx}[1]{\valueatmidpoint{\yv}_{#1}}
+\newcommand{\yvhf}{\yvhfx{n}}
+
+% df/dy matrix
+\newcommand{\dfdy}{F}
+\newcommand{\dfdyhfx}[1]{\valueatmidpoint{\dfdy_{#1}}}
+\newcommand{\dfdyhf}{\dfdyhfx{n}}
+
+% don't know?
 %% \newcommand{\yvhfestx}[1]{\bar{\yv}_{#1}}
 %% \newcommand{\yvhfest}{\yvhfestx{n}}
-\newcommand{\dfdyhfx}[1]{\hat{\dfdy_{#1}}}
-\newcommand{\dfdyhf}{\dfdyhfx{n}}
+
 
 \section{An adaptive implicit-midpoint-method time-integrator}
 
@@ -27,6 +46,9 @@ To make the following derivations more readable we write:
   %% \yvhfest &= \frac{\yv_{n+1} + \yv_n}{2},
 \end{align}
 and we denote derivatives of $\yv$ by $\yv'$ etc.
+
+We use~'$\cdot$' to denote matrix vector multiplication (for emphasis).
+
 
 
 \subsection{Non-adaptive implicit midpoint method}
@@ -56,7 +78,7 @@ An example calculation for the forward Euler method is commonly given in basic t
 
 The local truncation error of the midpoint method is
 \begin{align}
-  \lte^\MP &= \yv(t_{n+1}) - \yv_{n+1}^\MP, \notag\\
+  \lte^\IMP &= \yv(t_{n+1}) - \yv_{n+1}^\IMP, \notag\\
   &= \yv(t_{n+1}) - \yv(t_n) - \dtn \fv\left( \thf, \frac{\yv(t_n) + \yv_{n+1}}{2} \right).
   \label{eq:trunc-start}
 \end{align}
@@ -79,7 +101,7 @@ Similarly the expansion at $t_n$ is
 
 Substituting equations~\eqref{eq:taylornp1} and \eqref{eq:taylorn} into equation~\eqref{eq:trunc-start} gives
 \begin{equation}
-  \lte^\MP = \dtn \yvhf' + \frac{\dtn^3}{24} \yvhf'''
+  \lte^\IMP = \dtn \yvhf' + \frac{\dtn^3}{24} \yvhf'''
   - \dtn \fv\left( \thf, \frac{\yv(t_n) + \yv_{n+1}}{2} \right)  \porder{\dtn^4}.
   \label{eq:trunc-mid}
 \end{equation}
@@ -93,7 +115,6 @@ Hence we need an expansion of the form
  \label{eq:f-taylor}
 \end{align}
 where $\dfdyhf = \dfdy(\thf, \yvhf)$ is a \emph{matrix} of partial derivatives of each element of $\fv$ with respect to each element of the vector $\yv$ (\ie almost a Jacobian, except without the time derivative).
-We use~'$\cdot$' here to denote matrix vector multiplication for clarity.
 Note that the $\fv$ term is multiplied by an additional factor of $\dtn$ in \eqref{eq:trunc-start}, so for this part of the derivation we can drop terms of higher order than $\order{\dtn^2}$ and still retain the same overall accuracy.
 
 We now derive the required $\dyn$.
@@ -105,24 +126,24 @@ From equation~\eqref{eq:f-taylor} we have
 However we cannot expand $\yv_{n+1}$ to get $\dyn$ in terms of only values at the midpoint.
 So we use the LTE of the midpoint method to rewrite equation~\eqref{eq:51} as
 \begin{equation}
-   \dyn = \frac{\yv(t_n) + \yv(t_{n+1}) - \lte^\MP}{2} - \yvhf.
+   \dyn = \frac{\yv(t_n) + \yv(t_{n+1}) - \lte^\IMP}{2} - \yvhf.
 \end{equation}
 Substituting in the Taylor expansions for $\yv(t_n)$ and $\yv(t_{n+1})$ about $\thf$ (from equations~\eqref{eq:taylornp1} and \eqref{eq:taylorn}) gives
 \begin{align}
-  \dyn &= \yvhf + \frac{\dtn^2}{8} \yvhf'' - \yvhf - \frac{1}{2} \lte^\MP \porder{\dtn^4} \notag\\
-  &= \frac{\dtn^2}{8} \yvhf'' - \frac{1}{2} \lte^\MP \porder{\dtn^4}
+  \dyn &= \yvhf + \frac{\dtn^2}{8} \yvhf'' - \yvhf - \frac{1}{2} \lte^\IMP \porder{\dtn^4} \notag\\
+  &= \frac{\dtn^2}{8} \yvhf'' - \frac{1}{2} \lte^\IMP \porder{\dtn^4}
   \label{eq:dy-value}
 \end{align}
 
 Substituting the above value for $\dyn$ into the Taylor series expansion of $\fv$ from \eqref{eq:f-taylor} gives
 \begin{equation}
   \fv(\thf, \frac{\yv(t_n) + \yv_{n+1}}{2}) = \yvhf'
-  + \frac{\dtn^2}{8} \dfdyhf \cdot \yvhf'' - \frac{1}{2} \dfdyhf \lte^\MP \porder{\dtn^4}
+  + \frac{\dtn^2}{8} \dfdyhf \cdot \yvhf'' - \frac{1}{2} \dfdyhf \lte^\IMP \porder{\dtn^4}
   . \label{eq:fy-taylor}
 \end{equation}
 and using \eqref{eq:fy-taylor} in \eqref{eq:trunc-mid} gives the local truncation error
 \begin{align}
-  (I + \frac{\dtn}{2}\dfdyhf)\lte^\MP
+  (I + \frac{\dtn}{2}\dfdyhf)\lte^\IMP
   &= \dtn \yvhf' + \frac{\dtn^3}{24} \yvhf'''
   - \dtn \yvhf'
   - \frac{\dtn^3}{8} \dfdyhf \cdot \yvhf'' \porder{\dtn^4}
@@ -139,7 +160,7 @@ Using a geometric series representation we can show that if all eigenvalues of  
 \end{equation}
 and so\footnote{Assuming that $\dfdyhf$ is not inversely proportional to $\dtn$.}
 \begin{equation}
-   \lte^\MP = \frac{\dtn^3}{24} \left[\yvhf''' - 3 \dfdyhf \cdot \yvhf'' \right]
+   \lte^\IMP = \frac{\dtn^3}{24} \left[\yvhf''' - 3 \dfdyhf \cdot \yvhf'' \right]
    \quad +\order{\dtn^4}.
   \label{eq:trunc-final}
 \end{equation}
@@ -194,16 +215,10 @@ With these times equation~\eqref{eq:AB2} becomes
    \yv_{n+1}^{\AB} = \yvhf + \frac{\dtn}{4} \left[
      \left (2 + \frac{\dtn}{2\dtx{n-1}} \right) \yvhf'
      - \frac{\dtn}{2\dtx{n-1}} \yvhfx{n-1}'
-     \right].
+     \right],
    \label{eq:AB2-mid}
 \end{equation}
-Note that $\yvhf'$ and $\yvhfx{n-1}'$ can be calculated from the midpoint method values at the endpoints using equation~\eqref{eq:implicit-f-midpoint}. Also of use here is a rearrangement of equations~\eqref{eq:51} and \eqref{eq:dy-value}
-\begin{equation}
-  \yvhf = \frac{\yv(t_n) + \yv_{n+1}}{2} -\frac{\dtn^2}{8} \yvhf' \porder{\dtn^3 + \lte^\MP},
-\end{equation}
-which gives the final value needed to calculate $\yv_{n+1}^\AB$ from equation~\eqref{eq:AB2-mid}.
-
-??ds do we lose any (extra) accuracy by doing these subs?
+and all the values required can be approximated using the results of the implicit midpoint method.
 
 Using the time-steps in \eqref{eq:ab2-ts} equation~\eqref{eq:AB2LTE} becomes
 \begin{equation}
@@ -215,7 +230,7 @@ Using the time-steps in \eqref{eq:ab2-ts} equation~\eqref{eq:AB2LTE} becomes
 
 We can eliminate the unknown $\yv(t_{n+1})$ term by subtracting the Adams-Bashforth LTE from the midpoint method LTE, $\eqref{eq:trunc-final} - \eqref{eq:AB2-mid-LTE}$
 \begin{equation}
- \yv_{n+1}^{\MP} - \yv_{n+1}^{\AB} =
+ \yv_{n+1}^{\IMP} - \yv_{n+1}^{\AB} =
   - \frac{\dtn^3}{8} \dfdyhf \cdot \yvhf''
   + \left( 10 + \frac{6 \dtx{n-1}}{\dtn} \right) \frac{\dtn^3}{96} \yvhf'''
   \porder{\dtn^4}.
@@ -225,11 +240,31 @@ Rearranging gives us an expression for $\yvhf'''(t_n)$
   \yvhf'''(t_n) \simeq
   \left( 10 + \frac{6 \dtx{n-1}}{\dtn} \right)^{-1} \frac{96}{\dtn^3}
   \left[
-    (\yv_{n+1}^{\MP} - \yv_{n+1}^{\AB} + \frac{\dtn^3}{8} \dfdyhf \cdot \yvhf'')
-    \right].
+    (\yv_{n+1}^{\IMP} - \yv_{n+1}^{\AB} + \frac{\dtn^3}{8} \dfdyhf \cdot \yvhf'')
+    \right],
 \end{equation}
-Note that all the values needed (except for $\dfdy$, see the next section) can be written in terms of the values and time-steps from the midpoint method via equations~\eqref{eq:implicit-f-midpoint} and~\eqref{eq:AB2-mid}.
+which can be substituted into equation~\eqref{eq:trunc-final} to give the truncation error.
 
+\subsubsection{Calculation of Required Input Values}
+
+It remains to provide efficient ways of calculating $\yvhf$, $\yvhfx{n-1}'$, $\yvhf'$ and $\yvhf''$.
+
+First we use a rearrangement of equations~\eqref{eq:51} and \eqref{eq:dy-value}
+\begin{equation}
+  \yvhf = \frac{\yv(t_n) + \yv_{n+1}}{2} -\frac{\dtn^2}{8} \yvhf' \porder{\dtn^4 + \lte^\IMP}.
+\end{equation}
+Secondly we have
+\begin{equation}
+  \yvhf' =
+.
+\end{equation}
+Finally we can approximate the second derivative using a finite difference method
+\begin{equation}
+  \yvhf'' =
+.
+\end{equation}
+
+Note that the accuracy requirement for these approximations is low:
 
 \subsubsection{Calculation of $\dfdy \cdot \yv'$}
 
@@ -298,6 +333,46 @@ So the obvious equivalent to try is
 %*** stiffness
 
 %*** Adaptivity effectiveness
+
+
+\subsection{Additional Notes and Alternatives}
+
+
+\subsubsection{Use of Predictor for Initial Guess}
+
+Often the predictor (i.e. the explicit method used to eliminate the highest derivative of $\yv$) is used to give an initial guess for the non-linear solve.
+In fact this appears to be where the term ``Predictor-Corrector'' originates.
+This is not possible here because we use $\yv_{n+1}$ in the predictor calculation.
+However past experience with Newton's method suggests that using a predictor instead of the value at the previous time $\yv_n$ gives no reduction in the number of Newton steps needed for convergence.\cite{Milan, Matthias}
+Hence there is no disadvantage in using $\yv_{n+1}$ in the predictor calculation.
+
+\subsubsection{Suitability of Adams-Bashforth 2 Predictor}
+
+There are a large number of explicit time integration algorithms, here we list the requirements which result in the decision to use AB2 over other possibilities:
+\begin{itemize}
+\item Must be second order (and no higher), otherwise it cannot be used to eliminate the $\yv'''$ term.
+
+\item Must be calculable without calculating $\yv'$ at points far away from where it is already calculated.
+  Otherwise we would need to perform additional separate calculations.
+  This would be reasonable if the $\yv'$ is given explicitly, but that is not always the case.
+  So we avoid additional $\yv'$ evaluations for increased generality (and in particular for use with the Gilbert form of the LLG equation).
+
+\item Must not reduce to the implicit midpoint rule when shifted to appropriate times and the approximation $\yv'(t_{n+ 0.5}) \simeq \yvhf'$ is used.
+  It turns out that this is the case for the explicit midpoint rule.
+\end{itemize}
+
+Other second order explicit ODE solvers:
+\begin{itemize}
+\item Explicit midpoint rule (a.k.a. Verlet, leapfrog method) -- see requirement 3.
+\item Heunn's method -- requires a $\yv'$ evaluation at a point determined by a previous evaluation which almost always require a new calculation, see requirement 2. Similarly for any other variants on second order Runge-Kutta methods other than the explicit midpoint rule.
+\end{itemize}
+
+
+Other possibilities:
+\begin{itemize}
+\item Some sort of explicitised-BDF2? Replace $\yv_{n+1}$ on RHS of expression by $\yv_{n+1}^\IMP$ and calculate explicitly? LTE could be hard to derive... Similar to predictor-corrector methods...
+\item Interpolate or FD derivatives further to get values at whatever points are needed. Probably quite a bad loss of accuracy from interpolation.
+\end{itemize}
 
 \subsection{Future work}
 

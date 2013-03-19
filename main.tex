@@ -172,6 +172,7 @@
 
 % Big O notation
 \newcommand{\order}[1]{\text{O}(#1)}
+\newcommand{\porder}[1]{\quad + \order{#1}} % with larger spacing
 
 % Differential operators
 %% \newcommand{\div}{\nabla \cdot}
@@ -286,28 +287,24 @@
 \newcommand{\ibasisb}{{j}}
 \newcommand{\ibasisc}{{k}}
 
-%% Midpoint method
+%% Time stepping
 %% ------------------------------
 
-%% \newcommand{\dt}{\dtx{}}
+% time step
 \newcommand{\dtn}{\dtx{n}}
 \newcommand{\dtx}[1]{\Delta_{#1}}
 
+% "value step"
 % Getting bold greek requires a hack because mathbf sees it as a "symbol"
 % and so doesn't change it. This uses the direct TeX solution (from google!)
 \newcommand{\dyn}{\dyx{n}}
 \newcommand{\dyx}[1]{\mbox{\boldmath$\delta$}_{#1}}
 
-\newcommand{\thfx}[1]{\hat{t}_{#1}}
-\newcommand{\thf}{\thfx{n}}
+% Denote various time steppers
+\newcommand{\AB}{\text{AB}} % Adams-Bashforth 2
+\newcommand{\IMP}{\text{MP}} % Implicit midpoint
 
-\newcommand{\yvhfx}[1]{\hat{\yv}_{#1}}
-\newcommand{\yvhf}{\yvhfx{n}}
-
-\newcommand{\dfdy}{F}
-\newcommand{\AB}{\text{AB}}
-\newcommand{\MP}{\text{MP}}
-
+% Local truncation errors
 \newcommand{\lte}{T_n}
 
 
