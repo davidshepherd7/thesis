@@ -10,8 +10,15 @@
 
 % Language
 % ============================================================
-\usepackage[utf8]{inputenc} % Support for UTF8
-\usepackage{csquotes} % Commonly recommend, not sure what it does
+% Support for UTF8 input
+\usepackage[utf8]{inputenc}
+
+% Handle non-ascii fonts properly, see
+% http://tex.stackexchange.com/questions/664/why-should-i-use-usepackaget1fontenc
+\usepackage[T1]{fontenc}
+
+% Commonly recommend, not sure what it does
+\usepackage{csquotes}
 \usepackage[UKenglish]{babel} % same...
 
 %% Page Layout
@@ -28,8 +35,10 @@
 \lhead{\leftmark}
 \setlength{\headheight}{15.2pt}
 
-\usepackage[top=1in, bottom=1in, left=1.4in, right=1.2in]{geometry}     %Set up border widths
+% Set up border widths
+\usepackage[top=1in, bottom=1in, left=1.4in, right=1.2in]{geometry}
 
+% % Title within the first page
 %\usepackage{titling}   %Reduce spacing before title
 %\setlength{\droptitle}{-6em}   %-6em reduces to ~normal margins
 
@@ -57,6 +66,7 @@
 %% Equations/maths
 %% ============================================================
 \numberwithin{equation}{section} % Number equations by "<section>.<number>".
+
 %\usepackage{nath}
 % % Prevent line break in the middle of maths except in extreme cases (increse numbers to make line breaking even more unlikely)
 % \relpenalty=3000
@@ -75,6 +85,8 @@
   doi=false,
   %% dashed=false % never replace repeated author names by _____
 ]{biblatex}
+
+% Add bibtex files
 \addbibresource{websites.bib}
 \addbibresource{library.bib}
 
@@ -94,9 +106,6 @@
 % Use superscript cite instead of normal ones
 \let\cite=\supercite
 
-%% %% Natbib package, make citations square bracketed superscripts [1]
-%% \usepackage[super,sort&compress,square,numbers]{natbib}
-
 
 
 %% Flow charts
@@ -113,7 +122,7 @@
 \tikzstyle{line} = [draw, -]
 
 
-%% Define new commands:
+%% Define new commands
 %% ============================================================
 
 %% General Latex commands
@@ -125,12 +134,12 @@
 \def\sc@mergesubs_#1{_{\sc@thesub#1}}
 \makeatother
 
-% The LyX greyedout annotation environment
-\usepackage{color}
-\definecolor{note_fontcolor}{rgb}{0.80078125, 0.80078125, 0.80078125}
-\newenvironment{lyxgreyedout}
-  {\textcolor{note_fontcolor}\bgroup\ignorespaces}
-  {\ignorespacesafterend\egroup}
+%% % The LyX greyedout annotation environment
+%% \usepackage{color}
+%% \definecolor{note_fontcolor}{rgb}{0.80078125, 0.80078125, 0.80078125}
+%% \newenvironment{lyxgreyedout}
+%%   {\textcolor{note_fontcolor}\bgroup\ignorespaces}
+%%   {\ignorespacesafterend\egroup}
 
 % ie and eg
 \newcommand{\ie}{\textit{i.e.} }
@@ -148,7 +157,7 @@
 % d for the end of integrals (e.g. dx) with correct spacing and non-italic
 \renewcommand{\d}{{\; \text{d}}}
 
-% Some generic vector functions
+% Some vector functions
 \newcommand{\gv}{{\mathbf{g}}}
 \newcommand{\fv}{{\mathbf{f}}}
 
@@ -167,7 +176,7 @@
 \newcommand{\jv}{\unitv{j}}
 \newcommand{\kv}{\unitv{k}}
 
-
+% 3-component vector as a list of components
 \newcommand{\threevec}[3]{\begin{pmatrix} #1 \\ #2 \\ #3 \end{pmatrix} }
 
 % Big O notation
