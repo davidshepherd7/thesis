@@ -13,6 +13,7 @@
 \newcommand{\yvhfx}[1]{\valueatmidpoint{\yv}_{#1}}
 \newcommand{\yvhf}{\yvhfx{n}}
 
+
 % df/dy matrix
 \newcommand{\dfdy}{F}
 \newcommand{\dfdyhfx}[1]{\valueatmidpoint{\dfdy_{#1}}}
@@ -138,12 +139,12 @@ Substituting in the Taylor expansions for $\yv(t_n)$ and $\yv(t_{n+1})$ about $\
 Substituting the above value for $\dyn$ into the Taylor series expansion of $\fv$ from \eqref{eq:f-taylor} gives
 \begin{equation}
   \fv(\thf, \frac{\yv(t_n) + \yv_{n+1}}{2}) = \yvhf'
-  + \frac{\dtn^2}{8} \dfdyhf \cdot \yvhf'' - \frac{1}{2} \dfdyhf \lte^\IMP \porder{\dtn^4}
+  + \frac{\dtn^2}{8} \dfdyhf \cdot \yvhf'' - \frac{1}{2} \dfdyhf \cdot \lte^\IMP \porder{\dtn^4}
   . \label{eq:fy-taylor}
 \end{equation}
 and using \eqref{eq:fy-taylor} in \eqref{eq:trunc-mid} gives the local truncation error
 \begin{align}
-  (I + \frac{\dtn}{2}\dfdyhf)\lte^\IMP
+  (I + \frac{\dtn}{2}\dfdyhf) \cdot\lte^\IMP
   &= \dtn \yvhf' + \frac{\dtn^3}{24} \yvhf'''
   - \dtn \yvhf'
   - \frac{\dtn^3}{8} \dfdyhf \cdot \yvhf'' \porder{\dtn^4}
@@ -168,10 +169,43 @@ and so\footnote{Assuming that $\dfdyhf$ is not inversely proportional to $\dtn$.
 \subsection{Construction of an adaptive scheme}
 
 In order to construct an adaptive time integration scheme we must find an easy to compute approximate to the local truncation error.
-In this section we use a second order Adams-Bashforth method as a ``predictor'' in order to eliminate the difficult-to-estimate $\yvhf'''$ term.\cite[p.707]{Gresho-Sani}
-We also show that $\dfdy$ can be written in terms of the Jacobian of a Newton method applied to the problem.
+In this section we first use a forward Euler-like ``predictor'' to eliminate the difficult-to-estimate $ \dfdyhf \cdot \yvhf''$ term. We also use a second order Adams-Bashforth method to eliminate the  $\yvhf'''$ term.\cite[p.707]{Gresho-Sani}
 
-\subsubsection{Elimination of the third derivative by a predictor}
+
+
+\subsubsection{Elimination of $ \dfdyhf \cdot \yvhf''$ by Forward Euler Predictor}
+
+We define a new time integration method by\footnote{We don't really use this as a time integrator (it is just a convenient way to think about this elimination process) so stability properties etc. are not so important.}
+\begin{equation}
+  \yv_{n+1}^\FE = \yvhf + \frac{\dtn}{2} \fv \left(\thf, \frac{\yv_{n+1} + \yv_n}{2}\right).
+\end{equation}
+The corresponding local truncation error can be derived using the usual Taylor expansion and equation~\eqref{eq:fy-taylor}:
+\begin{equation}
+  \lte^\FE = \yv(t_{n+1}) - \yv_{n+1}^\FE
+  = \frac{\dtn^2}{8}\yvhf'' + \frac{\dtn^3}{48} \yvhf'''
+  - \frac{\dtn^3}{16} \dfdyhf \cdot \yvhf'' \porder{\dtn^4}.
+  \label{eq:fe-lte}
+\end{equation}
+
+Subtracting the midpoint method LTE~\eqref{eq:trunc-final} from equation~\eqref{eq:fe-lte} gives
+\begin{equation}
+  \yv_{n+1}^\IMP - \yv_{n+1}^\FE = \frac{\dtn^2}{8}\yvhf'' - \frac{\dtn^3}{48} \yvhf'''
+  + \frac{\dtn^3}{16} \dfdyhf \cdot \yvhf'' \porder{\dtn^4},
+\end{equation}
+and rearranging
+\begin{equation}
+  - \frac{\dtn^3}{8} \dfdyhf \cdot \yvhf''
+  = \frac{1}{2} (\yv_{n+1}^\FE - \yv_{n+1}^\IMP) + \frac{\dtn^2}{8}\yvhf''
+  - \frac{\dtn^3}{48} \yvhf''' \porder{\dtn^4}.
+  \label{eq:F-y''}
+\end{equation}
+Substituting \eqref{eq:F-y''} in~\eqref{eq:trunc-final} leaves
+\begin{equation}
+  \lte^\IMP = \frac{\dtn^3}{48} \yvhf''' + \frac{1}{2} (\yv_{n+1}^\FE - \yv_{n+1}^\IMP)
+  + \frac{\dtn^2}{8}\yvhf'' \porder{\dtn^4}.
+\end{equation}
+
+\subsubsection{Elimination of $\yvhf'''$ term by Adams-Bashforth Predictor}
 The second-order variable time-step Adams-Bashforth method is\cite[p.267]{Gresho-Sani}
 \begin{equation}
   \yv_{n+1}^{\AB} = \yv_n + \frac{\dtn}{2} \left[
@@ -182,8 +216,8 @@ The second-order variable time-step Adams-Bashforth method is\cite[p.267]{Gresho
 \end{equation}
 and its local truncation error is\cite[p.267]{Gresho-Sani}
 \begin{equation}
-  \lte^{\AB} = \yv_{n+1}^{\AB} - \yv(t_{n+1})
-  = - \left( 2 + \frac{3 \dtx{n-1}}{\dtn} \right) \frac{\dtn^3}{12} \yv'''(t_n)
+  \lte^{\AB} = \yv(t_{n+1}) - \yv_{n+1}^{\AB}
+  = \left( 2 + \frac{3 \dtx{n-1}}{\dtn} \right) \frac{\dtn^3}{12} \yv'''(t_n)
   \porder{\dtn^4}.
   \label{eq:AB2LTE}
 \end{equation}
@@ -215,20 +249,19 @@ With these times equation~\eqref{eq:AB2} becomes
    \yv_{n+1}^{\AB} = \yvhf + \frac{\dtn}{4} \left[
      \left (2 + \frac{\dtn}{2\dtx{n-1}} \right) \yvhf'
      - \frac{\dtn}{2\dtx{n-1}} \yvhfx{n-1}'
-     \right],
+     \right].
    \label{eq:AB2-mid}
 \end{equation}
-and all the values required can be approximated using the results of the implicit midpoint method.
 
 Using the time-steps in \eqref{eq:ab2-ts} equation~\eqref{eq:AB2LTE} becomes
 \begin{equation}
-  \lte^\AB = \yv_{n+1}^{\AB} - \yv(t_{n+1})
-  = - \left( 2 + \frac{6 \dtx{n-1}}{\dtn} \right) \frac{\dtn^3}{96} \yvhf'''
+  \lte^\AB %= \yv(t_{n+1}) -  \yv_{n+1}^{\AB}
+  = \left( 1 + \frac{3 \dtx{n-1}}{\dtn} \right) \frac{\dtn^3}{48} \yvhf'''
   \porder{\dtn^4}.
 \label{eq:AB2-mid-LTE}
 \end{equation}
 
-We can eliminate the unknown $\yv(t_{n+1})$ term by subtracting the Adams-Bashforth LTE from the midpoint method LTE, $\eqref{eq:trunc-final} - \eqref{eq:AB2-mid-LTE}$
+We can eliminate the unknown $\yv(t_{n+1})$ term by subtracting the Adams-Bashforth LTE \eqref{eq:AB2-mid-LTE} from the midpoint method LTE \eqref{eq:trunc-final}
 \begin{equation}
  \yv_{n+1}^{\IMP} - \yv_{n+1}^{\AB} =
   - \frac{\dtn^3}{8} \dfdyhf \cdot \yvhf''
@@ -247,51 +280,51 @@ which can be substituted into equation~\eqref{eq:trunc-final} to give the trunca
 
 \subsubsection{Calculation of Required Input Values}
 
-It remains to provide efficient ways of calculating $\yvhf$, $\yvhfx{n-1}'$, $\yvhf'$ and $\yvhf''$.
+It remains to provide efficient ways of calculating $\yvhf$, $\yvhfx{n-1}'$, $\yvhf'$ and $\yvhf''$. Interpolate?
+%% For $\yvhf$ we use a rearrangement of equations~\eqref{eq:51} and \eqref{eq:dy-value}
+%% \begin{equation}
+%%   \yvhf = \frac{\yv(t_n) + \yv_{n+1}}{2} -\frac{\dtn^2}{8} \yvhf' \porder{\dtn^4 + \lte^\IMP}.
+%% \end{equation}
+%% For $\yvhfx{n-1}'$ and $\yvhf'$ we can rearrange equations~\eqref{eq:fy-taylor} and \eqref{eq:basic-midpoint} to get
+%% \begin{equation}
+%%   \yvhf' =  \frac{\yv_{n+1} - \yv_n}{\dtn} -
+%%    \frac{\dtn^2}{8} \dfdyhf \cdot \yvhf'' \porder{\dtn^4 + \lte^\IMP}.
+%% \end{equation}
+%% Finally we can approximate the second derivative, $\yvhf''$, using a finite difference method
+%% \begin{equation}
+%%   \yvhf'' =
+%% .
+%% \end{equation}
+%% ??ds $y'$ calc needs $y''$ but $y''$ needs $y'$!!
 
-First we use a rearrangement of equations~\eqref{eq:51} and \eqref{eq:dy-value}
-\begin{equation}
-  \yvhf = \frac{\yv(t_n) + \yv_{n+1}}{2} -\frac{\dtn^2}{8} \yvhf' \porder{\dtn^4 + \lte^\IMP}.
-\end{equation}
-Secondly we have
-\begin{equation}
-  \yvhf' =
-.
-\end{equation}
-Finally we can approximate the second derivative using a finite difference method
-\begin{equation}
-  \yvhf'' =
-.
-\end{equation}
+??ds could we eliminate $y''$ using a forward Euler step (midpoint  n+1)?
 
-Note that the accuracy requirement for these approximations is low:
+%% \subsubsection{Calculation of $\dfdy \cdot \yv'$}
 
-\subsubsection{Calculation of $\dfdy \cdot \yv'$}
+%% Newton's method is commonly used to solve non-linear ODEs.\cite{??ds}
+%% In this method a residual is minimised using the Jacobian of the residual (the matrix of derivatives of the residual with respect to $\yv$).
+%% For the case of equation~\eqref{eq:43} the residual can be defined as\cite{??ds}
+%% \begin{equation}
+%%   \rv_n(\yv) = \fv(\thf, \frac{\yv + \yv_n}{2}) - \frac{\yv - \yv_{n}}{\dtn},
+%% \end{equation}
+%% so that when $\rv_n(\yv) =0$, $\yv = \yv_{n+1}$.
+%% The Jacobian is then
+%% \begin{equation}
+%%   J_n(\yv) = \frac{1}{2}F(\thf, \frac{\yv + \yv_n}{2}) - \frac{1}{\dtn}I.
+%% \end{equation}
 
-Newton's method is commonly used to solve non-linear ODEs.\cite{??ds}
-In this method a residual is minimised using the Jacobian of the residual (the matrix of derivatives of the residual with respect to $\yv$).
-For the case of equation~\eqref{eq:43} the residual can be defined as\cite{??ds}
-\begin{equation}
-  \rv_n(\yv) = \fv(\thf, \frac{\yv + \yv_n}{2}) - \frac{\yv - \yv_{n}}{\dtn},
-\end{equation}
-so that when $\rv_n(\yv) =0$, $\yv = \yv_{n+1}$.
-The Jacobian is then
-\begin{equation}
-  J_n(\yv) = \frac{1}{2}F(\thf, \frac{\yv + \yv_n}{2}) - \frac{1}{\dtn}I.
-\end{equation}
+%% We let $\yv = 2 \yvhf - \yv_n$, giving
+%% \begin{equation}
+%%   \dfdyhf \cdot \yvhf'' = 2 J(\thf, 2 \yvhf - \yv_n) \cdot \yvhf'' + \frac{2}{\dtn} \yvhf''.
+%% \end{equation}
 
-We let $\yv = 2 \yvhf - \yv_n$, giving
-\begin{equation}
-  \dfdyhf \cdot \yvhf'' = 2 J(\thf, 2 \yvhf - \yv_n) \cdot \yvhf'' + \frac{2}{\dtn} \yvhf''.
-\end{equation}
-
-Caveats:
-\begin{itemize}
-\item Some methods don't use Jacobians.
-\item The Jacobian may be fairly inaccurate, especially if the Newton method converged in a single step? But if so it was ``good enough'' to converge so probably good enough for an error estimate.
-\item Is $\yv_{n+1} = 2 \yvhf - \yv_n$ close enough?
-\item Implicit ODEs??
-\end{itemize}
+%% Caveats:
+%% \begin{itemize}
+%% \item Some methods don't use Jacobians.
+%% \item The Jacobian may be fairly inaccurate, especially if the Newton method converged in a single step? But if so it was ``good enough'' to converge so probably good enough for an error estimate.
+%% \item Is $\yv_{n+1} = 2 \yvhf - \yv_n$ close enough?
+%% \item Implicit ODEs??
+%% \end{itemize}
 
 
 \subsection{Extension to implicit ODEs}
