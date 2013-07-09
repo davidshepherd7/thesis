@@ -40,7 +40,7 @@ where $\delta$ indicates a variational derivative and $V_{\magd}$ is the volume 
 In a ferromagnetic material neighbouring magnetic moments prefer to align parallel to each other due to quantum mechanical effects. This can be well approximated by a classical expression for exchange energy:\cite{Aharoni1996}
 \begin{equation}
   \label{eq:39}
-  E_\text{ex} =  \frac{\Exchc}{M_s^2} \int_{\magd} (\nabla M_x)^2  + (\nabla M_y)^2  + (\nabla M_z)^2 \d \magd,
+  \Eex =  \frac{\Exchc}{M_s^2} \int_{\magd} (\nabla M_x)^2  + (\nabla M_y)^2  + (\nabla M_z)^2 \d \magd,
 \end{equation}
 where $A$ is the material dependant exchange constant which depends on the crystal structure and the strength of the exchange coupling between electrons in the material.
 
@@ -58,14 +58,14 @@ Magnetic materials generate magnetic fields, which in turn affects the magnetic 
 Once the self field has been calculated the energy contribution due to it is given by
 \begin{equation}
   \label{eq:41}
-  E_\text{ms} =  \frac{-\mu_0}{2} \int_{\magd} \Mv \cdot \Hms \d \magd,
+  \Ems =  \frac{-\mu_0}{2} \int_{\magd} \Mv \cdot \Hms \d \magd,
 \end{equation}
 where the factor of $\frac{1}{2}$ is to avoid double counting.
 
 Similarly any external applied field gives an energy contribution of
 \begin{equation}
   \label{eq:42}
-  E_\text{ap} = - \mu_0 \int_{\magd} \Mv \cdot \Happ \d \magd.
+  \Eapp = - \mu_0 \int_{\magd} \Mv \cdot \Happ \d \magd.
 \end{equation}
 
 \subsubsection{Magnetocrystalline Anisotropy}
@@ -75,7 +75,7 @@ Many magnetic materials have a preferred direction (or directions) of magnetisat
 
 A detailed description of the many varieties of magnetocrystalline anisotropy is beyond the scope of this report but can be found in various textbooks on magnetic materials.\cite{Coey2010}\cite{Aharoni1996} However, since the anisotropy term is always a simple function of $\Mv$ it is not important for the implementation of a numerical model which type is used. Hence we give only the most useful case: in magnetic data recording we are interested in materials with a single \emph{easy axis} either in the plane of the disk or perpendicular to it since magnetisation is most stable in these types of material. The first order approximation for the free energy contribution for a perpendicular uniaxial material is given by
 \begin{equation}
-  E_{\text{ca}} = K_u \int_\magd 1 - \left( \mv \cdot \ev \right)^2 \d \magd,
+  \Eca = K_u \int_\magd 1 - \left( \mv \cdot \ev \right)^2 \d \magd,
   \label{eq:36}
 \end{equation}
 where $\ev$ is the easy axis and $K_u$ is the (material dependant) first order anisotropy energy density coefficient.\footnote{It is possible to define many different forms for this energy. Be warned that the choice of definition changes the meaning of $K_u$!} The first order approximation is valid when the anisotropy energy density coefficients are such that $K_u = K_1 >> K_2$, which is the case in most materials.\cite{Kronmuller2003} The effective field corresponding to this case is

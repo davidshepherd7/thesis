@@ -85,33 +85,33 @@ Sometimes we may need to know the non-dimensional energy of a micromagnetic stat
 We repeat the process used in Section~\ref{sec:land-lifsh-gilb-normalisation} to get a set of non-dimensionalised energy equations, starting from the equations given in Section~\ref{sec:energy-magnetic-body}:
 
 \begin{equation*}
-  E_\text{ap}^* = - \mu_0 \int_{\magd} \Mv^* \cdot \Happ^* \d \magd^*,
+  \Eapp^* = - \mu_0 \int_{\magd} \Mv^* \cdot \Happ^* \d \magd^*,
 \end{equation*}
 \begin{equation}
-  E_\text{ms}^* =  \frac{-\mu_0}{2} \int_{\magd} \Mv^* \cdot \Hms^* \d \magd^*,
+  \Ems^* =  \frac{-\mu_0}{2} \int_{\magd} \Mv^* \cdot \Hms^* \d \magd^*,
 \end{equation}
 \begin{equation*}
-  E_\text{ex}^* =  \Exchc^* \int_{\magd} (\nabla^* \mv)^2 \d \magd^*,
+  \Eex^* =  \Exchc^* \int_{\magd} (\nabla^* \mv)^2 \d \magd^*,
 \end{equation*}
 \begin{equation*}
-  E_\text{ca}^* =  \Kone^* \int_\magd (\mv \cdot \ev)^2 \d \magd^*.
+  \Eca^* =  \Kone^* \int_\magd (\mv \cdot \ev)^2 \d \magd^*.
 \end{equation*}
 
-We substitute definitions~\eqref{eqn:nddefs}, \eqref{eqn:ndfields} and $F^* = \nF f = \mu_0 M_s^2 l^d \, f$ where $d$ denotes the number of spatial dimensions:
+We substitute definitions~\eqref{eqn:nddefs}, \eqref{eqn:ndfields} and $E^* = \nE e = \mu_0 M_s^2 l^d \, e$ where $d$ denotes the number of spatial dimensions:
 \begin{equation*}
-  e_\text{ap} = \frac{-\mu_0 M_s^2 l^d}{\nF} \int_{\magd} \mv \cdot \happ \d \magd
+  \eapp = \frac{-\mu_0 M_s^2 l^d}{\nE} \int_{\magd} \mv \cdot \happ \d \magd
   = - \int_{\magd} \mv \cdot \happ \d \magd,
 \end{equation*}
 \begin{equation}
-  e_\text{ms} = \frac{-\mu_0 M_s^2 l^d}{2\nF} \int_{\magd} \mv \cdot \hms \d \magd
+  \ems = \frac{-\mu_0 M_s^2 l^d}{2\nE} \int_{\magd} \mv \cdot \hms \d \magd
   = - \int_{\magd} \mv \cdot \hms \d \magd,
 \end{equation}
 \begin{equation*}
-  e_\text{ex} =  \frac{\mu_0 M_s^2 l^2 l^d}{l^2\nF} \exchc \int_{\magd} (\nabla \mv)^2 \d \magd
+  \eex =  \frac{\mu_0 M_s^2 l^2 l^d}{l^2\nE} \exchc \int_{\magd} (\nabla \mv)^2 \d \magd
   = \exchc \int_{\magd} (\nabla \mv)^2 \d \magd,
 \end{equation*}
 \begin{equation*}
-  e_\text{ca} = \frac{\mu_0 M_s^2 l^d}{\nF} \kone \int_\magd 1 - (\mv \cdot \ev)^2 \d \magd
+  \eca = \frac{\mu_0 M_s^2 l^d}{\nE} \kone \int_\magd 1 - (\mv \cdot \ev)^2 \d \magd
   = \kone \int_\magd 1 - (\mv \cdot \ev)^2 \d \magd.
 \end{equation*}
 Note that we have used
