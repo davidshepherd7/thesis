@@ -146,7 +146,7 @@
 \newcommand{\ie}{\textit{i.e.} }
 \newcommand{\cf}{\textit{c.f.} }
 \newcommand{\eg}{\textit{e.g.} }
-
+\newcommand{\etal}{\textit{et al.} }
 
 %% General maths commands
 %% ------------------------------
@@ -227,6 +227,7 @@
 
 % Define some common types of H-field.
 % if changing these beware of components of H which are not defined here.
+\newsubcommand{\Heff}{\mathbf{H}}{{\text{eff}}} %effective (total)
 \newsubcommand{\Happ}{\mathbf{H}}{{\text{ap}}} %applied
 \newsubcommand{\Hms}{\mathbf{H}}{\text{ms}} % magnetostatic/demag
 \newsubcommand{\phim}{\phi}{\text{m}} % magnetostatic potential
@@ -266,6 +267,7 @@
 \newcommand{\Kone}{K_1}
 \newcommand{\kone}{\mathcal{K}_1}
 \newcommand{\dampc}{\alpha}
+\newcommand{\dampeff}{\alpha_\text{eff}}
 \newcommand{\gymagc}{{|\gamma_{\text{\tiny{L}}}|}}
 
 
@@ -383,6 +385,7 @@
 %\include{./quadrature/quadrature}
 
 \include{./midpoint}
+\include{./midpoint_verification}
 
 %  preconditioners:
 % (very) basicis
