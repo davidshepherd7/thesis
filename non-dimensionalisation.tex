@@ -8,40 +8,30 @@
 % improves accuracy by minimising round off error
 
 \subsection{The Landau-Lifshitz-Gilbert equation}
+\label{sec:land-lifsh-gilb-normalisation}
 
 We start from the Landau--Lifshitz--Gilbert equation with the magnetostatic, applied, exchange and magnetocrystalline (effective) fields (see Section~\ref{sec:cont-micromag}):
 
 \begin{align}
   \pd{\Mv^*}{t^*} &= - \gymagc \Mv^* \times \Hv^* + \frac{\alpha}{M_s} \Mv^* \times \pd{\Mv^*}{t^*}, \label{eqn:llgnd} \\
-  \Hv^* &= \Happ^* - \nabla^* \phi^* + \Exchc^* \nabla^{*2} \mv + \Kone^* (\mv \cdot \ev) \ev.
+  \Hv^* &= \Happ^* - \nabla^* \phi^* + \frac{2\Exchc^*}{\mu_0 M_s} \nabla^{*2} \mv + \frac{2\Kone^*}{\mu_0 M_s} (\mv \cdot \ev) \ev.
   \label{eqn:effnd} \\
   \nabla^{*2} \phi^* &= \nabla^* \cdot \Mv^* \label{eqn:phind}
 \end{align}
-where we use $^*$ to denote the dimensional variables, operators and constants that will be non-dimensionalised.
-
-%% Let the unit conversions be given by
-%% \begin{align}
-%%  \text{space :}& 1 \, \text{m} \rightarrow l, \notag \\ 
-%%  \text{magnetisation/magnetic field strength:}& 1 \, \text{A} \text{m}^{2-d} \rightarrow M', \notag \\ 
-%%  \text{time :}&1 \, \text{s} \rightarrow (\gymagc M_)^{-1}, \notag \\
-%%  \text{energy :}&1 \, \text{J} \rightarrow \mu_0 M_s^2 l^d.
-%%  \label{eqn:unitdefs}
-%% \end{align}
-%% where $d$ is the spatial dimension. The factors of $l^{2-d}$ are needed because magnetisation is a \emph{density} of magnetic moments and so the units vary with dimension.
-
-%% Note that the quantities on the right hand side are given in the same units
-%% as the unit they are rescaling (this is automatic if everything is in S.I.,
-%% possibly in other unit systems as well).
+where we use $^*$ to denote the dimensional variables, operators and constants that will be non-dimensionalised. We assume (for simplicity) that $M_s$, $\Exchc$ and $\Kone$ are all
+constant throughout the magnetic materials used.
 
 Let
 \begin{align}
   \Mv^* &= M_s \mv, \notag \\
   \phi^* &= \Phi \phi, \notag \\
   \Hv^* &= M_s \hv, \label{eqn:nddefs} \\
+  \Exchc^* &= \nA \exchc, \notag \\
+  \Kone^* &= \nK \kone, \notag \\
   t^* &= \frac{1}{\gymagc M_s} t, \notag \\
   x_i^* &= l x_i. \notag
 \end{align}
-Note that $\Mv$ and $\Hv$ have the same units so we use the same normalisation factor. Also for dimensional purposes derivatives are equivalent to division by the variable differentiated with respect to, so $\nabla^* = \frac{1}{l} \nabla$, $\pd{a}{t^*} = \gymagc M_s \pd{a}{t}$ etc.
+Note that $\Mv$ and $\Hv$ have the same units so we use the same normalisation factor. For dimensional purposes derivatives are equivalent to division by the variable differentiated with respect to, so $\nabla^* = \frac{1}{l} \nabla$, $\pd{a}{t^*} = \gymagc M_s \pd{a}{t}$ etc.
 
 Combining equation~\eqref{eqn:llgnd} with the definitions~\eqref{eqn:nddefs} gives
 \begin{equation}
@@ -59,7 +49,7 @@ cancelling the various constants results in the non-dimensionalised Landau--Lifs
 Similarly for equation~\eqref{eqn:phind}
 \begin{align*}
   \frac{1}{l^2} \Phi \nabla^{2} \phi &= \frac{1}{l} M_s \nabla \cdot \mv, \\
-  \frac{\Phi}{M_s l} \nabla^{2} \phi &= \nabla \cdot \mv. 
+  \frac{\Phi}{M_s l} \nabla^{2} \phi &= \nabla \cdot \mv.
 \end{align*}
 
 Letting $\Phi = M_s l$ we obtain
@@ -68,78 +58,67 @@ Letting $\Phi = M_s l$ we obtain
   \nabla^2 \phi = \nabla \cdot \mv.
 \end{equation}
 
-Repeating the substitution again for equation~\eqref{eqn:effnd} gives
+Repeating the substitutions for equation~\eqref{eqn:effnd} gives
 \begin{align*}
-  M_s \hv &= \Happ - \frac{\Phi}{l} \nabla \phi + \frac{\Exchc^*}{l^2} \nabla^2 \mv + \Kone^* (\mv \cdot \ev) \ev, \\
-  \hv &= \frac{\Happ}{M_s} - \frac{M_s}{M_s} \nabla \phi + \frac{\Exchc^*}{l^2 M_s} \nabla^2 \mv + \frac{\Kone^*}{M_s} (\mv \cdot \ev) \ev.
+  M_s \hv &= M_s \happ - \frac{\Phi}{l} \nabla \phi + \frac{2\nA}{\mu_0l^2 M_s}  \exchc \nabla^2 \mv + \frac{2\nK}{\mu_0 M_s}  \kone (\mv \cdot \ev) \ev, \\
+  \hv &= \frac{M_s}{M_s} \happ - \frac{M_s}{M_s} \nabla \phi + \frac{2\nA}{\mu_0 l^2 M_s^2}  \exchc \nabla^2 \mv + \frac{2\nK}{\mu_0 M_s^2} \kone (\mv \cdot \ev) \ev.
 \end{align*}
-This can be further simplified by choosing
+This can be further simplified by using:
 \begin{align}
-  \Exchc^* &= \exchc l^2 M_s, \notag \\
-  \Kone^* &= \kone M_s, \notag \\
-  \Happ &= M_s \happ,
-  \label{eqn:ndfields}
+  \nK &= \mu_0 M_s^2, \notag \\
+  \nA &= l^2 \nK, \label{eqn:ndfields}
 \end{align}
 
 leaving
 \begin{equation}
-  \hv = \happ - \nabla \phi + \exchc \nabla^2 \mv + \kone (\mv \cdot \ev) \ev.
+  \hv = \happ - \nabla \phi + 2\exchc \nabla^2 \mv + 2\kone (\mv \cdot \ev) \ev.
 \end{equation}
 
 The parameter for length, $l$ is still free to be chosen. Useful possibilities are the exchange length or a unit on the length scale of a dimension of the magnetic material being modelled (typically $\sim1-100$nm).
 
-Note that for models with more than one type of magnetic material then $M_s$ cannot be used as the normalising factor for magnetisation because it is non-constant. The result of this is just a factor of $\frac{M'}{M_s(\xv)}$ (where $M'$ is a the normalising factor used) in front of the damping term of the LLG equation.
 
-%% \subsection{Extension to the hybrid method}
-%% \label{sec:extens-hybr-met}
+\subsection{Energy calculations}
+\label{sec:energy-calculations}
 
-%% \subsection{Energy equations}
+Sometimes we may need to know the non-dimensional energy of a micromagnetic state in a form consistent with that used for the LLG equation. One example is for the computation of an effective damping constant, see section ??ds.
 
-%% ??ds I gave up on this because I didn't need it, might be wrong...
+We repeat the process used in Section~\ref{sec:land-lifsh-gilb-normalisation} to get a set of non-dimensionalised energy equations, starting from the equations given in Section~\ref{sec:energy-magnetic-body}:
 
+\begin{equation*}
+  E_\text{ap}^* = - \mu_0 \int_{\magd} \Mv^* \cdot \Happ^* \d \magd^*,
+\end{equation*}
+\begin{equation}
+  E_\text{ms}^* =  \frac{-\mu_0}{2} \int_{\magd} \Mv^* \cdot \Hms^* \d \magd^*,
+\end{equation}
+\begin{equation*}
+  E_\text{ex}^* =  \Exchc^* \int_{\magd} (\nabla^* \mv)^2 \d \magd^*,
+\end{equation*}
+\begin{equation*}
+  E_\text{ca}^* =  \Kone^* \int_\magd (\mv \cdot \ev)^2 \d \magd^*.
+\end{equation*}
 
-%% We repeat the process to get a set of non-dimensionalised energy equations, starting from the equations given in Section~\ref{sec:cont-micromag}):
+We substitute definitions~\eqref{eqn:nddefs}, \eqref{eqn:ndfields} and $F^* = \nF f = \mu_0 M_s^2 l^d \, f$ where $d$ denotes the number of spatial dimensions:
+\begin{equation*}
+  e_\text{ap} = \frac{-\mu_0 M_s^2 l^d}{\nF} \int_{\magd} \mv \cdot \happ \d \magd
+  = - \int_{\magd} \mv \cdot \happ \d \magd,
+\end{equation*}
+\begin{equation}
+  e_\text{ms} = \frac{-\mu_0 M_s^2 l^d}{2\nF} \int_{\magd} \mv \cdot \hms \d \magd
+  = - \int_{\magd} \mv \cdot \hms \d \magd,
+\end{equation}
+\begin{equation*}
+  e_\text{ex} =  \frac{\mu_0 M_s^2 l^2 l^d}{l^2\nF} \exchc \int_{\magd} (\nabla \mv)^2 \d \magd
+  = \exchc \int_{\magd} (\nabla \mv)^2 \d \magd,
+\end{equation*}
+\begin{equation*}
+  e_\text{ca} = \frac{\mu_0 M_s^2 l^d}{\nF} \kone \int_\magd 1 - (\mv \cdot \ev)^2 \d \magd
+  = \kone \int_\magd 1 - (\mv \cdot \ev)^2 \d \magd.
+\end{equation*}
+Note that we have used
+\begin{equation}
+  \d \magd^* = \d x^{*d} = l^d \d x^d = l^d \d \magd.
+\end{equation}
 
-%% \begin{equation}
-%%   F_\text{ex}^* =  \frac{\Exchc^*}{M_s^2} \int_{\magd} (\nabla^* M_x^*)^2  + (\nabla^* M_y^*)^2  + (\nabla^* M_z^*)^2 \d \magd^*,
-%% \end{equation}
-%% \begin{equation}
-%%   F_\text{ms}^* =  \frac{-\mu_0}{2} \int_{\magd} \Mv^* \cdot \Hms^* \d \magd^*,
-%% \end{equation}
-%% \begin{equation}
-%%   F_\text{ap}^* = - \mu_0 \int_{\magd} \Mv^* \cdot \Happ^* \d \magd^*,
-%% \end{equation}
-%% \begin{equation}
-%%   F_\text{ca}^* = \int_\magd \Kone^* (\mv \cdot \ev) \d \magd^*.
-%% \end{equation}
-
-%% %% From the rescaling of energy given in equation~\eqref{eqn:unitdefs} we have
-%% %% \begin{equation}
-%% %%   F_\text{...}^* = \mu_0 M_s^2 l^3 f_\text{...}
-%% %%   \label{eqn:energynd}
-%% %% \end{equation}
-
-%% After subsitution of definitions~\eqref{eqn:nddefs} and using $F^* = \Fnorm f$
-
-%% %??ds does this work in lower dimensions?
-
-%% \begin{equation}
-%%   f_\text{ex} =  \frac{\exchc l^2 M_s l^d}{l^2\Fnorm} \int_{\magd} (\nabla m_x)^2  + (\nabla m_y)^2  + (\nabla m_z)^2 \d \magd,
-%% \end{equation}
-%% \begin{equation}
-%%   f_\text{ms} = \frac{-\mu_0 M_s^2 l^d}{2\Fnorm} \int_{\magd} \mv \cdot \hms \d \magd,
-%% \end{equation}
-%% \begin{equation}
-%%   f_\text{ap} = \frac{- \mu_0 M_s^2 l^d}{\Fnorm} \int_{\magd} \mv \cdot \happ \d \magd,
-%% \end{equation}
-%% \begin{equation}
-%%   f_\text{ca} = \frac{ - \kone M_s l^d}{\Fnorm} \int_\magd (\mv \cdot \ev)^2 \d \magd.
-%% \end{equation}
-
-%% where $d$ denotes the number of spatial dimensions and we have used 
-%% \begin{equation} 
-%%   \d \magd^* = \d x^{*d} = l^d \d x^d = l^d \d \magd.
-%% \end{equation}
 
 
 %%% Local Variables:
