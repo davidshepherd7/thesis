@@ -14,9 +14,9 @@ We start from the Landau--Lifshitz--Gilbert equation with the magnetostatic, app
 
 \begin{align}
   \pd{\Mv^*}{t^*} &= - \gymagc \Mv^* \times \Hv^* + \frac{\alpha}{M_s} \Mv^* \times \pd{\Mv^*}{t^*}, \label{eqn:llgnd} \\
-  \Hv^* &= \Happ^* - \nabla^* \phi^* + \frac{2\Exchc^*}{\mu_0 M_s} \nabla^{*2} \mv + \frac{2\Kone^*}{\mu_0 M_s} (\mv \cdot \ev) \ev.
+  \Hv^* &= \Happ^* - \nabla^* \phi^* + \frac{2\Exchc^*}{\mu_0 M_s} \nabla^{*2} \mv + \frac{2\Kone^*}{\mu_0 M_s} (\mv \cdot \ev) \ev,
   \label{eqn:effnd} \\
-  \nabla^{*2} \phi^* &= \nabla^* \cdot \Mv^* \label{eqn:phind}
+  \nabla^{*2} \phi^* &= \nabla^* \cdot \Mv^*, \label{eqn:phind}
 \end{align}
 where we use $^*$ to denote the dimensional variables, operators and constants that will be non-dimensionalised. We assume (for simplicity) that $M_s$, $\Exchc$ and $\Kone$ are all
 constant throughout the magnetic materials used.
@@ -26,7 +26,6 @@ Let
   \Mv^* &= M_s \mv, \notag \\
   \phi^* &= \Phi \phi, \notag \\
   \Hv^* &= M_s \hv, \label{eqn:nddefs} \\
-  \Exchc^* &= \nA \exchc, \notag \\
   \Kone^* &= \nK \kone, \notag \\
   t^* &= \frac{1}{\gymagc M_s} t, \notag \\
   x_i^* &= l x_i. \notag
@@ -60,21 +59,26 @@ Letting $\Phi = M_s l$ we obtain
 
 Repeating the substitutions for equation~\eqref{eqn:effnd} gives
 \begin{align*}
-  M_s \hv &= M_s \happ - \frac{\Phi}{l} \nabla \phi + \frac{2\nA}{\mu_0l^2 M_s}  \exchc \nabla^2 \mv + \frac{2\nK}{\mu_0 M_s}  \kone (\mv \cdot \ev) \ev, \\
-  \hv &= \frac{M_s}{M_s} \happ - \frac{M_s}{M_s} \nabla \phi + \frac{2\nA}{\mu_0 l^2 M_s^2}  \exchc \nabla^2 \mv + \frac{2\nK}{\mu_0 M_s^2} \kone (\mv \cdot \ev) \ev.
+  M_s \hv &= M_s \happ - \frac{\Phi}{l} \nabla \phi + \frac{2 \Exchc }{\mu_0 M_s} \frac{1}{l^2} \nabla^2 \mv + \frac{2\kone}{\mu_0 M_s}  \nK (\mv \cdot \ev) \ev, \\
+  \hv &= \frac{M_s}{M_s} \happ - \frac{M_s}{M_s} \nabla \phi + \frac{2 \Exchc}{\mu_0 M_s^2} \frac{1}{l^2} \nabla^2 \mv + \frac{2\kone}{\mu_0 M_s^2} \nK (\mv \cdot \ev) \ev.
 \end{align*}
-This can be further simplified by using:
-\begin{align}
-  \nK &= \mu_0 M_s^2, \notag \\
-  \nA &= l^2 \nK, \label{eqn:ndfields}
-\end{align}
+
+This can be further simplified by choosing the exchange length\footnote{There are actually two exchange lengths: one based on the strength of exchange as compared with the magnetostatic field and another by comparison with the magnetocrystalline anisotropy. We use the magnetostatic-field-based exchange length for normalisation to avoid division by zero in the case of zero magnetocrystalline anisotropy.} as the characteristic length scale
+\begin{equation}
+  \label{eqn:l-normalisation}
+  l = \sqrt{ \frac{2 \Exchc}{\mu_0 M_s^2} },
+\end{equation}
+
+and
+\begin{equation}
+  \label{k-normalisation}
+  \nK = \frac{ \mu_0 M_S^2}{2}
+\end{equation}
 
 leaving
 \begin{equation}
-  \hv = \happ - \nabla \phi + 2\exchc \nabla^2 \mv + 2\kone (\mv \cdot \ev) \ev.
+  \hv = \happ - \nabla \phi + \nabla^2 \mv + \kone (\mv \cdot \ev) \ev.
 \end{equation}
-
-The parameter for length, $l$ is still free to be chosen. Useful possibilities are the exchange length or a unit on the length scale of a dimension of the magnetic material being modelled (typically $\sim1-100$nm).
 
 
 \subsection{Energy calculations}
@@ -91,32 +95,32 @@ We repeat the process used in Section~\ref{sec:land-lifsh-gilb-normalisation} to
   \Ems^* =  \frac{-\mu_0}{2} \int_{\magd} \Mv^* \cdot \Hms^* \d \magd^*,
 \end{equation}
 \begin{equation*}
-  \Eex^* =  \Exchc^* \int_{\magd} (\nabla^* \mv)^2 \d \magd^*,
+  \Eex^* =  \Exchc \int_{\magd} (\nabla^* \mv)^2 \d \magd^*,
 \end{equation*}
 \begin{equation*}
   \Eca^* =  \Kone^* \int_\magd (\mv \cdot \ev)^2 \d \magd^*.
 \end{equation*}
 
-We substitute definitions~\eqref{eqn:nddefs}, \eqref{eqn:ndfields} and $E^* = \nE e = \mu_0 M_s^2 l^d \, e$ where $d$ denotes the number of spatial dimensions:
+We substitute definitions~\eqref{eqn:nddefs}, \eqref{eqn:l-normalisation}, \eqref{k-normalisation} and $E^* = \nE e = \mu_0 M_s^2 l^d \, e$ where $d$ denotes the number of spatial dimensions:
 \begin{equation*}
-  \eapp = \frac{-\mu_0 M_s^2 l^d}{\nE} \int_{\magd} \mv \cdot \happ \d \magd
+  \eapp = -\mu_0 M_s^2 l^d \frac{1}{\nE} \int_{\magd} \mv \cdot \happ \d \magd
   = - \int_{\magd} \mv \cdot \happ \d \magd,
 \end{equation*}
 \begin{equation}
-  \ems = \frac{-\mu_0 M_s^2 l^d}{2\nE} \int_{\magd} \mv \cdot \hms \d \magd
-  = - \int_{\magd} \mv \cdot \hms \d \magd,
+  \ems = \frac{-\mu_0 M_s^2 l^d}{2} \frac{1}{\nE} \int_{\magd} \mv \cdot \hms \d \magd
+  = -\frac{1}{2} \int_{\magd} \mv \cdot \hms \d \magd,
 \end{equation}
 \begin{equation*}
-  \eex =  \frac{\mu_0 M_s^2 l^2 l^d}{l^2\nE} \exchc \int_{\magd} (\nabla \mv)^2 \d \magd
-  = \exchc \int_{\magd} (\nabla \mv)^2 \d \magd,
+  \eex =  \frac{\mu_0 M_s^2 l^2}{2} \frac{l^d}{l^2} \frac{1}{\nE} \int_{\magd} (\nabla \mv)^2 \d \magd
+  = \frac{1}{2} \int_{\magd} (\nabla \mv)^2 \d \magd,
 \end{equation*}
 \begin{equation*}
-  \eca = \frac{\mu_0 M_s^2 l^d}{\nE} \kone \int_\magd 1 - (\mv \cdot \ev)^2 \d \magd
-  = \kone \int_\magd 1 - (\mv \cdot \ev)^2 \d \magd.
+  \eca = \frac{\mu_0 M_s^2}{2 } l^d \kone \frac{1}{\nE} \int_\magd 1 - (\mv \cdot \ev)^2 \d \magd
+  = \frac{\kone}{2} \int_\magd 1 - (\mv \cdot \ev)^2 \d \magd.
 \end{equation*}
 Note that we have used
 \begin{equation}
-  \d \magd^* = \d x^{*d} = l^d \d x^d = l^d \d \magd.
+  \d \magd^* = \d (x^*)^d = l^d \d x^d = l^d \d \magd.
 \end{equation}
 
 

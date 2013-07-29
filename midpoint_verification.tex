@@ -26,15 +26,17 @@ The energy derivatives with respect to time in non-dimensionalised units (see Se
 \begin{align}
   \pd{\eapp}{t} &= - \int_\magd \pd{\mv}{t} \cdot \happ \d\magd, \\
   %
-  \pd{\eex}{t} &= 2 \exchc \int_\magd \nabla m_x \cdot \nabla \pd{m_x}{t}
+  \pd{\eex}{t} &= \int_\magd \nabla m_x \cdot \nabla \pd{m_x}{t}
            + \nabla m_y \cdot \nabla \pd{m_y}{t}
            + \nabla m_z \cdot \nabla \pd{m_z}{t} \d\magd, \\
   %
-  \pd{\eca}{t} &= - 2 \kone \int_\magd (\mv \cdot \ev )\, (\pd{\mv}{t} \cdot \ev) \d\magd, \\
+  \pd{\eca}{t} &= - \kone \int_\magd (\mv \cdot \ev )\, (\pd{\mv}{t} \cdot \ev) \d\magd, \\
   %
   \pd{\ems}{t} &= \frac{1}{2} \int_\magd \pd{\mv}{t} \cdot \nabla \phim
        + \mv \cdot \nabla \pd{\phim}{t} \d\magd.
 \end{align}
+
+Note the sign in $\pd{\ems}{t}$. There are two factors of $-1$: from the energy itself and from $\hms = - \nabla \phim$.
 
 Calculating these integrals using the same machinery as used for the main calculations ensures that the accuracy of $\dampeff$ is of the same order as the accuracy of the model.
 

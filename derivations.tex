@@ -38,32 +38,32 @@ For now we consider the magnetostatic potential only within the magnetic domain,
 \subsection{Normalisation}
 \label{sec:normalisation}
 
-For efficient and accurate numerical modelling it is essential to ensure that computed values remain close to unity. As such we actually work in terms of:
-\begin{itemize}
-\item $\mv = \frac{\Mv}{M_s}$ (non-dimensional)
-\item $\hv_{\Box} = \frac{\Hv_\Box}{H_k} = \Hv_\Box \frac{\mu_0 M_s}{2 K_1}$ (non-dimensional), for the applied, exchange and magnetocrystalline anisotropy fields.
-\item $t' = \frac{t}{\gymagc H_k}$ (units of .. ??ds)
-\end{itemize}
-The coefficient of the exchange effective field becomes $\exchc = \frac{2A}{\mu_0 M_s} \cdot \frac{\mu_0 M_s}{2 K_1} = \frac{A}{K_1}$. Both $A$ and $K_1$ have units of energy density\cite{Kronmuller2003} so $\exchc$ is non-dimensional. However this normalisation scheme fails for the case of $K_1 = 0$ (\ie no magnetocrystalline anisotropy), in this case we use $H_A = \frac{2A}{\mu_0 M_s}$ instead.
+%% For efficient and accurate numerical modelling it is essential to ensure that computed values remain close to unity. As such we actually work in terms of:
+%% \begin{itemize}
+%% \item $\mv = \frac{\Mv}{M_s}$ (non-dimensional)
+%% \item $\hv_{\Box} = \frac{\Hv_\Box}{H_k} = \Hv_\Box \frac{\mu_0 M_s}{2 K_1}$ (non-dimensional), for the applied, exchange and magnetocrystalline anisotropy fields.
+%% \item $t' = \frac{t}{\gymagc H_k}$ (units of .. ??ds)
+%% \end{itemize}
+%% The coefficient of the exchange effective field becomes $\exchc = \frac{2A}{\mu_0 M_s} \cdot \frac{\mu_0 M_s}{2 K_1} = \frac{A}{K_1}$. Both $A$ and $K_1$ have units of energy density\cite{Kronmuller2003} so $\exchc$ is non-dimensional. However this normalisation scheme fails for the case of $K_1 = 0$ (\ie no magnetocrystalline anisotropy), in this case we use $H_A = \frac{2A}{\mu_0 M_s}$ instead.
 
-Now our system of equations is:
-\begin{equation}
-  \label{eq:llg}
-  \dmdt = - \mxh + \dampc \left( \mv \times \dmdt \right),
-\end{equation}
-\begin{equation}
-  \label{eq:heff}
-  \hv = \happ + \hca + \hex +  \hms,
-\end{equation}
+%% Now our system of equations is:
+%% \begin{equation}
+%%   \label{eq:llg}
+%%   \dmdt = - \mxh + \dampc \left( \mv \times \dmdt \right),
+%% \end{equation}
+%% \begin{equation}
+%%   \label{eq:heff}
+%%   \hv = \happ + \hca + \hex +  \hms,
+%% \end{equation}
 
-\begin{equation}
-  \label{eq:hex}
-  \hex = \exchc \nabla^2 \mv,
-\end{equation}
-\begin{align}
-  \hms = - \nabla \phim, \label{eq:hms} \\
-  \nabla^2 \phim = \nabla \cdot \mv. \label{eq:phim}
-\end{align}
+%% \begin{equation}
+%%   \label{eq:hex}
+%%   \hex = \exchc \nabla^2 \mv,
+%% \end{equation}
+%% \begin{align}
+%%   \hms = - \nabla \phim, \label{eq:hms} \\
+%%   \nabla^2 \phim = \nabla \cdot \mv. \label{eq:phim}
+%% \end{align}
 
 
 
@@ -180,7 +180,7 @@ For the Landau--Lifshitz--Gilbert equation~\eqref{eq:llg} we have a set of three
   \\
   \mathbf{r}_{\text{llg}} = \int_\magd \Big( \dmdt
   + (\mv \times \hca) + (\mv \times \happ) \\
-  - (\mv \times \nabla \phi) + \exchc(\mv \times \nabla^2 \mv)
+  - (\mv \times \nabla \phi) + (\mv \times \nabla^2 \mv)
   - \dampc \left( \mv \times \dmdt \right)
   \Big)  v \d\magd
   = 0, \label{res:contllg}
@@ -245,7 +245,7 @@ and
   \mathbf{r}_{\text{llg},\ndi} &=
   \int_{\magd} \tn \left(\sum_k \sk \pd{\mv_k}{t} \right)
   \\
-  &- \exchc\crossop{\sum_k \mv_k \sk}{\sum_k \nabla \tn \mv_k (\nabla \sk)^T}
+  &- \crossop{\sum_k \mv_k \sk}{\sum_k \nabla \tn \mv_k (\nabla \sk)^T}
   \\
   &- \crossop{\sum_k \mv_k \sk}{\sum_k \phim_{,k} \nabla \sk} \tn
   \\
