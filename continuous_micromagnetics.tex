@@ -131,10 +131,9 @@ Equation~\eqref{eq:38} represents the procession of the magnetisation about the 
 However equation~\eqref{eq:38} implies that the precession motion is undamped, \ie no energy is lost and the magnetisation continues to precess forever. This is obviously not the case so an empirical damping term is added:
 \begin{equation}
   \label{eq:LL}
-  %\tag{LL}
-  \dMdt = - \gymagc \Mv \times \Hv - \frac{\dampc_{\text{\tiny{L}}}}{M_s} \Big( \Mv \times (\Mv \times \Hv) \Big),
+  \dMdt = - \gymagc \Mv \times \Hv - \frac{\dampc \gymagc}{M_s} \Big( \Mv \times (\Mv \times \Hv) \Big),
 \end{equation}
-where $\dampc_{\text{\tiny{L}}}$ is an experimentally determined material parameter related to the strength of the damping. Equation~\eqref{eq:LL} is referred to as the Landau--Lifshitz.\cite{Landau1935} The effects of the precession and damping terms are shown in Figure~\ref{fig:LLG-terms}.
+where $\dampc$ is an experimentally determined material parameter related to the strength of the damping. Equation~\eqref{eq:LL} is referred to as the Landau--Lifshitz.\cite{Landau1935} The effects of the precession and damping terms are shown in Figure~\ref{fig:LLG-terms}.
 
 \begin{figure}[ht!]
   \centering
@@ -148,7 +147,7 @@ However, there are still problems with this equation: for large damping the over
 motion increases without any increase in the precession speed. Hence the damping dominates and the switching time increases as damping is increased which is physically incorrect.\cite{Mallinson1987} There is another form of equation~\eqref{eq:LL} due to Gilbert\cite{Gilbert2004}, called the Landau--Lifshitz--Gilbert equation, which does not suffer from this problem
 \begin{equation}
   \label{eq:Gilbert}
-  \dMdt = - \gymagc \Mv \times \Hv - \frac{\dampc}{M_s} (\Mv \times \dMdt),
+  \dMdt = - \gymagc \Mv \times \Hv + \frac{\dampc}{M_s} (\Mv \times \dMdt),
 \end{equation}
 where $\dampc \neq \dampc_L$. Equation~\eqref{eq:Gilbert} can be rearranged into the same form as equation~\eqref{eq:LL}, giving
 \begin{equation}
