@@ -87,8 +87,8 @@ Finite element methods are used in the \texttt{magpar}\cite{Scholz2003}, \texttt
 
 The integral form of the magnetostatic field at a point $\xv \in \real^d$ due to the magnetic body $\magd$ with boundary $\boundd$ can be given in terms of magnetisation $\Mv$ by an integral over all volume and surface ``magnetic charges'' ($\nabla \cdot \Mv(\xv)$ and $\Mv(\xv) \cdot \nv(\xv)$ respectively) as
 \begin{align}
-  \Hms(\xv) &= \frac{1}{4 \pi} \Big[ - \int_\magd \frac{\big( \nabla' \cdot \Mv(\xv') \big)(\xv - \xv')}{| \xv -\xv'|^3} \d^3 \xv'
-  + \int_\boundd \frac{ \big( \Mv(\xv') \cdot \nv(\xv') \big) (\xv - \xv')}{|\xv - \xv'|^3} \d^2 \xv' \Big],
+  \Hms(\xv) &= \frac{1}{4 \pi} \Big[ - \int_\magd \frac{\big( \nabla' \cdot \Mv(\xv') \big)(\xv - \xv')}{\abs{ \xv -\xv'}^3} \d^3 \xv'
+  + \int_\boundd \frac{ \big( \Mv(\xv') \cdot \nv(\xv') \big) (\xv - \xv')}{\abs{\xv - \xv'}^3} \d^2 \xv' \Big],
   \label{eq:Hmsint}
 \end{align}
 where $\nabla'$ denotes the grad operator with respect to the $\xv'$ coordinate. For completeness we note that single magnetic charges (magnetic monopoles) have not been observed in nature. However they are a very useful mathematical tool for calculations of magnetic fields.
@@ -136,7 +136,7 @@ With the following boundary conditions
   \phim^\inte - \phim^\exte = 0 \quad \xv \in \boundd, \label{eq:cont-phi-bound} \\
   \pd{\phim^\inte}{\nv} - \pd{\phim^\exte}{\nv} = \Mv \cdot \nv \quad \xv \in \boundd,
   \label{eq:nndphidn-bound} \\
-  \phim \rightarrow 0 \text{ as } |\xv| \rightarrow \infty, \label{eq:phi-inf}
+  \phim \rightarrow 0 \text{ as } \abs{\xv} \rightarrow \infty, \label{eq:phi-inf}
 \end{gather}
 where $\phim^\inte$/$\phim^\exte$ are the values of $\phim$ just inside/outside the domain, $\magd$.
 
@@ -193,7 +193,7 @@ Some key attributes of a time discretisation scheme are:\cite{Atkinson2009}
 
 \item \textbf{Ability to deal with stiffness} -- Some ODEs have terms which vary on very different time scales, this is referred to as stiffness. Stiff ODEs causes some solvers to require extremely small time-steps in order to remain stable. The Landau--Lifshitz--Gilbert equation is sometimes stiff because the precession and damping terms usually operate on very different timescales but are both important for determination of the dynamics.\cite{Fidler2000}
 
-\item \textbf{Preservation of geometrical properties} -- Some differential equations have properties which should ideally be conserved in the discretised system. For example $|\Mv|$ should remain constant over time in the Landau--Lifshitz--Gilbert equation but this property is often lost after discretisation.\cite{DAquino2005}
+\item \textbf{Preservation of geometrical properties} -- Some differential equations have properties which should ideally be conserved in the discretised system. For example $\abs{\Mv}$ should remain constant over time in the Landau--Lifshitz--Gilbert equation but this property is often lost after discretisation.\cite{DAquino2005}
 
 \item \textbf{Self-starting} -- A scheme is self starting if it only requires a single initial value. This is desirable because methods of estimating additional initial values may introduce errors. However more advanced schemes often require values at multiple times and so need multiple initial values.
 \end{itemize}
@@ -259,18 +259,18 @@ Adaptive time discretisation methods vary the time-step in response to an estima
 \subsubsection{The Non-Convex Constraint}
 \label{sec:ensuring-constant-mv}
 
-Note that in equations~\eqref{eq:LL}, \eqref{eq:Gilbert} and \eqref{eq:LLG} the direction of $\dMdt$ is always perpendicular to the current value of $\Mv$ (since all terms contain cross products with $\Mv$). Hence we have an implicit condition: $|\Mv| = M_s$. However in the discretised approximation this is often lost and must be enforced separately. This condition is often called a  \emph{non-convex constraint}\footnote{Intuitively a convex set is one such that given two members of the set all points on a straight line between them are also members of the set. With the condition $|\Mv|=M_s$ the set of possible values of $\Mv$ is the surface of a sphere with radius $M_s$ which is not a convex set, hence the name.}. This can pose difficulties in the numerical solution of the Landau--Lifshitz--Gilbert equations because the approximations used do not necessarily respect the constraint. Hence the solution can end up with $|\Mv| \neq M_s$ which is un-physical (for constant temperature models).
+Note that in equations~\eqref{eq:LL}, \eqref{eq:Gilbert} and \eqref{eq:LLG} the direction of $\dMdt$ is always perpendicular to the current value of $\Mv$ (since all terms contain cross products with $\Mv$). Hence we have an implicit condition: $\abs{\Mv} = M_s$. However in the discretised approximation this is often lost and must be enforced separately. This condition is often called a  \emph{non-convex constraint}\footnote{Intuitively a convex set is one such that given two members of the set all points on a straight line between them are also members of the set. With the condition $\abs{\Mv}=M_s$ the set of possible values of $\Mv$ is the surface of a sphere with radius $M_s$ which is not a convex set, hence the name.}. This can pose difficulties in the numerical solution of the Landau--Lifshitz--Gilbert equations because the approximations used do not necessarily respect the constraint. Hence the solution can end up with $|\Mv| \neq M_s$ which is un-physical (for constant temperature models).
 
 A simple method of dealing with the constraint is to re-normalise $\Mv$ after some number of time-steps or when the error in $|\Mv|$ exceeds some tolerance.\cite{Fidler2000} However this approach fundamentally changes the system of equations being solved.\cite{Lewis2003}
 
 If we have a system with only a single (macro)spin (\ie a single value of $\Mv$ represents the magnetisation of the entire system) it is easy to avoid this problem by using a spherical polar coordinate system $(r,\theta,\phi)$. Equation~\eqref{eq:LLG} can be expressed in terms of only the angles $(\theta,\phi)$ representing the direction of $\Mv$ and the non-convex constraint is automatically enforced since
 \begin{equation}
   \label{eq:40}
-  \pd{|\Mv|}{t} = \pd{r}{t} \equiv 0.
+  \pd{\abs{\Mv}}{t} = \pd{r}{t} \equiv 0.
 \end{equation}
 However to extend this to systems where $\Mv$ varies with space we have to use a separate spherical polar coordinate system at each point where $\dMdt$ is calculated. Also a Cartesian global coordinate system is still needed to calculate the interactions between the discretised points (\ie magnetostatics, exchange coupling). Hence we have to convert back and forth between coordinate systems during the simulation.\cite{Scholz2003} Finally problems can occur with this approach as the polar angle, $\theta$, approaches zero because $\pd{\Mv}{t} \propto \frac{1}{\sin(\theta)}$.\cite{Fukushima2005}
 
-% Some people have used special test functions to keep $|\Mv|$ fixed, don't understand that method yet though
+% Some people have used special test functions to keep $\abs{\Mv}$ fixed, don't understand that method yet though
 
 ``Geometrical'' integration schemes aim to solve this problem by constructing a time discretisation scheme that naturally preserves the value of $|M_s|$. An example of such a scheme is the midpoint method as used by d'Aquino. The midpoint method also has other desirable properties -- it conserves energy when the damping term is zero and it ensures that the energy is a decreasing function of time when the damping is non-zero.\cite{DAquino2005} Alternatively geometrical integration methods based on Cayley transforms can be used.\cite{Lewis2003}\cite{Bottauscio2011}
 % ??ds however the proofs do not work for a weak formulation...

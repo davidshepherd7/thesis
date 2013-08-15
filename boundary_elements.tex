@@ -35,7 +35,7 @@ We have the following \emph{physical} conditions\footnote{Equations~\eqref{eq:2}
   \label{eq:2}
 \end{equation}
 \begin{equation}
-  \phim(\xv) \rightarrow 0 \qquad \text{ as } |\xv| \rightarrow \infty,
+  \phim(\xv) \rightarrow 0 \qquad \text{ as } \abs{\xv} \rightarrow \infty,
 \end{equation}
 \begin{equation}
   \pd{\phim^\inte(\xv)}{\nv} - \pd{\phim^\exte(\xv)}{\nv} = \mv \cdot \nv \qquad \xv \in \boundd,
@@ -122,9 +122,9 @@ The double layer potential at a point $\xv \in \real^d$ is defined as \cite{eom_
 \end{equation}
 where $G$ is the Green's function for a Laplacian operator.
 For $d=2$
-\[ \Green = \dfrac{-1}{2\pi}\ln(|\xv - \yv|), \]
+\[ \Green = \dfrac{-1}{2\pi}\ln(\abs{\xv - \yv}), \]
 and for $d=3$
-\begin{equation} \Green = \dfrac{-1}{4 \pi} \dfrac{1}{|\xv - \yv|}.
+\begin{equation} \Green = \dfrac{-1}{4 \pi} \dfrac{1}{\abs{\xv - \yv}}.
   \label{eqn:greenslaplacian3d}
 \end{equation}
 
@@ -271,28 +271,28 @@ In 3D
   \label{eq:11}
   \pd{\Green}{\nv} = \frac{-1}{4 \pi} \pd{}{\nv} \Gthreed = \frac{-1}{4 \pi} \nv \cdot \nabla \Big( \Gthreed \Big).
 \end{equation}
-Converting to spherical coordinates with the origin at $\xv_\ibasis$ ($r = |\yv - \xv_\ibasis|$, $\ruv = \frac{\yv - \xv_\ibasis}{r}$) we have
+Converting to spherical coordinates with the origin at $\xv_\ibasis$ ($r = \abs{\yv - \xv_\ibasis}$, $\ruv = \frac{\yv - \xv_\ibasis}{r}$) we have
 \begin{equation}
   \label{eq:12}
   \pd{G(r)}{\nv} = \frac{-1}{4 \pi} \nv \cdot \ruv \pd{}{r} \Big( \frac{1}{r} \Big)
   = \frac{+1}{4 \pi}  \frac{\nv \cdot \ruv}{r^2}
-  = \frac{\nv \cdot \rv}{4 \pi |\rv|^3}
+  = \frac{\nv \cdot \rv}{4 \pi \abs{\rv}^3}
   ,\footnote{In spherical polar coordinates $\nabla = \ruv \pd{}{r} +  \phiv \frac{1}{r} \pd{}{\phi} + \thetav \frac{1}{r \sin \theta} \pd{}{\theta}$. Obviously $\frac{1}{r}$ has no angular dependence so only the derivative with respect to $r$ is non-zero.}
 \end{equation}
 \begin{equation}
   \label{eq:13}
-  \pd{\Green}{\nv} = \frac{\nv \cdot \ruv}{4 \pi |\yv - \xv_\ibasis| ^2} .
+  \pd{\Green}{\nv} = \frac{\nv \cdot \ruv}{4 \pi \abs{\yv - \xv_\ibasis} ^2} .
 \end{equation}
 Similarly in 2D we find
 \begin{equation}
   \label{eq:14}
-  \pd{\Green}{\nv} = \frac{-1}{2 \pi} \pd{}{\nv} (\Gtwod) = \frac{\nv \cdot \ruv}{2 \pi |\yv - \xv_\ibasis|}.
+  \pd{\Green}{\nv} = \frac{-1}{2 \pi} \pd{}{\nv} (\Gtwod) = \frac{\nv \cdot \ruv}{2 \pi \abs{\yv - \xv_\ibasis}}.
 \end{equation}
 
 So the discretised boundary element matrix in $d=2,3$ dimensions is
 \begin{equation}
   \label{eq:19}
-  \bm_{\ibasis\ibasisb} =\frac{-1}{2^{(d-1)} \pi} \int_{\boundd_\ibasisb} \tbf_{1,\ibasisb}(\yv) \frac{\nv(\yv) \cdot \ruv_{\xv_{\ibasis} \rightarrow \yv}}{|\yv - \xv_\ibasis| ^{d-1}} \d \yv
+  \bm_{\ibasis\ibasisb} =\frac{-1}{2^{(d-1)} \pi} \int_{\boundd_\ibasisb} \tbf_{1,\ibasisb}(\yv) \frac{\nv(\yv) \cdot \ruv_{\xv_{\ibasis} \rightarrow \yv}}{\abs{\yv - \xv_\ibasis} ^{d-1}} \d \yv
    \quad + \gamma(\xv_\ibasis)\delta_{\ibasisb\ibasis},
 \end{equation}
 where the subscript on $\ruv_{\xv_{\ibasis} \rightarrow \yv}$ is to remind us that the unit vector goes from $\xv_j$ to $\yv$.  We denote the integral in this equation by $I_\bm$.
@@ -325,7 +325,7 @@ In the case of flat elements if $\xv_\ibasisb$ is within the element being integ
 \end{equation}
 So the integral is zero and the singularity is avoided. Unfortunately for neighbouring elements this is not necessarily true--in particular elements at a sharp corner may be very close to a node where $\nv(\yv) \cdot \ruv_{\xv_{\ibasis} \rightarrow \yv} \neq 0$ resulting in a near-singular integral.
 
-For curvilinear elements we no longer have the nice property that any potentially singular elements are automatically zero. However it can be shown that for reasonably shaped elements ??ds citation needed! there are still no real singular integrals only near-singular ones. This is due to the fact that $\nv(\yv) \cdot \ruv_{\xv_{\ibasis} \rightarrow \yv}$ tends to zero ``faster'' than $|\yv - \xv_\ibasis|^2$ so the limit of the ratio as $\yv \rightarrow \xv_\ibasis$ is zero. In fact integrals like this are routinely evaluated in standard boundary element methods ??ds citation needed.
+For curvilinear elements we no longer have the nice property that any potentially singular elements are automatically zero. However it can be shown that for reasonably shaped elements ??ds citation needed! there are still no real singular integrals only near-singular ones. This is due to the fact that $\nv(\yv) \cdot \ruv_{\xv_{\ibasis} \rightarrow \yv}$ tends to zero ``faster'' than $\abs{\yv - \xv_\ibasis}^2$ so the limit of the ratio as $\yv \rightarrow \xv_\ibasis$ is zero. In fact integrals like this are routinely evaluated in standard boundary element methods ??ds citation needed.
 
 % \subsubsection{Corner Singularities}
 

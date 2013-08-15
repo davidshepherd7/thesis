@@ -31,35 +31,40 @@
 
 %*** other names?
 
-To make the following derivations more readable we write:
-\begin{align}
-  \thf &= \frac{t_n + t_{n+1}}{2}, \notag\\
-  \yvhf &= \yv(\thf), %\notag\\
-  %% \yvhfest &= \frac{\yv_{n+1} + \yv_n}{2},
-\end{align}
-and we denote derivatives of $\yv$ by $\yv'$ etc.
+%% To make the following derivations more readable we write:
+%% \begin{align}
+%%   \thf &= \frac{t_n + t_{n+1}}{2}, \notag\\
+%%   \yvhf &= \yv(\thf), %\notag\\
+%%   %% \yvhfest &= \frac{\yv_{n+1} + \yv_n}{2},
+%% \end{align}
+%% and we denote derivatives of $\yv$ by $\yv'$ etc.
 
 
-\subsection{Non-adaptive implicit midpoint method}
+\subsection{Fixed step implicit midpoint method}
 
-Let $\yv(t)$ be a vector function of time, let $\yv_n$ denote a vector of estimates to $\yv(t)$ with $t = t_n$.
-Let $\dtn = t_{n+1} - t_n$ be the time-step.
+Let $\yv(t)$ be a vector function of time, let $\yv_n$ denote a vector of estimates to $\yv(t)$ at $t = t_n$.
+Let $\dtn = t_{n+1} - t_n$ be the (time-)step.
 Then given a system of equations of the form
 \begin{equation}
   \yv'(t) = \fv(t, \yv(t)),
   \label{eq:43}
 \end{equation}
-the midpoint method is given by
+the implicit midpoint method is
 \begin{align}
   \yv_{n+1} &= \yv_n + \dtn \fv(\frac{t_{n+1} + t_n}{2}, \frac{\yv_n + \yv_{n+1}}{2}), \notag\\
-  &= \yv_n + \dtn \fv(\thf, \frac{\yv_n + \yv_{n+1}}{2}).
+  &= \yv_n + \dtn \fv(\thf, \frac{\yv_n + \yv_{n+1}}{2}),
   \label{eq:basic-midpoint}
 \end{align}
+where we have written
+\begin{equation}
+  \frac{t_{n+1} + t_n}{2} = \thf,
+\end{equation}
+for readability.
 
-Note that unlike multistep methods (\eg BDF2, AB2) this is valid for both constant and variable time-step sizes.
+Note that unlike multistep methods (\eg BDF2, AB2) this is valid for both constant and variable step sizes because there is no dependence on previous steps.
 
 
-\subsection{Derivation of local truncation errors}
+\subsection{Derivation of local truncation error}
 \label{sec:deriv-local-trunc}
 
 The local truncation error (LTE) of a time integration scheme is the error due a single integration step.
@@ -190,19 +195,24 @@ which can be substituted into equation~\eqref{eq:trunc-final} to give the trunca
 
 \subsubsection{Calculation of Required Input Values}
 \label{sec:calc-requ-input}
-% new
 
 It remains to provide efficient ways of calculating $\yvhf$, $\yv_n'$, $\yvhf'$.
-Note that we can't just use the approximation $\yvhf \simeq \frac{\yv(t_n) + \yv_{n+1}}{2}$ because there is an error of order $\dtn^2$ involving $\yvhf''$ (see Section~\ref{sec:full-imr-lte-calculation} for details), which is even harder to calculate than $\yvhf$ itself. Instead we interpolate the values at the points needed from the known values at integer time steps.
+Note that we can't just use the approximation $\yvhf \simeq \frac{\yv(t_n) + \yv_{n+1}}{2}$ because there is an error of order $\dtn^2$ involving $\yvhf''$ (see Section~\ref{sec:full-imr-lte-calculation} for details), which is even harder to calculate than $\yvhf$ itself.
+Instead we interpolate the values at the points needed from the known values at integer time steps.
+
+The points $y_n, y_{n-1}, y_{n-2}, \ldots$ can be assumed to be exact in LTE estimation, so these will be the points used for interpolation.
+Other known values have an error (typically related to the truncation error) so these will not be used.
+
+If $\fv(t, \yv(t))$ is cheap to calculate, \ie it is given explicitly as in equation~\eqref{eq:43} then additional derivative values could be used as interpolation inputs.
+As an additional benefit the location (in time) of these derivatives can be chosen to improve the numerical stability of the interpolation.
+However, to remain more general (and in particular to allow the application of this scheme to the Gilbert form of the LLG equation) we avoid additional function evaluations and use only the previous time values.
 
 Barycentric Lagrange seems to be the ``best'' interpolation method.\cite{Berrut2004}
 But Hermite with divided differences gives an easy way to get derivatives in scipy implementation so use that for now.
 Errors should be the same.
 
-So as long as the previous $\texttt{npoints}$ time-steps are of comparable size to this one the interpolation will be $\order{\dtn^\texttt{npoints}}$.
-Otherwise it will be $~\order{\dtn \dtx{n-1} \dtx{n-2}\cdots}$.
-The points $y_n, y_{n-1}, y_{n-2}, \ldots$ can be assumed to be exact in LTE estimation, so no error there.
-
+%So as long as the previous $\texttt{npoints}$ time-steps are of comparable size to this one the interpolation will be $\order{\dtn^\texttt{npoints}}$.
+%Otherwise it will be $~\order{\dtn \dtx{n-1} \dtx{n-2}\cdots}$.
 
 There are conflicting requirements on the number of points to use for the interpolation ($\texttt{npoints}$). As number of points is increased:
 \begin{itemize}
@@ -213,9 +223,9 @@ There are conflicting requirements on the number of points to use for the interp
 Numerical experiments show that 2 points works best.
 
 
-Numerical experiments show that interpolating using $y_{n+1}^\IMP$ causes an increase in oscillations and strange behaviour, probably because of the truncation error (which is large compared to the interpolation error).
-We also have estimates for $\yvhf$, $\fv(\thf, \yvhf)$ for all $n \leq n+1$, with low accuracy, probably no way to use these..
-Unless we use some kind of least squares fitting, probably too expensive.
+%% Numerical experiments show that interpolating using $y_{n+1}^\IMP$ causes an increase in oscillations and strange behaviour, probably because of the truncation error (which is large compared to the interpolation error).
+%% We also have estimates for $\yvhf$, $\fv(\thf, \yvhf)$ for all $n \leq n+1$, with low accuracy, probably no way to use these..
+%% Unless we use some kind of least squares fitting, probably too expensive.
 
 
 \subsubsection{Computing the size of the next time-step}
@@ -226,7 +236,77 @@ We use a standard method for computing the next time step from the local truncat
 \dtx{n+1} = \dtn \left( \frac{\texttt{tol}}{\lte^\IMP}  \right) ^{\frac{1}{3}}
 \end{equation}
 
-\subsection{Extension to implicit ODEs}
+
+\subsection{Numerical experiments}
+
+To demonstrate the effectiveness of the adaptation scheme we use a simple ODE with known exact solution
+\begin{align}
+  f(t,y) &= - \beta e^{-\beta t} \sin(\omega t) + \omega e^{-\beta t} \cos(\omega t) \\
+  y(0) &= 0
+\end{align}
+which gives the exact solution
+\begin{equation}
+  \label{eq:59}
+  y(t) = e^{-\beta t} \sin(\omega t).
+\end{equation}
+The numerical experiments below all use $\omega = 2 \pi$ and $\beta = 0.3$.
+The exact solution for this case is shown in Figure~\ref{fig:mp-ode-exact}.
+Plots of the solutions given by the various numerical calculations below are all visually indistinguishable from Figure~\ref{fig:mp-ode-exact} (without zooming in) at the tolerances used, so they are not shown.
+
+\begin{figure}[ht!]
+  \centering
+  \includegraphics[width=0.8\textwidth]
+                  {/home/david/Dropbox/programming/simplellg/experiments/exact}
+  \caption{A plot of equation~\eqref{eq:59}, the exact solution of our example ODE.}
+  \label{fig:mp-ode-exact}
+\end{figure}
+
+Figure~\ref{fig:mp-ninterp} shows the step sizes selected with various numbers of interpolation points used.
+For larger numbers of interpolation points spurious oscillations begin to appear which are not related to the solution.
+??ds mention errors $\propto$ third derivative
+
+
+This could be due to increased coupling between previous points.
+Alternatively it could be due to Runge oscillations (a phenomenon commonly seen in polynomial interpolation when interpolation points are not careful selected), but this is unlikely because the number of points at which the oscillations appear is so low.
+\begin{figure}[ht!]
+  \centering
+  \includegraphics[width=\textwidth]
+                  {/home/david/Dropbox/programming/simplellg/experiments/mp_ninterp}
+  \caption{Behaviour of adaptive midpoint method using different numbers of interpolation points for a simple ODE. The \texttt{tol} parameter used is $1\E{-4}$.}
+  \label{fig:mp-ninterp}
+\end{figure}
+
+
+Figure~\ref{fig:mp-vs-bdf2} shows the performance of the adaptive midpoint scheme derived above compared to a standard adaptive BDF2 scheme.\cite{Gresho-Sani} %pg 715
+The step size selection of the adaptive midpoint scheme closely follows that of the BDF2 scheme.
+Also of note that the accuracy of the midpoint method is much higher than that of BDF2 for the same step size in this example.
+This is due to the fact that for ODEs where $f$ is not a function of $y$ (such as the one used here) the local truncation error of the midpoint method is equivalent to that of the trapezoid rule (see Section~\ref{sec:full-imr-lte-calculation} equation~\eqref{eq:trunc-final}) which has the smallest possible leading coefficient in the local truncation error.\cite{Gresho-Sani} % pg 281
+
+\begin{figure}[ht!]
+  \centering
+  \includegraphics[width=\textwidth]
+                  {/home/david/Dropbox/programming/simplellg/experiments/bdf2_vs_mp}
+  \caption{Adaptive midpoint (using two interpolation points) vs adaptive BDF2 for a simple ODE. The \texttt{tol} parameter used is $1 \E{-4} $ for both schemes.}
+  \label{fig:mp-vs-bdf2}
+\end{figure}
+
+Figure~\ref{fig:mp-tols} compares error norm and step sizes for the adaptive midpoint scheme with two interpolation points for varying tolerances.
+The midpoint method can be seen to have quadratic convergence by comparing with the $y=x^2$ line shown.
+Additionally it can be seen that decreasing the tolerance smoothly decreases the mean error (by smoothly decreasing the mean step size).
+
+\begin{figure}[ht!]
+  \centering
+  \includegraphics[width=\textwidth]
+                  {/home/david/Dropbox/programming/simplellg/experiments/mp_tols}
+  \caption{Adaptive midpoint mean dt vs mean error for varying tolerance. The line is $y = x^2$.}
+  \label{fig:mp-tols}
+\end{figure}
+
+
+\subsection{Additional Notes}
+
+\subsubsection{Extension to implicit ODEs}
+\label{sec:extens-impl-odes}
 
 We sometimes wish to solve a system of equations where $\yv'(t)$ only given implicitly\footnote{This use of ``implicit'' is unrelated to the notion of implicitness in the time integration scheme.} (for example the Gilbert form of the Landau-Lifshitz-Gilbert equation), in this case equation~\eqref{eq:43} becomes
 \begin{equation}
@@ -244,17 +324,6 @@ So the obvious equivalent for the midpoint method is
 
 Also note that we have avoided the requirement for any additional function (\ie $\fv$) evaluations during the estimation of the local truncation error.
 Hence everything derived here is equally applicable to implicit ODEs.
-
-\subsection{Numerical Tests}
-
-%*** Conservation properties
-
-%*** stiffness
-
-%*** Adaptivity effectiveness
-
-
-\subsection{Additional Notes}
 
 
 \subsubsection{Use of Predictor for Initial Guess}
@@ -348,7 +417,7 @@ and using \eqref{eq:fy-taylor} in \eqref{eq:trunc-mid} gives the local truncatio
   \label{eq:trunc-implicit-form}
 \end{align}
 
-Using a geometric series representation we can show that if all eigenvalues of  $-\frac{\dtn}{2}\dfdyhf$ are s.t. $|\lambda| < 1$\cite{??ds} (which will always be true for some ``small enough'' $\dtn$) then
+Using a geometric series representation we can show that if all eigenvalues of  $-\frac{\dtn}{2}\dfdyhf$ are s.t. $\abs{\lambda} < 1$\cite{??ds} (which will always be true for some ``small enough'' $\dtn$) then
 ??ds can we divide by the largest eigenvalue somewhere to do this?
 \begin{equation}
   (I + \frac{\dtn}{2}\dfdyhf)^{-1} = I - \frac{\dtn \dfdyhf}{2}  \porder{\dtn^2},
@@ -361,21 +430,213 @@ and so\footnote{Assuming that $\dfdyhf$ is not inversely proportional to $\dtn$.
 \end{equation}
 
 
+
+\section{Application of the adaptive midpoint method to micromagnetics}
+
+%*** Banas' work
+
+\subsection{Why use the midpoint method}
+
+The midpoint method is known to be especially effective for micromagnetics problems \cite{DAquino2005}.
+The continuous, non-dimensional form of the Landau-Lifshitz-Gilbert equation is
+\begin{equation}
+  \label{eq:llg-prop-form}
+  \dmdt = - \mv \times( \hv - \dampc \dmdt),
+\end{equation}
+
+It has certain properties:
+\begin{itemize}
+\item conserves magnetisation length
+\item dissipates energy at a rate determined by alpha (as defined by a Rayleigh dissipation functional)
+\item conserves energy at zero damping.
+\end{itemize}
+
+Clearly it is advantageous for a time discretisation method to preserve these properties.
+Midpoint method conserves them (demonstrated below), most other time discretisation schemes don't.
+
+In addition to these properties the midpoint method is:
+\begin{itemize}
+\item second order accurate -- typically considered good enough for pdes (higher orders would require expensive high order spatial discretisation to be effective, generally better to just do h-refinement instead) \cite{Matthias}
+\item ??ds-stable - think it's A-stable? \cite{??ds} -- so appropriate for stiff problems, llg is stiff in some/most cases\cite{??ds}.
+\end{itemize}
+
+Since the midpoint method is a single step method there is no dependence on $\dtx{n-1}$ (unlike, for example, BDF2) and so no change in these properties is expected when going from fixed to varying time step sizes.
+
+\subsection{Properties of continuous Landau-Lifshitz-Gilbert equation}
+\label{sec:prop-cont-llg}
+
+We will use the identity
+\begin{equation}
+  \label{eq:dot-cross-id}
+  \ip{\av}{\av \times \bv} = 0,
+\end{equation}
+which is true for all inner products because $\av \times \bv$ is perpendicular to $\av$ by the definition of the cross product.
+
+Conservation of magnetisation length can be shown by taking the dot product (scalar product, pointwise inner product) with $\mv$ on both sides of~\eqref{eq:llg-prop-form} and using~\eqref{eq:dot-cross-id} to get
+\begin{equation}
+  \label{eq:56}
+  \mv \cdot \dmdt = 0.
+\end{equation}
+Hence the change in $\mv$ is always perpendicular to $\mv$ so length is conserved.
+
+The energy change properties can be examined similarly by taking the inner product
+\begin{equation}
+  \ip{u}{v} = \int_\magd u v \d\magd
+\end{equation}
+with $\hv - \dampc \dmdt$ on both sides of~\eqref{eq:llg-prop-form} and using~\eqref{eq:dot-cross-id} to get
+\begin{equation}
+  \label{eq:58}
+  \ip{\hv}{\dmdt} - \dampc \ip{\dmdt}{\dmdt} = 0.
+\end{equation}
+Using the fact that $\hv = -\vd{\e}{\mv}$ and the chain rule for variational derivatives we get \cite{??ds}
+\begin{align*}
+  \pd{\e[\mv(\xv, t), t]}{t} &= \ip{\vd{e}{\mv}}{\dmdt} - \ip{\pd{\happ}{t}}{\mv} \\
+             &= -\ip{\hv}{\dmdt} - \ip{\pd{\happ}{t}}{\mv},
+\end{align*}
+and so
+\begin{equation}
+  \ip{\hv}{\dmdt} = -\vd{\e}{t} - \ip{\pd{\happ}{t}}{\mv}.
+\end{equation}
+
+Substituting this into equation~\eqref{eq:58} gives us
+\begin{equation}
+  \label{eq:energy-decay}
+  \vd{\e}{t} = -\dampc \ip{\dmdt}{\dmdt} - \ip{\pd{\happ}{t}}{\mv}.
+\end{equation}
+
+Equation~\eqref{eq:energy-decay} shows that under constant applied field the energy of the system is always decreasing by an amount proportional to $\dampc$.
+In fact this relationship is the Rayleigh dissipation functional used as the basis for the derivation of the Gilbert form of the LLG.\cite{Gilbert2004}
+For non-constant applied fields the change in the Zeeman energy is added which may increase or decrease the energy depending on how the field is changed. % field moves towards m -> decrease, away -> increase. For non-spatially constant this is averaged over space in some sense by the inner product.
+
+
+\subsection{Properties of midpoint method LLG discretisation}
+\label{sec:prop-midp-meth}
+
+??ds discuss which inner products/norms are used where
+
+As noted in Section~\ref{sec:extens-impl-odes} the midpoint method is defined by the following substitutions
+\begin{align}
+  \label{eq:55}
+  \pd{\mv}{t} &= \frac{\mv_{n+1} - \mv_n}{\dtn}, \\
+  \mv &= \frac{\mv_{n+1} + \mv_n}{2}, \\
+  t &=  \frac{t_{n+1} + t_n}{2}.
+\end{align}
+
+The special conservation properties of the midpoint method discretisation of the Landau-Lifshitz-Gilbert equation come from the fact that for any symmetrical linear operator $\ell$
+\begin{align}
+  \label{eq:54}
+  \ip{\ell \left[ \mv_{n+\half} \right]}{ \pd{\mv}{t} \lvert_{n+\half}}
+  &= \frac{1}{2\dtn} \left[
+    (\mv_{n+1} , \ell \mv_{n+1})
+    + (\mv_{n+1} , \ell \mv_{n})
+    - (\mv_{n} , \ell \mv_{n+1})
+    - (\mv_{n} , \ell \mv_{n})
+    \right] \notag\\
+  &= \frac{1}{2\dtn} \left[
+    (\mv_{n+1} , \ell \mv_{n+1})
+    - (\mv_{n} , \ell \mv_{n})
+    \right].
+\end{align}
+
+In particular for the identity operator, $\mv \in \real$ and $(\av, \bv) = \av \cdot \bv$ we have
+\begin{equation}
+  \label{eq:52}
+  \mv \cdot \pd{\mv}{t}  = \frac{1}{2\dtn} (\norm{\mv_{n+1}}^2 - \norm{\mv_{n}}^2 ).
+\end{equation}
+Substituting this into equation~\eqref{eq:56} gives
+\begin{equation}
+  \abs{\mv_{n+1} }^2 - \abs{\mv_{n}}^2 = 0 \quad \forall \xv \in \magd
+\end{equation}
+\ie conservation of magnetisation length.
+
+??ds operators below need checking, dAquino is only concerned with FD...
+
+The time-discretised effective field can be represented as a symmetrical linear operator on magnetisation:\cite{DAquino2005}
+\begin{equation}
+  \label{eq:hop}
+  \hv_n(\xv) = \hop [\mv_n(\xv)] + \happ(\xv, t_n).
+\end{equation}
+The energy can be written using this operator as
+\begin{equation}
+  \label{eq:energy-hop}
+  \e_n = \frac{1}{2} \ip{\mv_n}{\hop[\mv_n] + \happ(\xv,t_n)}.
+\end{equation}
+
+Substituting the midpoint approximation and equation~\eqref{eq:hop} into \eqref{eq:58} leaves
+\begin{align}
+  \label{eq:60}
+  &\ip{ \pd{\mv}{t} \lvert_{n+\half}}{\hop \left[\mv_{n+\half} \right]} + \ip{\frac{\mv_{n+1} - \mv_n}{\dtn}}{\happ(\xv,t_{n+\half})} \\
+  &= \dampc \ip{\frac{\mv_{n+1} - \mv_n}{\dtn}}{\frac{\mv_{n+1} - \mv_n}{\dtn}}.
+\end{align}
+We use a midpoint approximation for the applied field to allow us to cancel terms later:
+\begin{equation}
+  \label{eq:happ-midpoint}
+  \happ(\xv,t_{n+\half}) = \frac{\happ(\xv, t_{n+1}) + \happ(\xv, t_n)}{2} + \order{\dtn^2 \spd{\happ}{t}}.
+\end{equation}
+Combining equations~\eqref{eq:60}, \eqref{eq:happ-midpoint} and the identity~\eqref{eq:54} gives us
+\begin{align}
+  &\frac{\ip{\mv_{n+1}}{\hop \left[\mv_{n+1} \right] + \happ(\xv, t_{n+1})}
+    - \ip{\mv_{n}}{\hop \left[\mv_{n} \right] + \happ(\xv, t_n)}
+    }{2\dtn} \notag\\
+  &= \dampc \norm{\frac{\mv_{n+1} - \mv_n}{\dtn}}^2
+  + \order{\dtn^2 \spd{\happ}{t}}.
+\end{align}
+After substitution of the energy from~\eqref{eq:energy-hop} this leaves
+\begin{equation}
+  \frac{\e_{n+1} - \e_n}{\dtn}
+  = \dampc \norm{\frac{\mv_{n+1} - \mv_n}{\dtn}}^2
+  + \order{\dtn^2 \spd{\happ}{t}}.
+\end{equation}
+Hence with (piecewise) linear applied fields the energy loss is exactly correct.
+
+It should be noted that the above properties are only true up to the accuracy with which we solve the LLG. Since the LLG is non-linear this is typically the Newton tolerance.
+
+
+\subsection{Numerical Experiments}
+
+In this section we present numerical experiments showing that the adaptive midpoint method retains the conservation properties of the fixed step midpoint method.
+
+\subsection{Discussion}
+
+\subsubsection{Extension to pdes}
+
+We have done some initial work using adaptive midpoint for the non-spatially constant LLG (\ie a pde) which works well for fully implicit problems.
+
+Unfortunately the energy/damping conservation properties require the entire calculation to be performed implicitly.
+This is incompatible with the semi-implicit FEM/BEM method for magnetostatic field calculations,\cite{Koehler1997} which is used in the current implementation of our model.
+However d'Aquino \etal demonstrated an efficient, fully implicit finite difference LLG solver using the fixed step midpoint method\cite{DAquino2005}.
+Such a solver should be easy to modify to use the adaptive midpoint method.
+
+The conservation of magnetisation length by the midpoint method does not require a fully implicit calculation as demonstrated by Spargo \etal\cite{Spargo2003a}.
+Hence the adaptive midpoint method could be used to construct a semi-implicit magnetisation length conserving scheme with purely numerical time adaptivity, with the advantages discussed in Section~\ref{sec:altern-time-adapt}.
+
+
+\subsubsection{Alternative time adaptivity methods in micromagnetics}
+\label{sec:altern-time-adapt}
+
+In cases where the damping is not exact the effective damping can be used as an error estimator, as proposed by Albuquerque \etal\cite{Albuquerque2001}
+??ds The disadvantage of this method (aside from the obvious requirement that the damping be inexact) is that, depending on the discretisation used, the error estimator may be unable to distinguish between insufficient space refinement and insufficient time refinement.
+In particular this is the case when the solution is not completely divided into separate effective field calculations and pointwise time integration, such as in a typical Galerkin finite element model.
+
+Rigorous time error estimates for the LLG with limited effective field terms with a certain discretisation method were proven and used to perform adaptive refinement of midpoint method time steps by Ban̆as.\cite{Banas-thesis}
+By comparison our adaptive method is much more general in that it can be applied to any differential equation and any discretisation scheme which uses the method of lines for time.
+
+
+\subsubsection{Symplecity}
+
+??ds I basically have no idea about this stuff.
+
+The fixed step midpoint method is ``almost symplectic'' for the LLG equation with zero damping (Hamiltonian structure is preserved up to a small error).\cite{Austin1993}
+However it is well known that most adaptive schemes cannot be symplectic\cite{Iserles2009} % pg. 91
+so we do not discuss this area further.
+
+
 \subsection{Future work}
 
 %*** Does adaptivity trail off eventually like trapazoid?
 
+Testing with pdes.
 
-\subsection{Application to micromagnetics}
-
-%*** Banas' work
-
-%** midpoint vs bdf2 vs trapazoid rule in micromagnetics
-
-%** Adaptive scheme types, total error, spatial errors, LTE
-
-%** Numerical tests?
-%*** As above + conservation properties
 
 
 %%% Local Variables:

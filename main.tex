@@ -152,8 +152,15 @@
 %% ------------------------------
 \newcommand{\pd}[2]{\frac{\partial #1}{\partial #2}} % partial deriv
 \newcommand{\spd}[2]{\frac{\partial^2 #1}{\partial {#2}^2}} % 2nd partial deriv
+\newcommand{\vd}[2]{\frac{\delta #1}{\delta #2}} % variational derivative
 \newcommand{\E}[1]{\times 10^{#1}} % powers of 10
 \newcommand{\st}{\,|\,} % ``such that'' operator in sets (vertical line with spacing)
+\newcommand{\ip}[2]{\left(#1,\, #2 \right)}
+
+% Norm and abs: better spacing than if done manually with |
+\newcommand{\abs}[1]{\lvert #1 \rvert}
+\newcommand{\norm}[1]{\lVert #1 \rVert}
+
 
 % d for the end of integrals (e.g. dx) with correct spacing and non-italic
 \renewcommand{\d}{{\; \text{d}}}
@@ -245,13 +252,14 @@
 \newsubcommand{\hca}{\mathbf{h}}{\text{ca}} % crystalline ansiotropy
 \newsubcommand{\hthm}{\mathbf{h}}{\text{th}} % thermal
 \newcommand{\nH}{H_{\mathbb{n}}} % A "magnitude" of H for normalisation
-
+\newcommand{\hop}{h}
 
 % Similarly for energies
 \newsubcommand{\Eapp}{E}{{\text{ap}}} %applied
 \newsubcommand{\Ems}{E}{\text{ms}} % magnetostatic/demag
 \newsubcommand{\Eex}{E}{\text{ex}} % exchange
 \newsubcommand{\Eca}{E}{\text{ca}} % crystalline ansiotropy
+\newcommand{\e}{e} % total energy
 \newsubcommand{\eapp}{e}{{\text{ap}}} %applied
 \newsubcommand{\ems}{e}{\text{ms}} % magnetostatic/demag
 \newsubcommand{\eex}{e}{\text{ex}} % exchange
@@ -267,7 +275,7 @@
 \newcommand{\kone}{\mathcal{K}_1}
 \newcommand{\dampc}{\alpha}
 \newcommand{\dampeff}{\alpha_\text{eff}}
-\newcommand{\gymagc}{{|\gamma_{\text{\tiny{L}}}|}}
+\newcommand{\gymagc}{{\abs{\gamma_{\text{\tiny{L}}}}}}
 
 
 % SI magnetic units (Kronmuller2003)
@@ -302,8 +310,8 @@
 
 % Green's functions - general form and main parts of 2/3D Green's functions for the laplacian operator
 \newcommand{\Green}[1][]{G(\xv_{#1},\yv)}
-\newcommand{\Gtwod}[1][]{\ln|\xv_{#1} - \yv|}
-\newcommand{\Gthreed}[1][]{\frac{1}{|\xv_{#1} - \yv|}}
+\newcommand{\Gtwod}[1][]{\ln \abs{\xv_{#1} - \yv}}
+\newcommand{\Gthreed}[1][]{\frac{1}{ \abs{\xv_{#1} - \yv}}}
 
 % Boundary matrix
 \newcommand{\bm}{{\mathbf{G}}}
@@ -384,7 +392,7 @@
 %\include{./quadrature/quadrature}
 
 \include{./midpoint}
-\include{./midpoint_verification}
+%% \include{./midpoint_verification}
 
 %  preconditioners:
 % (very) basicis
