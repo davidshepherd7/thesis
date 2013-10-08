@@ -5,7 +5,14 @@
 %% ============================================================
 \usepackage{amsmath,amssymb,amsfonts}   %Add maths commands, symbols and fonts
 \usepackage{url}                %Support for urls
-%% \usepackage{hyperref}   %Urls can be hyperlinks
+
+%% \usepackage[colorlinks=true, % colour all links black (just using
+%%             linkcolor=black, % colorlinks=false results in boxes around
+%%             citecolor=black, % links)
+%%             filecolor=black,
+%%             urlcolor=black]{hyperref}
+
+\usepackage{xspace} % command for fixing spaces after macros
 
 
 % Language
@@ -142,11 +149,16 @@
 %%   {\textcolor{note_fontcolor}\bgroup\ignorespaces}
 %%   {\ignorespacesafterend\egroup}
 
-% ie and eg
-\newcommand{\ie}{\textit{i.e.} }
-\newcommand{\cf}{\textit{c.f.} }
-\newcommand{\eg}{\textit{e.g.} }
-\newcommand{\etal}{\textit{et al.} }
+% Latin
+% ============================================================
+
+% trailing slash is needed so that latex knows the final . is not the end
+% of a sentence.
+
+\newcommand{\ie}{\textit{i.e.}\ }
+\newcommand{\cf}{\textit{c.f.}\ }
+\newcommand{\eg}{\textit{e.g.}\ }
+\newcommand{\etal}{\textit{et al.}\ }
 
 %% General maths commands
 %% ------------------------------
@@ -354,6 +366,17 @@
 \newcommand{\half}{\nicefrac{1}{2}}
 
 
+% Some typewritter text
+% ============================================================
+
+% Make sure it's not italic or anything as well as being tt, because it
+% looks different (and stupid). \xspace makes sure there is a space
+% afterwards at the correct times without having to explicitly write the
+% empty argument (i.e. \toltt{}). It can be suppressed by writing the empty
+% argument.
+\newcommand{\toltt}{{\textrm{\textup{\texttt{tol}}}\xspace}}
+
+
 
 %% Beginning of main document
 %% =============================================================
@@ -369,6 +392,8 @@
 
 \input{./title.tex}
 
+\setcounter{page}{2} % Title is page 1, so that pdf page numbers match with
+% our pages numbers
 \include{./listofsymbols}
 
 \setcounter{tocdepth}{2} % Set contents to only go down to subsection level
