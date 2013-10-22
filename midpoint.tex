@@ -10,8 +10,8 @@
 \newcommand{\thf}{\thfx{n}}
 
 % exact y of t at midpoint
-\newcommand{\yvhfx}[1]{\yv(\thfx{#1})}
-\newcommand{\yvhf}{\yvhfx{n}}
+\newcommand{\yvhfx}[2]{\yv#1(\thfx{#2})}
+\newcommand{\yvhf}[1][]{\yvhfx{#1}{n}}
 
 % df/dy matrix
 \newcommand{\dfdy}{F}
@@ -26,7 +26,7 @@
 %% \newcommand{\yvhfest}{\yvhfestx{n}}
 
 
-\section{An adaptive implicit-midpoint-method time-integrator}
+\section{An adaptive implicit-midpoint-rule time-integrator}
 
 
 %*** other names?
@@ -42,8 +42,8 @@
 
 \subsection{Fixed step implicit midpoint method}
 
-Let $\yv(t)$ be a vector function of time, let $\yv_n$ denote a vector of estimates to $\yv(t)$ at $t = t_n$.
-Let $\dtn = t_{n+1} - t_n$ be the (time-)step.
+Let $\yv(t)$ be a vector function, let $\yv_n$ denote a vector of estimates to $\yv(t)$ at $t = t_n$.
+Let $\dtn = t_{n+1} - t_n$ be the step (or time-step).
 Then given a system of equations of the form
 \begin{equation}
   \yv'(t) = \fv(t, \yv(t)),
@@ -61,7 +61,7 @@ where we have written
 \end{equation}
 for readability.
 
-Note that unlike multistep methods (\eg BDF2, AB2) this is valid for both constant and variable step sizes because there is no dependence on previous steps.
+Note that unlike multistep methods, such as backwards difference 2 (BDF2), this is valid for both constant and variable step sizes because there is no dependence on previous steps.
 
 
 \subsection{Derivation of local truncation error}
@@ -80,20 +80,20 @@ Using this definition the local truncation error of the midpoint method is
 We choose to Taylor expand everything about the midpoint, $\thf$, because it reduces the complexity of the result (and allows easier calculations).\footnote{If instead chose to expand about $t_n$ there would be an additional term in $\yv_n''$ in equation~\eqref{eq:trunc-mid}.}
 We assume throughout that $\yv(t)$ is ``sufficiently smooth'' to have a Taylor series expansion. Then its Taylor series expansion at $t_{n+1}$ about $\thf$ is given by
 \begin{equation}
-  \yv(t_{n+1}) = \yv(\thf + \frac{\dtn}{2}) = \yvhf + \frac{\dtn}{2} \yvhf' + \frac{\dtn^2}{8} \yvhf'' + \frac{\dtn^3}{48} \yvhf''' \porder{\dtn^4}.
+  \yv(t_{n+1}) = \yv(\thf + \frac{\dtn}{2}) = \yvhf + \frac{\dtn}{2} \yvhf['] + \frac{\dtn^2}{8} \yvhf[''] + \frac{\dtn^3}{48} \yvhf['''] \porder{\dtn^4}.
   \label{eq:taylornp1}
 \end{equation}
 %% It is well known that the local truncation error of the midpoint method is $\order{\dtn^3}$ (\ie it is second order)\cite{??ds}, so we can safely ignore $\order{\dtn^4}$ terms.
 Similarly the expansion at $t_n$ is
 \begin{equation}
-  \yv(t_n) = \yv(\thf - \frac{\dtn}{2}) = \yvhf - \frac{\dtn}{2} \yvhf' + \frac{\dtn^2}{8} \yvhf'' - \frac{\dtn^3}{48} \yvhf''' \porder{\dtn^4}.
+  \yv(t_n) = \yv(\thf - \frac{\dtn}{2}) = \yvhf - \frac{\dtn}{2} \yvhf['] + \frac{\dtn^2}{8} \yvhf[''] - \frac{\dtn^3}{48} \yvhf['''] \porder{\dtn^4}.
   \label{eq:taylorn}
 \end{equation}
 
 Substituting equations~\eqref{eq:taylornp1} and \eqref{eq:taylorn} into equation~\eqref{eq:trunc-start} gives
 \begin{equation}
   \lte^\IMP = \yv(t_{n+1}) - \yv_{n+1}^\IMP
-  = \frac{\dtn^3}{24} \yvhf'''  + \dtn  \left[ \yvhf'
+  = \frac{\dtn^3}{24} \yvhf[''']  + \dtn  \left[ \yvhf[']
   - \fv\left( \thf, \frac{\yv(t_n) + \yv_{n+1}}{2} \right) \right]  \porder{\dtn^4}.
   \label{eq:trunc-mid}
 \end{equation}
@@ -115,19 +115,19 @@ First, notice that we can rearrange equation~\eqref{eq:basic-midpoint} to get
 \end{equation}
 which we can substitute into equation~\eqref{eq:trunc-mid}, leaving
 \begin{equation}
-  \lte^\IMP = \frac{\dtn^3}{24} \yvhf'''  + \dtn \yvhf' + \yv_n - \yv_{n+1}
+  \lte^\IMP = \frac{\dtn^3}{24} \yvhf[''']  + \dtn \yvhf['] + \yv_n - \yv_{n+1}
   \porder{\dtn^4}.
 \end{equation}
 To keep algebra simpler we write
 \begin{equation}
-   \ymiderr = \dtn  \left[ \yvhf'
-  - \fv\left( \thf, \frac{\yv(t_n) + \yv_{n+1}}{2} \right) \right] =  \dtn \yvhf' + \yv_n - \yv_{n+1}
+   \ymiderr = \dtn  \left[ \yvhf[']
+  - \fv\left( \thf, \frac{\yv(t_n) + \yv_{n+1}}{2} \right) \right] =  \dtn \yvhf['] + \yv_n - \yv_{n+1}
 \end{equation}
 
-Next we use a second order Adams-Bashforth method as a ``predictor'' to eliminate the difficult-to-estimate $\yvhf'''$ term.
+Next we use a second order Adams-Bashforth method as a ``predictor'' to eliminate the difficult-to-estimate $\yvhf[''']$ term.
 The approach is somewhat similar to that used in some adaptive trapezoid rule algorithms.\cite[p.707]{Gresho-Sani}
 
-\subsubsection{Elimination of $\yvhf'''$ term by Adams-Bashforth Predictor}
+\subsubsection{Elimination of $\yvhf[''']$ term by Adams-Bashforth Predictor}
 The second-order variable time-step Adams-Bashforth method is\cite[p.267]{Gresho-Sani}
 \begin{equation}
   \yv_{n+1}^{\AB} = \yv_n + \frac{\dtn^\AB}{2} \left[
@@ -144,7 +144,7 @@ and its local truncation error is\cite[p.267]{Gresho-Sani}
   \label{eq:AB2LTE}
 \end{equation}
 
-Note that equation~\eqref{eq:trunc-final} involves $\yvhf''' = \yv'''([t_n +t_{n+1}]/2)$ whereas equation~\eqref{eq:AB2LTE} involves $\yv'''(t_n^\AB)$.
+Note that equation~\eqref{eq:trunc-final} involves $\yvhf['''] = \yv'''([t_n +t_{n+1}]/2)$ whereas equation~\eqref{eq:AB2LTE} involves $\yv'''(t_n^\AB)$.
 Hence to eliminate the derivative we need to ``offset'' the Adams-Bashforth time-steps with respect to the midpoint method such that the $n$th time-step of the AB2 scheme is at the ``midpoint''.
 We also require that the $(n+1)$th time-steps be the same in both schemes so that the $\yv(t_{n+1})$ terms on the LHS of the truncation error equations will cancel.
 \begin{align}
@@ -161,29 +161,29 @@ for simplicity.\footnote{Depending on the method used to calculate input values 
 With these times the AB2 method \eqref{eq:AB2} becomes
 \begin{equation}
    \yv_{n+1}^{\AB} = \yvhf + \frac{\dtn}{4} \left[
-     3 \yvhf' - \yv_n' \right],
+     3 \yvhf['] - \yv_n' \right],
    \label{eq:AB2-mid}
 \end{equation}
 and the local truncation error \eqref{eq:AB2LTE} becomes
 \begin{equation}
   \lte^\AB = \yv(t_{n+1}) -  \yv_{n+1}^{\AB}
-  = \frac{5 \dtn^3}{96} \yvhf''' \porder{\dtn^4}.
+  = \frac{5 \dtn^3}{96} \yvhf['''] \porder{\dtn^4}.
 \label{eq:AB2-mid-LTE}
 \end{equation}
 
 We can eliminate the unknown $\yv(t_{n+1})$ term by subtracting the Adams-Bashforth LTE \eqref{eq:AB2-mid-LTE} from the midpoint method LTE \eqref{eq:trunc-final}
 \begin{align}
  - \yv_{n+1}^{\IMP} + \yv_{n+1}^{\AB} &=
-   \frac{\dtn^3}{24} \yvhf''' + \ymiderr
-  - \frac{5\dtn^3}{96} \yvhf'''
+   \frac{\dtn^3}{24} \yvhf['''] + \ymiderr
+  - \frac{5\dtn^3}{96} \yvhf[''']
   \porder{\dtn^4}, \notag \\
-  - \yv_{n+1}^{\IMP} + \yv_{n+1}^{\AB} &= -\frac{1}{4} \left( \frac{\dtn^3}{24} \yvhf''' \right)
+  - \yv_{n+1}^{\IMP} + \yv_{n+1}^{\AB} &= -\frac{1}{4} \left( \frac{\dtn^3}{24} \yvhf['''] \right)
   + \ymiderr
   \porder{\dtn^4},
 \end{align}
-Rearranging gives us an expression for $\yvhf'''$
+Rearranging gives us an expression for $\yvhf[''']$
 \begin{equation}
-  \frac{\dtn^3}{24} \yvhf''' = 4 \left[ \yv_{n+1}^\IMP - \yv_{n+1}^{\AB} + a_n \right]  \porder{\dtn^4},
+  \frac{\dtn^3}{24} \yvhf['''] = 4 \left[ \yv_{n+1}^\IMP - \yv_{n+1}^{\AB} + a_n \right]  \porder{\dtn^4},
 \end{equation}
 which can be substituted into equation~\eqref{eq:trunc-final} to give the truncation error
 \begin{equation}
@@ -196,8 +196,8 @@ which can be substituted into equation~\eqref{eq:trunc-final} to give the trunca
 \subsubsection{Calculation of Required Input Values}
 \label{sec:calc-requ-input}
 
-It remains to provide efficient ways of calculating $\yvhf$, $\yv_n'$, $\yvhf'$.
-Note that we can't just use the approximation $\yvhf \simeq \frac{\yv(t_n) + \yv_{n+1}}{2}$ because there is an error of order $\dtn^2$ involving $\yvhf''$ (see Section~\ref{sec:full-imr-lte-calculation} for details), which is even harder to calculate than $\yvhf$ itself.
+It remains to provide efficient ways of calculating $\yvhf$, $\yv_n'$, $\yvhf[']$.
+Note that we can't just use the approximation $\yvhf \simeq \frac{\yv(t_n) + \yv_{n+1}}{2}$ because there is an error of order $\dtn^2$ involving $\yvhf['']$ (see Section~\ref{sec:full-imr-lte-calculation} for details), which is even harder to calculate than $\yvhf$ itself.
 Instead we interpolate the values at the points needed from the known values at integer time steps.
 
 The points $y_n, y_{n-1}, y_{n-2}, \ldots$ can be assumed to be exact in LTE estimation, so these will be the points used for interpolation.
@@ -214,13 +214,13 @@ Errors should be the same.
 %So as long as the previous $\texttt{npoints}$ time-steps are of comparable size to this one the interpolation will be $\order{\dtn^\texttt{npoints}}$.
 %Otherwise it will be $~\order{\dtn \dtx{n-1} \dtx{n-2}\cdots}$.
 
-There are conflicting requirements on the number of points to use for the interpolation ($\texttt{npoints}$). As number of points is increased:
+There are conflicting requirements on the number of points to use for the interpolation ($\texttt{npoints}$). As number of points is increased we have
 \begin{itemize}
-\item Higher power in error term $\order{\dtn^\texttt{npoints}}$.
-\item Increases coupling to past values, which can induce oscillations in $\dtn$ (see numerical experiments section ??ds).
-\item We need $\texttt{npoints}$ known values before adaptivity can be used.
+\item A higher power in error term $\order{\dtn^\texttt{npoints}}$.
+\item Induced oscillations in $\dtn$ (see Figure~\ref{fig:mp-ninterp}).
+\item More initial values needed before adaptivity can be used.
 \end{itemize}
-Numerical experiments show that 2 points works best.
+Numerical experiments show that 2 points work best.
 
 
 %% Numerical experiments show that interpolating using $y_{n+1}^\IMP$ causes an increase in oscillations and strange behaviour, probably because of the truncation error (which is large compared to the interpolation error).
@@ -231,9 +231,9 @@ Numerical experiments show that 2 points works best.
 \subsubsection{Computing the size of the next time-step}
 % new
 
-We use a standard method for computing the next time step from the local truncation error and a target local truncation error $\texttt{tol}$:\cite[pg.268]{Gresho-Sani}
+We use a standard method for computing the next time step from the local truncation error and a target local truncation error \toltt:\cite[pg.268]{Gresho-Sani}
 \begin{equation}
-\dtx{n+1} = \dtn \left( \frac{\texttt{tol}}{\lte^\IMP}  \right) ^{\frac{1}{3}}
+\dtx{n+1} = \dtn \left( \frac{\toltt}{\lte^\IMP}  \right) ^{\frac{1}{3}}
 \end{equation}
 
 
@@ -253,51 +253,54 @@ The numerical experiments below all use $\omega = 2 \pi$ and $\beta = 0.3$.
 The exact solution for this case is shown in Figure~\ref{fig:mp-ode-exact}.
 Plots of the solutions given by the various numerical calculations below are all visually indistinguishable from Figure~\ref{fig:mp-ode-exact} (without zooming in) at the tolerances used, so they are not shown.
 
+Unless otherwise specified all examples in this section use a Newton tolerance of $1\E{-8}$ and an adaptive integrator tolerance of $\toltt = 1\E{-4}$.
+
 \begin{figure}[ht!]
   \centering
-  \includegraphics[width=0.8\textwidth]
-                  {/home/david/Dropbox/programming/simplellg/experiments/exact}
+  \includegraphics{images/osc_damped_ode_exact}
   \caption{A plot of equation~\eqref{eq:59}, the exact solution of our example ODE.}
   \label{fig:mp-ode-exact}
 \end{figure}
 
-Figure~\ref{fig:mp-ninterp} shows the step sizes selected with various numbers of interpolation points used.
-For larger numbers of interpolation points spurious oscillations begin to appear which are not related to the solution.
-??ds mention errors $\propto$ third derivative
-
-
-This could be due to increased coupling between previous points.
-Alternatively it could be due to Runge oscillations (a phenomenon commonly seen in polynomial interpolation when interpolation points are not careful selected), but this is unlikely because the number of points at which the oscillations appear is so low.
 \begin{figure}[ht!]
   \centering
-  \includegraphics[width=\textwidth]
-                  {/home/david/Dropbox/programming/simplellg/experiments/mp_ninterp}
-  \caption{Behaviour of adaptive midpoint method using different numbers of interpolation points for a simple ODE. The \texttt{tol} parameter used is $1\E{-4}$.}
+  \includegraphics{images/bdf2_vs_mp}
+  \caption{Adaptive midpoint (using two interpolation points) vs adaptive BDF2 for a simple ODE.}
+  \label{fig:mp-vs-bdf2}
+\end{figure}
+
+Figure~\ref{fig:mp-vs-bdf2} shows the performance of the adaptive midpoint scheme derived above compared to a standard adaptive BDF2 scheme.\cite{Gresho-Sani} %pg 715
+The step size selection of the adaptive midpoint scheme closely follows that of the BDF2 scheme.
+
+The pattern of step sizes is as expected.
+There is a general trend of increasing step size as the solution is gradually damped out.
+Additionally there is an oscillation which peaks at integer and half-integer times, this corresponds to the peaks in $\cos(\omega t)$ and $\sin(\omega t)$.
+This is relevant because the truncation error is proportional to $y'''(t)$ which consists of terms in these two functions.
+
+Also of note is that the accuracy of the midpoint method is much higher than that of BDF2 for the same step size in this example.
+This is due to the fact that for ODEs where $f$ is not a function of $y$ (such as the one used here) the local truncation error of the midpoint method is equivalent to that of the trapezoid rule (see Section~\ref{sec:full-imr-lte-calculation} equation~\eqref{eq:trunc-final}) which has the smallest possible leading coefficient in the local truncation error.\cite{Gresho-Sani} % pg 281
+
+
+Figure~\ref{fig:mp-ninterp} shows the step sizes selected with various numbers of interpolation points used.
+For larger numbers of interpolation points spurious oscillations begin to appear which are not related to the solution.
+This could be due to increased coupling between previous points.
+Alternatively it could be due to Runge oscillations (a phenomenon commonly seen in polynomial interpolation when interpolation points are not careful selected), but this is unlikely because the number of interpolation points is still low when the oscillations begin to appear.
+
+\begin{figure}[ht!]
+  \centering
+  \includegraphics{images/mp_ninterp}
+  \caption{Behaviour of adaptive midpoint method using different numbers of interpolation points for a simple ODE.}
   \label{fig:mp-ninterp}
 \end{figure}
 
 
-Figure~\ref{fig:mp-vs-bdf2} shows the performance of the adaptive midpoint scheme derived above compared to a standard adaptive BDF2 scheme.\cite{Gresho-Sani} %pg 715
-The step size selection of the adaptive midpoint scheme closely follows that of the BDF2 scheme.
-Also of note that the accuracy of the midpoint method is much higher than that of BDF2 for the same step size in this example.
-This is due to the fact that for ODEs where $f$ is not a function of $y$ (such as the one used here) the local truncation error of the midpoint method is equivalent to that of the trapezoid rule (see Section~\ref{sec:full-imr-lte-calculation} equation~\eqref{eq:trunc-final}) which has the smallest possible leading coefficient in the local truncation error.\cite{Gresho-Sani} % pg 281
-
-\begin{figure}[ht!]
-  \centering
-  \includegraphics[width=\textwidth]
-                  {/home/david/Dropbox/programming/simplellg/experiments/bdf2_vs_mp}
-  \caption{Adaptive midpoint (using two interpolation points) vs adaptive BDF2 for a simple ODE. The \texttt{tol} parameter used is $1 \E{-4} $ for both schemes.}
-  \label{fig:mp-vs-bdf2}
-\end{figure}
-
-Figure~\ref{fig:mp-tols} compares error norm and step sizes for the adaptive midpoint scheme with two interpolation points for varying tolerances.
+Figure~\ref{fig:mp-tols} compares mean error norms and step sizes of the adaptive midpoint scheme (with two interpolation points) for varying tolerances.
 The midpoint method can be seen to have quadratic convergence by comparing with the $y=x^2$ line shown.
 Additionally it can be seen that decreasing the tolerance smoothly decreases the mean error (by smoothly decreasing the mean step size).
 
 \begin{figure}[ht!]
   \centering
-  \includegraphics[width=\textwidth]
-                  {/home/david/Dropbox/programming/simplellg/experiments/mp_tols}
+  \includegraphics{images/mp_tols}
   \caption{Adaptive midpoint mean dt vs mean error for varying tolerance. The line is $y = x^2$.}
   \label{fig:mp-tols}
 \end{figure}
@@ -392,8 +395,8 @@ So we use the LTE of the midpoint method to rewrite equation~\eqref{eq:51} as
 \end{equation}
 Substituting in the Taylor expansions for $\yv(t_n)$ and $\yv(t_{n+1})$ about $\thf$ (from equations~\eqref{eq:taylornp1} and \eqref{eq:taylorn}) gives
 \begin{align}
-  \dyn &= \yvhf + \frac{\dtn^2}{8} \yvhf'' - \yvhf - \frac{1}{2} \lte^\IMP \porder{\dtn^4} \notag\\
-  &= \frac{\dtn^2}{8} \yvhf'' - \frac{1}{2} \lte^\IMP \porder{\dtn^4}
+  \dyn &= \yvhf + \frac{\dtn^2}{8} \yvhf[''] - \yvhf - \frac{1}{2} \lte^\IMP \porder{\dtn^4} \notag\\
+  &= \frac{\dtn^2}{8} \yvhf[''] - \frac{1}{2} \lte^\IMP \porder{\dtn^4}
   \label{eq:dy-value}
 \end{align}
 
@@ -401,18 +404,18 @@ Substituting in the Taylor expansions for $\yv(t_n)$ and $\yv(t_{n+1})$ about $\
 
 Substituting the above value for $\dyn$ into the Taylor series expansion of $\fv$ from \eqref{eq:f-taylor} gives
 \begin{equation}
-  \fv(\thf, \frac{\yv(t_n) + \yv_{n+1}}{2}) = \yvhf'
-  + \frac{\dtn^2}{8} \dfdyhf \cdot \yvhf'' - \frac{1}{2} \dfdyhf \cdot \lte^\IMP \porder{\dtn^4}
+  \fv(\thf, \frac{\yv(t_n) + \yv_{n+1}}{2}) = \yvhf[']
+  + \frac{\dtn^2}{8} \dfdyhf \cdot \yvhf[''] - \frac{1}{2} \dfdyhf \cdot \lte^\IMP \porder{\dtn^4}
   . \label{eq:fy-taylor}
 \end{equation}
 and using \eqref{eq:fy-taylor} in \eqref{eq:trunc-mid} gives the local truncation error
 \begin{align}
   (I + \frac{\dtn}{2}\dfdyhf) \cdot\lte^\IMP
-  &= \dtn \yvhf' + \frac{\dtn^3}{24} \yvhf'''
-  - \dtn \yvhf'
-  - \frac{\dtn^3}{8} \dfdyhf \cdot \yvhf'' \porder{\dtn^4}
+  &= \dtn \yvhf['] + \frac{\dtn^3}{24} \yvhf[''']
+  - \dtn \yvhf[']
+  - \frac{\dtn^3}{8} \dfdyhf \cdot \yvhf[''] \porder{\dtn^4}
   \notag \\
-  &= \frac{\dtn^3}{24} \left[\yvhf''' - 3 \dfdyhf \cdot \yvhf'' \right]
+  &= \frac{\dtn^3}{24} \left[\yvhf['''] - 3 \dfdyhf \cdot \yvhf[''] \right]
   \porder{\dtn^4}.
   \label{eq:trunc-implicit-form}
 \end{align}
@@ -424,7 +427,7 @@ Using a geometric series representation we can show that if all eigenvalues of  
 \end{equation}
 and so\footnote{Assuming that $\dfdyhf$ is not inversely proportional to $\dtn$.}
 \begin{equation}
-  \lte^\IMP = \frac{\dtn^3}{24} \left[\yvhf''' - 3 \dfdyhf \cdot \yvhf'' \right]
+  \lte^\IMP = \frac{\dtn^3}{24} \left[\yvhf['''] - 3 \dfdyhf \cdot \yvhf[''] \right]
   \quad +\order{\dtn^4}.
   \label{eq:trunc-final}
 \end{equation}
@@ -438,11 +441,12 @@ and so\footnote{Assuming that $\dfdyhf$ is not inversely proportional to $\dtn$.
 \subsection{Why use the midpoint method}
 
 The midpoint method is known to be especially effective for micromagnetics problems \cite{DAquino2005}.
-The continuous, non-dimensional form of the Landau-Lifshitz-Gilbert equation is
+The non-dimensionalised form of the Landau-Lifshitz-Gilbert equation is
 \begin{equation}
   \label{eq:llg-prop-form}
   \dmdt = - \mv \times( \hv - \dampc \dmdt),
 \end{equation}
+where $\hv$ is the effective field due to various effects depending on the system being modelled.
 
 It has certain properties:
 \begin{itemize}
@@ -479,16 +483,16 @@ Conservation of magnetisation length can be shown by taking the dot product (sca
 \end{equation}
 Hence the change in $\mv$ is always perpendicular to $\mv$ so length is conserved.
 
-The energy change properties can be examined similarly by taking the inner product
+The energy change properties can be examined similarly by taking the $L^2$ inner product
 \begin{equation}
   \ip{u}{v} = \int_\magd u v \d\magd
 \end{equation}
-with $\hv - \dampc \dmdt$ on both sides of~\eqref{eq:llg-prop-form} and using~\eqref{eq:dot-cross-id} to get
+with $\hv - \dampc \dmdt$ on both sides of~\eqref{eq:llg-prop-form} and using the identity~\eqref{eq:dot-cross-id} to get
 \begin{equation}
   \label{eq:58}
   \ip{\hv}{\dmdt} - \dampc \ip{\dmdt}{\dmdt} = 0.
 \end{equation}
-Using the fact that $\hv = -\vd{\e}{\mv}$ and the chain rule for variational derivatives we get \cite{??ds}
+Using the fact that $\hv = -\vd{\e}{\mv}$ and the chain rule for variational derivatives\cite{??ds} we get
 \begin{align*}
   \pd{\e[\mv(\xv, t), t]}{t} &= \ip{\vd{e}{\mv}}{\dmdt} - \ip{\pd{\happ}{t}}{\mv} \\
              &= -\ip{\hv}{\dmdt} - \ip{\pd{\happ}{t}}{\mv},
@@ -498,7 +502,7 @@ and so
   \ip{\hv}{\dmdt} = -\vd{\e}{t} - \ip{\pd{\happ}{t}}{\mv}.
 \end{equation}
 
-Substituting this into equation~\eqref{eq:58} gives us
+Substituting this into equation~\eqref{eq:58} leaves
 \begin{equation}
   \label{eq:energy-decay}
   \vd{\e}{t} = -\dampc \ip{\dmdt}{\dmdt} - \ip{\pd{\happ}{t}}{\mv}.
@@ -556,7 +560,7 @@ The time-discretised effective field can be represented as a symmetrical linear 
   \label{eq:hop}
   \hv_n(\xv) = \hop [\mv_n(\xv)] + \happ(\xv, t_n).
 \end{equation}
-The energy can be written using this operator as
+Additionally the energy can be written using this operator as
 \begin{equation}
   \label{eq:energy-hop}
   \e_n = \frac{1}{2} \ip{\mv_n}{\hop[\mv_n] + \happ(\xv,t_n)}.
@@ -595,6 +599,50 @@ It should be noted that the above properties are only true up to the accuracy wi
 \subsection{Numerical Experiments}
 
 In this section we present numerical experiments showing that the adaptive midpoint method retains the conservation properties of the fixed step midpoint method.
+For this purpose we choose a simple model: a small\footnote{Small enough that exchange coupling dominates and the magnetisation is spatially constant throughout the particle.} spherical nano-particle with no magnetocrystalline anisotropy under linearly increasing applied field.
+In this case
+\begin{equation}
+  \hv(t) = - t/2 +  \frac{\mv}{3}.
+\end{equation}
+The initial magnetisation used is $\mv_0 = \left( 0.05, 0, \sqrt{1 - 0.05^2} \right)$.
+The damping constant is $\dampc = 0.3$.
+The Newton tolerance is $1\E{-8}$ and the adaptive integrator tolerance is $\toltt = 1\E{-4}$ unless otherwise specified.
+
+Figure~\ref{fig:linear-field-switch-mp} shows again that the adaptivity works: initially the field is so weak that not much is happening and large steps are taken.
+Then the switching speeds up and the step size gradually decreases.
+Finally the switching is finished and the step size increases again.
+
+\begin{figure}[ht!]
+  \centering
+  \includegraphics{images/linear_field_switch_solution}
+  \caption{Magnetisation dynamics and step size selections for a small spherical magnetic nano-particle switching in a linearly increasing applied field. Calculated using the adaptive midpoint method with two interpolation points.}
+  \label{fig:linear-field-switch-mp}
+\end{figure}
+
+Figure~\ref{fig:linear-field-switch-errors-mp} shows that the adaptive midpoint method gives orders of magnitude better accuracy than adaptive BDF2 in magnetisation length and effective damping, as expected.
+Of interest is the noise in the midpoint effective damping error between $t \approx 2.5$ and $t \approx 9$.
+This is caused by strong variation in the final Newton error: since Newton's method gives quadratic convergence one additional step results in orders of magnitude more accuracy.
+This also indicates that the errors are strongly related to the Newton solver error, which is as expected since this is the only source of error (in these quantities) which is not removed by the use of the midpoint method.
+
+??ds also do fixed step midpoint?
+
+\begin{figure}[ht!]
+  \centering
+  \includegraphics{images/linear_field_switch_errors}
+  \caption{Comparison of errors in $\abs{\mv}$ and $\dampc$ for adaptive midpoint method and adaptive BDF2 for a small spherical magnetic nano-particle switching in a linearly increasing applied field.}
+  \label{fig:linear-field-switch-errors-mp}
+\end{figure}
+
+
+To investigate this effect further we compare the average errors for various Newton tolerances in Figure~\ref{fig:newton-tol-errors-mp}.
+It can be seen that reduction of the Newton tolerance strongly reduces the mean errors.
+
+\begin{figure}[ht!]
+  \centering
+  \includegraphics{images/midpoint_newton_tol_errors}
+  \caption{Effect of varying the Newton method tolerance on errors in $\abs{\mv}$ and $\dampc$  for the switching nano-particle problem discussed above.}
+  \label{fig:newton-tol-errors-mp}
+\end{figure}
 
 \subsection{Discussion}
 
@@ -618,9 +666,8 @@ In cases where the damping is not exact the effective damping can be used as an 
 ??ds The disadvantage of this method (aside from the obvious requirement that the damping be inexact) is that, depending on the discretisation used, the error estimator may be unable to distinguish between insufficient space refinement and insufficient time refinement.
 In particular this is the case when the solution is not completely divided into separate effective field calculations and pointwise time integration, such as in a typical Galerkin finite element model.
 
-Rigorous time error estimates for the LLG with limited effective field terms with a certain discretisation method were proven and used to perform adaptive refinement of midpoint method time steps by Ban̆as.\cite{Banas-thesis}
+Rigorous time error estimates for the LLG with limited effective field terms with a certain discretisation method were proven and used to perform adaptive refinement of midpoint method time steps by Banas.\cite{Banas-thesis}
 By comparison our adaptive method is much more general in that it can be applied to any differential equation and any discretisation scheme which uses the method of lines for time.
-
 
 \subsubsection{Symplecity}
 
