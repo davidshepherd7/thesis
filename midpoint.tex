@@ -21,6 +21,8 @@
 % error due to midpoint approx
 \newcommand{\ymiderr}{a_n}
 
+\newcommand{\imr}{IMR}
+
 % don't know?
 %% \newcommand{\yvhfestx}[1]{\bar{\yv}_{#1}}
 %% \newcommand{\yvhfest}{\yvhfestx{n}}
@@ -40,7 +42,7 @@
 %% and we denote derivatives of $\yv$ by $\yv'$ etc.
 
 
-\subsection{Fixed step implicit midpoint method}
+\subsection{Fixed step implicit midpoint rule}
 
 Let $\yv(t)$ be a vector function, let $\yv_n$ denote a vector of estimates to $\yv(t)$ at $t = t_n$.
 Let $\dtn = t_{n+1} - t_n$ be the step (or time-step).
@@ -49,7 +51,7 @@ Then given a system of equations of the form
   \yv'(t) = \fv(t, \yv(t)),
   \label{eq:43}
 \end{equation}
-the implicit midpoint method is
+the implicit midpoint rule is
 \begin{align}
   \yv_{n+1} &= \yv_n + \dtn \fv(\frac{t_{n+1} + t_n}{2}, \frac{\yv_n + \yv_{n+1}}{2}), \notag\\
   &= \yv_n + \dtn \fv(\thf, \frac{\yv_n + \yv_{n+1}}{2}),
@@ -70,7 +72,7 @@ Note that unlike multistep methods, such as backwards difference 2 (BDF2), this 
 The local truncation error (LTE) of a time integration scheme is the error due a single integration step.
 It can be calculated by substituting $\yv_n = \yv(t_n)$ into the approximation for the next time-step then subtracting the result from the exact solution at the next time-step, $\yv(t_{n+1})$.
 
-Using this definition the local truncation error of the midpoint method is
+Using this definition the local truncation error of \imr is
 \begin{align}
   \lte^\IMP &= \yv(t_{n+1}) - \yv_{n+1}^\IMP, \notag\\
   &= \yv(t_{n+1}) - \yv(t_n) - \dtn \fv\left( \thf, \frac{\yv(t_n) + \yv_{n+1}^\IMP}{2} \right).
@@ -83,7 +85,7 @@ We assume throughout that $\yv(t)$ is ``sufficiently smooth'' to have a Taylor s
   \yv(t_{n+1}) = \yv(\thf + \frac{\dtn}{2}) = \yvhf + \frac{\dtn}{2} \yvhf['] + \frac{\dtn^2}{8} \yvhf[''] + \frac{\dtn^3}{48} \yvhf['''] \porder{\dtn^4}.
   \label{eq:taylornp1}
 \end{equation}
-%% It is well known that the local truncation error of the midpoint method is $\order{\dtn^3}$ (\ie it is second order)\cite{??ds}, so we can safely ignore $\order{\dtn^4}$ terms.
+%% It is well known that the local truncation error of the midpoint rule is $\order{\dtn^3}$ (\ie it is second order)\cite{??ds}, so we can safely ignore $\order{\dtn^4}$ terms.
 Similarly the expansion at $t_n$ is
 \begin{equation}
   \yv(t_n) = \yv(\thf - \frac{\dtn}{2}) = \yvhf - \frac{\dtn}{2} \yvhf['] + \frac{\dtn^2}{8} \yvhf[''] - \frac{\dtn^3}{48} \yvhf['''] \porder{\dtn^4}.
@@ -101,7 +103,7 @@ Substituting equations~\eqref{eq:taylornp1} and \eqref{eq:taylorn} into equation
 There are two parts to this error: the first term (with $\yv'''_n$) is fairly standard in second order time integrators.
 However the second term is more complex, applying a Taylor expansion approach here would result in a Jacobian-like matrix of derivatives of $\fv$ with respect to $\yv$.
 Hence we avoid expanding it further.
-See Section~\ref{sec:full-imr-lte-calculation} for details of the rest of the Taylor expansion which proves that the midpoint method is indeed a second order method.
+See Section~\ref{sec:full-imr-lte-calculation} for details of the rest of the Taylor expansion which proves that \imr is indeed a second order method.
 
 
 
@@ -145,7 +147,7 @@ and its local truncation error is\cite[p.267]{Gresho-Sani}
 \end{equation}
 
 Note that equation~\eqref{eq:trunc-final} involves $\yvhf['''] = \yv'''([t_n +t_{n+1}]/2)$ whereas equation~\eqref{eq:AB2LTE} involves $\yv'''(t_n^\AB)$.
-Hence to eliminate the derivative we need to ``offset'' the Adams-Bashforth time-steps with respect to the midpoint method such that the $n$th time-step of the AB2 scheme is at the ``midpoint''.
+Hence to eliminate the derivative we need to ``offset'' the Adams-Bashforth time-steps with respect to the \imr such that the $n$th time-step of the AB2 scheme is at the ``midpoint''.
 We also require that the $(n+1)$th time-steps be the same in both schemes so that the $\yv(t_{n+1})$ terms on the LHS of the truncation error equations will cancel.
 \begin{align}
   t_{n+1}^\AB &= t_{n+1}, \notag\\
@@ -171,7 +173,7 @@ and the local truncation error \eqref{eq:AB2LTE} becomes
 \label{eq:AB2-mid-LTE}
 \end{equation}
 
-We can eliminate the unknown $\yv(t_{n+1})$ term by subtracting the Adams-Bashforth LTE \eqref{eq:AB2-mid-LTE} from the midpoint method LTE \eqref{eq:trunc-final}
+We can eliminate the unknown $\yv(t_{n+1})$ term by subtracting the Adams-Bashforth LTE \eqref{eq:AB2-mid-LTE} from the \imr LTE \eqref{eq:trunc-final}
 \begin{align}
  - \yv_{n+1}^{\IMP} + \yv_{n+1}^{\AB} &=
    \frac{\dtn^3}{24} \yvhf['''] + \ymiderr
@@ -277,8 +279,8 @@ There is a general trend of increasing step size as the solution is gradually da
 Additionally there is an oscillation which peaks at integer and half-integer times, this corresponds to the peaks in $\cos(\omega t)$ and $\sin(\omega t)$.
 This is relevant because the truncation error is proportional to $y'''(t)$ which consists of terms in these two functions.
 
-Also of note is that the accuracy of the midpoint method is much higher than that of BDF2 for the same step size in this example.
-This is due to the fact that for ODEs where $f$ is not a function of $y$ (such as the one used here) the local truncation error of the midpoint method is equivalent to that of the trapezoid rule (see Section~\ref{sec:full-imr-lte-calculation} equation~\eqref{eq:trunc-final}) which has the smallest possible leading coefficient in the local truncation error.\cite{Gresho-Sani} % pg 281
+Also of note is that the accuracy of \imr is much higher than that of BDF2 for the same step size in this example.
+This is due to the fact that for ODEs where $f$ is not a function of $y$ (such as the one used here) the local truncation error of \imr is equivalent to that of the trapezoid rule (see Section~\ref{sec:full-imr-lte-calculation} equation~\eqref{eq:trunc-final}) which has the smallest possible leading coefficient in the local truncation error.\cite{Gresho-Sani} % pg 281
 
 
 Figure~\ref{fig:mp-ninterp} shows the step sizes selected with various numbers of interpolation points used.
@@ -289,13 +291,13 @@ Alternatively it could be due to Runge oscillations (a phenomenon commonly seen 
 \begin{figure}[ht!]
   \centering
   \includegraphics{images/mp_ninterp}
-  \caption{Behaviour of adaptive midpoint method using different numbers of interpolation points for a simple ODE.}
+  \caption{Behaviour of adaptive \imr using different numbers of interpolation points for a simple ODE.}
   \label{fig:mp-ninterp}
 \end{figure}
 
 
 Figure~\ref{fig:mp-tols} compares mean error norms and step sizes of the adaptive midpoint scheme (with two interpolation points) for varying tolerances.
-The midpoint method can be seen to have quadratic convergence by comparing with the $y=x^2$ line shown.
+The \imr can be seen to have quadratic convergence by comparing with the $y=x^2$ line shown.
 Additionally it can be seen that decreasing the tolerance smoothly decreases the mean error (by smoothly decreasing the mean step size).
 
 \begin{figure}[ht!]
@@ -320,7 +322,7 @@ We note that equation~\eqref{eq:basic-midpoint} can also be written in the from
 \begin{equation}
   \yv'(\thf) = \frac{\yv_{n+1} - \yv_n}{\dtn} =  \fv(\thf, \frac{\yv_n + \yv_{n+1}}{2}).
 \end{equation}
-So the obvious equivalent for the midpoint method is
+So the obvious equivalent for \imr is
 \begin{equation}
   \fv(\thf, \frac{\yv_{n+1} + \yv_n}{2}, \frac{\yv_{n+1} - \yv_n}{\dtn}) = 0.
 \end{equation}
@@ -389,7 +391,7 @@ From equation~\eqref{eq:f-taylor} we have
   \label{eq:51}
 \end{equation}
 However we cannot expand $\yv_{n+1}$ to get $\dyn$ in terms of only values at the midpoint.
-So we use the LTE of the midpoint method to rewrite equation~\eqref{eq:51} as
+So we use the LTE of \imr to rewrite equation~\eqref{eq:51} as
 \begin{equation}
   \dyn = \frac{\yv(t_n) + \yv(t_{n+1}) - \lte^\IMP}{2} - \yvhf.
 \end{equation}
@@ -434,13 +436,13 @@ and so\footnote{Assuming that $\dfdyhf$ is not inversely proportional to $\dtn$.
 
 
 
-\section{Application of the adaptive midpoint method to micromagnetics}
+\section{Application of the adaptive implicit midpoint rule to micromagnetics}
 
 %*** Banas' work
 
-\subsection{Why use the midpoint method}
+\subsection{Why use the implicit midpoint rule}
 
-The midpoint method is known to be especially effective for micromagnetics problems \cite{DAquino2005}.
+Implicit midpoint rule is known to be especially effective for micromagnetics problems \cite{DAquino2005}.
 The non-dimensionalised form of the Landau-Lifshitz-Gilbert equation is
 \begin{equation}
   \label{eq:llg-prop-form}
@@ -456,15 +458,15 @@ It has certain properties:
 \end{itemize}
 
 Clearly it is advantageous for a time discretisation method to preserve these properties.
-Midpoint method conserves them (demonstrated below), most other time discretisation schemes don't.
+\imr conserves them (demonstrated below), most other time discretisation schemes don't.
 
-In addition to these properties the midpoint method is:
+In addition to these properties \imr is:
 \begin{itemize}
 \item second order accurate -- typically considered good enough for pdes (higher orders would require expensive high order spatial discretisation to be effective, generally better to just do h-refinement instead) \cite{Matthias}
 \item ??ds-stable - think it's A-stable? \cite{??ds} -- so appropriate for stiff problems, llg is stiff in some/most cases\cite{??ds}.
 \end{itemize}
 
-Since the midpoint method is a single step method there is no dependence on $\dtx{n-1}$ (unlike, for example, BDF2) and so no change in these properties is expected when going from fixed to varying time step sizes.
+Since \imr is a single step method there is no dependence on $\dtx{n-1}$ (unlike, for example, BDF2) and so no change in these properties is expected when going from fixed to varying time step sizes.
 
 \subsection{Properties of continuous Landau-Lifshitz-Gilbert equation}
 \label{sec:prop-cont-llg}
@@ -518,7 +520,7 @@ For non-constant applied fields the change in the Zeeman energy is added which m
 
 ??ds discuss which inner products/norms are used where
 
-As noted in Section~\ref{sec:extens-impl-odes} the midpoint method is defined by the following substitutions
+As noted in Section~\ref{sec:extens-impl-odes} \imr is defined by the following substitutions
 \begin{align}
   \label{eq:55}
   \pd{\mv}{t} &= \frac{\mv_{n+1} - \mv_n}{\dtn}, \\
@@ -526,7 +528,7 @@ As noted in Section~\ref{sec:extens-impl-odes} the midpoint method is defined by
   t &=  \frac{t_{n+1} + t_n}{2}.
 \end{align}
 
-The special conservation properties of the midpoint method discretisation of the Landau-Lifshitz-Gilbert equation come from the fact that for any symmetrical linear operator $\ell$
+The special conservation properties of \imr discretisation of the Landau-Lifshitz-Gilbert equation come from the fact that for any symmetrical linear operator $\ell$
 \begin{align}
   \label{eq:54}
   \ip{\ell \left[ \mv_{n+\half} \right]}{ \pd{\mv}{t} \lvert_{n+\half}}
@@ -622,7 +624,7 @@ Finally the switching is finished and the step size increases again.
 Figure~\ref{fig:linear-field-switch-errors-mp} shows that the adaptive midpoint method gives orders of magnitude better accuracy than adaptive BDF2 in magnetisation length and effective damping, as expected.
 Of interest is the noise in the midpoint effective damping error between $t \approx 2.5$ and $t \approx 9$.
 This is caused by strong variation in the final Newton error: since Newton's method gives quadratic convergence one additional step results in orders of magnitude more accuracy.
-This also indicates that the errors are strongly related to the Newton solver error, which is as expected since this is the only source of error (in these quantities) which is not removed by the use of the midpoint method.
+This also indicates that the errors are strongly related to the Newton solver error, which is as expected since this is the only source of error (in these quantities) which is not removed by the use of \imr.
 
 ??ds also do fixed step midpoint?
 
@@ -655,7 +657,7 @@ This is incompatible with the semi-implicit FEM/BEM method for magnetostatic fie
 However d'Aquino \etal demonstrated an efficient, fully implicit finite difference LLG solver using the fixed step midpoint method\cite{DAquino2005}.
 Such a solver should be easy to modify to use the adaptive midpoint method.
 
-The conservation of magnetisation length by the midpoint method does not require a fully implicit calculation as demonstrated by Spargo \etal\cite{Spargo2003a}.
+The conservation of magnetisation length by \imr does not require a fully implicit calculation as demonstrated by Spargo \etal\cite{Spargo2003a}.
 Hence the adaptive midpoint method could be used to construct a semi-implicit magnetisation length conserving scheme with purely numerical time adaptivity, with the advantages discussed in Section~\ref{sec:altern-time-adapt}.
 
 
