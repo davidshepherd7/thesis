@@ -51,7 +51,7 @@ Then given a system of equations of the form
   \yv'(t) = \fv(t, \yv(t)),
   \label{eq:43}
 \end{equation}
-the implicit midpoint rule is
+the implicit midpoint rule (\imr) is
 \begin{align}
   \yv_{n+1} &= \yv_n + \dtn \fv(\frac{t_{n+1} + t_n}{2}, \frac{\yv_n + \yv_{n+1}}{2}), \notag\\
   &= \yv_n + \dtn \fv(\thf, \frac{\yv_n + \yv_{n+1}}{2}),
@@ -63,7 +63,7 @@ where we have written
 \end{equation}
 for readability.
 
-Note that unlike multistep methods, such as backwards difference 2 (BDF2), this is valid for both constant and variable step sizes because there is no dependence on previous steps.
+Note that unlike multistep methods, such as the second order backwards difference (BDF2), this is valid for both constant and variable step sizes because there is no dependence on previous steps.
 
 
 \subsection{Derivation of local truncation error}
@@ -109,125 +109,6 @@ See Section~\ref{sec:full-imr-lte-calculation} for details of the rest of the Ta
 
 \subsection{Construction of an adaptive scheme}
 
-In order to construct an adaptive time integration scheme we must find an easy to compute approximate to the local truncation error \eqref{eq:trunc-mid}.
-
-First, notice that we can rearrange equation~\eqref{eq:basic-midpoint} to get
-\begin{equation}
-  \fv\left( \thf, \frac{\yv(t_n) + \yv_{n+1}}{2} \right) = \frac{\yv_{n+1} - \yv_n}{\dtn},
-\end{equation}
-which we can substitute into equation~\eqref{eq:trunc-mid}, leaving
-\begin{equation}
-  \lte^\IMP = \frac{\dtn^3}{24} \yvhf[''']  + \dtn \yvhf['] + \yv_n - \yv_{n+1}
-  \porder{\dtn^4}.
-\end{equation}
-To keep algebra simpler we write
-\begin{equation}
-   \ymiderr = \dtn  \left[ \yvhf[']
-  - \fv\left( \thf, \frac{\yv(t_n) + \yv_{n+1}}{2} \right) \right] =  \dtn \yvhf['] + \yv_n - \yv_{n+1}
-\end{equation}
-
-Next we use a second order Adams-Bashforth method as a ``predictor'' to eliminate the difficult-to-estimate $\yvhf[''']$ term.
-The approach is somewhat similar to that used in some adaptive trapezoid rule algorithms.\cite[p.707]{Gresho-Sani}
-
-\subsubsection{Elimination of $\yvhf[''']$ term by Adams-Bashforth Predictor}
-The second-order variable time-step Adams-Bashforth method is\cite[p.267]{Gresho-Sani}
-\begin{equation}
-  \yv_{n+1}^{\AB} = \yv_n + \frac{\dtn^\AB}{2} \left[
-    \left (2 + \frac{\dtn^\AB}{\dtx{n-1}^\AB} \right) \yv'_n
-    - \frac{\dtn^\AB}{\dtx{n-1}^\AB} \yv'_{n-1}
-    \right],
-  \label{eq:AB2}
-\end{equation}
-and its local truncation error is\cite[p.267]{Gresho-Sani}
-\begin{equation}
-  \lte^{\AB} = \yv(t_{n+1}) - \yv_{n+1}^{\AB}
-  = \left( 2 + \frac{3 \dtx{n-1}^\AB}{\dtn^\AB} \right) \frac{(\dtn^\AB)^3}{12} \yv'''(t_n^\AB)
-  \porder{\dtn^4}.
-  \label{eq:AB2LTE}
-\end{equation}
-
-Note that equation~\eqref{eq:trunc-final} involves $\yvhf['''] = \yv'''([t_n +t_{n+1}]/2)$ whereas equation~\eqref{eq:AB2LTE} involves $\yv'''(t_n^\AB)$.
-Hence to eliminate the derivative we need to ``offset'' the Adams-Bashforth time-steps with respect to the \imr such that the $n$th time-step of the AB2 scheme is at the ``midpoint''.
-We also require that the $(n+1)$th time-steps be the same in both schemes so that the $\yv(t_{n+1})$ terms on the LHS of the truncation error equations will cancel.
-\begin{align}
-  t_{n+1}^\AB &= t_{n+1}, \notag\\
-  t_n^\AB &= \thf = (t_{n} + t_{n+1})/2  \qquad   (\dtn^\AB = \frac{\dtn}{2}).
-  \label{eq:ab2-ts}
-\end{align}
-The $(n-1)$th step can be chosen freely, we pick
-\begin{equation}
-  t_{n-1}^\AB = t_n  \qquad   (\dtx{n-1}^\AB = \frac{\dtn}{2} = \dtn^\AB),
-\end{equation}
-for simplicity.\footnote{Depending on the method used to calculate input values for this step (see Section~\ref{sec:calc-requ-input}) $t_{n-1}^\AB = \thf$ might be preferable. The algebra is more complex but the numerical behaviour appears to be identical.}
-
-With these times the AB2 method \eqref{eq:AB2} becomes
-\begin{equation}
-   \yv_{n+1}^{\AB} = \yvhf + \frac{\dtn}{4} \left[
-     3 \yvhf['] - \yv_n' \right],
-   \label{eq:AB2-mid}
-\end{equation}
-and the local truncation error \eqref{eq:AB2LTE} becomes
-\begin{equation}
-  \lte^\AB = \yv(t_{n+1}) -  \yv_{n+1}^{\AB}
-  = \frac{5 \dtn^3}{96} \yvhf['''] \porder{\dtn^4}.
-\label{eq:AB2-mid-LTE}
-\end{equation}
-
-We can eliminate the unknown $\yv(t_{n+1})$ term by subtracting the Adams-Bashforth LTE \eqref{eq:AB2-mid-LTE} from the \imr LTE \eqref{eq:trunc-final}
-\begin{align}
- - \yv_{n+1}^{\IMP} + \yv_{n+1}^{\AB} &=
-   \frac{\dtn^3}{24} \yvhf['''] + \ymiderr
-  - \frac{5\dtn^3}{96} \yvhf[''']
-  \porder{\dtn^4}, \notag \\
-  - \yv_{n+1}^{\IMP} + \yv_{n+1}^{\AB} &= -\frac{1}{4} \left( \frac{\dtn^3}{24} \yvhf['''] \right)
-  + \ymiderr
-  \porder{\dtn^4},
-\end{align}
-Rearranging gives us an expression for $\yvhf[''']$
-\begin{equation}
-  \frac{\dtn^3}{24} \yvhf['''] = 4 \left[ \yv_{n+1}^\IMP - \yv_{n+1}^{\AB} + a_n \right]  \porder{\dtn^4},
-\end{equation}
-which can be substituted into equation~\eqref{eq:trunc-final} to give the truncation error
-\begin{equation}
-  \lte^\IMP = 4 \left[ \yv_{n+1}^\IMP - \yv_{n+1}^{\AB} \right] + 5 a_n
-  \porder{\dtn^4}.
-  \label{eq:50}
-\end{equation}
-
-
-\subsubsection{Calculation of Required Input Values}
-\label{sec:calc-requ-input}
-
-It remains to provide efficient ways of calculating $\yvhf$, $\yv_n'$, $\yvhf[']$.
-Note that we can't just use the approximation $\yvhf \simeq \frac{\yv(t_n) + \yv_{n+1}}{2}$ because there is an error of order $\dtn^2$ involving $\yvhf['']$ (see Section~\ref{sec:full-imr-lte-calculation} for details), which is even harder to calculate than $\yvhf$ itself.
-Instead we interpolate the values at the points needed from the known values at integer time steps.
-
-The points $y_n, y_{n-1}, y_{n-2}, \ldots$ can be assumed to be exact in LTE estimation, so these will be the points used for interpolation.
-Other known values have an error (typically related to the truncation error) so these will not be used.
-
-If $\fv(t, \yv(t))$ is cheap to calculate, \ie it is given explicitly as in equation~\eqref{eq:43} then additional derivative values could be used as interpolation inputs.
-As an additional benefit the location (in time) of these derivatives can be chosen to improve the numerical stability of the interpolation.
-However, to remain more general (and in particular to allow the application of this scheme to the Gilbert form of the LLG equation) we avoid additional function evaluations and use only the previous time values.
-
-Barycentric Lagrange seems to be the ``best'' interpolation method.\cite{Berrut2004}
-But Hermite with divided differences gives an easy way to get derivatives in scipy implementation so use that for now.
-Errors should be the same.
-
-%So as long as the previous $\texttt{npoints}$ time-steps are of comparable size to this one the interpolation will be $\order{\dtn^\texttt{npoints}}$.
-%Otherwise it will be $~\order{\dtn \dtx{n-1} \dtx{n-2}\cdots}$.
-
-There are conflicting requirements on the number of points to use for the interpolation ($\texttt{npoints}$). As number of points is increased we have
-\begin{itemize}
-\item A higher power in error term $\order{\dtn^\texttt{npoints}}$.
-\item Induced oscillations in $\dtn$ (see Figure~\ref{fig:mp-ninterp}).
-\item More initial values needed before adaptivity can be used.
-\end{itemize}
-Numerical experiments show that 2 points work best.
-
-
-%% Numerical experiments show that interpolating using $y_{n+1}^\IMP$ causes an increase in oscillations and strange behaviour, probably because of the truncation error (which is large compared to the interpolation error).
-%% We also have estimates for $\yvhf$, $\fv(\thf, \yvhf)$ for all $n \leq n+1$, with low accuracy, probably no way to use these..
-%% Unless we use some kind of least squares fitting, probably too expensive.
 
 
 \subsubsection{Computing the size of the next time-step}
@@ -266,34 +147,23 @@ Unless otherwise specified all examples in this section use a Newton tolerance o
 
 \begin{figure}[ht!]
   \centering
-  \includegraphics{images/bdf2_vs_mp}
-  \caption{Adaptive midpoint (using two interpolation points) vs adaptive BDF2 for a simple ODE.}
+  \includegraphics{images/placeholder}
+  \caption{Adaptive \imr vs adaptive BDF2 for a simple ODE.}
   \label{fig:mp-vs-bdf2}
 \end{figure}
 
 Figure~\ref{fig:mp-vs-bdf2} shows the performance of the adaptive midpoint scheme derived above compared to a standard adaptive BDF2 scheme.\cite{Gresho-Sani} %pg 715
 The step size selection of the adaptive midpoint scheme closely follows that of the BDF2 scheme.
 
+
+??ds discuss more about third derivative!
 The pattern of step sizes is as expected.
 There is a general trend of increasing step size as the solution is gradually damped out.
 Additionally there is an oscillation which peaks at integer and half-integer times, this corresponds to the peaks in $\cos(\omega t)$ and $\sin(\omega t)$.
 This is relevant because the truncation error is proportional to $y'''(t)$ which consists of terms in these two functions.
 
 Also of note is that the accuracy of \imr is much higher than that of BDF2 for the same step size in this example.
-This is due to the fact that for ODEs where $f$ is not a function of $y$ (such as the one used here) the local truncation error of \imr is equivalent to that of the trapezoid rule (see Section~\ref{sec:full-imr-lte-calculation} equation~\eqref{eq:trunc-final}) which has the smallest possible leading coefficient in the local truncation error.\cite{Gresho-Sani} % pg 281
-
-
-Figure~\ref{fig:mp-ninterp} shows the step sizes selected with various numbers of interpolation points used.
-For larger numbers of interpolation points spurious oscillations begin to appear which are not related to the solution.
-This could be due to increased coupling between previous points.
-Alternatively it could be due to Runge oscillations (a phenomenon commonly seen in polynomial interpolation when interpolation points are not careful selected), but this is unlikely because the number of interpolation points is still low when the oscillations begin to appear.
-
-\begin{figure}[ht!]
-  \centering
-  \includegraphics{images/mp_ninterp}
-  \caption{Behaviour of adaptive \imr using different numbers of interpolation points for a simple ODE.}
-  \label{fig:mp-ninterp}
-\end{figure}
+??ds why? (Jacobian is zero)
 
 
 Figure~\ref{fig:mp-tols} compares mean error norms and step sizes of the adaptive midpoint scheme (with two interpolation points) for varying tolerances.
@@ -302,7 +172,7 @@ Additionally it can be seen that decreasing the tolerance smoothly decreases the
 
 \begin{figure}[ht!]
   \centering
-  \includegraphics{images/mp_tols}
+  \includegraphics{images/placeholder}
   \caption{Adaptive midpoint mean dt vs mean error for varying tolerance. The line is $y = x^2$.}
   \label{fig:mp-tols}
 \end{figure}
@@ -310,7 +180,7 @@ Additionally it can be seen that decreasing the tolerance smoothly decreases the
 
 \subsection{Additional Notes}
 
-\subsubsection{Extension to implicit ODEs}
+\subsubsection{Implicit ODEs}
 \label{sec:extens-impl-odes}
 
 We sometimes wish to solve a system of equations where $\yv'(t)$ only given implicitly\footnote{This use of ``implicit'' is unrelated to the notion of implicitness in the time integration scheme.} (for example the Gilbert form of the Landau-Lifshitz-Gilbert equation), in this case equation~\eqref{eq:43} becomes
@@ -327,45 +197,8 @@ So the obvious equivalent for \imr is
   \fv(\thf, \frac{\yv_{n+1} + \yv_n}{2}, \frac{\yv_{n+1} - \yv_n}{\dtn}) = 0.
 \end{equation}
 
-Also note that we have avoided the requirement for any additional function (\ie $\fv$) evaluations during the estimation of the local truncation error.
-Hence everything derived here is equally applicable to implicit ODEs.
-
-
-\subsubsection{Use of Predictor for Initial Guess}
-
-Often the predictor (i.e. the explicit method used to eliminate the highest derivative of $\yv$) is used to give an initial guess for the non-linear solve.
-In fact this appears to be where the term ``Predictor-Corrector'' originates.
-This is not possible here because we use $\yv_{n+1}$ in the predictor calculation.
-However past experience with Newton's method suggests that using a predictor instead of the value at the previous time $\yv_n$ gives no reduction in the number of Newton steps needed for convergence.\cite{Milan, Matthias}
-Hence there is no disadvantage in using $\yv_{n+1}$ in the predictor calculation.
-
-\subsubsection{Suitability of Adams-Bashforth 2 Predictor}
-
-There are a large number of explicit time integration algorithms, here we list the requirements which result in the decision to use AB2 over other possibilities:
-\begin{itemize}
-\item Must be second order (and no higher), otherwise it cannot be used to eliminate the $\yv'''$ term.
-
-\item Must be calculable without calculating $\yv'$ at points far away from where it is already calculated.
-  Otherwise we would need to perform additional separate calculations.
-  This would be reasonable if the $\yv'$ is given explicitly, but that is not always the case.
-  So we avoid additional $\yv'$ evaluations for increased generality (and in particular for use with the Gilbert form of the LLG equation).
-
-\item Must not reduce to the implicit midpoint rule when shifted to appropriate times and the approximation under any approximations used.
-  This is the case for the explicit midpoint rule if we try $\fv(\thf, \yv_n + \dtn \fv(t_n, \yv_n)) \simeq \fv(\thf, \frac{\yv_n + \yv_{n+1}}{2})$.
-\end{itemize}
-
-Other second order explicit ODE solvers:
-\begin{itemize}
-\item Explicit midpoint rule (a.k.a. Verlet, leapfrog method) -- see requirement 3.
-\item Heunn's method -- requires a $\yv'$ evaluation at a point determined by a previous evaluation which almost always require a new calculation, see requirement 2. Similarly for any other variants on second order Runge-Kutta methods other than the explicit midpoint rule.
-\end{itemize}
-
-
-Other possibilities:
-\begin{itemize}
-\item Some sort of explicitised-BDF2? Replace $\yv_{n+1}$ on RHS of expression by $\yv_{n+1}^\IMP$ and calculate explicitly? LTE could be hard to derive... Similar to predictor-corrector methods...
-\item Interpolate or FD derivatives further to get values at whatever points are needed. Probably quite a bad loss of accuracy from interpolation.
-\end{itemize}
+However the adaptive scheme requires an additional function evaluation.
+For implicitly defined functions this is expensive, so this adaptive method is not efficient for equations which can only be defined in such a way.
 
 
 \subsubsection{Full lte calculation of implicit midpoint}
@@ -443,12 +276,13 @@ and so\footnote{Assuming that $\dfdyhf$ is not inversely proportional to $\dtn$.
 \subsection{Why use the implicit midpoint rule}
 
 Implicit midpoint rule is known to be especially effective for micromagnetics problems \cite{DAquino2005}.
-The non-dimensionalised form of the Landau-Lifshitz-Gilbert equation is
+The non-dimensionalised form of the Landau-Lifshitz equation is
 \begin{equation}
   \label{eq:llg-prop-form}
   \dmdt = - \mv \times( \hv - \dampc \dmdt),
 \end{equation}
 where $\hv$ is the effective field due to various effects depending on the system being modelled.
+It is mathematically equivalent to the Landau-Lifshitz equation (as used elsewhere) with different constants, however certain properties are easier to prove with this Gilbert form so we will use it for this section.
 
 It has certain properties:
 \begin{itemize}
@@ -460,13 +294,21 @@ It has certain properties:
 Clearly it is advantageous for a time discretisation method to preserve these properties.
 \imr conserves them (demonstrated below), most other time discretisation schemes don't.
 
+Errors in both of these conservation properties have been used as an error estimator for the entire error.
+Hence it seems likely that reducing these errors will reduce the total error.
+
+Geometric (or symplectic) integration schemes typically result in much smaller error build-up than schemes that do not preserve such quantities.
+
+
 In addition to these properties \imr is:
 \begin{itemize}
 \item second order accurate -- typically considered good enough for pdes (higher orders would require expensive high order spatial discretisation to be effective, generally better to just do h-refinement instead) \cite{Matthias}
 \item ??ds-stable - think it's A-stable? \cite{??ds} -- so appropriate for stiff problems, llg is stiff in some/most cases\cite{??ds}.
 \end{itemize}
 
-Since \imr is a single step method there is no dependence on $\dtx{n-1}$ (unlike, for example, BDF2) and so no change in these properties is expected when going from fixed to varying time step sizes.
+However it might suffer from order reduction ??ds Read more about implicit runge kutta etc?
+
+Since \imr is a single step method there is no dependence on $\dtx{n-1}$ (unlike, for example, BDF2) and so no change in these properties would be expected when going from fixed to varying time step sizes.
 
 \subsection{Properties of continuous Landau-Lifshitz-Gilbert equation}
 \label{sec:prop-cont-llg}
@@ -616,7 +458,7 @@ Finally the switching is finished and the step size increases again.
 
 \begin{figure}[ht!]
   \centering
-  \includegraphics{images/linear_field_switch_solution}
+  \includegraphics{images/placeholder}
   \caption{Magnetisation dynamics and step size selections for a small spherical magnetic nano-particle switching in a linearly increasing applied field. Calculated using the adaptive midpoint method with two interpolation points.}
   \label{fig:linear-field-switch-mp}
 \end{figure}
@@ -630,7 +472,7 @@ This also indicates that the errors are strongly related to the Newton solver er
 
 \begin{figure}[ht!]
   \centering
-  \includegraphics{images/linear_field_switch_errors}
+  \includegraphics{images/placeholder}
   \caption{Comparison of errors in $\abs{\mv}$ and $\dampc$ for adaptive midpoint method and adaptive BDF2 for a small spherical magnetic nano-particle switching in a linearly increasing applied field.}
   \label{fig:linear-field-switch-errors-mp}
 \end{figure}
@@ -641,10 +483,11 @@ It can be seen that reduction of the Newton tolerance strongly reduces the mean 
 
 \begin{figure}[ht!]
   \centering
-  \includegraphics{images/midpoint_newton_tol_errors}
+  \includegraphics{images/placeholder}
   \caption{Effect of varying the Newton method tolerance on errors in $\abs{\mv}$ and $\dampc$  for the switching nano-particle problem discussed above.}
   \label{fig:newton-tol-errors-mp}
 \end{figure}
+
 
 \subsection{Discussion}
 
@@ -655,10 +498,10 @@ We have done some initial work using adaptive midpoint for the non-spatially con
 Unfortunately the energy/damping conservation properties require the entire calculation to be performed implicitly.
 This is incompatible with the semi-implicit FEM/BEM method for magnetostatic field calculations,\cite{Koehler1997} which is used in the current implementation of our model.
 However d'Aquino \etal demonstrated an efficient, fully implicit finite difference LLG solver using the fixed step midpoint method\cite{DAquino2005}.
-Such a solver should be easy to modify to use the adaptive midpoint method.
+Such a solver should be easily to modifiable to use our adaptive midpoint method.
 
 The conservation of magnetisation length by \imr does not require a fully implicit calculation as demonstrated by Spargo \etal\cite{Spargo2003a}.
-Hence the adaptive midpoint method could be used to construct a semi-implicit magnetisation length conserving scheme with purely numerical time adaptivity, with the advantages discussed in Section~\ref{sec:altern-time-adapt}.
+Hence the adaptive midpoint method could be used to construct a semi-implicit magnetisation-length-conserving scheme with purely numerical time adaptivity, with the advantages discussed in Section~\ref{sec:altern-time-adapt}.
 
 
 \subsubsection{Alternative time adaptivity methods in micromagnetics}
@@ -668,7 +511,7 @@ In cases where the damping is not exact the effective damping can be used as an 
 ??ds The disadvantage of this method (aside from the obvious requirement that the damping be inexact) is that, depending on the discretisation used, the error estimator may be unable to distinguish between insufficient space refinement and insufficient time refinement.
 In particular this is the case when the solution is not completely divided into separate effective field calculations and pointwise time integration, such as in a typical Galerkin finite element model.
 
-Rigorous time error estimates for the LLG with limited effective field terms with a certain discretisation method were proven and used to perform adaptive refinement of midpoint method time steps by Banas.\cite{Banas-thesis}
+Rigorous time error estimates for the LLG with limited effective field terms with a certain discretisation method were proven and used to perform adaptive refinement of midpoint method time steps by Banas.\cite{Banas-thesis} ??ds do these work, why does no one use them?
 By comparison our adaptive method is much more general in that it can be applied to any differential equation and any discretisation scheme which uses the method of lines for time.
 
 \subsubsection{Symplecity}
@@ -676,8 +519,10 @@ By comparison our adaptive method is much more general in that it can be applied
 ??ds I basically have no idea about this stuff.
 
 The fixed step midpoint method is ``almost symplectic'' for the LLG equation with zero damping (Hamiltonian structure is preserved up to a small error).\cite{Austin1993}
-However it is well known that most adaptive schemes cannot be symplectic\cite{Iserles2009} % pg. 91
-so we do not discuss this area further.
+However it is well known that most adaptive schemes are not symplectic\cite{Iserles2009} % pg. 91
+because they constantly change the nearby Hamiltonian that is followed by the symplectic integrator.
+
+??ds MORE
 
 
 \subsection{Future work}
