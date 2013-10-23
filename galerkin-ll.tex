@@ -26,8 +26,8 @@ Since the non-dimensionalised version of equation~\eqref{eq:LLG} is the same as 
 So our starting system of equations is:
 \begin{align}
   \dmdt &= -\mxh -\dampc \mxmxh, \label{eq:ndll} \\
-  \hv &= \happ - \nabla \phi + \nabla^2 \mv + \kone \hca, \label{eq:ndh} \\
-  \nabla^2 \phi &= \nabla \cdot \mv. \label{eq:ndphi}
+  \hv &= \happ - \nabla \phi + \lap \mv + \kone \hca, \label{eq:ndh} \\
+  \lap \phi &= \nabla \cdot \mv. \label{eq:ndphi}
 \end{align}
 
 Where:
@@ -65,8 +65,8 @@ We start with the magnetostatic potential equation because it is the simplest.
 After weak forming, the equation for the magnetostatic potential becomes:
 \begin{gather}
   \text{given $\mv \in \sob^1(\magd)$, find $\phim \in \sob^2(\magd) \cap \Dfs$ such that:} \notag \\
-  r_{\phim} = \int_\magd (\nabla^2 \phim) \tbf  \d \magd
-  - \int_\magd (\nabla \cdot \mv) \tbf \d \magd = 0,
+  r_{\phim} = \intd{(\lap \phim) \tbf}
+  - \intd{(\nabla \cdot \mv) \tbf} = 0,
   \quad \forall \tbf \in \sob^0(\magd) \cap \Dfs_0. \label{eqn:phires1}
 \end{gather}
 
@@ -76,16 +76,16 @@ We do this by ``transferring'' the derivatives onto the test functions \cite{How
 
 First we need the following identity\footnote{This can be easily derived by applying the product rule to $\nabla \cdot (v \nabla \phim)$.}
 \begin{equation}
-  (\nabla^2 \phim) \tbf =
+  (\lap \phim) \tbf =
   \nabla \cdot (\tbf \nabla \phim)
   - \nabla \phim \cdot \nabla \tbf.
   \label{eq:20}
 \end{equation}
 Then integrating over the magnetic domain $\magd$ and applying the divergence theorem gives
 \begin{equation}
-  \int_\magd (\nabla^2 \phim) \tbf \d \magd =
+  \intd{(\lap \phim) \tbf} =
   \int_{\boundd} \tbf (\nabla \phim \cdot \nv) \d \boundd
-  - \int_\magd \nabla \phim \cdot \nabla \tbf \d \magd.
+  - \intd{\nabla \phim \cdot \nabla \tbf}.
   \label{eqn:identitygauss}
 \end{equation}
 
@@ -93,8 +93,8 @@ We now substitute \eqref{eqn:identitygauss} into \eqref{eqn:phires1}, giving
 \begin{gather}
    \text{given $\mv \in \sob^1(\magd)$, find $\phim \in \sob^1(\magd) \cap \Dfs$ such that:} \notag \\
   r_{\phim} = \int_{\boundd} \tbf (\nabla \phim \cdot \nv) \d \boundd
-  - \int_\magd \nabla \tbf \cdot \nabla \phim \d \magd
-  - \int_\magd (\nabla \cdot \mv) \tbf \d \magd = 0
+  - \intd{\nabla \tbf \cdot \nabla \phim}
+  - \intd{(\nabla \cdot \mv) \tbf} = 0
   , \notag \\
   \forall \tbf \in \sob^1(\magd) \cap \Dfs_0. \notag
 \end{gather}
@@ -104,24 +104,24 @@ Note that the boundary integral is always zero on the Dirichlet region of the bo
 \begin{gather}
    \text{given $\mv \in \sob^1(\magd)$, find $\phim \in \sob^1(\magd) \cap \Dfs$ such that:} \notag \\
   r_{\phim} = \int_{\boundd_\Neu} \tbf g_\Neu \d \boundd
-  - \int_\magd \nabla \tbf \cdot \nabla \phim \d \magd
-  - \int_\magd (\nabla \cdot \mv) \tbf \d \magd = 0
+  - \intd{\nabla \tbf \cdot \nabla \phim}
+  - \intd{(\nabla \cdot \mv) \tbf} = 0
   , \label{res:contphi} \\
   \forall \tbf \in \sob^1(\magd) \cap \Dfs_0. \notag
 \end{gather}
 
 %% We can also remove the gradient operator from $\mv$ in the second term of \eqref{eqn:phires1} using a similar identity\footnote{Derived by applying the product rule to $\nabla \cdot (\mv v)$ then integrating, multiplying by $4 \pi$ and applying the Divergence theorem.} to \eqref{eqn:identitygauss}
 %% \begin{equation}
-%%   - \int_\magd 4 \pi (\nabla \cdot \mv) v \d \magd =
-%%   4 \pi \int_\magd \mv \cdot (\nabla v) \d \magd
+%%   - \intd{4 \pi (\nabla \cdot \mv) v} =
+%%   4 \pi \intd{\mv \cdot (\nabla v)}
 %%   - 4 \pi \int_{\boundd} v \mv \cdot \nv \d \boundd.
 %% \end{equation}
 
 % Substituting this into \eqref{eqn:phires2} leaves us with
 % \begin{gather}
 %      \text{given $\mv \in \sob^1(\magd)$, find $\phim \in \sob^1(\magd) \cap \Dfs$ such that:} \notag \\
-%   r_{\phim} = - \int_\magd \nabla v \cdot \nabla \phim \d \magd
-%   + 4 \pi \int_\magd \mv \cdot (\nabla v) \d \magd
+%   r_{\phim} = - \intd{\nabla v \cdot \nabla \phim}
+%   + 4 \pi \intd{\mv \cdot (\nabla v)}
 %   - 4 \pi \int_{\boundd} v \mv \cdot \nv \d \boundd
 %   , \\
 %   \forall v \in \sob^1(\magd) \cap \Dfs_0. \notag
@@ -135,14 +135,14 @@ For the Landau-Lifshitz equation~\eqref{eq:ndll} we have a vector of three resid
   \begin{aligned}
     \rll = \int_\magd \tbf \dmdt &+ \tbf \mv \times \hat{\hv}
     + \dampc \tbf \mv \times \left( \mv \times \hat{\hv} \right) \\
-    &+  \tbf \mv \times \nabla^2 \mv
-    + \dampc \tbf \mv \times \left(\mv \times \nabla^2 \mv\right) \d\magd,
+    &+  \tbf \mv \times \lap \mv
+    + \dampc \tbf \mv \times \left(\mv \times \lap \mv\right) \d\magd,
     \label{res:contllg}
   \end{aligned}
 \end{equation}
 where
 \begin{equation}
-  \hat{\hv} = \happ - \nabla \phi + \kone \hca = \hv - \nabla^2 \mv
+  \hat{\hv} = \happ - \nabla \phi + \kone \hca = \hv - \lap \mv
 \end{equation}
 
 We temporarily sidestep the details of time discretisation by assuming $\dmdt$ to be just another function of $\xv$ that we can solve for.
@@ -150,55 +150,55 @@ We temporarily sidestep the details of time discretisation by assuming $\dmdt$ t
 
 Similarly to the situation with $\phim$ we require second order space derivatives on $\mv$, but only within the exchange field terms
 \begin{equation}
-  \rex = \underbrace{\int_\magd \tbf \mv \times \nabla^2 \mv \d\magd}_{\mxex}
-  + \dampc \underbrace{\int_\magd \tbf \mv \times \mv \times \nabla^2 \mv \d\magd}_{\mxmxex}
+  \rex = \underbrace{\intd{\tbf \mv \times \lap \mv}}_{\mxex}
+  + \dampc \underbrace{\intd{\tbf \mv \times \mv \times \lap \mv}}_{\mxmxex}
   \label{eqn:exresterms}
 \end{equation}
 First we reduce the derivative order in the simpler exchange term, $\mxex$:
 \begin{equation}
   \mxex =
-  \int_\magd \tbf \mv \times \nabla^2 \mv \d\magd =
-  \int_\magd \tbf \threevec{m_2 \nabla^2m_3 - m_3 \nabla^2m_2 }
-      {m_1 \nabla^2m_3 - m_3 \nabla^2m_1 }
-      {m_1 \nabla^2m_2 - m_2 \nabla^2m_1 } \d\magd
+  \intd{\tbf \mv \times \lap \mv} =
+  \intd{\tbf \threevec{m_2 \lap m_3 - m_3 \lap m_2 }
+      {m_1 \lap m_3 - m_3 \lap m_1 }
+      {m_1 \lap m_2 - m_2 \lap m_1 }}
   \notag
 \end{equation}
 Considering the first term of a single component of this we can use the same techniques as in Section~\ref{sec:magn-field-resid} to give
 \begin{align}
-  \int_\magd (\tbf m_i) \nabla^2 m_j \d\magd
+  \intd{(\tbf m_i) \lap m_j}
   &= \int_\boundd (\tbf m_i) \ddn{m_j} \d\boundd
-  - \int_\magd \nabla(\tbf m_i) \cdot \nabla m_j \d\magd, \notag \\
-  &= 0 - \int_\magd \tbf \nabla m_i \cdot \nabla m_j \d\magd
-  -  \int_\magd m_i \nabla \tbf \cdot \nabla m_j \d\magd, \notag
+  - \intd{\nabla(\tbf m_i) \cdot \nabla m_j}, \notag \\
+  &= 0 - \intd{\tbf \nabla m_i \cdot \nabla m_j}
+  -  \intd{m_i \nabla \tbf \cdot \nabla m_j}, \notag
 \end{align}
 where we have substituted in equation~\eqref{eqn:mbc} (the boundary condition on $\mv$).
 So the entire first component is:
 \begin{equation}
   \begin{aligned}
-    \int_\magd \tbf (m_i \nabla^2m_j - m_j \nabla^2m_i) \d\magd
+    \intd{\tbf (m_i \lap m_j - m_j \lap m_i)}
     &= - \int_\magd \tbf \nabla m_i \cdot \nabla m_j
     +  m_i \nabla \tbf \cdot \nabla m_j \\
     & \qquad - \tbf \nabla m_j \cdot \nabla m_i
     -  m_j \nabla \tbf \cdot \nabla m_i \d\magd, \\
-    &= -\int_\magd m_i \nabla \tbf \cdot \nabla m_j - m_j \nabla m_i  \cdot \nabla \tbf \d\magd,
+    &= -\intd{m_i \nabla \tbf \cdot \nabla m_j - m_j \nabla m_i  \cdot \nabla \tbf},
   \end{aligned}
 \end{equation}
 which is just a cross product.
 So we have
 \begin{equation}
-  \int_\magd \tbf \mv \times \nabla^2 \mv \d\magd =
-  -\int_\magd \mv \times \threevec{\nabla m_1 \cdot \nabla \tbf}{\nabla m_2 \cdot \nabla \tbf}{\nabla m_3 \cdot \nabla \tbf} \d\magd.
+  \intd{\tbf \mv \times \lap \mv} =
+  -\intd{\mv \times \threevec{\nabla m_1 \cdot \nabla \tbf}{\nabla m_2 \cdot \nabla \tbf}{\nabla m_3 \cdot \nabla \tbf}}.
 \end{equation}
 In a slight abuse of notation we write
 \begin{equation}
   \threevec{\nabla m_1 \cdot \nabla \tbf}{\nabla m_2 \cdot \nabla \tbf}{\nabla m_3 \cdot \nabla \tbf} = \nabla \mv \cdot \nabla \tbf,
   \label{eqn:gradvecm}
 \end{equation}
-(in a similar way to how we write the vector of Laplacians of $m_i$ as $\nabla^2 \mv$.
+(in a similar way to how we write the vector of Laplacians of $m_i$ as $\lap \mv$.
 
 Next the second term of equation~\eqref{eqn:exresterms}
 \begin{equation}
-  \mxmxex = \int_\magd \tbf \mv \times \left( \mv \times \nabla^2 \mv \right) \d\magd, \notag
+  \mxmxex = \intd{\tbf \mv \times \left( \mv \times \lap \mv \right)}, \notag
 \end{equation}
 which, unfortunately, does not have such neat cancellations.
 First note that we can use the identity
@@ -208,12 +208,12 @@ First note that we can use the identity
 \end{equation}
 and $\mv \cdot \mv = \abs{\mv} = 1$ to slightly reduce the complexity of $\mxmxex$ to
 \begin{equation}
-  \mxmxex = \underbrace{\int_\magd \tbf \mv (\mv \cdot \nabla^2 \mv) \d\magd}_{\mxmxex_1} \;\;
-  \underbrace{- \int_\magd \tbf \nabla^2 \mv  \d\magd}_{\mxmxex_2}.
+  \mxmxex = \underbrace{\intd{\tbf \mv (\mv \cdot \lap \mv)}}_{\mxmxex_1} \;\;
+  \underbrace{- \intd{\tbf \lap \mv}}_{\mxmxex_2}.
 \end{equation}
 Term $\mxmxex_2$ can again be dealt with by the same tricks as in Section~\ref{sec:magn-field-resid}:
 \begin{equation}
-  \left[ \mxmxex_2 \right]_i = -0 + \int_\magd \nabla \tbf \cdot \nabla m_i \d\magd,
+  \left[ \mxmxex_2 \right]_i = -0 + \intd{\nabla \tbf \cdot \nabla m_i},
 \end{equation}
 or using the notation given in equation~\eqref{eqn:gradvecm}
 \begin{equation}
@@ -222,7 +222,7 @@ or using the notation given in equation~\eqref{eqn:gradvecm}
 
 The $i$-th component of term $\mxmxex_1$ is
 \begin{align}
-  \left[\mxmxex_1\right]_i &= \sum_j \int_\magd (\tbf m_i  m_j) \nabla^2 m_j \d\magd, \notag \\
+  \left[\mxmxex_1\right]_i &= \sum_j \int_\magd (\tbf m_i  m_j) \lap m_j \d\magd, \notag \\
   &= \sum_j \int_\boundd \tbf  m_i  m_j \ddn{m_j} \d\boundd
   - \int_\magd  \nabla(\tbf m_i  m_j) \cdot \nabla m_j  \d\magd, \notag \\
   &= \sum_j 0 - \int_\magd m_j \nabla(\tbf m_i) \cdot \nabla m_j
@@ -389,7 +389,7 @@ Some more points before the main Jacobian calculation:
   \end{equation}
   where $\dtsdml$ is some constant that depends on the time integration scheme.
   For BDF2 $\dtsdml = \frac{3}{2\dtn}$, for the implicit midpoint rule $\dtsdml = \frac{1}{\dtn}$.
-\item The part of the residual corresponding to the double-cross-product exchange field term ($\mv \times \mv \times \nabla^2 \mv$) is more complex and cannot be written in terms of skew operators (as far as I can tell).
+\item The part of the residual corresponding to the double-cross-product exchange field term ($\mv \times \mv \times \lap \mv$) is more complex and cannot be written in terms of skew operators (as far as I can tell).
   We will calculate it separately later, but for now we write it as $\rexh$.
 \end{itemize}
 

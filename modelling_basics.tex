@@ -129,7 +129,7 @@ The fast multipole method is used, with massive parallelisation for GPUs, to qui
 When the magnetic field is being produced only by magnets and not currents (\ie the magnetic field is irrotational) it is possible to express the field as a function of a scalar potential, $\phim$.\cite{Coey2010} Let $\magd$ be the magnetic body, $\boundd$ it's boundary and $\nv$ the outward unit normal on the boundary. Then we have
 \begin{gather}
   \Hms = - \nabla \phim,  \label{eq:Hms} \\
-  \nabla^2 \phim = \nabla \cdot \Mv \quad \xv \in \fulld, \label{eq:nnphim}
+  \lap \phim = \nabla \cdot \Mv \quad \xv \in \fulld, \label{eq:nnphim}
 \end{gather}
 With the following boundary conditions
 \begin{gather}

@@ -67,20 +67,20 @@ where $\gamma' = \frac{\gymagc}{1 + \alpha^2}$ and
 It is also fairly easy to construct stationary solutions to the Landau-Lifshitz-Gilbert equation with only the exchange field included.
 The full equation for this case is
 \begin{equation}
-  \dmdt = - \left( \mv \times \nabla^2 \mv \right) + \dampc \left( \mv \times \dmdt \right).
+  \dmdt = - \left( \mv \times \lap \mv \right) + \dampc \left( \mv \times \dmdt \right).
 \end{equation}
 
 When $\dmdt = 0$, \ie a steady state, this reduces to
 \begin{equation}
-   \left( \mv \times \nabla^2 \mv \right) = 0.
+   \left( \mv \times \lap \mv \right) = 0.
 \end{equation}
 
 One case when this is true is
 \begin{equation}
-  \nabla^2 \mv \propto \mv,
+  \lap \mv \propto \mv,
   \label{eq:steadystatecond}
 \end{equation}
-(also when $\nabla^2 \mv = 0$ or $\mv = 0$ but these are not useful for testing).
+(also when $\lap \mv = 0$ or $\mv = 0$ but these are not useful for testing).
 We can construct an $\mv$ situation where \eqref{eq:steadystatecond} holds from combinations of, for example, $\cos(x)$ and $\sin(x)$.
 An example of a complete solution is
 \begin{equation}
@@ -91,4 +91,4 @@ An example of a complete solution is
     \right].
 \end{equation}
 
-Then $\nabla^2 \mv = - \mv$ as required.
+Then $\lap \mv = - \mv$ as required.

@@ -54,13 +54,13 @@ Similarly for equation~\eqref{eqn:phind}
 Letting $\Phi = M_s l$ we obtain
 \begin{equation}
   \label{eq:57}
-  \nabla^2 \phi = \nabla \cdot \mv.
+  \lap \phi = \nabla \cdot \mv.
 \end{equation}
 
 Repeating the substitutions for equation~\eqref{eqn:effnd} gives
 \begin{align*}
-  M_s \hv &= M_s \happ - \frac{\Phi}{l} \nabla \phi + \frac{2 \Exchc }{\mu_0 M_s} \frac{1}{l^2} \nabla^2 \mv + \frac{2\kone}{\mu_0 M_s}  \nK (\mv \cdot \ev) \ev, \\
-  \hv &= \frac{M_s}{M_s} \happ - \frac{M_s}{M_s} \nabla \phi + \frac{2 \Exchc}{\mu_0 M_s^2} \frac{1}{l^2} \nabla^2 \mv + \frac{2\kone}{\mu_0 M_s^2} \nK (\mv \cdot \ev) \ev.
+  M_s \hv &= M_s \happ - \frac{\Phi}{l} \nabla \phi + \frac{2 \Exchc }{\mu_0 M_s} \frac{1}{l^2} \lap \mv + \frac{2\kone}{\mu_0 M_s}  \nK (\mv \cdot \ev) \ev, \\
+  \hv &= \frac{M_s}{M_s} \happ - \frac{M_s}{M_s} \nabla \phi + \frac{2 \Exchc}{\mu_0 M_s^2} \frac{1}{l^2} \lap \mv + \frac{2\kone}{\mu_0 M_s^2} \nK (\mv \cdot \ev) \ev.
 \end{align*}
 
 This can be further simplified by choosing the exchange length\footnote{There are actually two exchange lengths: one based on the strength of exchange as compared with the magnetostatic field and another by comparison with the magnetocrystalline anisotropy. We use the magnetostatic-field-based exchange length for normalisation to avoid division by zero in the case of zero magnetocrystalline anisotropy.} as the characteristic length scale
@@ -77,7 +77,7 @@ and
 
 leaving
 \begin{equation}
-  \hv = \happ - \nabla \phi + \nabla^2 \mv + \kone (\mv \cdot \ev) \ev.
+  \hv = \happ - \nabla \phi + \lap \mv + \kone (\mv \cdot \ev) \ev.
 \end{equation}
 
 \subsection{The Landau-Lifshitz form of the LLG}

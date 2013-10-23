@@ -3,7 +3,7 @@
 
 %% General packages
 %% ============================================================
-\usepackage{amsmath,amssymb,amsfonts}   %Add maths commands, symbols and fonts
+\usepackage{amsmath,amssymb,amsfonts,amsthm}   %Add maths commands, symbols and fonts
 \usepackage{url}                %Support for urls
 
 %% \usepackage[colorlinks=true, % colour all links black (just using
@@ -169,16 +169,21 @@
 \newcommand{\vd}[2]{\frac{\delta #1}{\delta #2}} % variational derivative
 \newcommand{\E}[1]{\times 10^{#1}} % powers of 10
 \newcommand{\st}{\,|\,} % ``such that'' operator in sets (vertical line with spacing)
-\newcommand{\ip}[2]{\left(#1,\, #2 \right)}
+\newcommand{\ip}[2]{\left(#1,\, #2 \right)} % inner product
 \newcommand{\ddn}[1]{\pd{#1}{\nv}} % normal derivative
 
 % Norm and abs: better spacing than if done manually with |
 \newcommand{\abs}[1]{\lvert #1 \rvert}
 \newcommand{\norm}[1]{\lVert #1 \rVert}
 
+\newcommand{\ltwo}{L^2}
+
 
 % d for the end of integrals (e.g. dx) with correct spacing and non-italic
 \renewcommand{\d}{{\; \text{d}}}
+% standard integrals
+\newcommand{\intd}[1]{{\int_{\magd} #1 \d\magd}}
+\newcommand{\intb}[1]{{\int_{\boundd} #1 \d\magd}}
 
 % Some vector functions
 \newcommand{\gv}{{\mathbf{g}}}
@@ -208,10 +213,10 @@
 \newcommand{\porder}[1]{\quad + \order{#1}} % with larger spacing
 
 % Differential operators
-%% \newcommand{\div}{\nabla \cdot}
+\renewcommand{\div}{\nabla \cdot} % \div is normally division
 \newcommand{\grad}{\nabla}
-\newcommand{\lap}{\nabla^2}
 \newcommand{\curl}{\nabla \cross}
+\newcommand{\lap}{\nabla^2}
 
 
 %% Spaces, domains and geometrical labels
@@ -268,7 +273,6 @@
 \newsubcommand{\hca}{\mathbf{h}}{\text{ca}} % crystalline ansiotropy
 \newsubcommand{\hthm}{\mathbf{h}}{\text{th}} % thermal
 \newcommand{\nH}{H_{\mathbb{n}}} % A "magnitude" of H for normalisation
-\newcommand{\hop}{h}
 
 % Similarly for energies
 \newsubcommand{\Eapp}{E}{{\text{ap}}} %applied
@@ -358,6 +362,16 @@
 
 % Local truncation errors
 \newcommand{\lte}{T_n}
+
+
+% Operators
+% ============================================================
+\usepackage{mathrsfs}
+\newcommand{\myop}[1]{\mathscr{#1}}
+\newcommand{\hop}{\myop{H}}
+\newcommand{\aop}{\myop{A}}
+\newcommand{\bop}{\myop{B}}
+\newcommand{\cop}{\myop{C}}
 
 
 % Fractions

@@ -53,11 +53,11 @@ For now we consider the magnetostatic potential only within the magnetic domain,
 
 %% \begin{equation}
 %%   \label{eq:hex}
-%%   \hex = \exchc \nabla^2 \mv,
+%%   \hex = \exchc \lap \mv,
 %% \end{equation}
 %% \begin{align}
 %%   \hms = - \nabla \phim, \label{eq:hms} \\
-%%   \nabla^2 \phim = \nabla \cdot \mv. \label{eq:phim}
+%%   \lap \phim = \nabla \cdot \mv. \label{eq:phim}
 %% \end{align}
 
 
@@ -75,7 +75,7 @@ We convert some of the above equations into their residual weak forms as describ
 The equation for the magnetostatic potential becomes \eqref{eq:phim} becomes:
 \begin{gather}
   \text{given $\mv \in \sob^1(\magd)$, find $\phim \in \sob^2(\magd) \cap \Dfs$ such that:} \notag \\
-  r_{\phim} = \int_\magd (\nabla^2 \phim) v  \d \magd
+  r_{\phim} = \int_\magd (\lap \phim) v  \d \magd
   - \int_\magd (\nabla \cdot \mv) v \d \magd = 0,
   \quad \forall v \in \sob^0(\magd) \cap \Dfs_0. \label{eqn:phires1}
 \end{gather}
@@ -86,14 +86,14 @@ We do this by ``transferring'' the derivatives onto the test functions \cite{How
 
 First we need the following identity\footnote{This can be easily derived by applying the product rule to $\nabla \cdot (v \nabla \phim)$.}
 \begin{equation}
-  (\nabla^2 \phim) v =
+  (\lap \phim) v =
   \nabla \cdot (v \nabla \phim)
   - \nabla \phim \cdot \nabla v.
   \label{eq:20}
 \end{equation}
 Then integrating over the magnetic domain $\magd$ and applying the divergence theorem gives
 \begin{equation}
-  \int_\magd (\nabla^2 \phim) v \d \magd =
+  \int_\magd (\lap \phim) v \d \magd =
   \int_{\boundd} v (\nabla \phim \cdot \nv) \d \boundd
   - \int_\magd \nabla \phim \cdot \nabla v \d \magd.
   \label{eqn:identitygauss}
@@ -143,14 +143,14 @@ Note that the boundary integral is always zero on the Dirichlet region of the bo
 % The exchange effective field equation~\eqref{eq:hex} becomes:
 % \begin{gather}
 %    \text{given $\mv \in \sob^2(\magd)$, find $\hex \in \sob^0(\magd)$ such that:} \notag \\
-%   \mathbf{r}_{\text{ex}} = \int_\magd \Big( \hex - \exchc \nabla^2 \mv \Big) v \d\magd
+%   \mathbf{r}_{\text{ex}} = \int_\magd \Big( \hex - \exchc \lap \mv \Big) v \d\magd
 %   = 0,
 %   \quad \forall v \in \sob^0(\magd).
 % \end{gather}
 
 % A similar substitution to \eqref{eqn:identitygauss} can be applied to the residuals for $\hex$. Considering only the $i$th component of $\mathbf{r}_{\text{ex}}$ we have
 % \begin{equation}
-%   r_{\text{ex},i} = \int_\magd \Big( h_{\text{ex},i} - \exchc \nabla^2 m_i \Big) v \d \magd,
+%   r_{\text{ex},i} = \int_\magd \Big( h_{\text{ex},i} - \exchc \lap m_i \Big) v \d \magd,
 %   \quad \forall v \in \sob^0(\magd).
 %   \label{eqn:exresi}
 % \end{equation}
@@ -175,7 +175,7 @@ For the Landau--Lifshitz--Gilbert equation~\eqref{eq:llg} we have a set of three
   \\
   \mathbf{r}_{\text{llg}} = \int_\magd \Big( \dmdt
   + (\mv \times \hca) + (\mv \times \happ) \\
-  - (\mv \times \nabla \phi) + (\mv \times \nabla^2 \mv)
+  - (\mv \times \nabla \phi) + (\mv \times \lap \mv)
   - \dampc \left( \mv \times \dmdt \right)
   \Big)  v \d\magd
   = 0, \label{res:contllg}
@@ -185,7 +185,7 @@ For the Landau--Lifshitz--Gilbert equation~\eqref{eq:llg} we have a set of three
 
 We again wish to reduce the order of the derivatives, this time on $\mv$ in
 \begin{equation}
-  I = \int_\magd (\mv \times \nabla^2 \mv) v \d\magd.
+  I = \int_\magd (\mv \times \lap \mv) v \d\magd.
   \label{eq:46}
 \end{equation}
 It can be shown that this is equivalent to

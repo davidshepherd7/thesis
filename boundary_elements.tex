@@ -31,7 +31,7 @@ Let $\phi^\inte$ be the value of $\phi$ (with subscripts as appropriate) close t
 
 We have the following \emph{physical} conditions\footnote{Equations~\eqref{eq:2}-\eqref{eqn:phibound} come from the definition of $\phi_m$, requirement for finite total energy, $\Bv^\text{int} \cdot \nv = \Bv^\text{ext} \cdot \nv$ and ??ds respectively.} on the total magnetostatic potential $\phim$:
 \begin{equation}
-  \nabla^2 \phim(\xv) = \nabla \cdot \mv(\xv) \qquad \forall \xv \in \magd \cup \extd,
+  \lap \phim(\xv) = \nabla \cdot \mv(\xv) \qquad \forall \xv \in \magd \cup \extd,
   \label{eq:2}
 \end{equation}
 \begin{equation}
@@ -53,7 +53,7 @@ We choose $\phi_1$ to satisfy:
   \label{eq:21}
 \end{equation}
 \begin{equation}
-  \nabla^2 \phi_1(\xv) = \nabla \cdot \mv(\xv) \qquad \xv \in \magd,
+  \lap \phi_1(\xv) = \nabla \cdot \mv(\xv) \qquad \xv \in \magd,
   \label{eq:1}
 \end{equation}
 \begin{equation}
@@ -66,10 +66,10 @@ We choose $\phi_1$ to satisfy:
 \end{equation}
 Note that equations~\eqref{eq:1} and \eqref{eqn:dphionebound} give a self contained Poisson Neumann problem for $\phi_1 \in \magd \cup \boundd$.
 
-The equations~\eqref{eq:2} to \eqref{eqn:phibound} for $\phim$ combined with equations~\eqref{eq:21} to \eqref{eqn:phioneoutside} for $\phi_1$ give a number of conditions on $\phi_2$ must satisfy. Since the Laplacian operator is linear, \ie $\nabla^2 \phim = \nabla^2 \phi_1 + \nabla^2 \phi_2$, from \eqref{eq:2} and \eqref{eq:1} it follows that
+The equations~\eqref{eq:2} to \eqref{eqn:phibound} for $\phim$ combined with equations~\eqref{eq:21} to \eqref{eqn:phioneoutside} for $\phi_1$ give a number of conditions on $\phi_2$ must satisfy. Since the Laplacian operator is linear, \ie $\lap \phim = \lap \phi_1 + \lap \phi_2$, from \eqref{eq:2} and \eqref{eq:1} it follows that
 \begin{equation}
   \label{eq:8}
-  \nabla^2 \phi_2(\xv) = 0 \qquad \forall \xv \in \fulld.
+  \lap \phi_2(\xv) = 0 \qquad \forall \xv \in \fulld.
 \end{equation}
 
 Equation~\eqref{eqn:phioneoutside} implies that $\pd{\phi^\exte_1(\xv)}{\nv} = 0$. Combining this with equations (\ref{eqn:dphionebound}) and (\ref{eqn:dphibound}) gives
@@ -131,7 +131,7 @@ and for $d=3$
 
 We have the following results from potential theory:\cite{Sternberg1946}
 \begin{enumerate}
-\item The double layer potential satisfies Laplace's equation $\nabla^2 \phi = 0$ (in other words the double layer potential is harmonic).% pages ?
+\item The double layer potential satisfies Laplace's equation $\lap \phi = 0$ (in other words the double layer potential is harmonic).% pages ?
 
 \item The double layer potential undergoes a jump of $\mu(\xv)$ moving in the direction $\nv$ across a smooth surface $S$, \ie
   \begin{equation}
@@ -199,7 +199,7 @@ Either equation~\eqref{eq:6} or \eqref{eq:18} can be used to give boundary condi
  Hence, given the solution for $\phi_1 \in \boundd$ (from solving \eqref{eq:1} and \eqref{eqn:dphionebound}) we have a complete Dirichlet Poisson problem for $\phim \in \magd \cup \boundd$:
 \begin{align}
   \label{eq:phim-bem}
-  \nabla^2 \phim(\xv) = \nabla \cdot \mv(\xv) \quad \xv \in \magd, \\
+  \lap \phim(\xv) = \nabla \cdot \mv(\xv) \quad \xv \in \magd, \\
   \phim(\xv) = \bm \big[ \phi_1(\xv) \big] \quad \xv \in \boundd.
 \end{align}
 
