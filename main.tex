@@ -381,6 +381,52 @@
 \newcommand{\toltt}{{\textrm{\textup{\texttt{tol}}}\xspace}}
 
 
+% Stuff needed for galerkin
+% ============================================================
+\newcommand{\skewop}{\text{\Large{$\Lambda$}}}
+\newcommand{\skewm}[1]{\skewop\left[ #1 \right]}
+\newcommand{\crossop}[2]{\skewm{ #1 } \cdot \left( #2 \right)}
+
+\newcommand*\circled[1]{\tikz[baseline=(char.base)]{
+    \node[shape=circle,draw,inner sep=1pt] (char) {#1};}}
+\newcommand{\mxex}{I}
+\newcommand{\mxmxex}{J}
+
+\newsubcommand{\rex}{\mathbf{r}}{\text{ex}}
+\newsubcommand{\rexh}{\mathbf{r}}{\text{ex,h}}
+\newsubcommand{\rll}{\mathbf{r}}{\text{ll}}
+
+\newcommand{\intp}[1]{\sum_\ibasisc \sk #1_\ibasisc}
+\newcommand{\intpb}[1]{\left( \intp{#1} \right)}
+\newsubcommand{\hs}{\hv}{\text{s}}
+
+\newcommand{\ik}{\ibasisc}
+
+\newcommand{\dtsdml}{J_\text{ts}}
+
+
+
+% Notation for midpoint method stuff
+% ============================================================
+
+% t at midpoint
+\newcommand{\thfx}[1]{t_{#1+\half}}
+\newcommand{\thf}{\thfx{n}}
+
+% exact y of t at midpoint
+\newcommand{\yvhfx}[2]{\yv#1(\thfx{#2})}
+\newcommand{\yvhf}[1][]{\yvhfx{#1}{n}}
+
+% df/dy matrix
+\newcommand{\dfdy}{F}
+\newcommand{\dfdyhfx}[1]{\dfdy_{#1+\half}}
+\newcommand{\dfdyhf}{\dfdyhfx{n}}
+
+% error due to midpoint approx
+\newcommand{\ymiderr}{a_n}
+
+
+
 
 %% Beginning of main document
 %% =============================================================
@@ -436,7 +482,7 @@
 \include{llg-signs}
 \include{non-dimensionalisation}
 \include{analytical-solutions}
-\include{galerkin-llg.tex}
+\include{galerkin-llg}
 
 \begin{landscape}
   \begin{table}

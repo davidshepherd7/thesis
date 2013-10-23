@@ -1,31 +1,4 @@
 
-% Notation for midpoint method stuff
-% ============================================================
-
-% notation for "at midpoint"
-%% \newcommand{\valueatmidpoint}[1]{\hat{#1}}
-
-% t at midpoint
-\newcommand{\thfx}[1]{t_{#1+\half}}
-\newcommand{\thf}{\thfx{n}}
-
-% exact y of t at midpoint
-\newcommand{\yvhfx}[2]{\yv#1(\thfx{#2})}
-\newcommand{\yvhf}[1][]{\yvhfx{#1}{n}}
-
-% df/dy matrix
-\newcommand{\dfdy}{F}
-\newcommand{\dfdyhfx}[1]{\dfdy_{#1+\half}}
-\newcommand{\dfdyhf}{\dfdyhfx{n}}
-
-% error due to midpoint approx
-\newcommand{\ymiderr}{a_n}
-
-
-% don't know?
-%% \newcommand{\yvhfestx}[1]{\bar{\yv}_{#1}}
-%% \newcommand{\yvhfest}{\yvhfestx{n}}
-
 
 \section{An adaptive implicit-midpoint-rule time-integrator}
 
