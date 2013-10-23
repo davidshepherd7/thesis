@@ -1,0 +1,162 @@
+\newtheorem{theorem}{Theorem}
+
+\newcommand{\ff}{f}
+\newcommand{\gf}{g}
+
+\newcommand{\knl}{k}
+
+\section{Proof of properties of the effective field}
+
+\subsection{Linear Symmetrical operator}
+
+An operator is linear if
+\begin{equation}
+  \lop[\av + c\bv] = \lop[\av] + c\lop[\bv].
+\end{equation}
+The vector Laplace, magnetostatic field and magnetocrystalline anisotropy operators are all easily seen to be linear because they involve only derivatives, integrals and dot products with other vectors (all linear) of the vector function that they operate on.
+
+An operator is symmetrical if
+\begin{equation}
+  \ip{\lop \av}{\bv} = \ip{\av}{\lop \bv},
+\end{equation}
+for all possible $\av, \bv$.
+
+In this section we make heavy use of a consequence of the divergence theorem:
+\begin{equation}
+  \intd{\fv(\xv) \cdot \grad \gf(\xv)}
+  = \intb{\gf(\xv) \, (\fv(\xv) \cdot \nv)} - \intd{\gf(\xv) \, \div \fv(\xv)}.
+  \label{eqn:grad-divergence}
+\end{equation}
+
+Note that by substituting $\fv = \grad \ff$ we can derive
+\begin{equation}
+  \begin{aligned}
+    \intd{(\lap \ff) \gf}
+    &= \intb{\gf (\nabla \ff \cdot \nv)} - \intd{\nabla \ff \cdot \nabla \gf}, \\
+    &= \intb{\gf \ddn{\ff}} - \intd{\nabla \ff \cdot \nabla \gf}.
+    \label{eqn:laplace-divergence}
+  \end{aligned}
+\end{equation}
+
+\subsubsection{Applied field}
+
+The applied field part of the effective field is \emph{not} symmetrical.
+This can be seen from the fact that it is independent of $\mv$ and so it is impossible to ``get back any information'' about $\av$ in $\ip{\happ[\av](\xv, t)}{\bv}$.
+
+\subsubsection{Vector Laplace operator}
+
+\begin{theorem}
+  If $\lop$ is a symmetric operator on $z \in \ltwo$ then so is its ``vector equivalent'', $\bar{\lop}$.
+\end{theorem}
+
+\begin{proof}
+  \begin{equation}
+    \begin{aligned}
+      \ip{\bar{\lop}\av}{\bv} &= \intd{ \bar{\lop} \av \cdot \bv}, \\
+      &= \intd{\lop[a_0] b_0} + \intd{\lop[a_1] b_1} + \intd{\lop[a_2] b_2}, \\
+      & = \ip{\lop[a_0]}{b_0} + \ip{\lop[a_1]}{b_1} + \ip{\lop[a_2]}{b_2}.
+    \end{aligned}
+  \end{equation}
+  So $\bar{\lop}$ is symmetrical if and only if $\lop$ is symmetrical.
+\end{proof}
+
+\begin{theorem}[Symmetry of Laplace operator]
+ If $m_x \in \ltwo$ and $\ddn{m_x} = 0$ on all of $\boundd$ then $\lap$ is a symmetric linear operator on $m_x$.
+\end{theorem}
+\begin{proof}
+  Apply equation~\eqref{eqn:laplace-divergence} twice: first with $\ff = a$, $\gf = b$, then the other way around.
+  \begin{equation}
+    \begin{aligned}
+      \ip{\lap a}{b} &= \intd{\left(\lap a \right) b}, \\
+      &= \intb{b \ddn{a}} - \intd{\nabla a \cdot \nabla b}, \\
+      &= \intb{b \ddn{a}} + \intd{a (\lap b)} - \intb{a \ddn{b}}, \\
+      &= \intd{a (\lap b)}.
+    \end{aligned}
+  \end{equation}
+\end{proof}
+
+From these two theorems we see that our operator $\lap \mv$ is symmetrical. Note that this is \emph{not} true when we have surface anisotropy or when the length of $\mv$ is not constant!
+
+The Laplace operator is easily seen to be linear because it only involves derivatives.
+
+
+\subsubsection{Magnetostatic field operator}
+
+For simplicity write
+\begin{equation}
+  \knl = \frac{1}{4\pi \abs{\xv - \xv'}}.
+\end{equation}
+
+\begin{theorem}[Symmetry of magnetostatic field operator]
+  The operator
+  \begin{equation}
+    \begin{aligned}
+      \hmsop [\av](\xv) &= - \grad \phim[\av](\xv), \\
+      &= -\grad \left[-\intd[\magd']{\knl \nabla' \cdot \av(\xv')}
+          + \intd[\boundd']{\knl \av(\xv') \cdot \nv(\xv')} \right].
+    \end{aligned}
+  \end{equation}
+  is symmetrical.
+\end{theorem}
+
+\begin{proof}
+
+  Essentially we just apply identity~\eqref{eqn:grad-divergence}, rearrange the result using the symmetry of the kernel, $\knl$, and apply the identity again in reverse. We drop the $\xv$ argument from $\phim$ where it is obvious.
+
+  Using~\eqref{eqn:grad-divergence} we get
+  \begin{equation}
+    \begin{aligned}
+      \ip{\hmsop[\av]}{\bv} &= -\intd{\bv \cdot \grad \phim[\av] }, \\
+      &= - \intb{\phim[\av] (\bv \cdot \nv)} + \intd{\phim[\av] (\div \bv) }, \\
+      &= \intb{ \intd[\magd']{\knl (\nabla' \cdot \av(\xv')) (\bv(\xv) \cdot \nv(\xv))}} \\
+      &- \intb{ \intd[\boundd']{\knl (\av(\xv') \cdot \nv(\xv')) (\bv(\xv) \cdot \nv(\xv))}} \\
+      &- \intd{ \intd[\magd']{\knl (\nabla' \cdot \av(\xv')) (\div \bv(\xv))}} \\
+      &+ \intd{ \intd[\boundd']{\knl (\av(\xv') \cdot \nv(\xv')) (\div \bv(\xv))}}.
+    \end{aligned}
+  \end{equation}
+
+Changing the order of the integrals gives
+  \begin{equation}
+    \begin{aligned}
+      \ip{\hmsop[\av]}{\bv}
+      &= \intd[\magd']{ \intb{\knl (\bv(\xv) \cdot \nv(\xv))} (\nabla' \cdot \av(\xv'))} \\
+      &- \intd[\boundd']{ \intb{\knl (\bv(\xv) \cdot \nv(\xv))} (\av(\xv') \cdot \nv(\xv'))} \\
+      &- \intd[\magd']{ \intd{\knl (\div \bv(\xv))} (\nabla' \cdot \av(\xv'))} \\
+      &+ \intd[\boundd']{ \intd{\knl (\div \bv(\xv))} (\av(\xv') \cdot \nv(\xv'))}.
+    \end{aligned}
+  \end{equation}
+
+  Finally we swap $\xv$ with $\xv'$ (allowed because $\knl$ is symmetrical in its arguments) and collect terms with the same (outer) integral domain
+  \begin{equation}
+    \begin{aligned}
+      \ip{\hmsop[\av]}{\bv} &= \intd{\phi[\bv] (\div \av)} - \intb{\phi[\bv] (\av \cdot \nv)}, \\
+      & = \ip{\hmsop[\bv]}{\av}.
+    \end{aligned}
+  \end{equation}
+
+\end{proof}
+
+Note that this is a property of the operator itself and so holds regardless of the method used to calculate the field.
+
+
+\subsubsection{Magnetocrystalline anisotropy}
+
+Here we only examine the case of uniaxial anisotropy
+\begin{equation}
+  \hca[\mv] = \kone (\mv \cdot \ev) \ev.
+\end{equation}
+
+We can easily see that the operator is symmetrical by writing out the definitions
+\begin{equation}
+  \begin{aligned}
+    \ip{\hca[\av]}{\bv} &= \intd{ \kone (\av \cdot \ev) (\ev \cdot \bv)}, \\
+    &= \intd{(\kone(\bv \cdot \ev) \ev) \cdot \av}, \\
+    &= \ip{\hca[\bv]}{\av}.
+  \end{aligned}
+\end{equation}
+
+
+%%% Local Variables:
+%%% mode: latex
+%%% TeX-master: "./main"
+%%% End:
