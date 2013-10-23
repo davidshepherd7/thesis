@@ -21,7 +21,6 @@
 % error due to midpoint approx
 \newcommand{\ymiderr}{a_n}
 
-\newcommand{\imr}{IMR}
 
 % don't know?
 %% \newcommand{\yvhfestx}[1]{\bar{\yv}_{#1}}
@@ -51,7 +50,7 @@ Then given a system of equations of the form
   \yv'(t) = \fv(t, \yv(t)),
   \label{eq:43}
 \end{equation}
-the implicit midpoint rule (\imr) is
+the implicit midpoint rule (IMR) is
 \begin{align}
   \yv_{n+1} &= \yv_n + \dtn \fv(\frac{t_{n+1} + t_n}{2}, \frac{\yv_n + \yv_{n+1}}{2}), \notag\\
   &= \yv_n + \dtn \fv(\thf, \frac{\yv_n + \yv_{n+1}}{2}),
@@ -72,7 +71,7 @@ Note that unlike multistep methods, such as the second order backwards differenc
 The local truncation error (LTE) of a time integration scheme is the error due a single integration step.
 It can be calculated by substituting $\yv_n = \yv(t_n)$ into the approximation for the next time-step then subtracting the result from the exact solution at the next time-step, $\yv(t_{n+1})$.
 
-Using this definition the local truncation error of \imr is
+Using this definition the local truncation error of IMR is
 \begin{align}
   \lte^\IMP &= \yv(t_{n+1}) - \yv_{n+1}^\IMP, \notag\\
   &= \yv(t_{n+1}) - \yv(t_n) - \dtn \fv\left( \thf, \frac{\yv(t_n) + \yv_{n+1}^\IMP}{2} \right).
@@ -103,16 +102,28 @@ Substituting equations~\eqref{eq:taylornp1} and \eqref{eq:taylorn} into equation
 There are two parts to this error: the first term (with $\yv'''_n$) is fairly standard in second order time integrators.
 However the second term is more complex, applying a Taylor expansion approach here would result in a Jacobian-like matrix of derivatives of $\fv$ with respect to $\yv$.
 Hence we avoid expanding it further.
-See Section~\ref{sec:full-imr-lte-calculation} for details of the rest of the Taylor expansion which proves that \imr is indeed a second order method.
+See Section~\ref{sec:full-imr-lte-calculation} for details of the rest of the Taylor expansion which proves that IMR is indeed a second order method.
 
 
 
 \subsection{Construction of an adaptive scheme}
 
+Most adaptive schemes for implicit integrators (e.g. trapezoid rule, BDF2) use a Milne-device based method.\cite{gresho-sani} % not sure what page
+However due to the complexity of the local truncation error of the implicit midpoint rule there are some difficulties, see Section~??ds for more details.
+Instead we take the approach commonly used in Runge-Kutta time integrators: we attempt to cheaply repeat the calculation at a higher accuracy and compare the answers to get an error estimate.
+Such approaches usually rely on ``Runge-Kutta pairs'', pairs of RK methods which share a number of evaluation points but have different orders of accuracy.
+Examples are ??ds RK45, RK23 \cite{??ds}
+
+However IMR uses a single evaluation at the optimal point in the time step to cause cancellation of higher order terms.
+Hence there is no way to reuse this evaluation in a higher order method without at least two additional evaluations, due to the destruction of symmetry.
+Instead we use a little known explicit version of the third order backwards difference method (eBDF3).
+This requires only 3 history values and a single (explicit) derivative function evaluation at time $t_n$ in order to compute a 3rd order accurate step.
+Alternatively a 3rd order Adams-Bashforth scheme could be used, this would require one less startup step but would require storage of an additional derivative value.
+
+
 
 
 \subsubsection{Computing the size of the next time-step}
-% new
 
 We use a standard method for computing the next time step from the local truncation error and a target local truncation error \toltt:\cite[pg.268]{Gresho-Sani}
 \begin{equation}
@@ -148,7 +159,7 @@ Unless otherwise specified all examples in this section use a Newton tolerance o
 \begin{figure}[ht!]
   \centering
   \includegraphics{images/placeholder}
-  \caption{Adaptive \imr vs adaptive BDF2 for a simple ODE.}
+  \caption{Adaptive IMR vs adaptive BDF2 for a simple ODE.}
   \label{fig:mp-vs-bdf2}
 \end{figure}
 
@@ -162,12 +173,12 @@ There is a general trend of increasing step size as the solution is gradually da
 Additionally there is an oscillation which peaks at integer and half-integer times, this corresponds to the peaks in $\cos(\omega t)$ and $\sin(\omega t)$.
 This is relevant because the truncation error is proportional to $y'''(t)$ which consists of terms in these two functions.
 
-Also of note is that the accuracy of \imr is much higher than that of BDF2 for the same step size in this example.
+Also of note is that the accuracy of IMR is much higher than that of BDF2 for the same step size in this example.
 ??ds why? (Jacobian is zero)
 
 
 Figure~\ref{fig:mp-tols} compares mean error norms and step sizes of the adaptive midpoint scheme (with two interpolation points) for varying tolerances.
-The \imr can be seen to have quadratic convergence by comparing with the $y=x^2$ line shown.
+The IMR can be seen to have quadratic convergence by comparing with the $y=x^2$ line shown.
 Additionally it can be seen that decreasing the tolerance smoothly decreases the mean error (by smoothly decreasing the mean step size).
 
 \begin{figure}[ht!]
@@ -192,7 +203,7 @@ We note that equation~\eqref{eq:basic-midpoint} can also be written in the from
 \begin{equation}
   \yv'(\thf) = \frac{\yv_{n+1} - \yv_n}{\dtn} =  \fv(\thf, \frac{\yv_n + \yv_{n+1}}{2}).
 \end{equation}
-So the obvious equivalent for \imr is
+So the obvious equivalent for IMR is
 \begin{equation}
   \fv(\thf, \frac{\yv_{n+1} + \yv_n}{2}, \frac{\yv_{n+1} - \yv_n}{\dtn}) = 0.
 \end{equation}
@@ -224,7 +235,7 @@ From equation~\eqref{eq:f-taylor} we have
   \label{eq:51}
 \end{equation}
 However we cannot expand $\yv_{n+1}$ to get $\dyn$ in terms of only values at the midpoint.
-So we use the LTE of \imr to rewrite equation~\eqref{eq:51} as
+So we use the LTE of IMR to rewrite equation~\eqref{eq:51} as
 \begin{equation}
   \dyn = \frac{\yv(t_n) + \yv(t_{n+1}) - \lte^\IMP}{2} - \yvhf.
 \end{equation}
@@ -292,7 +303,7 @@ It has certain properties:
 \end{itemize}
 
 Clearly it is advantageous for a time discretisation method to preserve these properties.
-\imr conserves them (demonstrated below), most other time discretisation schemes don't.
+IMR conserves them (demonstrated below), most other time discretisation schemes don't.
 
 Errors in both of these conservation properties have been used as an error estimator for the entire error.
 Hence it seems likely that reducing these errors will reduce the total error.
@@ -300,7 +311,7 @@ Hence it seems likely that reducing these errors will reduce the total error.
 Geometric (or symplectic) integration schemes typically result in much smaller error build-up than schemes that do not preserve such quantities.
 
 
-In addition to these properties \imr is:
+In addition to these properties IMR is:
 \begin{itemize}
 \item second order accurate -- typically considered good enough for pdes (higher orders would require expensive high order spatial discretisation to be effective, generally better to just do h-refinement instead) \cite{Matthias}
 \item ??ds-stable - think it's A-stable? \cite{??ds} -- so appropriate for stiff problems, llg is stiff in some/most cases\cite{??ds}.
@@ -308,7 +319,7 @@ In addition to these properties \imr is:
 
 However it might suffer from order reduction ??ds Read more about implicit runge kutta etc?
 
-Since \imr is a single step method there is no dependence on $\dtx{n-1}$ (unlike, for example, BDF2) and so no change in these properties would be expected when going from fixed to varying time step sizes.
+Since IMR is a single step method there is no dependence on $\dtx{n-1}$ (unlike, for example, BDF2) and so no change in these properties would be expected when going from fixed to varying time step sizes.
 
 \subsection{Properties of continuous Landau-Lifshitz-Gilbert equation}
 \label{sec:prop-cont-llg}
@@ -362,7 +373,7 @@ For non-constant applied fields the change in the Zeeman energy is added which m
 
 ??ds discuss which inner products/norms are used where
 
-As noted in Section~\ref{sec:extens-impl-odes} \imr is defined by the following substitutions
+As noted in Section~\ref{sec:extens-impl-odes} IMR is defined by the following substitutions
 \begin{align}
   \label{eq:55}
   \pd{\mv}{t} &= \frac{\mv_{n+1} - \mv_n}{\dtn}, \\
@@ -370,7 +381,7 @@ As noted in Section~\ref{sec:extens-impl-odes} \imr is defined by the following 
   t &=  \frac{t_{n+1} + t_n}{2}.
 \end{align}
 
-The special conservation properties of \imr discretisation of the Landau-Lifshitz-Gilbert equation come from the fact that for any symmetrical linear operator $\ell$
+The special conservation properties of IMR discretisation of the Landau-Lifshitz-Gilbert equation come from the fact that for any symmetrical linear operator $\ell$
 \begin{align}
   \label{eq:54}
   \ip{\ell \left[ \mv_{n+\half} \right]}{ \pd{\mv}{t} \lvert_{n+\half}}
@@ -466,7 +477,7 @@ Finally the switching is finished and the step size increases again.
 Figure~\ref{fig:linear-field-switch-errors-mp} shows that the adaptive midpoint method gives orders of magnitude better accuracy than adaptive BDF2 in magnetisation length and effective damping, as expected.
 Of interest is the noise in the midpoint effective damping error between $t \approx 2.5$ and $t \approx 9$.
 This is caused by strong variation in the final Newton error: since Newton's method gives quadratic convergence one additional step results in orders of magnitude more accuracy.
-This also indicates that the errors are strongly related to the Newton solver error, which is as expected since this is the only source of error (in these quantities) which is not removed by the use of \imr.
+This also indicates that the errors are strongly related to the Newton solver error, which is as expected since this is the only source of error (in these quantities) which is not removed by the use of IMR.
 
 ??ds also do fixed step midpoint?
 
@@ -500,7 +511,7 @@ This is incompatible with the semi-implicit FEM/BEM method for magnetostatic fie
 However d'Aquino \etal demonstrated an efficient, fully implicit finite difference LLG solver using the fixed step midpoint method\cite{DAquino2005}.
 Such a solver should be easily to modifiable to use our adaptive midpoint method.
 
-The conservation of magnetisation length by \imr does not require a fully implicit calculation as demonstrated by Spargo \etal\cite{Spargo2003a}.
+The conservation of magnetisation length by IMR does not require a fully implicit calculation as demonstrated by Spargo \etal\cite{Spargo2003a}.
 Hence the adaptive midpoint method could be used to construct a semi-implicit magnetisation-length-conserving scheme with purely numerical time adaptivity, with the advantages discussed in Section~\ref{sec:altern-time-adapt}.
 
 
