@@ -182,8 +182,8 @@
 % d for the end of integrals (e.g. dx) with correct spacing and non-italic
 \renewcommand{\d}{{\; \text{d}}}
 % standard integrals
-\newcommand{\intd}[1]{{\int_{\magd} #1 \d\magd}}
-\newcommand{\intb}[1]{{\int_{\boundd} #1 \d\magd}}
+\newcommand{\intd}[2][\magd]{{\int_{#1} #2 \d {#1}}}
+\newcommand{\intb}[1]{\intd[\boundd]{#1}}
 
 % Some vector functions
 \newcommand{\gv}{{\mathbf{g}}}
