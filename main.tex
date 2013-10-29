@@ -6,11 +6,11 @@
 \usepackage{amsmath,amssymb,amsfonts,amsthm}   %Add maths commands, symbols and fonts
 \usepackage{url}                %Support for urls
 
-%% \usepackage[colorlinks=true, % colour all links black (just using
-%%             linkcolor=black, % colorlinks=false results in boxes around
-%%             citecolor=black, % links)
-%%             filecolor=black,
-%%             urlcolor=black]{hyperref}
+\usepackage[colorlinks=true, % colour all links black (just using
+            linkcolor=black, % colorlinks=false results in boxes around
+            citecolor=black, % links)
+            filecolor=black,
+            urlcolor=black]{hyperref}
 
 \usepackage{xspace} % command for fixing spaces after macros
 
@@ -97,22 +97,23 @@
 % Add bibtex files
 \addbibresource{websites.bib}
 \addbibresource{library.bib}
+\addbibresource{mendeley_library.bib}
 
-% A superscript ciation command
-\DeclareCiteCommand{\supercite}[\mkbibsuperscript]
-  {\iffieldundef{prenote}
-     {}
-     {\BibliographyWarning{Ignoring prenote argument}}%
-   \iffieldundef{postnote}
-     {}
-     {\BibliographyWarning{Ignoring postnote argument}}}
-  {\usebibmacro{citeindex}%
-   \bibopenbracket\usebibmacro{cite}\bibclosebracket}
-  {\supercitedelim}
-  {}
+%% % A superscript ciation command
+%% \DeclareCiteCommand{\supercite}[\mkbibsuperscript]
+%%   {\iffieldundef{prenote}
+%%      {}
+%%      {\BibliographyWarning{Ignoring prenote argument}}%
+%%    \iffieldundef{postnote}
+%%      {}
+%%      {\BibliographyWarning{Ignoring postnote argument}}}
+%%   {\usebibmacro{citeindex}%
+%%    \bibopenbracket\usebibmacro{cite}\bibclosebracket}
+%%   {\supercitedelim}
+%%   {}
 
-% Use superscript cite instead of normal ones
-\let\cite=\supercite
+%% % Use superscript cite instead of normal ones
+%% \let\cite=\supercite
 
 
 

@@ -251,7 +251,7 @@ The space $V_{s}$ is the solution space
 \end{equation*}
  \ie the space of functions that are sufficiently smooth for the integrals to be finite and that satisfy the boundary conditions.
 
-To see that the weak form is equivalent consider the case when the error or \emph{residual} $f(x) -y(x)''$ is non-zero for some $x \in [0,1]$. Since equation~\eqref{eq:26} must hold for all functions $v$ we can come up with a function which is non-zero at $x$ and hence the equality in \eqref{eq:26} fails. We call this the method of weighted residuals because we use a weighted integral of the residual to approximate the true equation.\cite{Zeinkiewicz1967}%pg 210,214
+To see that the weak form is equivalent consider the case when the error or \emph{residual} $f(x) -y(x)''$ is non-zero for some $x \in [0,1]$. Since equation~\eqref{eq:26} must hold for all functions $v$ we can come up with a function which is non-zero at $x$ and hence the equality in \eqref{eq:26} fails. We call this the method of weighted residuals because we use a weighted integral of the residual to approximate the true equation.\cite[pg. 210, 214]{Zeinkiewicz1967}
 
 The smoothness restrictions on our weak form approximation can be further reduced using integration by parts
 \begin{equation*}
@@ -346,7 +346,7 @@ This can be solved to find the vector of unknown coefficients $\mathbf{c}$ which
 \subsubsection{Finite Elements in One Dimension}
 \label{sub:Actual-Finite-Elements}
 
-To create a useable implementation of the methodology derived in Section~\ref{Derivation-of-weighted-residuals} we must first define a set of basis functions $\tbf_\ndi$ for the space $V_{T}^{h}$ and a set of $\sbf_l$ for the space $V_S^h$. For simplicity we choose the two types of basis functions to be the same: $\sbf_l = \tbf_l$. This choice defines the Galerkin method (and often results in symmetric matrix $A$).\cite{Zeinkiewicz1967} %pg215
+To create a useable implementation of the methodology derived in Section~\ref{Derivation-of-weighted-residuals} we must first define a set of basis functions $\tbf_\ndi$ for the space $V_{T}^{h}$ and a set of $\sbf_l$ for the space $V_S^h$. For simplicity we choose the two types of basis functions to be the same: $\sbf_l = \tbf_l$. This choice defines the Galerkin method (and often results in symmetric matrix $A$).\cite[pg. 215]{Zeinkiewicz1967}
 
 
 The overall aim is to approximate an arbitrary function at a finite set of \emph{nodes}, $x_\ndi$, by a linear combination of a finite set of simple functions, $\tbf_\ndi$. There are a variety of useful choices for $\tbf_\ndi$ but we will focus on a carefully constructed set of polynomials -- the Lagrange interpolation basis functions, defined as

@@ -85,7 +85,7 @@ See Section~\ref{sec:full-imr-lte-calculation} for details of the rest of the Ta
 
 \subsection{Construction of an LTE estimate}
 
-Most truncation error estimators for implicit integrators (e.g. trapezoid rule, BDF2) use a Milne-device based method.\cite{gresho-sani} % not sure what page
+Most truncation error estimators for implicit integrators (e.g. trapezoid rule, BDF2) use a Milne-device based method.\cite[pgs 707-716]{Gresho-Sani}
 This means that they compute two estimates of the value at $t_{n+1}$ to the same order of accuracy.
 They then use algebraic rearrangements of the two LTE expressions to calculate an approximation of the LTE (typically to one order of accuracy better than the original calculations).
 However due to the complexity of the local truncation error of the implicit midpoint rule there are some difficulties with this approach.
@@ -170,7 +170,7 @@ Plots of the solutions given by the various numerical calculations below are all
   \label{fig:mp-vs-bdf2}
 \end{figure}
 
-Figure~\ref{fig:mp-vs-bdf2} shows the performance of the adaptive midpoint scheme derived above compared to a standard adaptive BDF2 scheme.\cite{Gresho-Sani} %pg 715
+Figure~\ref{fig:mp-vs-bdf2} shows the performance of the adaptive midpoint scheme derived above compared to a standard adaptive BDF2 scheme.\cite[pg. 715]{Gresho-Sani}
 The step size selection of the adaptive midpoint scheme closely follows that of the BDF2 scheme.
 
 
