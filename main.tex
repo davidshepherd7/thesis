@@ -167,17 +167,20 @@
 %% ------------------------------
 \newcommand{\pd}[2]{\frac{\partial #1}{\partial #2}} % partial deriv
 \newcommand{\spd}[2]{\frac{\partial^2 #1}{\partial {#2}^2}} % 2nd partial deriv
+\newcommand{\ddn}[1]{\pd{#1}{\nv}} % normal derivative
 \newcommand{\vd}[2]{\frac{\delta #1}{\delta #2}} % variational derivative
+
 \newcommand{\E}[1]{\times 10^{#1}} % powers of 10
 \newcommand{\st}{\,|\,} % ``such that'' operator in sets (vertical line with spacing)
+
 \newcommand{\ip}[2]{\left(#1,\, #2 \right)} % inner product
-\newcommand{\ddn}[1]{\pd{#1}{\nv}} % normal derivative
+\newcommand{\ltip}[2]{\ip{#1}{#2}_{\ltwo}} % l2 inner product
+
 
 % Norm and abs: better spacing than if done manually with |
 \newcommand{\abs}[1]{\lvert #1 \rvert}
 \newcommand{\norm}[1]{\lVert #1 \rVert}
-
-\newcommand{\ltwo}{L^2}
+\newcommand{\ltnorm}[1]{\norm{#1}_{\ltwo}}
 
 
 % d for the end of integrals (e.g. dx) with correct spacing and non-italic
@@ -234,7 +237,10 @@
 
 \newcommand{\real}{\mathbb{R}} % real numbers
 \newcommand{\complex}{\mathbb{C}} % complex numbers
+
 \newcommand{\sob}{\mathcal{H}} % Sobelov spaces
+\newcommand{\ltwo}{L^2} %L2
+
 \newcommand{\Dfs}{\mathcal{D}} % Set of functions that obey Dirichlet boundaries
 \newcommand{\Neu}{{\scriptscriptstyle{\mathcal{N}}}} % Neumann
 
@@ -449,6 +455,12 @@
 % error due to midpoint approx
 \newcommand{\ymiderr}{a_n}
 
+% full expressions for midpoint values
+\newcommand{\mpm}{\frac{\mv_{n+1} + \mv_n}{2}}
+\newcommand{\mpt}{\frac{t_n + t_{n+1}}{2}}
+\newcommand{\mpdmdt}{\frac{\mv_{n+1} - \mv_n}{\dtn}}
+\newcommand{\mphop}{\hop \left[ \mpm \right]}
+\newcommand{\mphapp}{\happ \left(\mpt \right)}
 
 
 
@@ -492,6 +504,7 @@
 %\include{./quadrature/quadrature}
 
 \include{./midpoint}
+\include{./imr_micromagnetics}
 %% \include{./midpoint_verification}
 
 %  preconditioners:
