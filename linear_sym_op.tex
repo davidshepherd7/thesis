@@ -5,9 +5,11 @@
 
 \newcommand{\knl}{k}
 
-\section{Proof of properties of the effective field}
+\section{Properties of the effective field operator}
+\label{sec:properties-of-field-operators}
 
 \subsection{Linear Symmetrical operator}
+\label{sec:linear-symm-field-operators}
 
 An operator is linear if
 \begin{equation}
@@ -19,7 +21,7 @@ An operator is symmetrical if
 \begin{equation}
   \ip{\lop \av}{\bv} = \ip{\av}{\lop \bv},
 \end{equation}
-for all possible $\av, \bv$.
+for all functions $\av, \bv \in $ in some function space on the real numbers where $\ip{\cdot}{\cdot}$ is defined.
 
 In this section we make heavy use of a consequence of the divergence theorem:
 \begin{equation}
@@ -40,13 +42,12 @@ Note that by substituting $\fv = \grad \ff$ we can derive
 
 \subsubsection{Applied field}
 
-The applied field part of the effective field is \emph{not} symmetrical.
-This can be seen from the fact that it is independent of $\mv$ and so it is impossible to ``get back any information'' about $\av$ in $\ip{\happ[\av](\xv, t)}{\bv}$.
+The applied field part of the effective field is \emph{not} linear or symmetrical because it is independent of $\mv$.
 
 \subsubsection{Vector Laplace operator}
 
 \begin{theorem}
-  If $\lop$ is a symmetric operator on $z \in \ltwo$ then so is its ``vector equivalent'', $\bar{\lop}$.
+  If $\lop$ is a symmetric operator on $m \in \ltwo$ then so is its ``vector equivalent'', $\bar{\lop}[\mv] = \threevec{\lop m_0}{\lop m_1}{\lop m_2}$.
 \end{theorem}
 
 \begin{proof}
@@ -61,7 +62,7 @@ This can be seen from the fact that it is independent of $\mv$ and so it is impo
 \end{proof}
 
 \begin{theorem}[Symmetry of Laplace operator]
- If $m_x \in \ltwo$ and $\ddn{m_x} = 0$ on all of $\boundd$ then $\lap$ is a symmetric linear operator on $m_x$.
+  If $m_i \in \ltwo$ and $\ddn{m_i} = 0$ on all of $\boundd$ then $\lap$ is a linear operator on $m_i$.
 \end{theorem}
 \begin{proof}
   Apply equation~\eqref{eqn:laplace-divergence} twice: first with $\ff = a$, $\gf = b$, then the other way around.
@@ -75,7 +76,7 @@ This can be seen from the fact that it is independent of $\mv$ and so it is impo
   \end{equation}
 \end{proof}
 
-From these two theorems we see that our operator $\lap \mv$ is symmetrical. Note that this is \emph{not} true when we have surface anisotropy or when the length of $\mv$ is not constant!
+From these two theorems we see that our operator $\lap \mv$ is symmetrical. Note that this is \emph{not} automatically true when we have surface anisotropy or when the length of $\mv$ is not constant (because in either of these cases we do not necessarily have $\ddn{\mv} = 0$)!
 
 The Laplace operator is easily seen to be linear because it only involves derivatives.
 
@@ -88,7 +89,7 @@ For simplicity write
 \end{equation}
 
 \begin{theorem}[Symmetry of magnetostatic field operator]
-  The operator
+  If $\av, \bv \in \ltwo$ and $\grad \av, \grad\bv \in \ltwo$ then the operator
   \begin{equation}
     \begin{aligned}
       \hmsop [\av](\xv) &= - \grad \phim[\av](\xv), \\
@@ -97,6 +98,7 @@ For simplicity write
     \end{aligned}
   \end{equation}
   is symmetrical.
+  %% Do we also need some properties on k? Is k in ltwo -- yes int(k) something like [1/x]form -inf to inf = 0
 \end{theorem}
 
 \begin{proof}
@@ -115,7 +117,7 @@ For simplicity write
     \end{aligned}
   \end{equation}
 
-Changing the order of the integrals gives
+Changing the order of the integrals gives (since $\av$, $\bv$ and their derivatives are in $\ltwo$)
   \begin{equation}
     \begin{aligned}
       \ip{\hmsop[\av]}{\bv}
@@ -126,7 +128,7 @@ Changing the order of the integrals gives
     \end{aligned}
   \end{equation}
 
-  Finally we swap $\xv$ with $\xv'$ (allowed because $\knl$ is symmetrical in its arguments) and collect terms with the same (outer) integral domain
+  Finally we swap $\xv$ with $\xv'$ (which we can do because $\knl$ is symmetrical in its arguments) and collect terms with the same (outer) integral domain
   \begin{equation}
     \begin{aligned}
       \ip{\hmsop[\av]}{\bv} &= \intd{\phi[\bv] (\div \av)} - \intb{\phi[\bv] (\av \cdot \nv)}, \\

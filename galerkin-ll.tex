@@ -339,7 +339,7 @@ The skew operator is given by
   \label{eqn:skew}
 \end{equation}
 
-Some identities are:
+Some properties are:
 \begin{itemize}
 \item No effect on derivatives
   \begin{equation}
@@ -361,14 +361,15 @@ Some identities are:
     \skewop_3 \cdot \av = \skewm{\av}.
   \end{equation}
 
+  ??ds is this the correct way to write it? Check tensor mul.
 \end{itemize}
 
-As a simple example of how this can be used we first examine the differentiation of the $\mv \times (\happ + \hms)$ term of the Landau-Lifshitz equation residual (these two fields are not directly dependant on magnetisation).
+As a simple example of how this can be used we first examine the differentiation of the $\mv \times (\happ + \hms)$ term of the Landau-Lifshitz equation residual (note that these two fields are not (directly) dependant on $\mv$).
 \begin{align}
   \circled{c} &= \intpb{\mv} \times (\happ + \hms), \notag\\
-  &= \skewm{\intp{\mv}} \cdot (\happ + \hms),
+  &= \skewm{\intp{\mv}} \cdot (\happ + \hms).
 \end{align}
-and differentiating each component of \circled{c} by each component of $\mv_l$ simply results in the Jacobian
+Differentiating each component of \circled{c} by each component of $\mv_l$ simply results in the Jacobian
 \begin{align}
   \pd{\circled{c}}{\mv_l} = \sbf_l \skewm{\happ + \hms}.
 \end{align}
@@ -385,7 +386,7 @@ Some more points before the main Jacobian calculation:
 
 \item We write
   \begin{equation}
-    \dtsdml = \pd{}{\mv_l} \left(\pd{\mv}{t} \right),
+    \dtsdml = \pd{}{\mv_l} \left(\pd{\mv_i}{t} \right),
   \end{equation}
   where $\dtsdml$ is some constant that depends on the time integration scheme.
   For BDF2 $\dtsdml = \frac{3}{2\dtn}$, for the implicit midpoint rule $\dtsdml = \frac{1}{\dtn}$.
@@ -394,18 +395,8 @@ Some more points before the main Jacobian calculation:
 \end{itemize}
 
 
-Now we extend this approach to all residual terms except for the more complex .
-%% \begin{equation}
-%%   \begin{aligned}
-%%     \rll
-%%     = \int_\magd &\Bigg[ \tbf \intpb{\dmdt} \\
-%%       &+ \intpb{\mv} \times (\happ + \hms) + \intpb{\mv} \times \hca
-%%       \\
-%%       &+ \dampc \intpb{\mv} \times \left( \intpb{\mv} \times (\happ + \hms) \right)
-%%       \\
-%%       &+ \dampc \intpb{\mv} \times \left( \intpb{\mv} \times \hca \right) \Bigg] \d\magd
-%%   \end{aligned}
-%% \end{equation}
+Now we extend this approach to all residual terms except for the double cross product exchange term, which cannot be written in terms of the skew operator.
+After replacing cross products with the skew operator and substituting in the interpolation formulae for $\mv$ we have
 \begin{equation}
   \begin{aligned}
     \rll = \int_\magd \tbf &\Bigg[ \left( \sum_\ibasisc \sk \pd{\mv_\ibasisc}{t} \right)
@@ -419,7 +410,7 @@ Now we extend this approach to all residual terms except for the more complex .
     + \rexh.
   \end{aligned}
 \end{equation}
-Differentiating gives
+Differentiating then pulling out a factor of $\sbf_l$ gives
 \begin{equation}
   \begin{aligned}
     \pd{\rll}{\mv_l} =  \int_\magd \tbf \sbf_l &\Bigg[
@@ -427,10 +418,10 @@ Differentiating gives
       \\
       &+ \skewm{\happ + \hms} + \skewm{\hca} + \frac{1}{\sbf_l} \skewm{\mv} \cdot \pd{\hca}{\mv_l}
       \\
-      &+ \dampc \skewop_3 \cdot \crossop{\mv}{\happ + \hms}
+      &+ \dampc \skewm{\crossop{\mv}{\happ + \hms}}
       + \dampc \skewm{\mv} \cdot \skewm{\happ + \hms}
       \\
-      &+ \dampc \skewop_3 \cdot \crossop{\mv}{\hca}
+      &+ \dampc \skewm{\crossop{\mv}{\hca}}
       + \dampc \crossop{\mv}{\skewm{\hca} + \frac{1}{\sbf_l}\crossop{\mv}{\pd{\hca}{\mv_l}}}
       \Bigg]
     \\
@@ -441,8 +432,31 @@ Differentiating gives
   \end{aligned}
 \end{equation}
 where we have replaced the interpolation formulae with $\mv$ where they still occur in the Jacobian.
+By combining terms and rearranging a little we can simplify this to
+\begin{equation}
+  \begin{aligned}
+    \pd{\rll}{\mv_l} =  \int_\magd \tbf \sbf_l &\Bigg[
+      \dtsdml I_3
+      + \skewm{\happ + \hms + \hca}
+      \\
+      &+ \dampc \skewm{ \crossop{\mv}{\happ + \hms + \hca}}
+      + \dampc \skewm{\mv} \cdot \skewm{\happ + \hms + \hca}
+      \Bigg]
+    \\
+    &+ (I_3 + \dampc \skewm{\mv}) \cdot \skewm{\mv} \cdot \pd{\hca}{\mv_l}
+    \\
+    &+ \sbf_l \skewm{\nabla \mv \cdot \nabla \tbf}
+    + \skewm{\mv} \nabla \sbf_l \cdot \nabla \tbf \d\magd
+    \\
+    &+ \pd{\rexh}{\mv_l}.
+  \end{aligned}
+\end{equation}
 
-Now we deal with the other exchange term, which unfortunately cannot be written in terms of the skew operator.
+??ds write the following out as 9 separate linear terms?
+
+??ds explain where this is from a bit better, might need to rearrange the residual calc ending a bit
+
+Now we deal with the other exchange term, which unfortunately cannot be written in terms of the skew operator. It is
 \begin{equation}
   \begin{aligned}
     \left[\rexh \right]_i &= \dampc \int_\magd
@@ -452,7 +466,7 @@ Now we deal with the other exchange term, which unfortunately cannot be written 
       + \tbf m_i (\nabla m_p)^2 \right] \d\magd.
   \end{aligned}
 \end{equation}
-Now we use the fact that
+We use the fact that
 \begin{equation}
   \pd{m_i}{m_{l,j}} = \delta_{ij} \sbf_l,
 \end{equation}
@@ -474,22 +488,49 @@ which gives us
     \d\magd.
   \end{aligned}
 \end{equation}
-Pulling redundant deltas out of the summation and combining some terms simplifies this to
+
+We simplify this expression by using a property of the Kronecker delta
+\begin{equation}
+  \sum_p \delta_{pj} y_j = y_p,
+\end{equation}
+to pull some terms out of the summation, leaving
 \begin{equation}
   \begin{aligned}
     \pd{[\rexh]_i}{m_{l,j}} &= \dampc \int_\magd
     \delta_{ij}\, \left(\nabla \tbf \cdot \nabla \sbf_l \right)
     \\
-    &- \delta_{ij}\, \sum_p \left[
+    &- \delta_{ij}\, \sum_p \Big[
       m_p \left(\nabla(\tbf \sbf_l) \cdot \nabla m_p \right)
       +\tbf \sbf_l (\nabla m_p)^2
-      \right]
+      \Big]
+    \\
+    &- \sbf_l \left(\nabla(\tbf m_i) \cdot \nabla m_j \right)
+    - m_j \left(\nabla(\tbf m_i) \cdot \nabla \sbf_l \right)
+    - 2\tbf m_i (\nabla m_j \cdot \nabla \sbf_l).
+  \end{aligned}
+\end{equation}
+
+Finally we can use the fact that (from the chain rule)
+\begin{equation}
+  \nabla(\tbf m_i) \cdot \nabla \left( \sbf_l m_j \right)
+   = \sbf_l \left(\nabla(\tbf m_i) \cdot \nabla m_j \right)
+    + m_j \left(\nabla(\tbf m_i) \cdot \nabla \sbf_l \right)
+\end{equation}
+to get
+\begin{equation}
+  \begin{aligned}
+    \pd{[\rexh]_i}{m_{l,j}} &= \dampc \int_\magd
+    \delta_{ij}\, \left(\nabla \tbf \cdot \nabla \sbf_l \right)
+    \\
+    &- \delta_{ij}\, \sum_p \Big[
+      m_p \left(\nabla(\tbf \sbf_l) \cdot \nabla m_p \right)
+      +\tbf \sbf_l (\nabla m_p)^2
+      \Big]
     \\
     &- \nabla(\tbf m_i) \cdot \nabla \left( \sbf_l m_j \right)
     - 2 \tbf m_i (\nabla m_j \cdot \nabla \sbf_l) \d\magd.
   \end{aligned}
 \end{equation}
-
 
 %% ??ds TODO
 %% \begin{itemize}
