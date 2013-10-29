@@ -285,6 +285,8 @@
 \newsubcommand{\ems}{e}{\text{ms}} % magnetostatic/demag
 \newsubcommand{\eex}{e}{\text{ex}} % exchange
 \newsubcommand{\eca}{e}{\text{ca}} % crystalline ansiotropy
+\newsubcommand{\ehop}{\e}{\hop} % total due to h operator fields
+
 
 \newcommand{\nE}{E_{\mathbb{n}}} % A "magnitude" of energy for normalisation
 \newcommand{\nA}{\mathbb{A}} % A "magnitude" of exchange const for normalisation
@@ -358,7 +360,7 @@
 
 % Denote various time steppers
 \newcommand{\AB}{\text{AB}} % Adams-Bashforth 2
-\newcommand{\IMP}{\text{MP}} % Implicit midpoint
+\newcommand{\IMP}{\text{IMR}} % Implicit midpoint
 \newcommand{\FE}{\text{FE}} % Forward Euler (like)
 
 % Local truncation errors
@@ -434,6 +436,11 @@
 \newcommand{\yvhfx}[2]{\yv#1(\thfx{#2})}
 \newcommand{\yvhf}[1][]{\yvhfx{#1}{n}}
 
+% midpoint approximation to y
+\newcommand{\yvmx}[1]{\yv_{#1+\half}}
+\newcommand{\yvm}{\yvmx{n}}
+
+
 % df/dy matrix
 \newcommand{\dfdy}{F}
 \newcommand{\dfdyhfx}[1]{\dfdy_{#1+\half}}
@@ -499,7 +506,7 @@
 \include{llg-signs}
 \include{non-dimensionalisation}
 \include{analytical-solutions}
-\include{galerkin-llg}
+%% \include{galerkin-llg}
 \include{linear_sym_op}
 
 \begin{landscape}

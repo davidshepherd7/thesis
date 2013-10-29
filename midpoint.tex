@@ -1,3 +1,13 @@
+\newcommand{\ltip}[2]{\ip{#1}{#2}_{\ltwo}}
+
+% full expressions for midpoint values
+\newcommand{\mpm}{\frac{\mv_{n+1} + \mv_n}{2}}
+\newcommand{\mpt}{\frac{t_n + t_{n+1}}{2}}
+\newcommand{\mpdmdt}{\frac{\mv_{n+1} - \mv_n}{\dtn}}
+\newcommand{\mphop}{\hop \left[ \mpm \right]}
+\newcommand{\mphapp}{\happ \left(\mpt \right)}
+
+\newcommand{\ltnorm}[1]{\norm{#1}_{\ltwo}}
 
 
 \section{An adaptive implicit-midpoint-rule time-integrator}
@@ -7,38 +17,43 @@
 
 %% To make the following derivations more readable we write:
 %% \begin{align}
-%%   \thf &= \frac{t_n + t_{n+1}}{2}, \notag\\
+%%   \thf &= \frac{
 %%   \yvhf &= \yv(\thf), %\notag\\
 %%   %% \yvhfest &= \frac{\yv_{n+1} + \yv_n}{2},
 %% \end{align}
 %% and we denote derivatives of $\yv$ by $\yv'$ etc.
 
-
 \subsection{Fixed step implicit midpoint rule}
 
-Let $\yv(t)$ be a vector function, let $\yv_n$ denote a vector of estimates to $\yv(t)$ at $t = t_n$.
-Let $\dtn = t_{n+1} - t_n$ be the step (or time-step).
+Let $\yv(t)$ be a vector function, let $\yv_n$ denote an estimate to $\yv(t)$ at $t = t_n$.
+Let $\dtn = t_{n+1} - t_n$ be the $n$th time step (or just ``step'').
 Then given a system of equations of the form
 \begin{equation}
   \yv'(t) = \fv(t, \yv(t)),
   \label{eq:43}
 \end{equation}
 the implicit midpoint rule (IMR) is
-\begin{align}
-  \yv_{n+1} &= \yv_n + \dtn \fv(\frac{t_{n+1} + t_n}{2}, \frac{\yv_n + \yv_{n+1}}{2}), \notag\\
-  &= \yv_n + \dtn \fv(\thf, \frac{\yv_n + \yv_{n+1}}{2}),
-  \label{eq:basic-midpoint}
-\end{align}
-where we have written
 \begin{equation}
-  \frac{t_{n+1} + t_n}{2} = \thf,
+    \yv_{n+1} = \yv_n + \dtn \fv(\frac{t_{n+1} + t_n}{2}, \frac{\yv_n + \yv_{n+1}}{2}).
+    \notag
 \end{equation}
-for readability.
+We write
+\begin{equation}
+  \begin{aligned}
+    \frac{t_{n+1} + t_n}{2} &= \thf, \\
+    \frac{\yv_{n+1} + \yv_n}{2} &= \yvm,
+  \end{aligned}
+\end{equation}
+for readability, giving
+\begin{equation}
+  \yv_{n+1} = \yv_n + \dtn \fv(\thf, \yvm).
+  \label{eq:basic-midpoint}
+\end{equation}
 
 Note that unlike multistep methods, such as the second order backwards difference (BDF2), this is valid for both constant and variable step sizes because there is no dependence on previous steps.
 
 
-\subsection{Derivation of local truncation error}
+\subsection{Implicit midpoint rule local truncation error}
 \label{sec:deriv-local-trunc}
 
 The local truncation error (LTE) of a time integration scheme is the error due a single integration step.
@@ -75,36 +90,64 @@ Substituting equations~\eqref{eq:taylornp1} and \eqref{eq:taylorn} into equation
 There are two parts to this error: the first term (with $\yv'''_n$) is fairly standard in second order time integrators.
 However the second term is more complex, applying a Taylor expansion approach here would result in a Jacobian-like matrix of derivatives of $\fv$ with respect to $\yv$.
 Hence we avoid expanding it further.
-See Section~\ref{sec:full-imr-lte-calculation} for details of the rest of the Taylor expansion which proves that IMR is indeed a second order method.
+See Section~\ref{sec:full-imr-lte-calculation} for details of the rest of the Taylor expansion, which also proves that IMR is indeed a second order method.
 
 
+\subsection{Construction of an LTE estimate}
 
-\subsection{Construction of an adaptive scheme}
+Most truncation error estimators for implicit integrators (e.g. trapezoid rule, BDF2) use a Milne-device based method.\cite{gresho-sani} % not sure what page
+This means that they compute two estimates of the value at $t_{n+1}$ to the same order of accuracy.
+They then use algebraic rearrangements of the two LTE expressions to calculate an approximation of the LTE (typically to one order of accuracy better than the original calculations).
+However due to the complexity of the local truncation error of the implicit midpoint rule there are some difficulties with this approach.
+In particular the midpoint rule's LTE has a term giving the error due to the approximation $\yvm \sim \yvhf$.
+This term cannot appear in the LTE expression for any time integrator that does not use the midpoint approximation (\ie any other useful integrator) and so cannot be easily approximated using a Milne-device-like method.
 
-Most adaptive schemes for implicit integrators (e.g. trapezoid rule, BDF2) use a Milne-device based method.\cite{gresho-sani} % not sure what page
-However due to the complexity of the local truncation error of the implicit midpoint rule there are some difficulties, see Section~??ds for more details.
-Instead we take the approach commonly used in Runge-Kutta time integrators: we attempt to cheaply repeat the calculation at a higher accuracy and compare the answers to get an error estimate.
-Such approaches usually rely on ``Runge-Kutta pairs'', pairs of RK methods which share a number of evaluation points but have different orders of accuracy.
-Examples are ??ds RK45, RK23 \cite{??ds}
-
+Instead we take the approach commonly used in Runge-Kutta time integrators: we cheaply repeat the calculation at a higher accuracy and compare the two answers directly to get an error estimate.
+Such approaches usually rely on hard to find Runge-Kutta pairs: pairs of RK methods which share a number of evaluation points but have different orders of accuracy.
+One example of this technique is the Dormand–Prince (order 4/5), as used in MATLAB's \texttt{ode45} function.
 However IMR uses a single evaluation at the optimal point in the time step to cause cancellation of higher order terms.
 Hence there is no way to reuse this evaluation in a higher order method without at least two additional evaluations, due to the destruction of symmetry.
+
 Instead we use a little known explicit version of the third order backwards difference method (eBDF3).
 This requires only 3 history values and a single (explicit) derivative function evaluation at time $t_n$ in order to compute a 3rd order accurate step.
-Alternatively a 3rd order Adams-Bashforth scheme could be used, this would require one less startup step but would require storage of an additional derivative value.
+Alternatively a 3rd order Adams-Bashforth scheme could be used, this would require one less start-up step but would require storage of an additional derivative value.
 
+\subsubsection{The variable step explicit backwards difference 3 method}
 
+Hairer and Wanner\cite{Hairer book} give...
 
+Used sympy\cite{??ds sympy} to generate scheme
 
-\subsubsection{Computing the size of the next time-step}
+Code at \cite{??ds github}
 
-We use a standard method for computing the next time step from the local truncation error and a target local truncation error \toltt:\cite[pg.268]{Gresho-Sani}
+\subsubsection{Computing the size of the next step}
+
+We use a standard method for computing the next step from the local truncation error and a target local truncation error \toltt:\cite[pg.268]{Gresho-Sani}
 \begin{equation}
-\dtx{n+1} = \dtn \left( \frac{\toltt}{\lte^\IMP}  \right) ^{\frac{1}{3}}
+\dtx{n+1} = \dtn \left( \frac{\toltt}{\lte}  \right) ^{\frac{1}{\texttt{order}+1}}.
+\end{equation}
+For implicit midpoint rule this is
+\begin{equation}
+  \dtx{n+1} = \dtn \left( \frac{\toltt}{\lte^\IMP}  \right) ^{\frac{1}{3}}.
 \end{equation}
 
 
 \subsection{Numerical experiments}
+
+\subsubsection{Implementation}
+
+To increase relevance to realistic models including spatial discretisation we use a Newton method to solve \emph{all} equations (even linear ones).
+
+Implemented in python using scipy, this allowed for rapid prototyping of new schemes. However little attention has been paid to optimisation, so wall-clock timing results would not be relevant (and so are not presented).
+
+All code used has been open sourced and is available on github.\cite{simple-ode-github}
+
+
+??ds update
+Unless otherwise specified all examples in this section use a Newton tolerance of $1\E{-10}$ and an adaptive integrator tolerance of $\toltt = 1\E{-4}$.
+
+
+\subsubsection{Test functions}
 
 To demonstrate the effectiveness of the adaptation scheme we use a simple ODE with known exact solution
 \begin{align}
@@ -120,7 +163,6 @@ The numerical experiments below all use $\omega = 2 \pi$ and $\beta = 0.3$.
 The exact solution for this case is shown in Figure~\ref{fig:mp-ode-exact}.
 Plots of the solutions given by the various numerical calculations below are all visually indistinguishable from Figure~\ref{fig:mp-ode-exact} (without zooming in) at the tolerances used, so they are not shown.
 
-Unless otherwise specified all examples in this section use a Newton tolerance of $1\E{-8}$ and an adaptive integrator tolerance of $\toltt = 1\E{-4}$.
 
 \begin{figure}[ht!]
   \centering
@@ -128,6 +170,8 @@ Unless otherwise specified all examples in this section use a Newton tolerance o
   \caption{A plot of equation~\eqref{eq:59}, the exact solution of our example ODE.}
   \label{fig:mp-ode-exact}
 \end{figure}
+
+\subsubsection{Results}
 
 \begin{figure}[ht!]
   \centering
@@ -252,174 +296,229 @@ and so\footnote{Assuming that $\dfdyhf$ is not inversely proportional to $\dtn$.
 \end{equation}
 
 
+\subsubsection{Order reduction}
+
+It is known that implicit Runge-Kutta methods (such as the implicit midpoint rule) are susceptible to reduced accuracy when used to solve certain types of stiff problem.
+This is represented in the second term of the full LTE expression~\eqref{eq:trunc-final}.
+If $\dfdyhf \cdot \yvhf['']$ is large then the error could be much larger than expected.
+This effect will be automatically detected and adjusted for by the error estimator. ??ds experimental results?
+
+However in practice this seems to only occur in rare cases...
+LLG doesn't look like it will suffer from it.
+
+
 
 \section{Application of the adaptive implicit midpoint rule to micromagnetics}
-
 %*** Banas' work
+
 
 \subsection{Why use the implicit midpoint rule}
 
 Implicit midpoint rule is known to be especially effective for micromagnetics problems \cite{DAquino2005}.
-The non-dimensionalised form of the Landau-Lifshitz equation is
+The non-dimensional form of the Landau-Lifshitz-Gilbert equation is
 \begin{equation}
   \label{eq:llg-prop-form}
   \dmdt = - \mv \times( \hv - \dampc \dmdt),
 \end{equation}
 where $\hv$ is the effective field due to various effects depending on the system being modelled.
-It is mathematically equivalent to the Landau-Lifshitz equation (as used elsewhere) with different constants, however certain properties are easier to prove with this Gilbert form so we will use it for this section.
+It is mathematically equivalent to the Landau-Lifshitz equation (with slightly different non-dimensionalisation), however some derivations in this section are easier when starting with this form.
 
-It has certain properties:
+The Landau-Lifshitz-Gilbert equation with constant applied field has certain fundamental properties (see Section~\ref{sec:prop-cont-llg} for a derivation of these properties):
 \begin{itemize}
-\item conserves magnetisation length
-\item dissipates energy at a rate determined by alpha (as defined by a Rayleigh dissipation functional)
-\item conserves energy at zero damping.
+\item Magnetisation length is constant.
+\item Energy is dissipated at a rate determined only by the damping constant.
+\item Energy is conserved when $\dampc = 0$.
+\end{itemize}
+In a varying applied field the Zeeman energy may vary independently of damping, which can drive other effects.
+However similar energy balance equations can still be derived.
+
+In contrast to most time integrators the implicit midpoint rule conserves the magnetisation length, conserves energy at zero damping in constant applied field and gives highly accurate energy dissipation in linear applied fields (see Section~\ref{sec:prop-imr-llg} for details).
+
+We have a number of reasons to believe that such improvements in the accuracy of these properties will translate into an improvement in the accuracy and robustness of the overall solver:
+\begin{itemize}
+\item Errors in the energy dissipation\cite{Albuquerque2001} and magnetisation length\cite{Chantrell2001} have been successfully used as error estimators for total error.
+
+\item It is well known that geometric integration schemes (\ie schemes that preserve properties of the system) typically result in much smaller long-timescale error-build-up than schemes that do not preserve such quantities.\cite{Iserles2009} ??ds check it says geometric
+
+\item The non-linear modification to the Landau-Lifshitz-Gilbert equation caused by renormalisation of the magnetisation length (as commonly used to maintain correct magnetisation length in non-conservative time integrators) is may cause significant changes in the magnetostatic field.\cite{Lewis2003}
+
+\item Renormalisation of the magnetisation modifies the balance between the various energy terms.
+ This is similar to the methods that lead to the ``flying ice cube'' problem in molecular dynamics.\cite{Harvey1998}\footnote{In such simulations rescaling of particle velocities (to maintain constant temperature despite numerical error accumulation) can result in large amounts of kinetic energy being transferred from the motion of internal degrees of freedom to motion of the centre of mass.}
 \end{itemize}
 
-Clearly it is advantageous for a time discretisation method to preserve these properties.
-IMR conserves them (demonstrated below), most other time discretisation schemes don't.
+Additionally it is ``almost-symplectic'', \ie the property equivalent to Hamiltonian flow for  dissipative systems is conserved up to \order{??ds}\cite{daquino2005}\cite{??ds-older-paper for this?} ??ds here
 
-Errors in both of these conservation properties have been used as an error estimator for the entire error.
-Hence it seems likely that reducing these errors will reduce the total error.
-
-Geometric (or symplectic) integration schemes typically result in much smaller error build-up than schemes that do not preserve such quantities.
-
-
-In addition to these properties IMR is:
+In addition to these conservation properties IMR is:
 \begin{itemize}
 \item second order accurate -- typically considered good enough for pdes (higher orders would require expensive high order spatial discretisation to be effective, generally better to just do h-refinement instead) \cite{Matthias}
 \item ??ds-stable - think it's A-stable? \cite{??ds} -- so appropriate for stiff problems, llg is stiff in some/most cases\cite{??ds}.
 \end{itemize}
 
-However it might suffer from order reduction ??ds Read more about implicit runge kutta etc?
+%% Since IMR is a single step method there is no dependence on $\dtx{n-1}$ (unlike, for example, BDF2) and so no change in these properties would be expected when going from fixed to varying time step sizes.
 
-Since IMR is a single step method there is no dependence on $\dtx{n-1}$ (unlike, for example, BDF2) and so no change in these properties would be expected when going from fixed to varying time step sizes.
-
-\subsection{Properties of continuous Landau-Lifshitz-Gilbert equation}
+\subsection{Properties of the continuous Landau-Lifshitz-Gilbert equation}
 \label{sec:prop-cont-llg}
 
-We will use the identity
+We first need the identity
 \begin{equation}
   \label{eq:dot-cross-id}
   \ip{\av}{\av \times \bv} = 0,
 \end{equation}
-which is true for all inner products because $\av \times \bv$ is perpendicular to $\av$ by the definition of the cross product.
+which is true for all inner products $\ip{\cdot}{\cdot}$ because $\av \times \bv$ is perpendicular to $\av$ by the definition of the cross product.
+In particular it is true for the dot product (scalar multiplication) and the $\ltwo$ inner product.
 
-Conservation of magnetisation length can be shown by taking the dot product (scalar product, pointwise inner product) with $\mv$ on both sides of~\eqref{eq:llg-prop-form} and using~\eqref{eq:dot-cross-id} to get
+Conservation of magnetisation length can be shown by taking the dot product with $\mv$ on both sides of~\eqref{eq:llg-prop-form} and using~\eqref{eq:dot-cross-id} to get
 \begin{equation}
   \label{eq:56}
   \mv \cdot \dmdt = 0.
 \end{equation}
-Hence the change in $\mv$ is always perpendicular to $\mv$ so length is conserved.
+Hence the change in $\mv$ is always perpendicular to $\mv$, so length is conserved.\footnote{Actually this is equally obvious from the fact that $\dmdt$ is given a cross product involving $\mv$, but the technique used here is useful in the discussion of properties of the time-discretised Landau-Lifshitz-Gilbert equation.}
 
-The energy change properties can be examined similarly by taking the $L^2$ inner product
+The energy change properties can be examined similarly by taking the $\ltwo$ inner product:
 \begin{equation}
-  \ip{u}{v} = \int_\magd u v \d\magd
+  \ltip{\av}{\bv} = \int_\magd \av \cdot \bv \d\magd
 \end{equation}
 with $\hv - \dampc \dmdt$ on both sides of~\eqref{eq:llg-prop-form} and using the identity~\eqref{eq:dot-cross-id} to get
 \begin{equation}
   \label{eq:58}
-  \ip{\hv}{\dmdt} - \dampc \ip{\dmdt}{\dmdt} = 0.
+  \ltip{\hv}{\dmdt} - \dampc \ltip{\dmdt}{\dmdt} = 0.
 \end{equation}
-Using the fact that $\hv = -\vd{\e}{\mv}$ and the chain rule for variational derivatives\cite{??ds} we get
+Using the fact that $\hv = -\vd{\e}{\mv}$ and the chain rule for variational derivatives\cite{??ds} we find that the time derivative of the energy is given by
 \begin{align*}
-  \pd{\e[\mv(\xv, t), t]}{t} &= \ip{\vd{e}{\mv}}{\dmdt} - \ip{\pd{\happ}{t}}{\mv} \\
-             &= -\ip{\hv}{\dmdt} - \ip{\pd{\happ}{t}}{\mv},
+  \pd{\e[\mv(\xv, t), t]}{t} &= \ltip{\vd{e}{\mv}}{\dmdt} - \ltip{\pd{\happ}{t}}{\mv} \\
+             &= -\ltip{\hv}{\dmdt} - \ltip{\pd{\happ}{t}}{\mv},
 \end{align*}
 and so
 \begin{equation}
-  \ip{\hv}{\dmdt} = -\vd{\e}{t} - \ip{\pd{\happ}{t}}{\mv}.
+  \ltip{\hv}{\dmdt} = -\vd{\e}{t} - \ltip{\pd{\happ}{t}}{\mv}.
 \end{equation}
-
-Substituting this into equation~\eqref{eq:58} leaves
+Finally, substituting this into equation~\eqref{eq:58} leaves
 \begin{equation}
   \label{eq:energy-decay}
-  \vd{\e}{t} = -\dampc \ip{\dmdt}{\dmdt} - \ip{\pd{\happ}{t}}{\mv}.
+  \vd{\e}{t} = -\dampc \ltip{\dmdt}{\dmdt} - \ltip{\pd{\happ}{t}}{\mv}.
 \end{equation}
-
 Equation~\eqref{eq:energy-decay} shows that under constant applied field the energy of the system is always decreasing by an amount proportional to $\dampc$.
-In fact this relationship is the Rayleigh dissipation functional used as the basis for the derivation of the Gilbert form of the LLG.\cite{Gilbert2004}
 For non-constant applied fields the change in the Zeeman energy is added which may increase or decrease the energy depending on how the field is changed. % field moves towards m -> decrease, away -> increase. For non-spatially constant this is averaged over space in some sense by the inner product.
+In fact the first term of equation~\eqref{eq:energy-decay} can be easily derived from the Rayleigh dissipation functional used as the basis for the derivation of the Gilbert form of the LLG.\cite{Gilbert2004}
+
+Note that length conservation is a \emph{pointwise} property, \ie $\abs{\mv} = 1$ at every point in space, whereas the energy decay property is a \emph{global} property.
+This is related to the use of the dot product and the $\ltwo$ inner product respectively in their proofs.
 
 
-\subsection{Properties of midpoint method LLG discretisation}
-\label{sec:prop-midp-meth}
+\subsection{Properties of the IMR-discretised LLG}
+\label{sec:prop-imr-llg}
 
-??ds discuss which inner products/norms are used where
+We now repeat the above procedures for the discrete form of the Landau-Lifshitz-Gilbert equation that results from the use of the implicit midpoint rule.
 
-As noted in Section~\ref{sec:extens-impl-odes} IMR is defined by the following substitutions
+As noted in Section~\ref{sec:extens-impl-odes} IMR is defined by the following substitutions:
 \begin{align}
   \label{eq:55}
-  \pd{\mv}{t} &= \frac{\mv_{n+1} - \mv_n}{\dtn}, \\
-  \mv &= \frac{\mv_{n+1} + \mv_n}{2}, \\
-  t &=  \frac{t_{n+1} + t_n}{2}.
+  \pd{\mv}{t} &\rightarrow \frac{\mv_{n+1} - \mv_n}{\dtn}, \\
+  \mv &\rightarrow \frac{\mv_{n+1} + \mv_n}{2}, \\
+  t &\rightarrow \frac{t_{n+1} + t_n}{2}.
 \end{align}
 
-The special conservation properties of IMR discretisation of the Landau-Lifshitz-Gilbert equation come from the fact that for any symmetrical linear operator $\ell$
-\begin{align}
-  \label{eq:54}
-  \ip{\ell \left[ \mv_{n+\half} \right]}{ \pd{\mv}{t} \lvert_{n+\half}}
-  &= \frac{1}{2\dtn} \left[
-    (\mv_{n+1} , \ell \mv_{n+1})
-    + (\mv_{n+1} , \ell \mv_{n})
-    - (\mv_{n} , \ell \mv_{n+1})
-    - (\mv_{n} , \ell \mv_{n})
-    \right] \notag\\
-  &= \frac{1}{2\dtn} \left[
-    (\mv_{n+1} , \ell \mv_{n+1})
-    - (\mv_{n} , \ell \mv_{n})
-    \right].
-\end{align}
-
-In particular for the identity operator, $\mv \in \real$ and $(\av, \bv) = \av \cdot \bv$ we have
+So the discretised LLG is
 \begin{equation}
-  \label{eq:52}
-  \mv \cdot \pd{\mv}{t}  = \frac{1}{2\dtn} (\norm{\mv_{n+1}}^2 - \norm{\mv_{n}}^2 ).
+  \frac{\mv_{n+1} - \mv_n}{\dtn} = - \frac{\mv_{n+1} + \mv_n}{2} \times
+  \left(
+  \hv \left[\frac{\mv_{n+1} + \mv_n}{2} \right]
+  + \happ\left(\frac{t_{n+1} + t_n}{2}\right)
+  - \dampc \frac{\mv_{n+1} - \mv_n}{\dtn}
+  \right),
+  \label{eqn:disc-llg}
 \end{equation}
-Substituting this into equation~\eqref{eq:56} gives
+where we have separated the applied field from the rest of the effective field because 1) it is independent of $\mv$ and 2) it is the only field with explicit time dependence.
+
+Intuitively the conservation properties of the IMR discretisation come from the cancellation of cross terms in $\ip{\lop[\mv]}{\dmdt}$ for any symmetrical linear operator $\lop$. More precisely:
 \begin{equation}
-  \abs{\mv_{n+1} }^2 - \abs{\mv_{n}}^2 = 0 \quad \forall \xv \in \magd
+  \begin{aligned}
+    \label{eqn:imr-linop}
+    \ip{\lop \left[ \frac{\mv_{n+1} + \mv_n}{2} \right]}{ \frac{\mv_{n+1} - \mv_n}{\dtn} }
+    &= \frac{1}{2\dtn} \Big[
+      \ip{\mv_{n+1}}{\lop \mv_{n+1}} + \ip{\mv_{n+1}}{\lop \mv_{n}} \\
+      & \qquad\qquad - \ip{\mv_{n}}{\lop \mv_{n+1}} - \ip{\mv_{n}}{\lop \mv_{n}}
+      \Big] \\
+    &= \frac{1}{2\dtn} \Big[
+      \ip{\mv_{n+1}}{\lop \mv_{n+1}}
+      - \ip{\mv_{n}}{\lop \mv_{n}}
+      \Big].
+  \end{aligned}
 \end{equation}
-\ie conservation of magnetisation length.
 
-??ds operators below need checking, dAquino is only concerned with FD...
+We can examine the change in magnetisation length similarly to in Section~\ref{sec:prop-cont-llg}: take the dot product with $\frac{\mv_{n+1} + \mv_n}{2}$ on both sides of~\eqref{eqn:disc-llg} and use~\eqref{eq:dot-cross-id} to get
+\begin{equation}
+  \frac{\mv_{n+1} + \mv_n}{2} \cdot \frac{\mv_{n+1} - \mv_n}{\dtn} = 0.
+\end{equation}
+Now using~\eqref{eqn:imr-linop} with $\lop$ the identity operator gives us
+\begin{equation}
+  \begin{aligned}
+    \frac{\ip{\mv_{n+1}}{\mv_{n+1}} - \ip{\mv_n}{\mv_n} }{2 \dtn} &= 0, \\
+    \abs{\mv_{n+1}} - \abs{\mv_n} &= 0.
+  \end{aligned}
+\end{equation}
+So the magnetisation length does not change.
 
-The time-discretised effective field can be represented as a symmetrical linear operator on magnetisation:\cite{DAquino2005}
+Before we can derive energy decay properties of the discretised LLG we need to look at the properties of the effective field when considered as an operator on $\mv$.
+We split the effective field into one operator containing the exchange, magnetostatic and magnetocrystalline anisotropy fields and a separate function for the applied field only:
 \begin{equation}
   \label{eq:hop}
-  \hv_n(\xv) = \hop [\mv_n(\xv)] + \happ(\xv, t_n).
+  \hv(\xv, t)[\mv(\xv)] = \hop [\mv(\xv)] + \happ(\xv, t).
 \end{equation}
-Additionally the energy can be written using this operator as
+It can be shown (see Section~\ref{sec:linear-symm-field-operators}) that $\hop[\mv]$ is a linear symmetric operator on $\mv$ provided that there is no surface anisotropy and that the magnetocrystalline anisotropy is uniaxial (extensions may be possible.. not really checked).
+The applied field is of course not an operator at all so we treat it separately. The energy can be written, using this operator, as ??ds why?
 \begin{equation}
   \label{eq:energy-hop}
-  \e_n = \frac{1}{2} \ip{\mv_n}{\hop[\mv_n] + \happ(\xv,t_n)}.
+  \e_n = \ehop_{,n} + \eapp_{,n} = - \ip{\mv_n}{\frac{\hop[\mv_n]}{2}} - \ip{\mv_n}{\happ(t_n)}.
+\end{equation}
+We also expand $\mphapp$ into a midpoint-like form
+\begin{equation}
+  \mphapp = \frac{\happ(t_{n+1}) + \happ(t_n)}{2} + \order{\dtn^2 \spd{\happ}{t}}.
+  \label{eq:happ-midpoint}
 \end{equation}
 
-Substituting the midpoint approximation and equation~\eqref{eq:hop} into \eqref{eq:58} leaves
-\begin{align}
-  \label{eq:60}
-  &\ip{ \pd{\mv}{t} \lvert_{n+\half}}{\hop \left[\mv_{n+\half} \right]} + \ip{\frac{\mv_{n+1} - \mv_n}{\dtn}}{\happ(\xv,t_{n+\half})} \\
-  &= \dampc \ip{\frac{\mv_{n+1} - \mv_n}{\dtn}}{\frac{\mv_{n+1} - \mv_n}{\dtn}}.
-\end{align}
-We use a midpoint approximation for the applied field to allow us to cancel terms later:
+
+Again in the same manner as the previous section we derive the change in energy of the discrete LLG by taking the $\ltwo$ inner product of equation~\eqref{eqn:disc-llg} with
 \begin{equation}
-  \label{eq:happ-midpoint}
-  \happ(\xv,t_{n+\half}) = \frac{\happ(\xv, t_{n+1}) + \happ(\xv, t_n)}{2} + \order{\dtn^2 \spd{\happ}{t}}.
+  \mphop + \frac{\happ(t_{n+1}) + \happ(t_n)}{2} - \dampc \mpdmdt
+  + \order{\dtn^2 \spd{\happ}{t}},
 \end{equation}
-Combining equations~\eqref{eq:60}, \eqref{eq:happ-midpoint} and the identity~\eqref{eq:54} gives us
-\begin{align}
-  &\frac{\ip{\mv_{n+1}}{\hop \left[\mv_{n+1} \right] + \happ(\xv, t_{n+1})}
-    - \ip{\mv_{n}}{\hop \left[\mv_{n} \right] + \happ(\xv, t_n)}
-    }{2\dtn} \notag\\
-  &= \dampc \norm{\frac{\mv_{n+1} - \mv_n}{\dtn}}^2
-  + \order{\dtn^2 \spd{\happ}{t}}.
-\end{align}
-After substitution of the energy from~\eqref{eq:energy-hop} this leaves
+resulting in (ignoring the error terms for now)
+\begin{equation}
+  \begin{aligned}
+    &\ltip{\mphop + \frac{\happ(t_{n+1}) + \happ(t_n)}{2}}{\mpdmdt} \\
+    & \quad - \dampc \ltip{\mpdmdt}{\mpdmdt} = 0.
+    \label{eq:54}
+  \end{aligned}
+\end{equation}
+The $\hop$ term can be simplified by using identity~\eqref{eqn:imr-linop} then written as an energy using equation~\eqref{eq:energy-hop}
+\begin{equation}
+  \begin{aligned}
+    &\frac{1}{2\dtn} \Big[\ip{\mv_{n+1}}{\hop \left[\mv_{n+1} \right]}
+      - \ip{\mv_{n}}{ \hop\left[ \mv_{n} \right]} \Big], \\
+    &= -\frac{\ehop_{,n+1} - \ehop_{,n}}{\dtn}.
+  \end{aligned}
+  \label{eq:50}
+\end{equation}
+Next we examine the $\happ$ term. By adding and subtracting $\happ(t_{n+1}) + \happ(t_n)$ from different parts of the equation, then rearranging and again using equation~\eqref{eq:energy-hop} we obtain
+\begin{equation}
+  \begin{aligned}
+    &\frac{ \ip{\happ(t_{n+1})}{\mv_{n+1}} - \ip{\happ(t_n)}{\mv_{n}}}{\dtn}
+    + \frac{\ip{\happ(t_{n+1}) -\happ(t_n)}{\mv_{n+1} + \mv_{n}}}{2\dtn}, \\
+    &= -\frac{\eapp_{, n+1} - \eapp_{, n}}{\dtn}
+    - \ip{\frac{\happ(t_{n+1}) -\happ(t_n)}{\dtn}}{\frac{\mv_{n+1} + \mv_{n}}{2}}.
+  \end{aligned}
+  \label{eq:52}
+\end{equation}
+Finally we insert the results of equations~\eqref{eq:50} and \eqref{eq:52} into \eqref{eq:54} to find
 \begin{equation}
   \frac{\e_{n+1} - \e_n}{\dtn}
-  = \dampc \norm{\frac{\mv_{n+1} - \mv_n}{\dtn}}^2
-  + \order{\dtn^2 \spd{\happ}{t}}.
+  = -\dampc \ltip{\mpdmdt}{\mpdmdt}
+  - \ip{\frac{\happ(t_{n+1}) -\happ(t_n)}{\dtn}}{\frac{\mv_{n+1} + \mv_{n}}{2}},
 \end{equation}
-Hence with (piecewise) linear applied fields the energy loss is exactly correct.
+which is exactly the midpoint discretisation of the continuous energy balance equation~\eqref{eq:energy-decay}.
+
+
 
 It should be noted that the above properties are only true up to the accuracy with which we solve the LLG. Since the LLG is non-linear this is typically the Newton tolerance.
 
@@ -482,10 +581,10 @@ We have done some initial work using adaptive midpoint for the non-spatially con
 Unfortunately the energy/damping conservation properties require the entire calculation to be performed implicitly.
 This is incompatible with the semi-implicit FEM/BEM method for magnetostatic field calculations,\cite{Koehler1997} which is used in the current implementation of our model.
 However d'Aquino \etal demonstrated an efficient, fully implicit finite difference LLG solver using the fixed step midpoint method\cite{DAquino2005}.
-Such a solver should be easily to modifiable to use our adaptive midpoint method.
+Such a solver should be easily modifiable to use our adaptive midpoint method.
 
 The conservation of magnetisation length by IMR does not require a fully implicit calculation as demonstrated by Spargo \etal\cite{Spargo2003a}.
-Hence the adaptive midpoint method could be used to construct a semi-implicit magnetisation-length-conserving scheme with purely numerical time adaptivity, with the advantages discussed in Section~\ref{sec:altern-time-adapt}.
+Hence the our adaptive IMR scheme could be used in a semi-implicit magnetisation-length-conserving solver.
 
 
 \subsubsection{Alternative time adaptivity methods in micromagnetics}
@@ -495,8 +594,10 @@ In cases where the damping is not exact the effective damping can be used as an 
 ??ds The disadvantage of this method (aside from the obvious requirement that the damping be inexact) is that, depending on the discretisation used, the error estimator may be unable to distinguish between insufficient space refinement and insufficient time refinement.
 In particular this is the case when the solution is not completely divided into separate effective field calculations and pointwise time integration, such as in a typical Galerkin finite element model.
 
-Rigorous time error estimates for the LLG with limited effective field terms with a certain discretisation method were proven and used to perform adaptive refinement of midpoint method time steps by Banas.\cite{Banas-thesis} ??ds do these work, why does no one use them?
+Rigorous time error estimates for the LLG with limited effective field terms with a certain discretisation method were proven and used to perform adaptive refinement of midpoint method time steps by Banas.\cite{Banas-thesis}
+??ds do these work, why does no one use them?
 By comparison our adaptive method is much more general in that it can be applied to any differential equation and any discretisation scheme which uses the method of lines for time.
+It is also simpler to implement (requiring only an additional explicit time step, which can easily be handled by existing ODE solver packages) and easy to understand.
 
 \subsubsection{Symplecity}
 
@@ -507,13 +608,6 @@ However it is well known that most adaptive schemes are not symplectic\cite{Iser
 because they constantly change the nearby Hamiltonian that is followed by the symplectic integrator.
 
 ??ds MORE
-
-
-\subsection{Future work}
-
-%*** Does adaptivity trail off eventually like trapazoid?
-
-Testing with pdes.
 
 
 
