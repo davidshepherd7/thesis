@@ -1,11 +1,10 @@
 
 \section{Application of the adaptive implicit midpoint rule to micromagnetics}
-%*** Banas' work
 
 
 \subsection{Why use the implicit midpoint rule}
 
-Implicit midpoint rule is known to be especially effective for micromagnetics problems \cite{DAquino2005}.
+%% The implicit midpoint rule is known to be especially effective for micromagnetics problems \cite{DAquino2005}.
 The non-dimensional form of the Landau-Lifshitz-Gilbert equation is
 \begin{equation}
   \label{eq:llg-prop-form}
@@ -23,7 +22,7 @@ The Landau-Lifshitz-Gilbert equation with constant applied field has certain fun
 In a varying applied field the Zeeman energy may vary independently of damping, which can drive other effects.
 However similar energy balance equations can still be derived.
 
-In contrast to most time integrators the implicit midpoint rule conserves the magnetisation length, conserves energy at zero damping in constant applied field and gives highly accurate energy dissipation in linear applied fields (see Section~\ref{sec:prop-imr-llg} for details).
+In contrast to most time integrators the implicit midpoint rule conserves the magnetisation length, conserves energy at zero damping in constant applied field and gives highly accurate energy dissipation in linear applied fields\cite{DAquino2005} (see Section~\ref{sec:prop-imr-llg} for details).
 
 We have a number of reasons to believe that such improvements in the accuracy of these properties will translate into an improvement in the accuracy and robustness of the overall solver:
 \begin{itemize}
@@ -42,7 +41,7 @@ Additionally it is ``almost-symplectic'', \ie the property equivalent to Hamilto
 In addition to these conservation properties IMR is:
 \begin{itemize}
 \item second order accurate -- typically considered good enough for pdes (higher orders would require expensive high order spatial discretisation to be effective, generally better to just do h-refinement instead) \cite{Matthias}
-\item ??ds-stable - think it's A-stable? \cite{??ds} -- so appropriate for stiff problems, llg is stiff in some/most cases\cite{??ds}.
+\item ??ds-stable - think it's L-stable? \cite{??ds} -- so appropriate for stiff problems, llg is stiff in some/most cases\cite{??ds}.
 \end{itemize}
 
 %% Since IMR is a single step method there is no dependence on $\dtx{n-1}$ (unlike, for example, BDF2) and so no change in these properties would be expected when going from fixed to varying time step sizes.
@@ -167,14 +166,14 @@ We also expand $\mphapp$ into a midpoint-like form
   \mphapp = \frac{\happ(t_{n+1}) + \happ(t_n)}{2} + \order{\dtn^2 \spd{\happ}{t}}.
   \label{eq:happ-midpoint}
 \end{equation}
-
+For now we will assume that $\happ$ is linear within each step so that the error term is zero, for details about this see Section~\ref{sec:non-linear-applied}.
 
 Again in the same manner as the previous section we derive the change in energy of the discrete LLG by taking the $\ltwo$ inner product of equation~\eqref{eqn:disc-llg} with
 \begin{equation}
   \mphop + \frac{\happ(t_{n+1}) + \happ(t_n)}{2} - \dampc \mpdmdt
   + \order{\dtn^2 \spd{\happ}{t}},
 \end{equation}
-resulting in (ignoring the error terms for now)
+resulting in
 \begin{equation}
   \begin{aligned}
     &\ltip{\mphop + \frac{\happ(t_{n+1}) + \happ(t_n)}{2}}{\mpdmdt} \\
@@ -192,6 +191,7 @@ The $\hop$ term can be simplified by using identity~\eqref{eqn:imr-linop} then w
   \label{eq:50}
 \end{equation}
 Next we examine the $\happ$ term. By adding and subtracting $\happ(t_{n+1}) + \happ(t_n)$ from different parts of the equation, then rearranging and again using equation~\eqref{eq:energy-hop} we obtain
+??ds add at least one more step here
 \begin{equation}
   \begin{aligned}
     &\frac{ \ip{\happ(t_{n+1})}{\mv_{n+1}} - \ip{\happ(t_n)}{\mv_{n}}}{\dtn}
@@ -206,12 +206,45 @@ Finally we insert the results of equations~\eqref{eq:50} and \eqref{eq:52} into 
   \frac{\e_{n+1} - \e_n}{\dtn}
   = -\dampc \ltip{\mpdmdt}{\mpdmdt}
   - \ip{\frac{\happ(t_{n+1}) -\happ(t_n)}{\dtn}}{\frac{\mv_{n+1} + \mv_{n}}{2}},
+\label{eqn:imr-llg-energy}
 \end{equation}
 which is exactly the midpoint discretisation of the continuous energy balance equation~\eqref{eq:energy-decay}.
 
+Note that nothing in the above derivations depends in previous step sizes, hence these properties should hold regardless of any variations in step size (\ie in an adaptive time integrator).
 
+
+\subsection{Limitations of conservation properties}
+
+\subsubsection{Non-linear applied fields}
+\label{sec:non-linear-applied}
+
+In the previous section we assumed that the applied field, $\happ$, is linear (within each step).
+We now examine what happens when $\happ$ is not linear.
+
+First when $\happ$ is piecewise linear, for example instantaneously switching on a field at a certain point in time.
+In this case we can avoid any problems by selecting time steps such that each non-linear change happens exactly at the start/end of a step.
+As long as the time between non-linear changes in field is long compared to the time scale of the dynamics this will have no effect on the efficiency.
+
+In the case when the field is genuinely non-linear there is an additional error term added to the energy balance equation~\eqref{eqn:imr-llg-energy}:
+\begin{equation}
+  err =
+\end{equation}
+
+
+
+
+
+
+\subsubsection{Solvers}
 
 It should be noted that the above properties are only true up to the accuracy with which we solve the LLG. Since the LLG is non-linear this is typically the Newton tolerance.
+
+Additionally the derivation assume that all fields are calculated at the midpoint without any additional approximations, \ie that we are using a fully implicit method.
+In contrast to this, many existing FEM/BEM models use an explicit approximation to the magnetostatic field.
+Unfortunately in this case the energy properties will be lost (or at least reduced in effectiveness) due to the replacement of $\hop \left[ \mpm \right]$ by different approximation.
+However the magnetisation length property will be retained because this only relies on $\mv$ itself being calculated implicitly.
+
+Efficient, fully-implicit solvers, as required to realise the full potential of the implicit midpoint rule, are certainly possible: one example was implemented by d'Aquino \etal.\cite{DAquino2005}
 
 
 \subsection{Numerical Experiments}
@@ -275,7 +308,7 @@ However d'Aquino \etal demonstrated an efficient, fully implicit finite differen
 Such a solver should be easily modifiable to use our adaptive midpoint method.
 
 The conservation of magnetisation length by IMR does not require a fully implicit calculation as demonstrated by Spargo \etal\cite{Spargo2003a}.
-Hence the our adaptive IMR scheme could be used in a semi-implicit magnetisation-length-conserving solver.
+Hence the our adaptive IMR scheme could be also be useful in a semi-implicit magnetisation-length-conserving solver.
 
 
 \subsubsection{Alternative time adaptivity methods in micromagnetics}
