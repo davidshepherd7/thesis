@@ -38,10 +38,10 @@ We have a number of reasons to believe that such improvements in the accuracy of
 
 Additionally it is ``almost-symplectic'', \ie the property equivalent to Hamiltonian flow for  dissipative systems is conserved up to \order{??ds}\cite{daquino2005}\cite{??ds-older-paper for this?} ??ds here
 
-In addition to these conservation properties IMR is:
+In addition to these conservation properties the following properties make IMR suitable for micromagnetics problems
 \begin{itemize}
-\item second order accurate -- typically considered good enough for pdes (higher orders would require expensive high order spatial discretisation to be effective, generally better to just do h-refinement instead) \cite{Matthias}
-\item ??ds-stable - think it's L-stable? \cite{??ds} -- so appropriate for stiff problems, llg is stiff in some/most cases\cite{??ds}.
+\item It is second order, which is typically considered a good compromise between speed and accuracy for pdes (higher orders would require expensive high order spatial discretisation to be effective, generally better to just do h-refinement instead).\cite{Matthias}
+\item It is A-stable? \cite{??ds} and so appropriate for stiff problems (the LLG is stiff in some cases, as demonstrated by vastly superior performance of stiff solvers (\eg BDF2) on certain problems\cite{Tsiantos2001})
 \end{itemize}
 
 %% Since IMR is a single step method there is no dependence on $\dtx{n-1}$ (unlike, for example, BDF2) and so no change in these properties would be expected when going from fixed to varying time step sizes.
