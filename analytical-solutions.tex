@@ -92,3 +92,27 @@ An example of a complete solution is
 \end{equation}
 
 Then $\lap \mv = - \mv$ as required.
+
+\subsection{Wave-like solutions in an infinite domain}
+
+These solutions are taken from \cite{Jeong2014}, \cite{Fuwa2006}. It was originally published (as far as I can tell) in \cite{Lakshmanan1976} but in a much harder to understand form.
+
+For an infinite magnetic domain. Let $a \in \real$, choose $l \in \integers$ so that the solution is periodic in a square/cube domain of unit size. Let $D$ be the dimension of the problem and $\lv$ the $D$ dimensional vector of l. Lte
+\begin{equation}
+  \begin{aligned}
+    b(t) &= \pi^2 l^2 \dampc t, \\
+    d(t) &= \sqrt{\sin^2(a) + e^{2 D b(t)} \cos^2(a)}, \\
+    g(t) &= \frac{1}{\dampc} \log \left( \frac{d(t) + e^{D b(t)} \cos(a)}{1 + \cos(a)} \right).
+  \end{aligned}
+\end{equation}
+
+Then the solution is:
+\begin{equation}
+  \begin{aligned}
+    m_x &= \frac{1}{d(t)} \sin(a) \cos\left[\pi \l \cdot \xv + g(t) \right], \\
+    m_y &= \frac{1}{d(t)} \sin(a) \sin\left[\pi \l \cdot \xv + g(t) \right], \\
+    m_z &= \frac{1}{d(t)} \cos(a) e^{D b(t)}.
+  \end{aligned}
+\end{equation}
+
+
