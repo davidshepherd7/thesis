@@ -1,4 +1,4 @@
-\section{Truncation errors for some ODE methods}
+\chapter{Truncation errors for some ODE methods}
 
 \begin{table}[h]
   \centering
@@ -11,7 +11,7 @@
   \label{tab:truncation-errors}
 \end{table}
 
-\subsection{Trapezoid Rule}
+\section{Trapezoid Rule}
 
 Expression from \cite[pg. 261]{Gresho-Sani}
 \begin{equation}
@@ -20,7 +20,7 @@ Expression from \cite[pg. 261]{Gresho-Sani}
   + \order{\dtn^4}.
 \end{equation}
 
-\subsection{BDF2}
+\section{BDF2}
 
 Expression from \cite[pg. 715]{Gresho-Sani} or \cite[eq. (2.43)]{Prinja2010}
 \begin{equation}
@@ -37,7 +37,7 @@ With constant time steps this reduces to
   + \order{\dtn^4}.
 \end{equation}
 
-\subsection{IMR}
+\section{IMR}
 \label{sec:full-imr-lte-calculation}
 
 Continuing from equation~\eqref{eq:trunc-mid} at the end of Section~\ref{sec:deriv-local-trunc}.

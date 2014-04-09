@@ -1,4 +1,4 @@
-\section{Introduction to Finite Difference and Finite Element Approximations}
+\chapter{Introduction to Finite Difference and Finite Element Approximations}
 \label{sec:intr-finite-ele-diff}
 
 The finite difference and finite element methods allow the \emph{discretisation} of a continuous differential equation to allow for solution by computational methods. The finite element method allows for more complex geometries than the finite difference method, at the cost of increased complexity and setup time.
@@ -13,7 +13,7 @@ equation in one spatial dimension. Find\footnote{A function $g\in C^{k}(0,1)$ if
   y(0)=y_{a},\quad y(1)=y_{b},\quad f=f(x)\in C(0,1).
 \end{equation*}
 
-\subsection{Finite Difference Approximation}
+\section{Finite Difference Approximation}
 \label{sec:finite-diff-appr}
 
 We start with the equation~\eqref{eq:poisson1} and subdivide this interval into
@@ -136,7 +136,7 @@ which simplifies to
 This can be easily solved computationally by using standard linear algebra solvers.
 
 
-\subsubsection{Example}
+\subsection{Example}
 
 \begin{figure}[!ht]
   \includegraphics[width=1\textwidth]{./images/finitediffexample}
@@ -184,10 +184,10 @@ Solving for $\mathbf{y} = [ y_1, y_2, y_3]$ gives
 which is plotted in Figure~\ref{fig:A-finite-difference-example}.
 
 
-\subsection{Finite Elements}
+\section{Finite Elements}
 \label{sec:finite-elements-one-d}
 
-\subsubsection{Definitions}
+\subsection{Definitions}
 \label{sec:fem-definitions}
 
 The function space $L^{2}$ is the set of all functions $f(x)$ such
@@ -208,7 +208,7 @@ The $n$-th Sobelov space is the space of all functions such that they and their 
   \sob^1(\magd) = \{ y \st y, \pd{y}{x_i} \in L^2(\magd) \; \forall x_i \}
 \end{equation}
 
-\subsubsection{The Weak Formulation \& A Discretisation}
+\subsection{The Weak Formulation \& A Discretisation}
 \label{Derivation-of-weighted-residuals}
 
 The method of weighted residuals is a way to convert a differential equation
@@ -343,7 +343,7 @@ and the problem is reduced to a system of linear equations
 This can be solved to find the vector of unknown coefficients $\mathbf{c}$ which can be substituted into \eqref{eq:y-spans} to give an approximation for $y$.
 
 
-\subsubsection{Finite Elements in One Dimension}
+\subsection{Finite Elements in One Dimension}
 \label{sub:Actual-Finite-Elements}
 
 To create a useable implementation of the methodology derived in Section~\ref{Derivation-of-weighted-residuals} we must first define a set of basis functions $\tbf_\ndi$ for the space $V_{T}^{h}$ and a set of $\sbf_l$ for the space $V_S^h$. For simplicity we choose the two types of basis functions to be the same: $\sbf_l = \tbf_l$. This choice defines the Galerkin method (and often results in symmetric matrix $A$).\cite[pg. 215]{Zeinkiewicz1967}
@@ -469,9 +469,9 @@ which we compute numerically since the entries depend on $f(x)$ which is not yet
 decided.
 
 
-\subsection{Extensions of the Finite Element Method}
+\section{Extensions of the Finite Element Method}
 
-\subsubsection{Non-Dirichlet Boundary Conditions}
+\subsection{Non-Dirichlet Boundary Conditions}
 \label{sub:Non-Dirichlet-Boundary-Conditions}
 
 There are two main types of boundary condition. Dirichlet conditions specify the
@@ -488,19 +488,19 @@ additional equation for the Neumann condition on each boundary node.
 Combinations of Neumann and Dirichlet conditions on different parts of the boundary can be treated the same way, by restricting the shape and test functions only on the Dirichlet parts.
 
 
-\subsubsection{Other Equations}
+\subsection{Other Equations}
 \label{sec:fem-other-equations}
 
 Finite element models are used to solve a wide range of equations including for example applications in fluid/solid mechanics, electrostatics and magnetostatics. There can be various subtleties in the application to different equations but the main difference in the method described so far is the derivation of the weak form. However the same steps of multiplying by a test function and transferring derivatives to the test functions are still used.
 
 
-\subsubsection{Higher Order Shape/Test Functions}
+\subsection{Higher Order Shape/Test Functions}
 \label{sec:fem-high-order-shap}
 
 The shape and test functions can also be chosen to be of quadratic, cubic or higher order. This increases the number of nodes required per element (to ensure uniqueness) and increases the difficulty of calculating the integrals. However in some cases the use of higher order polynomials can give a better approximation.
 
 
-\subsubsection{Higher Dimensions}
+\subsection{Higher Dimensions}
 \label{sec:fem-higher-dimensions}
 
 The same basic method as given in Sections~\ref{Derivation-of-weighted-residuals} and \ref{sub:Actual-Finite-Elements} can be applied to two and three dimensional problems. Different polynomials for the shape/test functions must be chosen but the basic orthogonality property from equation~\eqref{eq:35} is kept. A larger variety of element shapes are possible -- typically triangular or quadrilateral elements are used in two dimensions and their higher dimension equivalents (tetrahedrons and ``bricks'') are used in three dimensions.

@@ -1,9 +1,9 @@
-\section{Continuous Micromagnetics}
+\chapter{Continuous Micromagnetics}
 \label{sec:cont-micromag}
 
 In this section we give an introduction to micromagnetics including a statement of the equations to be solved.
 
-\subsection{Definitions}
+\section{Definitions}
 We use S.I. units throughout unless otherwise specified. In particular normalised quantities are no longer in S.I. units.
 
 We define $\Hv(\xv,t)$ to be the magnetic field at position $\xv$ and time $t$ in units of $\Hu$.
@@ -22,7 +22,7 @@ where $\mu_0$ is the magnetic constant (or permeability of free space).
 
 In general we will not make dependencies on $\xv$ and $t$ explicit.
 
-\subsection{Energy of a Magnetic Body}
+\section{Energy of a Magnetic Body}
 \label{sec:energy-magnetic-body}
 
 The effects that must be considered in a micromagnetic mode are: the magnetostatic self field, the exchange energy and the magnetocrystalline anisotropy energy. Also important is the external applied field due to magnetic bodies or electrical currents outside the modelled region. Other effects which are sometimes important include temperature (thermal effects) and magnetostriction energy (due to stretching or compressing the magnet).
@@ -35,7 +35,7 @@ where $\delta$ indicates a variational derivative and $V_{\magd}$ is the volume 
 
 %% Energy and field expressions below are taken from Matteo Franchin's thesis.\cite{Franchin2009}\footnote{Note that due to the variety in unit systems, definitions of magnetisation and other choices it can be difficult to compare energy/effective field equations from different authors, in particular the location of factors of $\mu_0$.}
 
-\subsubsection{Exchange Energy}
+\subsection{Exchange Energy}
 
 In a ferromagnetic material neighbouring magnetic moments prefer to align parallel to each other due to quantum mechanical effects. This can be well approximated by a classical expression for exchange energy:\cite{Aharoni1996}
 \begin{equation}
@@ -50,7 +50,7 @@ We write the vector Laplacian as $\lap \Mv = (\lap M_x,\lap M_y, \lap M_z )$. Th
   \Hex = \frac{2 \Exchc}{ \mu_0 M_s} \lap \Mv.
 \end{equation}
 
-\subsubsection{Magnetostatic Field}
+\subsection{Magnetostatic Field}
 \label{sec:magnetostatic-field}
 
 Magnetic materials generate magnetic fields, which in turn affects the magnetic material. This type of field is also known as the demagnetising field since it tends to oppose the magnetisation of the body. The magnetostatic field, $\Hms$, can be calculated in two ways: an integral based method or a potential based method. These methods are discussed in Sections~\ref{sec:magstat-field-calc-inte} and \ref{sec:magstat-field-calc-pote} respectively.
@@ -68,7 +68,7 @@ Similarly any external applied field gives an energy contribution of
   \Eapp = - \mu_0 \int_{\magd} \Mv \cdot \Happ \d \magd.
 \end{equation}
 
-\subsubsection{Magnetocrystalline Anisotropy}
+\subsection{Magnetocrystalline Anisotropy}
 \label{sec:magn-anis}
 
 Many magnetic materials have a preferred direction (or directions) of magnetisation due to their crystal structure. This is known as magnetocrystalline anisotropy. The equation for the magnetocrystalline anisotropy energy depends on the crystal structure of the material.
@@ -85,7 +85,7 @@ where $\ev$ is the easy axis and $K_u$ is the (material dependant) first order a
 \end{equation}
 
 
-\subsection{Core Models}
+\section{Core Models}
 ??ds before energy/fields?
 
 The general aim of a micromagnetic model is to predict the behaviour of a magnetic body under a variety of conditions. This can either be done by finding the minimum energy of the body or by modelling the dynamics of the magnetisation.
@@ -106,14 +106,14 @@ The general aim of a micromagnetic model is to predict the behaviour of a magnet
 \end{figure}
 
 
-\subsubsection{Energy Based Micromagnetics}
+\subsection{Energy Based Micromagnetics}
 \label{sec:energy-based-micr}
 
 Energy based methods find an equilibrium state of the magnetic system by finding the minimum energy with respect to variation of $\Mv$. For example Fredkin and Koehler used a finite element energy minimisation method.\cite{Koehler1992} Energy based methods require less computational effort than dynamic methods. However they cannot give any information about the time evolution of a system.\cite{Fidler2000} This is an important problem in many areas: for example in magnetic data storage the time taken to reverse the magnetisation of a bit is of key interest.
 
 % could include more details on how to search for minima.
 
-\subsubsection{Dynamic Micromagnetics}
+\subsection{Dynamic Micromagnetics}
 \label{sec:land-lifsch-gilb}
 
 Dynamic micromagnetic methods model the time evolution of the magnetisation, for given effective field, as a differential equation. Starting with the quantum mechanical angular momentum of an electron, and converting from a single spin a continuous magnetisation gives\cite{Kronmuller2003}
@@ -163,19 +163,19 @@ Note that there is no spatial dependence directly contained in equations~\eqref{
 Examples of currently available micromagnetic models include the \texttt{OOMMF}\cite{oommf-website} and \texttt{nmag}\cite{Fischbacher2007} packages, which both use the dynamic method exclusively, along with \texttt{magpar}\cite{Scholz2003} and \texttt{FEMME}\cite{suessco-website} which can use either dynamic or energy based methods.
 
 
-% \subsection{Accounting for Thermal Effects}
+% \section{Accounting for Thermal Effects}
 % \label{sec:thermal-effects}
 % ??ds put in from other file when ready
 
 
 
 
-% \subsubsection{Magnetostrictive Effects}
+% \subsection{Magnetostrictive Effects}
 % \label{sec:magstric-effects}
 % probably will never include this...
 
 
-% \subsection{Limitations of Micromagnetics}
+% \section{Limitations of Micromagnetics}
 % ??ds put in from another file when ready
 
 

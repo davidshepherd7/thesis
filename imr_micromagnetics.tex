@@ -1,8 +1,8 @@
 
-\section{Application of the adaptive implicit midpoint rule to micromagnetics}
+\chapter{Application of the adaptive implicit midpoint rule to micromagnetics}
 
 
-\subsection{Why use the implicit midpoint rule}
+\section{Why use the implicit midpoint rule}
 
 %% The implicit midpoint rule is known to be especially effective for micromagnetics problems \cite{DAquino2005}.
 The non-dimensional form of the Landau-Lifshitz-Gilbert equation is
@@ -46,7 +46,7 @@ In addition to these conservation properties the following properties make IMR s
 
 %% Since IMR is a single step method there is no dependence on $\dtx{n-1}$ (unlike, for example, BDF2) and so no change in these properties would be expected when going from fixed to varying time step sizes.
 
-\subsection{Properties of the continuous Landau-Lifshitz-Gilbert equation}
+\section{Properties of the continuous Landau-Lifshitz-Gilbert equation}
 \label{sec:prop-cont-llg}
 
 We first need the identity
@@ -95,7 +95,7 @@ Note that length conservation is a \emph{pointwise} property, \ie $\abs{\mv} = 1
 This is related to the use of the dot product and the $\ltwo$ inner product respectively in their proofs.
 
 
-\subsection{Properties of the IMR-discretised LLG}
+\section{Properties of the IMR-discretised LLG}
 \label{sec:prop-imr-llg}
 
 We now repeat the above procedures for the discrete form of the Landau-Lifshitz-Gilbert equation that results from the use of the implicit midpoint rule.
@@ -213,9 +213,9 @@ which is exactly the midpoint discretisation of the continuous energy balance eq
 Note that nothing in the above derivations depends in previous step sizes, hence these properties should hold regardless of any variations in step size (\ie in an adaptive time integrator).
 
 
-\subsection{Limitations of conservation properties}
+\section{Limitations of conservation properties}
 
-\subsubsection{Non-linear applied fields}
+\subsection{Non-linear applied fields}
 \label{sec:non-linear-applied}
 
 In the previous section we assumed that the applied field, $\happ$, is linear (within each step).
@@ -235,7 +235,7 @@ In the case when the field is genuinely non-linear there is an additional error 
 
 
 
-\subsubsection{Solvers}
+\subsection{Solvers}
 
 It should be noted that the above properties are only true up to the accuracy with which we solve the LLG. Since the LLG is non-linear this is typically the Newton tolerance.
 
@@ -247,7 +247,7 @@ However the magnetisation length property will be retained because this only rel
 Efficient, fully-implicit solvers, as required to realise the full potential of the implicit midpoint rule, are certainly possible: one example was implemented by d'Aquino \etal.\cite{DAquino2005}
 
 
-\subsection{Numerical Experiments}
+\section{Numerical Experiments}
 
 In this section we present numerical experiments showing that the adaptive midpoint method retains the conservation properties of the fixed step midpoint method.
 For this purpose we choose a simple model: a small\footnote{Small enough that exchange coupling dominates and the magnetisation is spatially constant throughout the particle.} spherical nano-particle with no magnetocrystalline anisotropy under linearly increasing applied field.
@@ -296,9 +296,9 @@ It can be seen that reduction of the Newton tolerance strongly reduces the mean 
 \end{figure}
 
 
-\subsection{Discussion}
+\section{Discussion}
 
-\subsubsection{Extension to pdes}
+\subsection{Extension to pdes}
 
 We have done some initial work using adaptive midpoint for the non-spatially constant LLG (\ie a pde) which works well for fully implicit problems.
 
@@ -311,7 +311,7 @@ The conservation of magnetisation length by IMR does not require a fully implici
 Hence the our adaptive IMR scheme could be also be useful in a semi-implicit magnetisation-length-conserving solver.
 
 
-\subsubsection{Alternative time adaptivity methods in micromagnetics}
+\subsection{Alternative time adaptivity methods in micromagnetics}
 \label{sec:altern-time-adapt}
 
 In cases where the damping is not exact the effective damping can be used as an error estimator, as proposed by Albuquerque \etal\cite{Albuquerque2001}
@@ -323,7 +323,7 @@ Rigorous time error estimates for the LLG with limited effective field terms wit
 By comparison our adaptive method is much more general in that it can be applied to any differential equation and any discretisation scheme which uses the method of lines for time.
 It is also simpler to implement (requiring only an additional explicit time step, which can easily be handled by existing ODE solver packages) and easy to understand.
 
-\subsubsection{Symplecity}
+\subsection{Symplecity}
 
 ??ds I basically have no idea about this stuff.
 

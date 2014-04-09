@@ -1,6 +1,6 @@
 
 
-\section{An adaptive implicit-midpoint-rule time-integrator}
+\chapter{An adaptive implicit-midpoint-rule time-integrator}
 
 
 %*** other names?
@@ -13,7 +13,7 @@
 %% \end{align}
 %% and we denote derivatives of $\yv$ by $\yv'$ etc.
 
-\subsection{Fixed step implicit midpoint rule}
+\section{Fixed step implicit midpoint rule}
 
 Let $\yv(t)$ be a vector function, let $\yv_n$ denote an estimate to $\yv(t)$ at $t = t_n$.
 Let $\dtn = t_{n+1} - t_n$ be the $n$th time step (or just ``step'').
@@ -43,7 +43,7 @@ for readability, giving
 Note that unlike multistep methods, such as the second order backwards difference (BDF2), this is valid for both constant and variable step sizes because there is no dependence on previous steps.
 
 
-\subsection{Implicit midpoint rule local truncation error}
+\section{Implicit midpoint rule local truncation error}
 \label{sec:deriv-local-trunc}
 
 The local truncation error (LTE) of a time integration scheme is the error due a single integration step.
@@ -83,7 +83,7 @@ Hence we avoid expanding it further.
 See Section~\ref{sec:full-imr-lte-calculation} for details of the rest of the Taylor expansion, which also proves that IMR is indeed a second order method.
 
 
-\subsection{Construction of an LTE estimate}
+\section{Construction of an LTE estimate}
 
 Most truncation error estimators for implicit integrators (e.g. trapezoid rule, BDF2) use a Milne-device based method.\cite[pgs 707-716]{Gresho-Sani}
 This means that they compute two estimates of the value at $t_{n+1}$ to the same order of accuracy.
@@ -102,7 +102,7 @@ Instead we use a little known explicit version of the third order backwards diff
 This requires only 3 history values and a single (explicit) derivative function evaluation at time $t_n$ in order to compute a 3rd order accurate step.
 Alternatively a 3rd order Adams-Bashforth scheme could be used, this would require one less start-up step but would require storage of an additional derivative value.
 
-\subsubsection{The variable step explicit backwards difference 3 method}
+\subsection{The variable step explicit backwards difference 3 method}
 
 Hairer and Wanner\cite{Hairer book} give...
 
@@ -110,7 +110,7 @@ Used sympy\cite{??ds sympy} to generate scheme
 
 Code at \cite{??ds github}
 
-\subsubsection{Computing the size of the next step}
+\subsection{Computing the size of the next step}
 
 We use a standard method for computing the next step from the local truncation error and a target local truncation error \toltt:\cite[pg.268]{Gresho-Sani}
 \begin{equation}
@@ -122,9 +122,9 @@ For implicit midpoint rule this is
 \end{equation}
 
 
-\subsection{Numerical experiments}
+\section{Numerical experiments}
 
-\subsubsection{Implementation}
+\subsection{Implementation}
 
 To increase relevance to realistic models including spatial discretisation we use a Newton method to solve \emph{all} equations (even linear ones).
 
@@ -137,7 +137,7 @@ All code used has been open sourced and is available on github.\cite{simple-ode-
 Unless otherwise specified all examples in this section use a Newton tolerance of $1\E{-10}$ and an adaptive integrator tolerance of $\toltt = 1\E{-4}$.
 
 
-\subsubsection{Test functions}
+\subsection{Test functions}
 
 To demonstrate the effectiveness of the adaptation scheme we use a simple ODE with known exact solution
 \begin{align}
@@ -161,7 +161,7 @@ Plots of the solutions given by the various numerical calculations below are all
   \label{fig:mp-ode-exact}
 \end{figure}
 
-\subsubsection{Results}
+\subsection{Results}
 
 \begin{figure}[ht!]
   \centering
@@ -196,9 +196,9 @@ Additionally it can be seen that decreasing the tolerance smoothly decreases the
 \end{figure}
 
 
-\subsection{Additional Notes}
+\section{Additional Notes}
 
-\subsubsection{Implicit ODEs}
+\subsection{Implicit ODEs}
 \label{sec:extens-impl-odes}
 
 We sometimes wish to solve a system of equations where $\yv'(t)$ only given implicitly\footnote{This use of ``implicit'' is unrelated to the notion of implicitness in the time integration scheme.} (for example the Gilbert form of the Landau-Lifshitz-Gilbert equation), in this case equation~\eqref{eq:43} becomes
@@ -219,7 +219,7 @@ However the adaptive scheme requires an additional function evaluation.
 For implicitly defined functions this is expensive, so this adaptive method is not efficient for equations which can only be defined in such a way.
 
 
-\subsubsection{Order reduction}
+\subsection{Order reduction}
 
 It is known that implicit Runge-Kutta methods (such as the implicit midpoint rule) are susceptible to reduced accuracy when used to solve certain types of stiff problem.
 This is represented in the second term of the full LTE expression~\eqref{eq:trunc-final}.

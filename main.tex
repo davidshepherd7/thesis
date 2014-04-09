@@ -1,5 +1,4 @@
-\documentclass[11pt,a4paper,pdftex]{article}
-%% use book eventually? - lets us have chapters
+\documentclass[11pt,a4paper,pdftex]{book}
 
 %% General packages
 %% ============================================================
@@ -38,7 +37,7 @@
 \cfoot{\thepage}        %Page number in centre footer
 
 % These 3 commands set the left header to display the current section
-\renewcommand{\sectionmark}[1]{\markboth{#1}{}}
+\renewcommand{\chaptermark}[1]{\markboth{#1}{}}
 \lhead{\leftmark}
 \setlength{\headheight}{15.2pt}
 
@@ -72,7 +71,7 @@
 
 %% Equations/maths
 %% ============================================================
-\numberwithin{equation}{section} % Number equations by "<section>.<number>".
+\numberwithin{equation}{chapter} % Number equations by "<chapter>.<number>".
 
 %\usepackage{nath}
 % % Prevent line break in the middle of maths except in extreme cases (increse numbers to make line breaking even more unlikely)
@@ -484,7 +483,7 @@
 % our pages numbers
 \include{./listofsymbols}
 
-\setcounter{tocdepth}{2} % Set contents to only go down to subsection level
+\setcounter{tocdepth}{1} % Set contents to only go down to section level
 \tableofcontents
 
 \include{./introduction}

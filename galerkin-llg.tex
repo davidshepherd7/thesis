@@ -1,8 +1,8 @@
 
-\section{Galerkin's Method for the Landau--Lifshitz--Gilbert Equation}
+\chapter{Galerkin's Method for the Landau--Lifshitz--Gilbert Equation}
 \label{sec:galerk-meth-llg}
 
-\subsection{Initial Equations}
+\section{Initial Equations}
 
 Our labelling of the domains is shown in Figure~\ref{fig:domain_labels}. We label the region of magnetisable material as $\magd$, it's boundary as $\boundd$ and the external domain as $\extd$.
 
@@ -30,7 +30,7 @@ For now we consider the magnetostatic potential only within the magnetic domain,
   \Dfs_0 &= \{ v \st v(\xv) = 0 \; \forall \xv \in \boundd_D \}.
 \end{align}
 
-\subsection{Normalisation}
+\section{Normalisation}
 \label{sec:normalisation}
 
 %% For efficient and accurate numerical modelling it is essential to ensure that computed values remain close to unity. As such we actually work in terms of:
@@ -64,12 +64,12 @@ For now we consider the magnetostatic potential only within the magnetic domain,
 
 
 
-\subsection{Conversion to Weak Form Residuals}
+\section{Conversion to Weak Form Residuals}
 
 We convert some of the above equations into their residual weak forms as described in Section~\ref{Derivation-of-weighted-residuals}. Each residual equation used increases the complexity of our system of equations, hence we do not rewrite the simple equations for crystalline anisotropy effective field or for the magnetostatic field (in terms of $\phim$) as residuals.
 
 
-\subsubsection{Magnetostatic Field Residuals}
+\subsection{Magnetostatic Field Residuals}
 \label{sec:magn-field-resid}
 
 The equation for the magnetostatic potential becomes \eqref{eq:phim} becomes:
@@ -137,7 +137,7 @@ Note that the boundary integral is always zero on the Dirichlet region of the bo
 %   \forall v \in \sob^1(\magd) \cap \Dfs_0. \notag
 % \end{gather}
 
-% \subsubsection{Exchange Field Residuals}
+% \subsection{Exchange Field Residuals}
 % \label{sec:exch-field-resid}
 
 % The exchange effective field equation~\eqref{eq:hex} becomes:
@@ -167,7 +167,7 @@ Note that the boundary integral is always zero on the Dirichlet region of the bo
 %   \forall v \in \sob^1(\magd). \notag
 % \end{gather}
 
-\subsubsection{Landau--Lifshitz--Gilbert Equation Residuals}
+\subsection{Landau--Lifshitz--Gilbert Equation Residuals}
 
 For the Landau--Lifshitz--Gilbert equation~\eqref{eq:llg} we have a set of three residuals per test function. For now we sidestep the details of time discretisation by assuming $\dmdt$ to be just another function of $\xv$ that we can solve for.
 \begin{gather}
@@ -197,7 +197,7 @@ using similar techniques to those in Section~\ref{sec:magn-field-resid}. %??ds d
 
 ??ds can we assume $(\mv \times \pd{\mv}{\nv}) = 0$? Others do... will do for now
 
-\subsection{Spatial Discretisation}
+\section{Spatial Discretisation}
 \label{sec:spat-discr-resi}
 
 The next step is to discretise the residuals in space. As in Section~\ref{Derivation-of-weighted-residuals} and \ref{sub:Actual-Finite-Elements} we replace continuous variables and functions by a basis representation using a finite space of shape functions. We also replace the infinite spaces of test functions used so far by finite dimensional approximations.
@@ -258,7 +258,7 @@ As described in Section~\ref{sub:Actual-Finite-Elements} we can convert this ``g
 
 Let $\magd_\eli$ represent the volume of element $e$, let $\boundd_\eli$ represent any part of the boundary of the element which is on $\boundd$ (nothing for most elements). Then the contribution of element $\eli$ to the residuals at node $\ndi$ is exactly as given in equations~\eqref{res:tintro}-\eqref{res:tllg} except that the integrations are performed over $\magd_\eli$ and $\boundd_\eli$ rather than $\magd$ and $\boundd$. Also note that the sums only need to consider values of $k$ such that node $k$ is in element $\eli$ and that residual contributions only need to be calculated for nodes $\ndi$ such that node $\ndi$ is in element $\eli$.
 
-\subsection{Jacobian calculation}
+\section{Jacobian calculation}
 \label{sec:jacobian-calculation}
 
 To solve this system by a Newton method we also need to know the Jacobian of the residuals.
@@ -316,7 +316,7 @@ Denote (tensor)
 
 
 
-\subsection{Time Discretisation}
+\section{Time Discretisation}
 \label{sec:time-discretisation-resi}
 
 To deal with the time derivative in equation~\eqref{res:tllg} we must apply a time discretisation scheme. As discussed in Section~\ref{sec:model-conclusions} we aim to use the mid-point method in our model, however so far the backwards difference method has been used for implementation convenience.

@@ -1,8 +1,8 @@
 
-\section{Galerkin's Method for the Landau-Lifshitz Equation}
+\chapter{Galerkin's Method for the Landau-Lifshitz Equation}
 \label{sec:galerk-meth-ll}
 
-\subsection{Initial Equations}
+\section{Initial Equations}
 
 Our labelling of the domains is shown in Figure~\ref{fig:domain_labels}. We label the region of magnetisable material as $\magd$, it's boundary as $\boundd$ and the external domain as $\extd$.
 
@@ -54,12 +54,12 @@ We also define the following function spaces for convenience
 
 
 
-\subsection{Conversion to Weak Form Residuals}
+\section{Conversion to Weak Form Residuals}
 
 The next step is to convert equations~\eqref{eq:ndll}, \eqref{eq:ndh} and \eqref{eq:ndphi} into their residual weak forms as described in Section~\ref{Derivation-of-weighted-residuals}.
 We start with the magnetostatic potential equation because it is the simplest.
 
-\subsubsection{Magnetostatic Field Residuals}
+\subsection{Magnetostatic Field Residuals}
 \label{sec:magn-field-resid}
 
 After weak forming, the equation for the magnetostatic potential becomes:
@@ -127,7 +127,7 @@ Note that the boundary integral is always zero on the Dirichlet region of the bo
 %   \forall v \in \sob^1(\magd) \cap \Dfs_0. \notag
 % \end{gather}
 
-\subsubsection{Landau--Lifshitz--Gilbert Equation Residuals}
+\subsection{Landau--Lifshitz--Gilbert Equation Residuals}
 
 
 For the Landau-Lifshitz equation~\eqref{eq:ndll} we have a vector of three residuals.
@@ -241,7 +241,7 @@ So finally we have the exchange contribution to the Landau-Lifshitz-Gilbert equa
 \end{align}
 
 
-\subsection{Spatial Discretisation}
+\section{Spatial Discretisation}
 \label{sec:spat-discr-resi}
 
 The next step is to discretise the residuals in space. As in Section~\ref{Derivation-of-weighted-residuals} and \ref{sub:Actual-Finite-Elements} we replace continuous variables and functions by a basis representation using a finite space of shape functions. We also replace the infinite spaces of test functions used so far by finite dimensional approximations.
@@ -296,7 +296,7 @@ As described in Section~\ref{sub:Actual-Finite-Elements} we can convert this ``g
 Let $\magd_\eli$ represent the volume of element $e$, let $\boundd_\eli$ represent any part of the boundary of the element which is on $\boundd$ (nothing for most elements). Then the contribution of element $\eli$ to the residuals at node $\ndi$ is exactly as given above except that the integrations only need to be performed over $\magd_\eli$ and $\boundd_\eli$ rather than $\magd$ and $\boundd$. Also note that the sums only need to consider values of $k$ such that node $k$ is in element $\eli$ and that residual contributions only need to be calculated for nodes $\ndi$ such that node $\ndi$ is in element $\eli$.
 
 
-\subsection{Time Discretisation}
+\section{Time Discretisation}
 \label{sec:time-discretisation-resi}
 
 To deal with the time derivative in the residual we apply a time discretisation scheme (\ie we use the method of lines). As discussed in Section~\ref{sec:model-conclusions} we aim to use the mid-point method in our final model but the backwards difference methods are also useful for comparison.
@@ -317,7 +317,7 @@ which can similarly be substituted into the spatially discretised residuals with
 
 
 
-\subsection{Jacobian calculation}
+\section{Jacobian calculation}
 \label{sec:jacobian-calculation}
 
 To solve this system by a Newton method we also need to know the Jacobian matrix of the residuals differentiated with respect to the variables at the target time step: $\phim_\ik^{\tl+1}$ and $\mv_\ik^{\tl+}$.
