@@ -1,0 +1,109 @@
+\section{Truncation errors for some ODE methods}
+
+\begin{table}[h]
+  \centering
+  \begin{tabular}{c|c}
+    TR & $\frac{1}{12} \approx 0.0833$ \\
+    BDF2 & $\frac{2}{9} \approx 0.2222$ \\
+    IMR & complex, as TR for linear problems
+  \end{tabular}
+  \caption{Magnitude of the constant in front of leading order term of truncation errors for constant time step size.}
+  \label{tab:truncation-errors}
+\end{table}
+
+\subsection{Trapezoid Rule}
+
+Expression from \cite[pg. 261]{Gresho-Sani}
+\begin{equation}
+  \label{eq:tr-lte-conststep}
+  \lte = \yv_{n+1} - \yv(t_{n+1}) = -\frac{\dtn^3 \yv_n'''}{12}
+  + \order{\dtn^4}.
+\end{equation}
+
+\subsection{BDF2}
+
+Expression from \cite[pg. 715]{Gresho-Sani} or \cite[eq. (2.43)]{Prinja2010}
+\begin{equation}
+  \label{eq:bdf2-lte}
+  \lte = \yv_{n+1} - \yv(t_{n+1}) = \frac{(\dtn + \dtx{n-1})^2}{\dtn(2\dtn + \dtx{n-1})}
+  \frac{\dtn^3 \yv_n'''}{6}
+  + \order{\dtn^4}.
+\end{equation}
+
+With constant time steps this reduces to
+\begin{equation}
+  \label{eq:bdf2-lte}
+  \lte = \yv_{n+1} - \yv(t_{n+1}) =  \frac{2\dtn^3 \yv_n'''}{9}
+  + \order{\dtn^4}.
+\end{equation}
+
+\subsection{IMR}
+\label{sec:full-imr-lte-calculation}
+
+Continuing from equation~\eqref{eq:trunc-mid} at the end of Section~\ref{sec:deriv-local-trunc}.
+
+In order to be able to cancel terms we now need to Taylor expand $\fv\left( \thf, \frac{\yv(t_n) + \yv_{n+1}}{2} \right)$ in $\yv$ about $\yvhf$.
+Hence we need an expansion of the form
+\begin{align}
+  \fv(\thf, \frac{\yv(t_n) + \yv_{n+1}}{2}) &= \fv(\thf, \yvhf + \dyn),
+                                              \notag \\
+                                            &= \fv(\thf, \yvhf) + \dfdyhf \cdot \dyn  \porder{\dyn^2}
+                                              \label{eq:f-taylor}
+\end{align}
+where $\dfdyhf = \dfdy(\thf, \yvhf)$ is a \emph{matrix} of partial derivatives of each element of $\fv$ with respect to each element of the vector $\yv$ (\ie almost a Jacobian, except without the time derivative).
+Note that the $\fv$ term is multiplied by an additional factor of $\dtn$ in \eqref{eq:trunc-start}, so for this part of the derivation we can drop terms of higher order than $\order{\dtn^2}$ and still retain the same asymptotic accuracy.
+
+We now derive the required correction $\dyn$.
+From equation~\eqref{eq:f-taylor} we have
+\begin{equation}
+  \dyn = \frac{\yv(t_n) + \yv_{n+1}}{2} - \yvhf.
+  \label{eq:51}
+\end{equation}
+However we cannot expand $\yv_{n+1}$ to get $\dyn$ in terms of only values at the midpoint.
+So we use the LTE of IMR to rewrite equation~\eqref{eq:51} as
+\begin{equation}
+  \dyn = \frac{\yv(t_n) + \yv(t_{n+1}) - \lte^\IMP}{2} - \yvhf.
+\end{equation}
+Substituting in the Taylor expansions for $\yv(t_n)$ and $\yv(t_{n+1})$ about $\thf$ (from equations~\eqref{eq:taylornp1} and \eqref{eq:taylorn}) gives
+\begin{align}
+  \dyn &= \yvhf + \frac{\dtn^2}{8} \yvhf[''] - \yvhf - \frac{1}{2} \lte^\IMP \porder{\dtn^4} \notag\\
+       &= \frac{\dtn^2}{8} \yvhf[''] - \frac{1}{2} \lte^\IMP \porder{\dtn^4}
+         \label{eq:dy-value}
+\end{align}
+
+
+
+Substituting the above value for $\dyn$ into the Taylor series expansion of $\fv$ from \eqref{eq:f-taylor} gives
+\begin{equation}
+  \fv(\thf, \frac{\yv(t_n) + \yv_{n+1}}{2}) = \yvhf[']
+  + \frac{\dtn^2}{8} \dfdyhf \cdot \yvhf[''] - \frac{1}{2} \dfdyhf \cdot \lte^\IMP \porder{\dtn^4}
+  . \label{eq:fy-taylor}
+\end{equation}
+and using \eqref{eq:fy-taylor} in \eqref{eq:trunc-mid} gives the local truncation error
+\begin{align}
+  (I + \frac{\dtn}{2}\dfdyhf) \cdot\lte^\IMP
+  &= \dtn \yvhf['] + \frac{\dtn^3}{24} \yvhf[''']
+    - \dtn \yvhf[']
+    - \frac{\dtn^3}{8} \dfdyhf \cdot \yvhf[''] \porder{\dtn^4}
+    \notag \\
+  &= \frac{\dtn^3}{24} \left[\yvhf['''] - 3 \dfdyhf \cdot \yvhf[''] \right]
+    \porder{\dtn^4}.
+    \label{eq:trunc-implicit-form}
+\end{align}
+
+Using a geometric series representation we can show that if all eigenvalues of  $-\frac{\dtn}{2}\dfdyhf$ are s.t. $\abs{\lambda} < 1$\cite{??ds} (which will always be true for some ``small enough'' $\dtn$) then
+??ds can we divide by the largest eigenvalue somewhere to do this?
+\begin{equation}
+  (I + \frac{\dtn}{2}\dfdyhf)^{-1} = I - \frac{\dtn \dfdyhf}{2}  \porder{\dtn^2},
+\end{equation}
+and so\footnote{Assuming that $\dfdyhf$ is not inversely proportional to $\dtn$.}
+\begin{equation}
+  \lte^\IMP = \frac{\dtn^3}{24} \left[\yvhf['''] - 3 \dfdyhf \cdot \yvhf[''] \right]
+  \quad +\order{\dtn^4}.
+  \label{eq:trunc-final}
+\end{equation}
+
+%%% Local Variables:
+%%% mode: latex
+%%% TeX-master: "main"
+%%% End:
