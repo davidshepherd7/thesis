@@ -168,6 +168,7 @@
 \newcommand{\spd}[2]{\frac{\partial^2 #1}{\partial {#2}^2}} % 2nd partial deriv
 \newcommand{\ddn}[1]{\pd{#1}{\nv}} % normal derivative
 \newcommand{\vd}[2]{\frac{\delta #1}{\delta #2}} % variational derivative
+\newcommand{\myvector}[1]{\mathbf{#1}}
 
 \newcommand{\E}[1]{\times 10^{#1}} % powers of 10
 \newcommand{\st}{\,|\,} % ``such that'' operator in sets (vertical line with spacing)
@@ -189,20 +190,20 @@
 \newcommand{\intb}[1]{\intd[\boundd]{#1}}
 
 % Some vector functions
-\newcommand{\gv}{{\mathbf{g}}}
-\newcommand{\fv}{{\mathbf{f}}}
+\newcommand{\gv}{{\myvector{g}}}
+\newcommand{\fv}{{\myvector{f}}}
 
 % Some vectors
-\newcommand{\av}{{\mathbf{a}}}
-\newcommand{\bv}{{\mathbf{b}}}
-\newcommand{\cv}{{\mathbf{c}}}
+\newcommand{\av}{{\myvector{a}}}
+\newcommand{\bv}{{\myvector{b}}}
+\newcommand{\cv}{{\myvector{c}}}
 
-\newcommand{\ev}{\mathbf{\hat{e}}}
-\newcommand{\nv}{\mathbf{\hat{n}}}
+\newcommand{\ev}{\myvector{\hat{e}}}
+\newcommand{\nv}{\myvector{\hat{n}}}
 
-\newcommand{\xv}{\mathbf{x}}
-\newcommand{\yv}{\mathbf{y}}
-\newcommand{\lv}{\mathbf{l}}
+\newcommand{\xv}{\myvector{x}}
+\newcommand{\yv}{\myvector{y}}
+\newcommand{\lv}{\myvector{l}}
 
 \newcommand{\unitv}[1]{{\hat{#1}}}
 \newcommand{\iv}{\unitv{i}}
@@ -256,37 +257,37 @@
 %% Magnetics
 %% ------------------------------
 % Define M, H, B vectors (i.e. bold)
-\newcommand{\Mv}{\mathbf{M}}
-\newcommand{\Hv}{\mathbf{H}}
-\newcommand{\Bv}{\mathbf{B}}
+\newcommand{\Mv}{\myvector{M}}
+\newcommand{\Hv}{\myvector{H}}
+\newcommand{\Bv}{\myvector{B}}
 
 
 % polar coords
-\newcommand{\ruv}{\mathbf{\hat{r}}} % r unit vector
-\newcommand{\phiv}{\mathbf{\hat{\phi}}}
-\newcommand{\thetav}{\mathbf{\hat{\theta}}}
-\newcommand{\rv}{\mathbf{r}} % r vector
+\newcommand{\ruv}{\myvector{\hat{r}}} % r unit vector
+\newcommand{\phiv}{\myvector{\hat{\phi}}}
+\newcommand{\thetav}{\myvector{\hat{\theta}}}
+\newcommand{\rv}{\myvector{r}} % r vector
 
 
 % Define some common types of H-field.
 % if changing these beware of components of H which are not defined here.
-\newsubcommand{\Heff}{\mathbf{H}}{{\text{eff}}} %effective (total)
-\newsubcommand{\Happ}{\mathbf{H}}{{\text{ap}}} %applied
-\newsubcommand{\Hms}{\mathbf{H}}{\text{ms}} % magnetostatic/demag
+\newsubcommand{\Heff}{\myvector{H}}{{\text{eff}}} %effective (total)
+\newsubcommand{\Happ}{\myvector{H}}{{\text{ap}}} %applied
+\newsubcommand{\Hms}{\myvector{H}}{\text{ms}} % magnetostatic/demag
 \newsubcommand{\phim}{\phi}{\text{m}} % magnetostatic potential
-\newsubcommand{\Hex}{\mathbf{H}}{\text{ex}} % exchange
-\newsubcommand{\Hca}{\mathbf{H}}{\text{ca}} % crystalline ansiotropy
-\newsubcommand{\Hthm}{\mathbf{H}}{\text{th}} % thermal
+\newsubcommand{\Hex}{\myvector{H}}{\text{ex}} % exchange
+\newsubcommand{\Hca}{\myvector{H}}{\text{ca}} % crystalline ansiotropy
+\newsubcommand{\Hthm}{\myvector{H}}{\text{th}} % thermal
 
 % Normalised versions of the above fields (and M)
-\newcommand{\mv}{\mathbf{m}}
-\newcommand{\hv}{\mathbf{h}}
-\newsubcommand{\heff}{\mathbf{h}}{{\text{eff}}} %effective (total)
-\newsubcommand{\happ}{\mathbf{h}}{{\text{ap}}} %applied
-\newsubcommand{\hms}{\mathbf{h}}{\text{ms}} % magnetostatic/demag
-\newsubcommand{\hex}{\mathbf{h}}{\text{ex}} % exchange
-\newsubcommand{\hca}{\mathbf{h}}{\text{ca}} % crystalline ansiotropy
-\newsubcommand{\hthm}{\mathbf{h}}{\text{th}} % thermal
+\newcommand{\mv}{\myvector{m}}
+\newcommand{\hv}{\myvector{h}}
+\newsubcommand{\heff}{\myvector{h}}{{\text{eff}}} %effective (total)
+\newsubcommand{\happ}{\myvector{h}}{{\text{ap}}} %applied
+\newsubcommand{\hms}{\myvector{h}}{\text{ms}} % magnetostatic/demag
+\newsubcommand{\hex}{\myvector{h}}{\text{ex}} % exchange
+\newsubcommand{\hca}{\myvector{h}}{\text{ca}} % crystalline ansiotropy
+\newsubcommand{\hthm}{\myvector{h}}{\text{th}} % thermal
 \newcommand{\nH}{H_{\mathbb{n}}} % A "magnitude" of H for normalisation
 
 % Similarly for energies
@@ -336,6 +337,10 @@
 %% ------------------------------
 % Define the test and shape functions
 \newcommand{\tbf}{\varphi}
+\newcommand{\tbfv}{\vec{\varphi}}
+\newcommand{\test}{v}
+\newcommand{\testv}{\myvector{\test}}
+
 \newcommand{\sbf}{\psi}
 \newcommand{\ts}{{\mathcal{H}^1_h(\magd)}} % my test/shape fn space
 \newcommand{\sk}{{\sbf_k}}
@@ -422,9 +427,9 @@
 \newcommand{\mxex}{I}
 \newcommand{\mxmxex}{J}
 
-\newsubcommand{\rex}{\mathbf{r}}{\text{ex}}
-\newsubcommand{\rexh}{\mathbf{r}}{\text{ex,h}}
-\newsubcommand{\rll}{\mathbf{r}}{\text{ll}}
+\newsubcommand{\rex}{\myvector{r}}{\text{ex}}
+\newsubcommand{\rexh}{\myvector{r}}{\text{ex,h}}
+\newsubcommand{\rll}{\myvector{r}}{\text{ll}}
 
 \newcommand{\intp}[1]{\sum_\ibasisc \sk #1_\ibasisc}
 \newcommand{\intpb}[1]{\left( \intp{#1} \right)}
