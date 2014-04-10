@@ -33,7 +33,7 @@ We have a number of reasons to believe that such improvements in the accuracy of
 \item The non-linear modification to the Landau-Lifshitz-Gilbert equation caused by renormalisation of the magnetisation length (as commonly used to maintain correct magnetisation length in non-conservative time integrators) is may cause significant changes in the magnetostatic field.\cite{Lewis2003}
 
 \item Renormalisation of the magnetisation modifies the balance between the various energy terms.
-  This is similar to the methods that lead to the ``flying ice cube'' problem in molecular dynamics.\cite{Harvey1998}\footnote{In such simulations rescaling of particle velocities (to maintain constant temperature despite numerical error accumulation) can result in large amounts of kinetic energy being transferred from the motion of internal degrees of freedom to motion of the centre of mass.}
+  This is similar to the methods that lead to the ``flying ice cube'' problem in molecular dynamics\footnote{In such simulations rescaling of particle velocities (to maintain constant temperature despite numerical error accumulation) can result in large amounts of kinetic energy being transferred from the motion of internal degrees of freedom to motion of the centre of mass.}.\cite{Harvey1998}
 \end{itemize}
 
 Additionally it is ``almost-symplectic'', \ie the property equivalent to Hamiltonian flow for  dissipative systems is conserved up to \order{??ds}\cite{daquino2005}\cite{??ds-older-paper for this?} ??ds here
@@ -80,12 +80,12 @@ Using the fact that $\hv = -\vd{\e}{\mv}$ and the chain rule for variational der
 \end{align*}
 and so
 \begin{equation}
-  \ltip{\hv}{\dmdt} = -\vd{\e}{t} - \ltip{\pd{\happ}{t}}{\mv}.
+  \ltip{\hv}{\dmdt} = -\pd{\e}{t} - \ltip{\pd{\happ}{t}}{\mv}.
 \end{equation}
 Finally, substituting this into equation~\eqref{eq:58} leaves
 \begin{equation}
   \label{eq:energy-decay}
-  \vd{\e}{t} = -\dampc \ltip{\dmdt}{\dmdt} - \ltip{\pd{\happ}{t}}{\mv}.
+  \pd{\e}{t} = -\dampc \ltip{\dmdt}{\dmdt} - \ltip{\pd{\happ}{t}}{\mv}.
 \end{equation}
 Equation~\eqref{eq:energy-decay} shows that under constant applied field the energy of the system is always decreasing by an amount proportional to $\dampc$.
 For non-constant applied fields the change in the Zeeman energy is added which may increase or decrease the energy depending on how the field is changed. % field moves towards m -> decrease, away -> increase. For non-spatially constant this is averaged over space in some sense by the inner product.
@@ -170,8 +170,7 @@ For now we will assume that $\happ$ is linear within each step so that the error
 
 Again in the same manner as the previous section we derive the change in energy of the discrete LLG by taking the $\ltwo$ inner product of equation~\eqref{eqn:disc-llg} with
 \begin{equation}
-  \mphop + \frac{\happ(t_{n+1}) + \happ(t_n)}{2} - \dampc \mpdmdt
-  + \order{\dtn^2 \spd{\happ}{t}},
+  \mphop + \frac{\happ(t_{n+1}) + \happ(t_n)}{2} - \dampc \mpdmdt,
 \end{equation}
 resulting in
 \begin{equation}
