@@ -27,8 +27,6 @@ By the uniqueness of solution for Poisson's equation with Dirichlet and/or Neuma
 \label{sec:problem-description}
 Let $\phi^\inte$ be the value of $\phi$ (with subscripts as appropriate) close to the boundary $\boundd$ and just inside the magnetic domain  and $\phi^\exte$ the value of $\phi$ just outside the magnetic domain\footnote{More precisely $\phi^\inte(\xv) = \lim_{\xv \rightarrow \boundd} \phi(\xv)$ from inside the magnetic domain, $\phi^\exte(\xv) = \lim_{\xv \rightarrow \boundd} \phi(\xv)$ from outside the magnetic domain.} (see Figure~\ref{fig:BEM-geometry}).
 
-\pagebreak % Be careful with this...
-
 We have the following \emph{physical} conditions\footnote{Equations~\eqref{eq:2}-\eqref{eqn:phibound} come from the definition of $\phi_m$, requirement for finite total energy, $\Bv^\text{int} \cdot \nv = \Bv^\text{ext} \cdot \nv$ and ??ds respectively.} on the total magnetostatic potential $\phim$:
 \begin{equation}
   \lap \phim(\xv) = \nabla \cdot \mv(\xv) \qquad \forall \xv \in \magd \cup \extd,
