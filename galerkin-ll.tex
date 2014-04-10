@@ -3,56 +3,9 @@
 \label{sec:galerk-meth-ll}
 
 \section{Initial Equations}
+Similarly to section Section~\ref{sec:llg-initial-equations}.
 
-Our labelling of the domains is shown in Figure~\ref{fig:domain_labels}. We label the region of magnetisable material as $\magd$, it's boundary as $\boundd$ and the external domain as $\extd$.
-
-\begin{figure}[!ht]
-  \center
-  \begin{tikzpicture}
-    \draw[line width=0.5mm,fill=paleblue,draw=solidblue] (0,0) ellipse (3cm and 1.5cm);
-    \draw (0,0) node {\Large{$\magd$}};
-    \draw (2.8,0.8) node[anchor=west] {\Large{$\boundd$}};
-    \draw (-6,1) node[anchor=north] {\Large{$\extd$}};
-  \end{tikzpicture}
-  \caption{The domain labels used: $\magd$ is the magnetic material, $\boundd$ is the boundary and $\extd$ is the (infinite) external region.} \label{fig:domain_labels}
-\end{figure}
-
-Throughout the rest of this section we use the Landau-Lifshitz form of the Landau-Lifshitz-Gilbert equation \eqref{eq:LLG}.
-We choose this version of the equation because it is explicit in $\dmdt$, making it (sometimes) easier to work with.
-For efficient and accurate numerical modelling it is essential to ensure that computed values remain close to unity.
-As such we non-dimensionalise the equations as described in Section~\ref{sec:normalisations-appendix}.
-Since the non-dimensionalised version of equation~\eqref{eq:LLG} is the same as the non-dimensionalised Landau-Lifshitz equation we will just refer to it as the Landau-Lifshitz equation.
-
-So our starting system of equations is:
-\begin{align}
-  \dmdt &= -\mxh -\dampc \mxmxh, \label{eq:ndll} \\
-  \hv &= \happ - \nabla \phi + \lap \mv + \kone \hca, \label{eq:ndh} \\
-  \lap \phi &= \nabla \cdot \mv. \label{eq:ndphi}
-\end{align}
-
-Where:
-\begin{itemize}
-\item $\happ$ is the (known) applied field, possibly a function of space and time.
-\item $\hca$ is the magnetocrystalline anisotropy effective field, which is a known function of $\mv$.
-\item $\nK$ is a measure of the comparative strength of magnetocrystalline anisotropy and exchange effects.
-\end{itemize}
-
-We are interested in the case of zero surface anisotropy (at least for now) which means that the boundary conditions on $\mv$ are simply\cite[pg. 178, 181]{Aharoni1996}
-\begin{equation}
-  \ddn{\mv} = 0. \label{eqn:mbc}
-\end{equation}
-The boundary conditions on the magnetostatic potential $\phim$ are more complex, for now we consider it only within the magnetic domain, $\magd$, with Neumann or Dirichlet boundary conditions on the boundary, $\boundd$.
-We define $\boundd_D$ to represent the region of the boundary domain where a Dirichlet condition is imposed on the magnetostatic potential.
-Similarly we define $\boundd_\Neu$ to be the region of the boundary where a Neumann condition is imposed. So $ \ddn{\phim} = g_\Neu(\xv) \; \forall \xv \in \boundd_\Neu$ and $\phim(\xv) = g_D(\xv) \; \forall \xv \in \boundd_D$.
-Typically we will have either $\boundd_D = \boundd$ or $\boundd_\Neu = \boundd$.
-We also define the following function spaces for convenience
-\begin{align}
-  \label{eq:037}
-  \Dfs & = \{ v \st v(\xv) \text{ satisfies the b.c. s } \; \forall \xv \in \boundd_D \}, \\
-  \Dfs_0 &= \{ v \st v(\xv) = 0 \; \forall \xv \in \boundd_D \}.
-\end{align}
-
-
+Final equations to be solved are... ??ds copy from appendix
 
 \section{Conversion to Weak Form Residuals}
 
@@ -296,119 +249,16 @@ As described in Section~\ref{sub:Actual-Finite-Elements} we can convert this ``g
 Let $\magd_\eli$ represent the volume of element $e$, let $\boundd_\eli$ represent any part of the boundary of the element which is on $\boundd$ (nothing for most elements). Then the contribution of element $\eli$ to the residuals at node $\ndi$ is exactly as given above except that the integrations only need to be performed over $\magd_\eli$ and $\boundd_\eli$ rather than $\magd$ and $\boundd$. Also note that the sums only need to consider values of $k$ such that node $k$ is in element $\eli$ and that residual contributions only need to be calculated for nodes $\ndi$ such that node $\ndi$ is in element $\eli$.
 
 
-\section{Time Discretisation}
-\label{sec:time-discretisation-resi}
-
-To deal with the time derivative in the residual we apply a time discretisation scheme (\ie we use the method of lines). As discussed in Section~\ref{sec:model-conclusions} we aim to use the mid-point method in our final model but the backwards difference methods are also useful for comparison.
-
-Let $\dtn$ be the time-step, let $\mv_k^\tl$ denote the value of $\mv_k$ at the $\tl$-th time-step, and consider only the value of $\mv_k$ at a single node. Then the mid-point method is defined by d'Aquino\cite{DAquino2005} as
-\begin{equation}
-  \label{eq:mid-point-scheme}
-  \dmdt \left( \frac{\mv_k^{\tl+1} + \mv_k^\tl}{2} \right) = \frac{\mv_k^{\tl+1} - \mv_k^l}{ \dtn}.
-\end{equation}
-So by substituting equation~\eqref{eq:mid-point-scheme} into  the spatially discretised residuals with $\mv_k = \frac{\mv_k^{\tl+1} + \mv^\tl_k}{2}$ we obtain a fully discretised system of equations in  $\mv_k^{\tl+1}$ and $\mv_k^\tl$.
-
-The second order backwards difference method is defined as\cite{Atkinson2009}
-\begin{equation}
-  \label{eq:bdf2-scheme}
-  \dmdt(\mv_k^{\tl+1}) = \frac{3 \mv_k^{\tl+1} - 4 \mv_k^{\tl} + \mv_k^{\tl-1}}{2\dtn},
-\end{equation}
-which can similarly be substituted into the spatially discretised residuals with $\mv_k = \mv_k^{\tl+1}$ to obtain a fully discretised system of equations in of $\mv_k^{\tl+1}$, $\mv_k^\tl$ and $\mv_k^{\tl-1}$.
-
 
 
 \section{Jacobian calculation}
-\label{sec:jacobian-calculation}
+\label{sec:ll-jacobian-calculation}
 
-To solve this system by a Newton method we also need to know the Jacobian matrix of the residuals differentiated with respect to the variables at the target time step: $\phim_\ik^{\tl+1}$ and $\mv_\ik^{\tl+1}$.
+Similarly to calculations in Section~\ref{sec:llg-jacobian-calculation}.
 
-We first note that the effect of differentiation on a single interpolated value is quite simple
-\begin{equation}
-  \pd{}{\mv_l} \left( \sum_k \mv_k \sk \right) = \sbf_l \text{I}_3.
-\end{equation}
-Unfortunately in most of the Jacobian calculations we have multiple terms depending on interpolated $\mv$ joined together by a cross product.
-The process of differentiating these terms can be made much easier by making use of the ``skew operator'' which represents a cross product as a small matrix-vector multiplication.
-The skew operator is given by
-\begin{equation}
-  \skewm{\av} = \text{skew}(\av) =
-  \begin{pmatrix}
-    0 & -a_3 & a_2 \\
-    a_3 & 0 & -a_1 \\
-    -a_2 & a_1 & 0
-  \end{pmatrix}.
-  \label{eqn:skew}
-\end{equation}
+First note that the part of the residual corresponding to the double-cross-product exchange field term ($\mv \times \mv \times \lap \mv$) is more complex and cannot be written in terms of skew operators (as far as I can tell).
+We will calculate it separately later, but for now we write it as $\rexh$.
 
-Some properties are:
-\begin{itemize}
-\item Skew-matrix-vector multiplication is a cross product
-  \begin{equation}
-    \skewm{\av} \cdot \bv
-    = \begin{pmatrix}
-      0 & -a_3 & a_2 \\
-    a_3 & 0 & -a_1 \\
-    -a_2 & a_1 & 0
-  \end{pmatrix}
-    \cdot \threevec{b_1}{b_2}{b_3}
-    = \threevec{-a_3b_2 + a_2b_3}{a_3b_1 - a_1b_3}{-a_2b_1 + a_1b_3}
-    = \av \times \bv
-  \end{equation}
-
-\item No effect on derivatives
-  \begin{equation}
-    \pd{}{x} \skewm{\av} = \skewm{ \pd{\av}{x} }
-  \end{equation}
-
-\item Linearity
-  \begin{equation}
-    \skewm{\av + \alpha \bv} = \skewm{\av} + \alpha \skewm{\bv}
-  \end{equation}
-
-\item Simple behaviour when applied to interpolated values and differentiated
-  \begin{equation}
-    \pd{}{\mv_l} \skewm{\intp{\mv}} = \sbf_l \threevec{\skewm{\iv}}{\skewm{\jv}}{\skewm{\kv}}
-    = \sbf_l \skewop_3.
-  \end{equation}
-  Note that $\skewop_3$ is a tensor: it generates a matrix when multiplying a vector. In fact it turns out that
-  \begin{equation}
-    \skewop_3 \cdot \av = \skewm{\av}.
-  \end{equation}
-
-  ??ds is this the correct way to write it? Check tensor mul.
-\end{itemize}
-
-As a simple example of how this can be used we first examine the differentiation of the $\mv \times (\happ + \hms)$ term of the Landau-Lifshitz equation residual (note that these two fields are not (directly) dependant on $\mv$).
-\begin{align}
-  \circled{c} &= \intpb{\mv} \times (\happ + \hms), \notag\\
-  &= \skewm{\intp{\mv}} \cdot (\happ + \hms).
-\end{align}
-Differentiating each component of \circled{c} by each component of $\mv_l$ simply results in the Jacobian
-\begin{align}
-  \pd{\circled{c}}{\mv_l} = \sbf_l \skewm{\happ + \hms}.
-\end{align}
-
-Some more points before the main Jacobian calculation:
-
-\begin{itemize}
-\item Note that $\hca$ is a vector function of $\mv$ so differentiating it gives a 3x3 Jacobian matrix  $\pd{\hca}{\mv_l}$.
-
-\item  \begin{equation}
-    \pd{}{\mv_l} \left(\nabla \mv \cdot \nabla \tbf\right) =
-    \left(\nabla \sbf_l \cdot \nabla \tbf \right) I_3.
-  \end{equation}
-
-\item We write
-  \begin{equation}
-    \dtsdml = \pd{}{\mv_l} \left(\pd{\mv_i}{t} \right),
-  \end{equation}
-  where $\dtsdml$ is some constant that depends on the time integration scheme.
-  For BDF2 $\dtsdml = \frac{3}{2\dtn}$, for the implicit midpoint rule $\dtsdml = \frac{1}{\dtn}$.
-\item The part of the residual corresponding to the double-cross-product exchange field term ($\mv \times \mv \times \lap \mv$) is more complex and cannot be written in terms of skew operators (as far as I can tell).
-  We will calculate it separately later, but for now we write it as $\rexh$.
-\end{itemize}
-
-
-Now we extend this approach to all residual terms except for the double cross product exchange term, which cannot be written in terms of the skew operator.
 After replacing cross products with the skew operator and substituting in the interpolation formulae for $\mv$ we have
 \begin{equation}
   \begin{aligned}

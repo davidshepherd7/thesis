@@ -3,6 +3,7 @@
 \label{sec:galerk-meth-llg}
 
 \section{Initial Equations}
+\label{sec:llg-initial-equations}
 
 Our labelling of the domains is shown in Figure~\ref{fig:domain_labels}. We label the region of magnetisable material as $\magd$, it's boundary as $\boundd$ and the external domain as $\extd$.
 
@@ -258,82 +259,116 @@ As described in Section~\ref{sub:Actual-Finite-Elements} we can convert this ``g
 
 Let $\magd_\eli$ represent the volume of element $e$, let $\boundd_\eli$ represent any part of the boundary of the element which is on $\boundd$ (nothing for most elements). Then the contribution of element $\eli$ to the residuals at node $\ndi$ is exactly as given in equations~\eqref{res:tintro}-\eqref{res:tllg} except that the integrations are performed over $\magd_\eli$ and $\boundd_\eli$ rather than $\magd$ and $\boundd$. Also note that the sums only need to consider values of $k$ such that node $k$ is in element $\eli$ and that residual contributions only need to be calculated for nodes $\ndi$ such that node $\ndi$ is in element $\eli$.
 
+
+\section{Time Discretisation}
+\label{sec:time-discretisation-resi}
+
+To deal with the time derivative in the residual we apply a time discretisation scheme (\ie we use the method of lines). As discussed in Section~\ref{sec:model-conclusions} we aim to use the mid-point method in our final model but the backwards difference methods are also useful for comparison.
+
+Let $\dtn$ be the time-step, let $\mv_k^\tl$ denote the value of $\mv_k$ at the $\tl$-th time-step, and consider only the value of $\mv_k$ at a single node. Then the mid-point method is defined by d'Aquino\cite{DAquino2005} as
+\begin{equation}
+  \label{eq:mid-point-scheme}
+  \dmdt \left( \frac{\mv_k^{\tl+1} + \mv_k^\tl}{2} \right) = \frac{\mv_k^{\tl+1} - \mv_k^l}{ \dtn}.
+\end{equation}
+So by substituting equation~\eqref{eq:mid-point-scheme} into  the spatially discretised residuals with $\mv_k = \frac{\mv_k^{\tl+1} + \mv^\tl_k}{2}$ we obtain a fully discretised system of equations in  $\mv_k^{\tl+1}$ and $\mv_k^\tl$.
+
+The second order backwards difference method is defined as\cite{Atkinson2009}
+\begin{equation}
+  \label{eq:bdf2-scheme}
+  \dmdt(\mv_k^{\tl+1}) = \frac{3 \mv_k^{\tl+1} - 4 \mv_k^{\tl} + \mv_k^{\tl-1}}{2\dtn},
+\end{equation}
+which can similarly be substituted into the spatially discretised residuals with $\mv_k = \mv_k^{\tl+1}$ to obtain a fully discretised system of equations in of $\mv_k^{\tl+1}$, $\mv_k^\tl$ and $\mv_k^{\tl-1}$.
+
+
 \section{Jacobian calculation}
-\label{sec:jacobian-calculation}
+\label{sec:llg-jacobian-calculation}
 
-To solve this system by a Newton method we also need to know the Jacobian of the residuals.
+To solve this system by a Newton method we also need to know the Jacobian matrix of the residuals differentiated with respect to the variables at the target time step: $\phim_\ik^{\tl+1}$ and $\mv_\ik^{\tl+1}$.
 
-Let $J_{\text{llg},n,l}$ be the block of the Jacobian that represents the derivative of LLG residuals at the $n$th node with respect to the $\mv$ values at the $l$th node.
-
-First we state some identities used
+We first note that the effect of differentiation on a single interpolated value is quite simple
+\begin{equation}
+  \pd{}{\mv_l} \left( \sum_k \mv_k \sk \right) = \sbf_l \text{I}_3.
+\end{equation}
+Unfortunately in most of the Jacobian calculations we have multiple terms depending on interpolated $\mv$ joined together by a cross product.
+The process of differentiating these terms can be made much easier by making use of the ``skew operator'' which represents a cross product as a small matrix-vector multiplication.
+The skew operator is given by
 \begin{equation}
   \skewm{\av} = \text{skew}(\av) =
   \begin{pmatrix}
     0 & -a_3 & a_2 \\
     a_3 & 0 & -a_1 \\
     -a_2 & a_1 & 0
-  \end{pmatrix}
-\end{equation}
-\begin{equation}
-  \pd{}{x} \skewm{\av} = \skewm{ \pd{\av}{x} }
-\end{equation}
-\begin{equation}
-  \skewm{\av + \alpha \bv} = \skewm{\av} + \alpha \skewm{\bv}
+  \end{pmatrix}.
+  \label{eqn:skew}
 \end{equation}
 
-\begin{equation}
-  \pd{}{\mv_l} \left( \sum_k \mv_k \sk \right) = \sbf_l \text{I}_3
-\end{equation}
-\begin{equation}
-  \pd{}{\mv_l} \skewm{ \sum_k \mv_k \sk } = \sbf_l
-  \threevec{\skewm{\iv}}{\skewm{\jv}}{\skewm{\kv}}
-\end{equation}
+Some properties are:
+\begin{itemize}
+\item Skew-matrix-vector multiplication is a cross product
+  \begin{equation}
+    \skewm{\av} \cdot \bv
+    = \begin{pmatrix}
+      0 & -a_3 & a_2 \\
+      a_3 & 0 & -a_1 \\
+      -a_2 & a_1 & 0
+    \end{pmatrix}
+    \cdot \threevec{b_1}{b_2}{b_3}
+    = \threevec{-a_3b_2 + a_2b_3}{a_3b_1 - a_1b_3}{-a_2b_1 + a_1b_3}
+    = \av \times \bv
+  \end{equation}
 
-Denote (tensor)
-\[
-\skewm{I_3} = \threevec{\skewm{\iv}}{\skewm{\jv}}{\skewm{\kv}}.
-\]
+\item No effect on derivatives
+  \begin{equation}
+    \pd{}{x} \skewm{\av} = \skewm{ \pd{\av}{x} }
+  \end{equation}
 
+\item Linearity
+  \begin{equation}
+    \skewm{\av + \alpha \bv} = \skewm{\av} + \alpha \skewm{\bv}
+  \end{equation}
+
+\item Simple behaviour when applied to interpolated values and differentiated
+  \begin{equation}
+    \pd{}{\mv_l} \skewm{\intp{\mv}} = \sbf_l \threevec{\skewm{\iv}}{\skewm{\jv}}{\skewm{\kv}}
+    = \sbf_l \skewop_3.
+  \end{equation}
+  Note that $\skewop_3$ is a tensor: it generates a matrix when multiplying a vector. In fact it turns out that
+  \begin{equation}
+    \skewop_3 \cdot \av = \skewm{\av}.
+  \end{equation}
+
+  ??ds is this the correct way to write it? Check tensor mul.
+\end{itemize}
+
+As a simple example of how this can be used we first examine the differentiation of the $\mv \times (\happ + \hms)$ term of the Landau-Lifshitz equation residual (note that these two fields are not (directly) dependant on $\mv$).
 \begin{align}
-  J_{\text{llg},n,l} &= \int_{\magd} \sk \tn J_\text{time} \\
-  &- \skewm{\sum_k \mv_k \sk} \cdot \left( \grad \tn (\grad \sbf_l)^T I_3 \right) \\
-  &- \sbf_l \skewm{I_3} \cdot \left( \sum_k \grad \tn \mv_k (\grad \sk)^T \right) \\
-  &+ \text{applied field term} \\
-  &+ \text{mag static field term} \\
-  \d \magd.
+  \circled{c} &= \intpb{\mv} \times (\happ + \hms), \notag\\
+              &= \skewm{\intp{\mv}} \cdot (\happ + \hms).
+\end{align}
+Differentiating each component of \circled{c} by each component of $\mv_l$ simply results in the Jacobian
+\begin{align}
+  \pd{\circled{c}}{\mv_l} = \sbf_l \skewm{\happ + \hms}.
 \end{align}
 
-??ds TODO
+Some more points before the main Jacobian calculation:
 \begin{itemize}
-\item explain skew operator earlier
-\item Check exchange term -- seems too simple
-\item exchange term
-\item tensor stuff? Or get it out?
-\item time jacobian + give examples for midpoint and bdf2
-\item explain differentiating by vector, abuse of notation..
-\item how related to blocked Jacobian
+\item Note that $\hca$ is a vector function of $\mv$ so differentiating it gives a 3x3 Jacobian matrix  $\pd{\hca}{\mv_l}$.
+
+\item 
+  \begin{equation}
+    \pd{}{\mv_l} \left(\nabla \mv \cdot \nabla \tbf\right) =
+    \left(\nabla \sbf_l \cdot \nabla \tbf \right) I_3.
+  \end{equation}
+
+\item We write
+  \begin{equation}
+    \dtsdml = \pd{}{\mv_l} \left(\pd{\mv_i}{t} \right),
+  \end{equation}
+  where $\dtsdml$ is some constant that depends on the time integration scheme.
+  For BDF2 $\dtsdml = \frac{3}{2\dtn}$, for the implicit midpoint rule $\dtsdml = \frac{1}{\dtn}$.
 \end{itemize}
 
 
-
-\section{Time Discretisation}
-\label{sec:time-discretisation-resi}
-
-To deal with the time derivative in equation~\eqref{res:tllg} we must apply a time discretisation scheme. As discussed in Section~\ref{sec:model-conclusions} we aim to use the mid-point method in our model, however so far the backwards difference method has been used for implementation convenience.
-
-Let $h$ be the time-step, let $\mv_k^\tl$ denote the value of $\mv_k$ at the $\tl$-th time-step, and consider only the value of $\mv_k$ at a single node. Then the mid-point method is defined by d'Aquino\cite{DAquino2005} as
-\begin{equation}
-  \label{eq:mid-point-scheme}
-  \dmdt \left( \frac{\mv_k^{\tl+1} + \mv_k^\tl}{2} \right) = \frac{\mv_k^{\tl+1} - \mv_k^l}{ h}.
-\end{equation}
-So by substituting equation~\eqref{eq:mid-point-scheme} into equation~\eqref{res:tllg} with $\mv_k = \frac{\mv_k^{\tl+1} + \mv^\tl_k}{2}$ we obtain a fully discretised system of equations for $\mv_k^{\tl+1}$ in terms of $\mv_k^\tl$.
-
-The second order backwards difference method is defined as\cite{Atkinson2009}
-\begin{equation}
-  \label{eq:bdf2-scheme}
-  \dmdt(\mv_k^{\tl+1}) = \frac{3 \mv_k^{\tl+1} - 4 \mv_k^{\tl} + \mv_k^{\tl-1}}{2h},
-\end{equation}
-which can similarly be substituted into equation~\eqref{res:tllg} with $\mv_k = \mv_k^{\tl+1}$ to obtain a fully discretised system of equations for $\mv_k^{\tl+1}$ in terms of $\mv_k^\tl$ and $\mv_k^{\tl-1}$.
 
 %%% Local Variables:
 %%% mode: latex
