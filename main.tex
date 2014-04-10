@@ -211,11 +211,22 @@
 \newcommand{\kv}{\unitv{k}}
 
 % Matrices
+\newcommand{\mymatrix}[1]{\mathrm{#1}}
+\newcommand{\Pm}{\mymatrix{P}}
+\newcommand{\Qm}{\mymatrix{Q}}
 \newcommand{\bm}{{\mathbf{\Gm}}}
-\newcommand{\Idm}{\mathrm{I}}
-\newcommand{\Am}{\mathrm{A}}
-\newcommand{\Gm}{\mathrm{G}}
-\newcommand{\Fm}{\mathrm{F}}
+\newcommand{\Idm}{\mymatrix{I}}
+\newcommand{\Am}{\mymatrix{A}}
+\newcommand{\Gm}{\mymatrix{G}}
+\newcommand{\Fm}{\mymatrix{F}}
+\newcommand{\Mm}{\mymatrix{M}}
+\newcommand{\Jm}{\mymatrix{J}}
+\newcommand{\Km}{\mymatrix{K}}
+\newcommand{\Jmca}{\mymatrix{J}_\text{ca}}
+\newcommand{\Jmts}{\mymatrix{J}_\text{ts}}
+\newcommand{\jts}{j_\text{ts}}
+
+
 
 % 3-component vector as a list of components
 \newcommand{\threevec}[3]{\begin{pmatrix} #1 \\ #2 \\ #3 \end{pmatrix} }
@@ -229,6 +240,9 @@
 \newcommand{\grad}{\nabla}
 \newcommand{\curl}{\nabla \cross}
 \newcommand{\lap}{\nabla^2}
+
+\newcommand{\compdot}{\mathbin{:}}
+
 
 
 %% Spaces, domains and geometrical labels
@@ -427,17 +441,18 @@
 \newcommand{\mxex}{I}
 \newcommand{\mxmxex}{J}
 
-\newsubcommand{\rex}{\myvector{r}}{\text{ex}}
-\newsubcommand{\rexh}{\myvector{r}}{\text{ex,h}}
-\newsubcommand{\rll}{\myvector{r}}{\text{ll}}
-
 \newcommand{\intp}[1]{\sum_\ibasisc \sk #1_\ibasisc}
 \newcommand{\intpb}[1]{\left( \intp{#1} \right)}
 \newsubcommand{\hs}{\hv}{\text{s}}
 
 \newcommand{\ik}{\ibasisc}
 
-\newcommand{\dtsdml}{J_\text{ts}}
+% residuals
+\newsubcommand{\rex}{\myvector{r}}{\text{ex}}
+\newsubcommand{\rexh}{\myvector{r}}{\text{ex,h}}
+\newsubcommand{\rll}{\myvector{r}}{\text{ll}}
+\newcommand{\rllg}{\rv}
+\newcommand{\rphi}{s}
 
 
 

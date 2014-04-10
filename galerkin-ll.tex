@@ -2,85 +2,11 @@
 \chapter{Galerkin's Method for the Landau-Lifshitz Equation}
 \label{sec:galerk-meth-ll}
 
-\section{Initial Equations}
 Similarly to section Section~\ref{sec:llg-initial-equations}.
 
 Final equations to be solved are... ??ds copy from appendix
 
-\section{Conversion to Weak Form Residuals}
-
-The next step is to convert equations~\eqref{eq:ndll}, \eqref{eq:ndh} and \eqref{eq:ndphi} into their residual weak forms as described in Section~\ref{Derivation-of-weighted-residuals}.
-We start with the magnetostatic potential equation because it is the simplest.
-
-\subsection{Magnetostatic Field Residuals}
-\label{sec:magn-field-resid}
-
-After weak forming, the equation for the magnetostatic potential becomes:
-\begin{gather}
-  \text{given $\mv \in \sob^1(\magd)$, find $\phim \in \sob^2(\magd) \cap \Dfs$ such that:} \notag \\
-  r_{\phim} = \intd{(\lap \phim) \tbf}
-  - \intd{(\nabla \cdot \mv) \tbf} = 0,
-  \quad \forall \tbf \in \sob^0(\magd) \cap \Dfs_0. \label{eqn:phires1}
-\end{gather}
-
-The above equation for calculating $\phim$ contains second order derivatives.
-We would like to reduce the order of these derivatives as discussed in Section~\ref{Derivation-of-weighted-residuals} to relieve the smoothness requirements on our solution.
-We do this by ``transferring'' the derivatives onto the test functions \cite{HowardElmanDavidSilvester2006}.
-
-First we need the following identity\footnote{This can be easily derived by applying the product rule to $\nabla \cdot (v \nabla \phim)$.}
-\begin{equation}
-  (\lap \phim) \tbf =
-  \nabla \cdot (\tbf \nabla \phim)
-  - \nabla \phim \cdot \nabla \tbf.
-  \label{eq:20}
-\end{equation}
-Then integrating over the magnetic domain $\magd$ and applying the divergence theorem gives
-\begin{equation}
-  \intd{(\lap \phim) \tbf} =
-  \int_{\boundd} \tbf (\nabla \phim \cdot \nv) \d \boundd
-  - \intd{\nabla \phim \cdot \nabla \tbf}.
-  \label{eqn:identitygauss}
-\end{equation}
-
-We now substitute \eqref{eqn:identitygauss} into \eqref{eqn:phires1}, giving
-\begin{gather}
-   \text{given $\mv \in \sob^1(\magd)$, find $\phim \in \sob^1(\magd) \cap \Dfs$ such that:} \notag \\
-  r_{\phim} = \int_{\boundd} \tbf (\nabla \phim \cdot \nv) \d \boundd
-  - \intd{\nabla \tbf \cdot \nabla \phim}
-  - \intd{(\nabla \cdot \mv) \tbf} = 0
-  , \notag \\
-  \forall \tbf \in \sob^1(\magd) \cap \Dfs_0. \notag
-\end{gather}
-This contains only first order derivatives so the solution space for $\phim$ is relaxed to $\sob^1(\magd) \cap \Dfs$. However, all first partial derivatives of the test functions are now required to be integrable, \ie $\tbf \in \sob^1(\magd)$ instead of $\tbf \in \sob^0(\magd)$.
-
-Note that the boundary integral is always zero on the Dirichlet region of the boundary by our definition of the test functions. Hence the boundary integral is only non-zero over $\boundd_{\Neu}$ where we know $(\nabla \phim \cdot \nv) = g_{\Neu}$. Hence we have
-\begin{gather}
-   \text{given $\mv \in \sob^1(\magd)$, find $\phim \in \sob^1(\magd) \cap \Dfs$ such that:} \notag \\
-  r_{\phim} = \int_{\boundd_\Neu} \tbf g_\Neu \d \boundd
-  - \intd{\nabla \tbf \cdot \nabla \phim}
-  - \intd{(\nabla \cdot \mv) \tbf} = 0
-  , \label{res:contphi} \\
-  \forall \tbf \in \sob^1(\magd) \cap \Dfs_0. \notag
-\end{gather}
-
-%% We can also remove the gradient operator from $\mv$ in the second term of \eqref{eqn:phires1} using a similar identity\footnote{Derived by applying the product rule to $\nabla \cdot (\mv v)$ then integrating, multiplying by $4 \pi$ and applying the Divergence theorem.} to \eqref{eqn:identitygauss}
-%% \begin{equation}
-%%   - \intd{4 \pi (\nabla \cdot \mv) v} =
-%%   4 \pi \intd{\mv \cdot (\nabla v)}
-%%   - 4 \pi \int_{\boundd} v \mv \cdot \nv \d \boundd.
-%% \end{equation}
-
-% Substituting this into \eqref{eqn:phires2} leaves us with
-% \begin{gather}
-%      \text{given $\mv \in \sob^1(\magd)$, find $\phim \in \sob^1(\magd) \cap \Dfs$ such that:} \notag \\
-%   r_{\phim} = - \intd{\nabla v \cdot \nabla \phim}
-%   + 4 \pi \intd{\mv \cdot (\nabla v)}
-%   - 4 \pi \int_{\boundd} v \mv \cdot \nv \d \boundd
-%   , \\
-%   \forall v \in \sob^1(\magd) \cap \Dfs_0. \notag
-% \end{gather}
-
-\subsection{Landau--Lifshitz--Gilbert Equation Residuals}
+\section{Landau-Lifshitz-Gilbert Equation Residuals}
 
 
 For the Landau-Lifshitz equation~\eqref{eq:ndll} we have a vector of three residuals.
@@ -277,7 +203,7 @@ Differentiating then pulling out a factor of $\sbf_l$ gives
 \begin{equation}
   \begin{aligned}
     \pd{\rll}{\mv_l} =  \int_\magd \tbf \sbf_l &\Bigg[
-      \dtsdml I_3
+      \Jmts
       \\
       &+ \skewm{\happ + \hms} + \skewm{\hca} + \frac{1}{\sbf_l} \skewm{\mv} \cdot \pd{\hca}{\mv_l}
       \\
@@ -299,7 +225,7 @@ By combining terms and rearranging a little we can simplify this to
 \begin{equation}
   \begin{aligned}
     \pd{\rll}{\mv_l} =  \int_\magd \tbf \sbf_l &\Bigg[
-      \dtsdml I_3
+      \Jmts
       + \skewm{\happ + \hms + \hca}
       \\
       &+ \dampc \skewm{ \crossop{\mv}{\happ + \hms + \hca}}
