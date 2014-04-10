@@ -36,7 +36,7 @@ Combining equation~\eqref{eqn:llgnd} with the definitions~\eqref{eqn:nddefs} giv
 \begin{equation}
   \notag
   \dmdt \gymagc M_s^2 =
-  - \gymagc M_s^2 (\mv \times \hv) + \frac{\alpha}{M_s} \gymagc M_s^3 (\mv \times \dmdt),
+  - \gymagc M_s^2 \mv \times \hv + \frac{\alpha}{M_s} \gymagc M_s^3 \mv \times \dmdt,
 \end{equation}
 
 cancelling the various constants results in the non-dimensionalised Landau--Lifshitz--Gilbert equation
@@ -72,18 +72,36 @@ This can be further simplified by choosing the exchange length\footnote{There ar
 and
 \begin{equation}
   \label{k-normalisation}
-  \nK = \frac{ \mu_0 M_S^2}{2}
+  \nK = \frac{ \mu_0 M_S^2}{2}.
 \end{equation}
 
-leaving
+So the final system of equations is
 \begin{equation}
-  \hv = \happ - \nabla \phi + \lap \mv + \kone (\mv \cdot \ev) \ev.
+  \begin{aligned}
+    \dmdt &= - \mv \times \hv + \alpha \mv \times \dmdt, \\
+    \hv &= \happ - \nabla \phi + \lap \mv + \kone (\mv \cdot \ev) \ev.
+    \label{eqn:nd-llg-full}
+  \end{aligned}
 \end{equation}
 
 \section{The Landau-Lifshitz form of the LLG}
 \label{sec:land-lifsh-normalisation}
 
-The non-dimensionalisation of the Landau-Lifshitz form (equation~\eqref{eq:LLG}) of the Landau-Lifshitz-Gilbert equation is essentially the same except for one change: the time variable is normalised differently to remove the factor of $(1 + \dampc^2)$. This gives us
+The dimensional Landau-Lifshitz equation is given in equation~\eqref{eq:LLG}:
+\begin{equation}
+  \label{eq:LLG-dim}
+  (1 + \dampc^2) \pd{\Mv^*}{t^*} = - \gymagc \Mv^* \times \Hv^*
+  - \frac{\gymagc \dampc}{M_s} \Mv^* \times (\Mv^* \times \Hv^*).
+\end{equation}
+The non-dimensionalisation process is essentially the same as for the Gilbert form, by substituting in the normalisations in equation~\eqref{eqn:nddefs} we obtain
+\begin{equation}
+  (1 + \dampc^2) \dmdt = - \mv \times \hv - \dampc \mv \times (\mv \times \hv).
+\end{equation}
+The field equations are obviously identical to those in equation~\eqref{eqn:nd-llg-full}.
+
+
+Alternatively the time variable could be normalised differently to remove the factor of $(1 + \dampc^2)$. 
+This gives us
 \begin{equation}
   t^* = \frac{1 + \dampc^2}{\gymagc M_s} t,
 \end{equation}
@@ -92,7 +110,7 @@ and
   \dmdt = -\mxh -\dampc \mxmxh.
 \end{equation}
 The $\hv$ and $\phi$ non-dimensionalisations are identical to the Landau-Lifshitz-Gilbert equation case.
-
+However this results in time scales varying between the two equations, making comparisons more difficult.
 
 
 \section{Energy calculations}
