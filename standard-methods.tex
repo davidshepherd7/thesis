@@ -1,16 +1,32 @@
-\chapter{Numerical Methods for Micromagnetics}
+\chapter{Numerical Methods for Dynamic Micromagnetic Modelling}
 \label{sec:numer-meth-micr}
 
-Here we give an overview of numerical methods that have been used in micromagnetics and their advantages/disadvantages.
+In this Chapter we give an overview of numerical methods that have previously been used in dynamic micromagnetic calculations.
+These calculations involve solving some form of the LLG (or sometimes a related equation to incorporate additional physics) with fields determined by energy derivatives as discussed in Chapter~\ref{sec:cont-micromag}.
+These systems of partial differential equations (PDEs) can only be solved analytically in a few extremely simple cases,\footnote{For example the Stoner-Wolfarth theory for the rotation of a single grain.\cite{Stoner1948a}}\cite{Aharoni1996} so numerical solutions are commonly required.
 
+Many numerical methods for solving non-linear PDEs, such as \eqref{eq:LLG}, can be thought of as a combination of various component methods which each handle different parts of the conversion from a differential equation to a sequence of add/multiply/divide operations which can be performed by a computer\footnote{Technically proofs of convergence etc. should be carried out for every combination of time and space discretisation\cite[pg. 382]{Iserles2009}; in practice suprises seem to be rare, at least within micromagnetics.}.
+The essential components of such a numerical method are:
 
-%??ds brief discussion of the various parts needed
+\begin{itemize}
+\item Spatial discretisation \eg Finite elements, finite differences, macrospins. Convert space derivatives into algebraic relationships between points in space. Section~\ref{sec:spat-discr}.
 
-The systems of equations used in micromagnetics can only be solved analytically in relatively simple cases.\footnote{For example the Stoner-Wolfarth theory for the rotation of a single grain.\cite{Stoner1948a}}\cite{Aharoni1996} Hence a numerical solution is normally found involving the conversion of the continuous equations into a system of linear equations relating the values of $\Mv$ at a finite set of points and from past time(s) to a future time. Depending n the exact methods used this discrete system can then be solved by matrix inversion or direct substitution. The setup and solution of such systems is typically done computationally.
+\item Time discretisation (a.k.a. time integration, time stepping) \eg Runge-Kutta methods, backwards difference formulae (BDF), implicit midpoint rule (IMR). Convert time derivatives into algebraic relationships between points in time. Section~\ref{sec:time-discretisation}.
+\end{itemize}
 
-The conversion to a system of equations at finite set of point is known as spatial discretisation. The conversion to a finite set of times is known as time discretisation or timestepping. Various methods for the space and time discretisation are discussed in Sections~\ref{sec:spat-discr} and~\ref{sec:time-discretisation} respectively.
+For some choices of time and space discretisations additional methods are needed:
+\begin{itemize}
+\item Linearisation \eg Newton method/Newton-Raphson, Picard/fixed-point iteration. Convert a system of non-linear equations into a sequence of linear systems.
+\item Linear system solver \eg LU decomposition, Krylov solvers, multigrid. Solve a system of linear equations.
+\end{itemize}
 
-Another interesting area of numerical micromagnetics is the calculation of the magnetostatic field (\ie the magnetic field interactions between magnetised regions). The naive method of evaluation results in a double integral (or a sum after spatial discretisation) over all of the magnetic body. This is usually unreasonably slow so more advanced methods are needed. Such methods break down into two categories: methods based on quickly approximating the integrals and methods based on the use of a \emph{scalar potential} to convert the calculation into a form similar to the rest of the problem. These are discussed in Sections~\ref{sec:magstat-field-calc-inte} and~\ref{sec:magstat-field-calc-pote}.
+Additionally in micromagnetic modelling the calculation of the magnetostatic field is required.
+If the integral form given in \eqref{eq:Hmsint} is used then an additional integral evaluation method is needed to handle it.
+However if the equivalent potential formulation \eqref{eq:Hms}-\eqref{eq:phi-inf} is used then we simply have another PDE to add to the system of PDEs describing the magnetisation dynamics.
+
+It should be noted that not all methods fit into this framework of independant methods for each part of the problem.
+In particular one example which uses a combined space/time discretisation to obtain some interesting properties is discussed (briefly) in Section~\ref{sec:advanced-lin}.
+In general however, the increased modularity of ideas and code is useful.
 
 Diagrams showing how the various methods are related are given for space discretisation in Figure~\ref{fig:types-spat-discl}, time discretisation in Figure~\ref{fig:types-time-disc}, and magnetostatic field calculations in Figure~\ref{fig:types-mag-stat}.
 
@@ -20,12 +36,20 @@ Diagrams showing how the various methods are related are given for space discret
 \subsection{Macrospins}
 \label{sec:sd-macrospins}
 
+??ds does this really belong here? macropins kind of not micromagnetics...
+
 In a granular material (a material consisting of magnetic grains separated by a non-magnetic material%% , see Figure~\ref{fig:Layouts-for-magnetic}
-) the simplest way to discretise the problem is to assume that within each grain the exchange coupling is so strong that it rotates as a single \emph{macrospin}. We assign a single value of $\Mv$ to each macrospin and proceed to calculate energy, effective field and/or magnetisation of each macrospin as required. One caveat is that the magnetostatic self field is not automatically accounted for since there is no modelling of intra-grain effects. Hence it must be calculated and added separately to the magnetostatic interactions between grains. When applied like this the magnetostatic self field is often called the \emph{shape anisotropy} since it is dependant on the shape of the grain and acts very similarly to the magnetocrystalline anisotropy. The same approach may be used with any system in which there are a number of ``small'',\footnote{All dimensions of the bodies must be much smaller than the exchange length so that all magnetisation within the body is approximately parallel.} separate magnetic bodies with approximately uniform magnetisation in the body.
+) the simplest way to discretise the problem is to assume that within each grain the exchange coupling is so strong that it rotates as a single \emph{macrospin}. We assign a single value of $\Mv$ to each macrospin and proceed to calculate energy, effective field and/or magnetisation of each macrospin as required. One caveat is that the magnetostatic self field is not automatically accounted for since there is no modelling of intra-grain effects. Hence it must be calculated and added separately to the magnetostatic interactions between grains. When applied like this the magnetostatic self field is often called the \emph{shape anisotropy} since it is dependant on the shape of the grain and acts very similarly to the magnetocrystalline anisotropy. The same approach may be used with any system in which there are a number of ``small'',\footnote{All dimensions of the bodies must be much smaller than the exchange length so that all magnetisation within the body is approximately parallel.} separate magnetic bodies with approximately uniform magnetisation inside the body.
 
 The obvious downside of a macrospin approach is that it only applies to fairly specific geometrical cases, although the case of a granular media has been of much interest for magnetic data storage. Additionally, if there are non-uniformities in magnetisation within the regions where it has been assumed constant the model may be inaccurate. However it is often simpler to construct a macrospin model than to use the methods described in Sections~\ref{sec:sd-finite-diff-meth} and~\ref{sec:sd-finite-elem-meth}. Also the assumption that each grain has uniform magnetisation will reduce the number of calculations needed.
 
 This approach was applied by, for example, J. Zhu and H. Bertram to study magnetisation dynamics in thin film granular media.\cite{Zhu1988}
+
+Closely related to macrospin models are atomistic models\cite{Evans2014}.
+In these models the assumption of a continuous magnetisation $\mv(\xv, t)$ is dropped in favor of an assumption that each atom is the location of a single macrospin.
+As such they allow modelling of some systems that are inaccessible using micromagnetics such as ??ds.
+However the required spatial resolution comes with a large increase in computational cost.
+Due to the differences in the underlying model the numerical methods used are often quite different so we won't discuss them much.
 
 \begin{figure}[h]
   \centering
@@ -45,128 +69,35 @@ This approach was applied by, for example, J. Zhu and H. Bertram to study magnet
 
 Another method of spatial discretisation is the finite difference method: a single magnetisation vector is assigned to each point on (or ``cell'' in) a simple square/cubic grid which covers the system being modelled. The method is described in more detail in Section~\ref{sec:intr-finite-ele-diff}.
 
-The finite difference method works well for very simple geometries when the grid can be lined up with all geometric features. For example when we are interested in comparing how different initial states evolve over time in a non-granular cuboid shaped piece of material a finite difference method will be sufficient (\eg in the $\mu$mag standard problems\cite{mumag-website}). However for arbitrarily shaped grains, bit patterned media or any other more complex geometric system other methods are better suited.
+The finite difference method works well for very simple geometries when the grid can be lined up with all geometric features. 
+For example when we are interested in how the magnetisation evolves over time in a non-granular cuboid-shaped thin film of magnetic material a finite difference method will be sufficient (\eg in the $\mu$mag standard problems\cite{mumag-website}). 
+However when the geometry involves curves, diagonals, hexagonal grains, bit patterned media or any other more complex geometric system other methods are better suited.
 
 NIST's \texttt{OOMMF} model, one of the oldest micromagnetic models still in use, uses the finite difference method\cite{oommf-website}.
+
 
 \subsection{Finite Element Methods}
 \label{sec:sd-finite-elem-meth}
 
-A more complex method of spatial discretisation is the finite element method. Here the magnetic body is divided up into a finite number of polygonal \emph{elements} which can vary in size and shape. The points where these elements meet, known as the \emph{nodes}, are each assigned a magnetisation vector. Values at any other point in the domain can be calculated by interpolation between the nodes. More details of the method are given in Section~\ref{sec:intr-finite-ele-diff}.
+A more complex method of spatial discretisation is the finite element method\cite{HowardElmanDavidSilvester2006}.
+Here the magnetic body is divided up into a finite number of polygonal \emph{elements}, which can vary in size and shape.
+Within each of these elements each magnetisation component is assumed to be a simple, usually linear, polynomial function.
+In practice the polynomials are defined by the values at the points where these elements meet, known as the \emph{nodes}.
+Values at any other point in the domain can be calculated by interpolation between the nodes. More details of the method are given in Section~\ref{sec:intr-finite-ele-diff}.
+When applied to a uniform cubeoid mesh of zero-th order polynomials the finite element method results in the same system of equations as the finite difference method\cite{??ds}.
 
 The main advantage of the finite element method is that it can accurately approximate any geometrical feature by an appropriate arrangement of the polygonal elements.
 
-The accuracy of the approximation will often depend on the size of the elements used and this can be varied arbitrarily as needed to give better accuracy in harder to model regions. The choice of element size can be done automatically using \emph{adaptive mesh refinement}: after each calculation an \emph{a posteriori} error estimate is calculated. If the error is determined to be too high anywhere the mesh is refined near that region and the calculation is repeated. Hence, given the desired error and a way of estimating the error, an appropriate mesh is automatically generated.\cite{Schrefl1999}
+An additional advantage is that the size of elements (and thus the accuracy of the approximation) can be varied arbitrarily as needed to give better accuracy in more complex or important regions. 
+The choice of element size can be done automatically using \emph{adaptive mesh refinement}: after each calculation an error estimate is calculated (known as \emph{a posteriori} error estimation).
+If the error is determined to be too high anywhere the mesh is refined near that region and the calculation is repeated.
+Hence, given the desired error and a method to estimate the error, a mesh giving an efficient and accurate approximation can be automatically generated.\cite{Schrefl1999}
 
-A downside is that the underlying maths can be more complex than that of the finite difference or macrospin models, hence increasing the time required to develop the model. Also the set up time can be greater because of the additional ``bookkeeping'' required.
+The major downside of finite element models is that the underlying mathematics is more complex than in finite difference methods.
+Also the set up time and memory usage can be greater because of the additional ``bookkeeping'' required to keep track of the more complex meshes.
 
 Finite element methods are used in the \texttt{magpar}\cite{Scholz2003}, \texttt{nmag}\cite{Fischbacher2007} and \texttt{FEMME} micromagnetics models\cite{suessco-website}.
 
-\section{Magnetostatic Field Calculations by Integral Methods}
-\label{sec:magstat-field-calc-inte}
-
-\begin{figure}[h]
-  \centering
-  \begin{tikzpicture}[level 1/.style={sibling distance=5.4cm},
-    level 2/.style={sibling distance=3.6cm}]
-
-    \node[block] {\textbf{Magnetostatic Calculations}}
-    child {node[block,text width=6cm] {Scalar Potential Formulation (with some spatial discretisation)}
-      child{node[block,text width=4cm,xshift=-1cm] {Asymptotic Boundary Conditions}}
-      child{node[block,text width=4.3cm] {Hybrid Finite/Boundary Element Method}}
-    }
-    child {node[block,yshift=-2.7cm] {Integral Formulation}
-      child{node[block,text width=3.2cm] {Full Calculation}}
-      child{node[block,text width=3.2cm] {Fast Fourier Transform}}
-      child{node[block,text width=3.2cm] {Fast\\ Multipole\\ Method}}
-    };
-    \end{tikzpicture}
-  \caption{Methods of magnetostatic field calculation that have been used in micromagnetic models.}
-  \label{fig:types-mag-stat}
-\end{figure}
-
-The integral form of the magnetostatic field at a point $\xv \in \real^d$ due to the magnetic body $\magd$ with boundary $\boundd$ can be given in terms of magnetisation $\Mv$ by an integral over all volume and surface ``magnetic charges'' ($\nabla \cdot \Mv(\xv)$ and $\Mv(\xv) \cdot \nv(\xv)$ respectively) as
-\begin{align}
-  \Hms(\xv) &= \frac{1}{4 \pi} \Big[ - \int_\magd \frac{\big( \nabla' \cdot \Mv(\xv') \big)(\xv - \xv')}{\abs{ \xv -\xv'}^3} \d^3 \xv'
-  + \int_\boundd \frac{ \big( \Mv(\xv') \cdot \nv(\xv') \big) (\xv - \xv')}{\abs{\xv - \xv'}^3} \d^2 \xv' \Big],
-  \label{eq:Hmsint}
-\end{align}
-where $\nabla'$ denotes the grad operator with respect to the $\xv'$ coordinate. For completeness we note that single magnetic charges (magnetic monopoles) have not been observed in nature. However they are a very useful mathematical tool for calculations of magnetic fields.
-
-% Alternatively it can be given in terms of a sum over the dipole fields of magnetic moments (\ie discretised magnetisation) as
-% \begin{equation}
-%   \label{eq:9}
-%   \Hms(\xv) = \frac{1}{4\pi} \sum_i \frac{1}{|\xv - \xv_i|^3} \Big[ \mu_i(\xv_i) - 3(\mu_i(\xv_i) \cdot \ruv_i ) \cdot \ruv_i \Big],
-% \end{equation}
-% where $\ruv_i$ is the unit vector pointing from $\xv_i$ to $\xv$.
-
-After the application of a discretisation scheme the integrals in equation~\eqref{eq:Hmsint} become a sum over all nodes. The naive way to calculate the magnetostatic fields would then be to work through the list of nodes calculating the field at each of them. Then for each node a contribution from all other nodes needs to be calculated. Hence this results in an algorithm complexity that scales as $\order{N^2}$ (where $N$ is the number of points used in the space discretisation) which is usually unacceptably slow.
-
-\subsection{Fast Fourier Transform Methods}
-
-If the individual magnetic charges are on a regular lattice (or approximated by a regular lattice) and the boundary conditions are periodic, then the redundancy can be exploited to speed up the magnetostatic field calculations. The calculation of $\Hms$ in equation~\eqref{eq:Hmsint} can be thought of as applying a convolution operator $D$ (\ie $\Hms = D \big[\Mv\big]$). The matrix corresponding to this operator  is only dependant on geometry, hence it can be precomputed, Fourier transformed and stored for use in the main simulation. Then all that is needed to calculate the magnetostatic field is to apply a Fourier transform to $\Mv$, compute the convolution and transform the result back into the time domain by applying the inverse Fourier transform. Because of the regularity, applying the convolution in the frequency domain is very fast and hence the complexity of the calculation is limited by the complexity of a fast Fourier transform, which is $\order{N \log(N)}$.\cite{Jones1997}
-
-The downside of this method is that points to be calculated must be on a regular lattice, similar to the finite difference method. Hence, it is most suited for use in combination with models using a finite difference spatial discretisation. Alternatively it may be used in less regular macrospin models by approximating the the macrospins as being on a regular lattice.\cite{Jones1997}
-
-A fast Fourier transform method is used to calculate the magnetostatic field in \texttt{OOMMF}.\cite{oommf-website}
-
-\subsection{Fast Multipole Method}
-\label{sec:fast-mult-meth}
-
-An alternative method of calculation of the magnetostatic field is the multipole method. It takes advantage of the fact that distant magnetic charge has a much smaller effect on the total field at a point than nearby magnetic charge.
-
-For the field calculation at a specific point, $\xv$, the full calculation is only performed for nearby magnetic charges. Groups of more distant charges are approximated (lumped) as a single multipole placed at the centre of the group. As the charges become more distant they contribute much less to the field due to the $\frac{1}{(\xv - \xv')^2}$ scaling in equation~\eqref{eq:Hmsint}. Hence for distant points the multipole approximation can become less accurate, and so faster to calculate, while still retaining the required overall level of accuracy.
-
-The trick for quickly calculating fields at a large number of points is to pre-calculate the multipole approximations for a range of accuracies over all space. Then the calculation of a field at a single point only requires the full calculation of effects from a few nearby points and from the appropriate multipoles.\cite{Beatson}
-
-One advantage of this method over the fast Fourier transform is that it allows for arbitrary geometries. Also the complexity of the method is $\order{N}$, where $N$ is the number of magnetic charges (equivalent to the number of nodes/cells/macrospins after spatial discretisation).\cite{Chang2011}
-
-The fast multipole method is used, with massive parallelisation for GPUs, to quickly calculate magnetostatic fields in FastMag.\cite{Chang2011} %??ds milan: how is load balencing performed?
-
-\section{Magnetostatic Field Calculation by a Scalar Potential}
-\label{sec:magstat-field-calc-pote}
-
-When the magnetic field is being produced only by magnets and not currents (\ie the magnetic field is irrotational) it is possible to express the field as a function of a scalar potential, $\phim$.\cite{Coey2010} Let $\magd$ be the magnetic body, $\boundd$ it's boundary and $\nv$ the outward unit normal on the boundary. Then we have
-\begin{gather}
-  \Hms = - \nabla \phim,  \label{eq:Hms} \\
-  \lap \phim = \nabla \cdot \Mv \quad \xv \in \fulld, \label{eq:nnphim}
-\end{gather}
-With the following boundary conditions
-\begin{gather}
-  \phim^\inte - \phim^\exte = 0 \quad \xv \in \boundd, \label{eq:cont-phi-bound} \\
-  \pd{\phim^\inte}{\nv} - \pd{\phim^\exte}{\nv} = \Mv \cdot \nv \quad \xv \in \boundd,
-  \label{eq:nndphidn-bound} \\
-  \phim \rightarrow 0 \text{ as } \abs{\xv} \rightarrow \infty, \label{eq:phi-inf}
-\end{gather}
-where $\phim^\inte$/$\phim^\exte$ are the values of $\phim$ just inside/outside the domain, $\magd$.
-
-This gives a formulation which can be solved using the finite element or finite difference discretisation methods. However, the zero boundary condition on $\phim$ at infinity, \eqref{eq:phi-inf}, is problematic. We obviously can not discretise an infinite domain to apply this condition since that would involve either infinite discrete elements or an infinitely sized element. Hence other techniques must be used.
-
-The speed of the internal field calculation is given by the discretisation method, however applying the boundary conditions can require additional processing time.
-
-% A third possibility is to define a vector potential $\vec{A}$ such that...
-
-\subsection{Asymptotic Boundary Conditions}
-\label{sec:asymptot-bcs}
-
-One way to avoid an infinite domain is to truncate the external region at some finite distance from the magnetic domain. However the relationship between truncation distance and accuracy is problem dependant (since the size of the external field at any point depends on the problem geometry) and does not lead to good accuracy even for large truncation distances.
-
-A more sophisticated method is to use asymptotic boundary conditions.\cite{Yang1997} The idea here is to use a truncated external region to calculate the boundary conditions on the magnetic domain that correspond to equation~\eqref{eq:phi-inf} being applied at infinity. Additionally the fact that any solution to the Poisson equation~\eqref{eq:nnphim} can be represented as an infinite series of harmonic functions is used to improve the accuracy. However the accuracy of this approach is still low compared to the hybrid method, even for large truncation distances.\cite{Bottauscio2008}
-
-This method of applying the boundary conditions was used by Yang in GDM\cite{Yang1997} (general purpose dynamical micromagnetic code), but the code does not seem to be available any more.
-
-\subsection{The Hybrid Boundary/Finite Element Method}
-\label{sec:bound-elem-meth}
-
-The idea of the hybrid method is to replace the external domain by a dipole layer placed on the surface of the magnetic domain which mimics the effect of the infinite external domain. This removes the need to truncate or discretise the infinite external domain. The full details of the method applied to magnetostatic calculations is discussed in Section~\ref{sec:hybr-finit-elem}.
-
-A comparison by Bottauscio\cite{Bottauscio2008} found that using the hybrid method was more accurate than applying asymptotic boundary conditions for a calculation of the time evolution of the magnetisation of a sphere with zero exchange coupling. Even with a truncation distance of four times the size of the magnetic sphere (the total domain was $4^d$ times larger then the sphere) the accuracy when using asymptotic boundary conditions was worse and did not improve between truncation distances of three and four times the magnetic sphere radius. Even when exchange coupling was added (giving an easier test) the truncation method was worse than the hybrid element method.
-
-One downside is an increase in the difficulty of creating the model since some parts of the boundary element method are mathematically different to the finite element method. For example singular integrals occur in the boundary element method and more advanced integration methods are needed. Also the hybrid method requires an additional dense matrix-vector multiplication for the calculation of boundary conditions.
-
-The speed (and memory usage) of calculation of the boundary values in the method is limited by the dense matrix multiplication which is $\order{N_b^2}$, where $N_b$ is the number of boundary nodes. The use of hierarchical matrix techniques can reduce this to $\order{N_b \log(N_b)}$.\cite{Knittel2009} Hence the speed of the hybrid method depends on the geometry. For example in 3D structures which are roughly spherical $N_b = \order{N^{2/3}}$ which gives optimal computation speed\footnote{With hierarchical matrix techniques the speed is $\order{N^{2/3}\log(N^{2/3})}$ but $\log(x) << x^{1/2}$ for large $x$, hence $\order{N^{2/3}\log(N^{2/3})} << \order{N}$, \ie optimal computation speed scaling.} but for extremely flat structures it can be as bad as $N_b = \order{N}$.
-
-The hybrid method was first applied to the computation of magnetostatic fields by Fredkin and Koehler.\cite{Fredkin1990}
 
 
 \section{Time Discretisation}
@@ -177,11 +108,14 @@ After applying a spatial discretisation,we obtain a semi-discrete version of  eq
 The time discretisation methods discussed here all bear a strong similarity to the finite difference method discussed in Section~\ref{sec:finite-diff-appr}, except that the independent variable is time instead of space.
 
 To explain the different time discretisation schemes we use a simple ordinary differential equation (an initial value problem)
-\begin{align}
-  \frac{dy}{dt} &= f(t,y(t)), \quad t \in [0,T],  \notag \\
-  y(0) &= y_0.
-  \label{eq:45}
-\end{align}
+\begin{equation}
+  \begin{aligned}
+    \frac{dy}{dt} &= f(t,y(t)) \quad t \in [0,T], \\
+    y(0) &= y_0.
+    \label{eq:45}
+  \end{aligned}
+\end{equation}
+
 where $f(t,y)$ is a known function and $T$ is the end time. The idea is to use the known values of $y(t)$ at the current/previous times along with the derivative to approximate the value $y(t+h)$  after stepping forwards in time by $h$.
 
 Some key attributes of a time discretisation scheme are:\cite{Atkinson2009}
@@ -289,16 +223,238 @@ However to extend this to systems where $\Mv$ varies with space we have to use a
 
 ??ds write something about the work summarised in Cimrak's review.
 
-\section{Conclusions}
-\label{sec:model-conclusions}
 
-A dynamic modelling method will be used because the ability to model time dependant processes is essential.
+\section{Linearisation}
+\label{sec:linearisation}
 
-For the spatial discretisation a macrospin model is not considered because its application is limited to cases with well separated grains and because it is not able to model effects inside a grain. Therefore a finite element spatial discretisation will be used because the ability to treat arbitrary geometries is extremely desirable (for example in the modelling of bit patterned media). Additionally \texttt{oomph-lib}\cite{oomph-lib-website} (a multi-physics open source finite element modelling library) gives an excellent framework in which to construct a new finite element micromagnetic model. This choice will also allow easy extension to the modelling of heat assisted magnetic recording using a finite element discretisation of the heat equation to model heat flow.
+When implicit time integration methods are used (on a non-linear differential equation such as the LLG) a non-linear system of equations must be solved.
+Explicit time integration methods essentially sidestep the non-linearity of the LLG equation by avoiding the need to solve any kind of system.
 
-The magnetostatic field will be evaluated from a scalar potential by the hybrid finite/boundary element method. A finite element method will be used because it can be easily integrated into the overall model. The hybrid method will be used to apply boundary conditions because the accuracy loss involved in efficiently approximating the external region by asymptotic boundary conditions is large and problem dependant.
+Such a problem can be stated as:
+Given a non-linear operator $F$ and a list of previous magnetisation values $\mv_{\text{history}}$ (as needed for the time integration method) find
+\begin{equation}
+  \label{eq:non-lin-system}
+  \mv_{n+1} = \min_{\mv'} \norm{\rv(\mv', \mv_{\text{history}})}.
+\end{equation}
 
-The time discretisation scheme used will be the mid-point method because of it's preservation of magnetisation vector length and ability to deal with stiffness. The use of preconditioners to speed up to the solution of the non-linear system created at each time-step will be investigated.
+
+\subsection{Picard Iteration}
+\label{sec:picard}
+
+aka functional iteration, fixed point iteration
+
+Cheap iterations
+
+Convergence proof via Banach fixed point theorem for sufficiently small time steps.
+
+Useful for non-stiff problems (convergence requirements similar to stiffness requirements) \cite{Iserles2009}.
+
+In practice people often terminate the Picard iteration after only one or two steps, leading to a predictor-corrector method. 
+These methods have similar properties to explicit methods: cheap per step but vunerable to stability problems.
+
+
+\subsection{Newton-Raphson method}
+\label{sec:newt-raph}
+
+\newcommand{\resi}{\rv}
+\newcommand{\jac}{\mathrm{J}}
+\newcommand{\nowm}{\mv^0}
+\newcommand{\nextm}{\mv}
+\newcommand{\corr}{\delta}
+
+The motivation for the Newton-Raphson method comes from a simple Taylor expansion of the residual. If the root of the residual is $\nextm$ and we have an initial guess for this root $\nowm$ then we can obtain a correction to this initial guess from:
+\begin{equation}
+  \begin{aligned}
+    0 &= \resi(\nextm) = \resi(\nowm + \corr) \\
+    &= \resi(\nowm) + \jac(\nowm) \cdot \corr + \order{\corr^2},
+  \end{aligned}
+\end{equation}
+where $\jac = \pd{\resi}{\mv}$ is the Jacobian matrix for the residual.
+So
+\begin{equation}
+  \label{eq:49}
+  \nextm = \nowm + \corr = \nowm + \jac^{-1}(\nowm) \cdot \resi(\nowm) + \order{\corr^2}.
+\end{equation}
+
+This suggests the iteration
+\begin{equation}
+  \mv^{i+1} = \mv^i + \jac^{-1}(\mv^i) \cdot \resi(\mv^i),
+\end{equation}
+in which the error is squared after each iteration (assuming that the Taylor series expansion is valid and that we can discard the higher order terms).
+
+In time stepping problems the value at the previous time step provides a good initial guess, $\mv^0$.
+For micromagnetics problems we find that this reliably converges, to a tolerence of $\sim1\E{-10}$, in around two steps!
+
+The downside of this method is that it requires the assembly and solution of a system of linear equations to obtain $\corr$.
+This is the subject of Section~\ref{sec:solution-lin-sys}.
+
+
+\subsection{Advanced LLG-specific methods}
+\label{sec:advanced-lin}
+
+Linearisation based on choice of test functions of much interest in recent times, initially for only exchange effective field\cite{Alouges2008}.
+Has recently been extended to handle general effective field contributions\cite{Banas2012}.
+
+Advantages:
+\begin{itemize}
+\item Only need to solve one linear system per step (rather than $\sim 2$ for Newton's method).
+\item Jacobian matrix is constant.
+\end{itemize}
+
+Disadvandages:
+\begin{itemize}
+\item Method is limited to first order: so need step sizes orders of magnitude smaller.
+\item Have to use specialised time integration scheme (no geometric, adaptive, ... schemes).
+\item Specific to the LLG equation--standard code libraries may not work, not as widely understood as standard FEM, extension to related equations (stochastic LLG, LLGS, LLB) is non-trivial.
+\end{itemize}
+
+The limitation to first order has been worked around recently, however the higher order schemes lose either stability or linearity\cite{Kritsikis2014}.
+Since the advantage of the scheme over standard methods was this unique combination of properties, this appears (to me at least) to not be very useful.
+
+Still a promising line of research though!
+
+
+\section{Solution of linear systems}
+\label{sec:solution-lin-sys}
+
+If we are using an implicit time integration scheme with the Newton-Raphson method for linearisation then we are left with the problem of solving a sequence of sparse linear systems.
+The problem can be stated as: Given a sparse $n \times n $ matrix $\Am$ and a vector $\bv$ find $\xv$ such that
+\begin{equation}
+  \label{eq:linear-system}
+  \Am \xv = \bv.
+\end{equation}
+This is a very well studied problem, see for example\cite{Saad2000}, but efficent techniques for very large $n$ (which corresponds to a large spatial problem and/or good spatial resolution) are complex and problem dependant.
+
+
+\subsection{Direct methods}
+\label{sec:direct-methods}
+
+Construct exact solutions to linear systems of equations
+
+Main example is LU decomposition.
+
+The main advantage of direct methods is their robustness: given any non-singular linear system a well designed direct solver will be able provide an answer.
+As such direct solvers are usually the first approach tried when solving a new system of equations.
+
+However as matrix sizes become large direct solvers become increasingly demanding in both time and memory.
+The problem is that the inverse of a sparse matrix is in general dense, or at least significantly more dense than the starting matrix.
+This means that the time and memory requirements for the solution scale as $\order{n^2}$, where $n$ is the number of rows/columns in the matrix.
+e
+
+
+\subsection{Krylov Solvers}
+\label{sec:krylov-solvers}
+
+Begin with an initial guess and move closer to the solution by iteration, until error is reduced by some amount.
+
+Based on Krylov subspace (polynomial of $\Am$ multiplied by $\xv$).
+
+Can be extremely efficent
+
+Rely on effective preconditioning, can also be thought of as convergence acceleration for another method--the preconditioner.
+
+
+\section{Magnetostatic Field Calculations}
+
+The naive method of evaluation results in a double integral (or a sum after spatial discretisation) over all of the magnetic body. 
+
+This is usually unreasonably slow so more advanced methods are needed. Such methods break down into two categories: methods based on quickly approximating the integrals and methods based on the use of a \emph{scalar potential} to convert the calculation into a form similar to the rest of the problem.
+
+\subsection{Integral Methods}
+\label{sec:magstat-field-calc-inte}
+
+\begin{figure}[h]
+  \centering
+  \begin{tikzpicture}[level 1/.style={sibling distance=5.4cm},
+    level 2/.style={sibling distance=3.6cm}]
+
+    \node[block] {\textbf{Magnetostatic Calculations}}
+    child {node[block,text width=6cm] {Scalar Potential Formulation (with some spatial discretisation)}
+      child{node[block,text width=4cm,xshift=-1cm] {Asymptotic Boundary Conditions}}
+      child{node[block,text width=4.3cm] {Hybrid Finite/Boundary Element Method}}
+    }
+    child {node[block,yshift=-2.7cm] {Integral Formulation}
+      child{node[block,text width=3.2cm] {Full Calculation}}
+      child{node[block,text width=3.2cm] {Fast Fourier Transform}}
+      child{node[block,text width=3.2cm] {Fast\\ Multipole\\ Method}}
+    };
+    \end{tikzpicture}
+  \caption{Methods of magnetostatic field calculation that have been used in micromagnetic models.}
+  \label{fig:types-mag-stat}
+\end{figure}
+
+After the application of a discretisation scheme the integrals in equation~\eqref{eq:Hmsint} become a sum over all nodes. The naive way to calculate the magnetostatic fields would then be to work through the list of nodes calculating the field at each of them. Then for each node a contribution from all other nodes needs to be calculated. Hence this results in an algorithm complexity that scales as $\order{N^2}$ (where $N$ is the number of points used in the space discretisation) which is usually unacceptably slow.
+
+These problems are even worse in the case of implicit time integration methods: the integral formulation couples mgnetisation at every point to every other point, this means that the Jacobian representing the derivatives of each magnetisation with respect to each other magnetisation is completely dense (and hence solution times are extremely slow)!
+One way around this is to discard the magnetostatic interactions from the Jacobian\cite{DAquino2005}, but in this case we no longer have a real Newton method.
+Because of this convergence is significantly slower and may even fail for large systems.
+Explicit time integration methods avoid these issues because no system solve is required.
+
+\subsubsection{Fast Fourier Transform Methods}
+
+If the individual magnetic charges are on a regular lattice (or approximated by a regular lattice) and the boundary conditions are periodic, then the redundancy can be exploited to speed up the magnetostatic field calculations. The calculation of $\Hms$ in equation~\eqref{eq:Hmsint} can be thought of as applying a convolution operator $D$ (\ie $\Hms = D \big[\Mv\big]$). The matrix corresponding to this operator  is only dependant on geometry, hence it can be precomputed, Fourier transformed and stored for use in the main simulation. Then all that is needed to calculate the magnetostatic field is to apply a Fourier transform to $\Mv$, compute the convolution and transform the result back into the time domain by applying the inverse Fourier transform. Because of the regularity, applying the convolution in the frequency domain is very fast and hence the complexity of the calculation is limited by the complexity of a fast Fourier transform, which is $\order{N \log(N)}$.\cite{Jones1997}
+
+The downside of this method is that points to be calculated must be on a regular lattice, similar to the finite difference method. Hence, it is most suited for use in combination with models using a finite difference spatial discretisation. Alternatively it may be used in less regular macrospin models by approximating the the macrospins as being on a regular lattice.\cite{Jones1997}
+
+A fast Fourier transform method is used to calculate the magnetostatic field in \texttt{OOMMF}.\cite{oommf-website}
+
+\subsubsection{Fast Multipole Method}
+\label{sec:fast-mult-meth}
+
+An alternative method of calculation of the magnetostatic field is the multipole method. It takes advantage of the fact that distant magnetic charge has a much smaller effect on the total field at a point than nearby magnetic charge.
+
+For the field calculation at a specific point, $\xv$, the full calculation is only performed for nearby magnetic charges. Groups of more distant charges are approximated (lumped) as a single multipole placed at the centre of the group. As the charges become more distant they contribute much less to the field due to the $\frac{1}{(\xv - \xv')^2}$ scaling in equation~\eqref{eq:Hmsint}. Hence for distant points the multipole approximation can become less accurate, and so faster to calculate, while still retaining the required overall level of accuracy.
+
+The trick for quickly calculating fields at a large number of points is to pre-calculate the multipole approximations for a range of accuracies over all space. Then the calculation of a field at a single point only requires the full calculation of effects from a few nearby points and from the appropriate multipoles.\cite{Beatson}
+
+One advantage of this method over the fast Fourier transform is that it allows for arbitrary geometries. Also the complexity of the method is $\order{N}$, where $N$ is the number of magnetic charges (equivalent to the number of nodes/cells/macrospins after spatial discretisation).\cite{Chang2011}
+
+The fast multipole method is used, with massive parallelisation for GPUs, to quickly calculate magnetostatic fields in FastMag.\cite{Chang2011} %??ds milan: how is load balencing performed?
+
+
+\subsection{Scalar Potential methods}
+\label{sec:magstat-field-calc-pote}
+
+This gives a formulation which can be solved using the finite element or finite difference discretisation methods. However, the zero boundary condition on $\phim$ at infinity, \eqref{eq:phi-inf}, is problematic. We obviously can not discretise an infinite domain to apply this condition since that would involve either infinite discrete elements or an infinitely sized element. Hence other techniques must be used.
+
+The speed of the internal field calculation is given by the discretisation method, however applying the boundary conditions can require additional processing time.
+
+% A third possibility is to define a vector potential $\vec{A}$ such that...
+
+\subsubsection{Asymptotic Boundary Conditions}
+\label{sec:asymptot-bcs}
+
+One way to avoid an infinite domain is to truncate the external region at some finite distance from the magnetic domain. However the relationship between truncation distance and accuracy is problem dependant (since the size of the external field at any point depends on the problem geometry) and does not lead to good accuracy even for large truncation distances.
+
+A more sophisticated method is to use asymptotic boundary conditions.\cite{Yang1997} The idea here is to use a truncated external region to calculate the boundary conditions on the magnetic domain that correspond to equation~\eqref{eq:phi-inf} being applied at infinity. Additionally the fact that any solution to the Poisson equation~\eqref{eq:nnphim} can be represented as an infinite series of harmonic functions is used to improve the accuracy. However the accuracy of this approach is still low compared to the hybrid method, even for large truncation distances.\cite{Bottauscio2008}
+
+This method of applying the boundary conditions was used by Yang in GDM\cite{Yang1997} (general purpose dynamical micromagnetic code), but the code does not seem to be available any more.
+
+\subsubsection{The Hybrid Boundary/Finite Element Method}
+\label{sec:bound-elem-meth}
+
+The idea of the hybrid method is to replace the external domain by a dipole layer placed on the surface of the magnetic domain which mimics the effect of the infinite external domain. This removes the need to truncate or discretise the infinite external domain. The full details of the method applied to magnetostatic calculations is discussed in Section~\ref{sec:hybr-finit-elem}.
+
+A comparison by Bottauscio\cite{Bottauscio2008} found that using the hybrid method was more accurate than applying asymptotic boundary conditions for a calculation of the time evolution of the magnetisation of a sphere with zero exchange coupling. Even with a truncation distance of four times the size of the magnetic sphere (the total domain was $4^d$ times larger then the sphere) the accuracy when using asymptotic boundary conditions was worse and did not improve between truncation distances of three and four times the magnetic sphere radius. Even when exchange coupling was added (giving an easier test) the truncation method was worse than the hybrid element method.
+
+One downside is an increase in the difficulty of creating the model since some parts of the boundary element method are mathematically different to the finite element method. For example singular integrals occur in the boundary element method and more advanced integration methods are needed. Also the hybrid method requires an additional dense matrix-vector multiplication for the calculation of boundary conditions.
+
+The speed (and memory usage) of calculation of the boundary values in the method is limited by the dense matrix multiplication which is $\order{N_b^2}$, where $N_b$ is the number of boundary nodes. The use of hierarchical matrix techniques can reduce this to $\order{N_b \log(N_b)}$.\cite{Knittel2009} Hence the speed of the hybrid method depends on the geometry. For example in 3D structures which are roughly spherical $N_b = \order{N^{2/3}}$ which gives optimal computation speed\footnote{With hierarchical matrix techniques the speed is $\order{N^{2/3}\log(N^{2/3})}$ but $\log(x) << x^{1/2}$ for large $x$, hence $\order{N^{2/3}\log(N^{2/3})} << \order{N}$, \ie optimal computation speed scaling.} but for extremely flat structures it can be as bad as $N_b = \order{N}$.
+
+The hybrid method was first applied to the computation of magnetostatic fields by Fredkin and Koehler.\cite{Fredkin1990}
+
+
+% \section{Conclusions}
+% \label{sec:model-conclusions}
+
+% A dynamic modelling method will be used because the ability to model time dependant processes is essential.
+
+% For the spatial discretisation a macrospin model is not considered because its application is limited to cases with well separated grains and because it is not able to model effects inside a grain. Therefore a finite element spatial discretisation will be used because the ability to treat arbitrary geometries is extremely desirable (for example in the modelling of bit patterned media). Additionally \texttt{oomph-lib}\cite{oomph-lib-website} (a multi-physics open source finite element modelling library) gives an excellent framework in which to construct a new finite element micromagnetic model. This choice will also allow easy extension to the modelling of heat assisted magnetic recording using a finite element discretisation of the heat equation to model heat flow.
+
+% The magnetostatic field will be evaluated from a scalar potential by the hybrid finite/boundary element method. A finite element method will be used because it can be easily integrated into the overall model. The hybrid method will be used to apply boundary conditions because the accuracy loss involved in efficiently approximating the external region by asymptotic boundary conditions is large and problem dependant.
+
+% The time discretisation scheme used will be the mid-point method because of it's preservation of magnetisation vector length and ability to deal with stiffness. The use of preconditioners to speed up to the solution of the non-linear system created at each time-step will be investigated.
+
 
 %%% Local Variables:
 %%% mode: latex
