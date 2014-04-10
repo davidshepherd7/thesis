@@ -301,12 +301,11 @@ where the subscript on $\ruv_{\xv_{\ibasis} \rightarrow \yv}$ is to remind us th
 
 \subsection{Discretisation Approaches: Co-location vs Galerkin}
 
-Note that in the above we have used a co-location approach to discretisation
-??ds where?
+In deriving equation~\eqref{eq:colocation} we used a co-location approach rather than the Galerkin approach used in our FEM method.
+The reason for this choice is that a Galerkin discretisation would lead to a double integral over the boundary, which would probably be more difficult to calculate.
 
-??ds difference
+Not sure what effect this has, if any, on the stability or accuracy of the scheme...
 
-??ds implications, why can't we use Galerkin?
 
 \subsection{The Matrix $\bm$}
 Since $\bm$ is a dense matrix the processing and memeory requirements to compute, store and use $\bm$ scales as $\order{N_b^2}$ where $N_b$ is the number of boundary nodes. For some geometries (\eg nearly spherical objects) the overall computational complexity remains $\order{N}$ but for others (especially very thin films) the complexity can approach $\order{N^2}$.
