@@ -10,24 +10,27 @@ Also the integrals that need to be computed may involve singularities, which int
 
 Note that the derivation for this hybrid method comes from potential theory, rather than the boundary integral formulation usually used to construct the standard boundary element method.
 
-\section{Background of the Method}
+\section{Derivation of the continuous problem}
+\label{sec:bem-derivation}
+
+\subsection{Background of the Method}
 \label{sec:basic-method}
 We want to use the boundary element method in the calculation of the magnetostatic scalar potential $\phim$, ($\hms = - \nabla \phim$), in the infinite region outside of a magnetic body.
 Using the boundary element method directly, however, would require the solution of dense matrix equations for the entire problem.
 
-We can circumvent this problem by splitting the potential into two parts $\phim = \phi_1 + \phi_2$ in such a way that $\phi_1$ can be calculated the magnetic region(s) using only the finite element method.
-We then have some conditions on $\phi_2$ that must be satisfied to give the correct total potential in $\magd$ and on $\boundd$, but, in order to solve for $\phi_2$ in the magnetic domain, we still need to find the boundary conditions (on the edge of the magnetic domain).
-So we choose a charge distribution on the boundary that satisfies all the conditions on $\phi_1$ and $\phi_2$.
-We can then solve for $\phi_2$ on the boundary using similar techniques to those used in the boundary element method.
-Finally we apply the finite element method to find $\phi_2$ inside the magnetic region $\magd$.
+We can circumvent this problem by splitting the potential into two parts $\phim = \phione + \phitwo$ in such a way that $\phione$ can be calculated the magnetic region(s) using only the finite element method.
+We then have some conditions on $\phitwo$ that must be satisfied to give the correct total potential in $\magd$ and on $\boundd$, but, in order to solve for $\phitwo$ in the magnetic domain, we still need to find the boundary conditions (on the edge of the magnetic domain).
+So we choose a charge distribution on the boundary that satisfies all the conditions on $\phione$ and $\phitwo$.
+We can then solve for $\phitwo$ on the boundary using similar techniques to those used in the boundary element method.
+Finally we apply the finite element method to find $\phitwo$ inside the magnetic region $\magd$.
 
 By the uniqueness of solution for Poisson's equation with Dirichlet and/or Neumann boundary conditions we know that the field $ \hms = \nabla \phim$  constructed by the above steps is \emph{the} magnetostatic field.\footnote{To see this take the difference of two solutions of Poisson's equation: $\phi = \psi_1 - \psi_2$. Then using identity \eqref{eq:20}, the linearity of Poisson's equation and the divergence theorem we obtain $\int_S \phi \nabla \phi \cdot d \mathbf{S} = \int_V (\nabla \phi)^2 dV$. Applying Dirichlet, Neumann or mixed boundary conditions shows that the boundary integral is zero and hence $\nabla \phi = 0$.}
 
-\section{Problem Description}
+\subsection{Problem Description}
 \label{sec:problem-description}
-Let $\phi^\inte$ be the value of $\phi$ (with subscripts as appropriate) close to the boundary $\boundd$ and just inside the magnetic domain  and $\phi^\exte$ the value of $\phi$ just outside the magnetic domain\footnote{More precisely $\phi^\inte(\xv) = \lim_{\xv \rightarrow \boundd} \phi(\xv)$ from inside the magnetic domain, $\phi^\exte(\xv) = \lim_{\xv \rightarrow \boundd} \phi(\xv)$ from outside the magnetic domain.} (see Figure~\ref{fig:BEM-geometry}).
+Let $\phim^\inte$ be the value of $\phim$ (with subscripts as appropriate) close to the boundary $\boundd$ and just inside the magnetic domain  and $\phim^\exte$ the value of $\phim$ just outside the magnetic domain\footnote{More precisely $\phim^\inte(\xv) = \lim_{\xv \rightarrow \boundd} \phim(\xv)$ from inside the magnetic domain, $\phim^\exte(\xv) = \lim_{\xv \rightarrow \boundd} \phim(\xv)$ from outside the magnetic domain.} (see Figure~\ref{fig:BEM-geometry}).
 
-We have the following \emph{physical} conditions\footnote{Equations~\eqref{eq:2}-\eqref{eqn:phibound} come from the definition of $\phi_m$, requirement for finite total energy, $\Bv^\text{int} \cdot \nv = \Bv^\text{ext} \cdot \nv$ and ??ds respectively.} on the total magnetostatic potential $\phim$:
+We have the following \emph{physical} conditions\footnote{Equations~\eqref{eq:2}-\eqref{eqn:phibound} come from the definition of $\phim$, requirement for finite total energy, $\Bv^\text{int} \cdot \nv = \Bv^\text{ext} \cdot \nv$ and ??ds respectively.} on the total magnetostatic potential $\phim$:
 \begin{equation}
   \lap \phim(\xv) = \nabla \cdot \mv(\xv) \qquad \forall \xv \in \magd \cup \extd,
   \label{eq:2}
@@ -45,43 +48,43 @@ We have the following \emph{physical} conditions\footnote{Equations~\eqref{eq:2}
 \end{equation}
 Note that equations~\eqref{eqn:dphibound} and \eqref{eqn:phibound} imply continuity but not smoothness of the magnetic potential $\phim$ across $\boundd$. This is due to surface magnetic charges.
 
-We choose $\phi_1$ to satisfy:
+We choose $\phione$ to satisfy:
 \begin{equation}
-  \phim(\xv) = \phi_1(\xv) + \phi_2(\xv) \qquad \forall \xv \in \fulld,
+  \phim(\xv) = \phione(\xv) + \phitwo(\xv) \qquad \forall \xv \in \fulld,
   \label{eq:21}
 \end{equation}
 \begin{equation}
-  \lap \phi_1(\xv) = \nabla \cdot \mv(\xv) \qquad \xv \in \magd,
+  \lap \phione(\xv) = \nabla \cdot \mv(\xv) \qquad \xv \in \magd,
   \label{eq:1}
 \end{equation}
 \begin{equation}
-  \pd{\phi^\inte_1(\xv)}{\nv} = \mv \cdot \nv \qquad \xv \in \boundd,
+  \pd{\phione^\inte(\xv)}{\nv} = \mv \cdot \nv \qquad \xv \in \boundd,
   \label{eqn:dphionebound}
 \end{equation}
 \begin{equation}
-  \phi_1(\xv) = 0 \qquad \xv \in \extd.
+  \phione(\xv) = 0 \qquad \xv \in \extd.
   \label{eqn:phioneoutside}
 \end{equation}
-Note that equations~\eqref{eq:1} and \eqref{eqn:dphionebound} give a self contained Poisson Neumann problem for $\phi_1 \in \magd \cup \boundd$.
+Note that equations~\eqref{eq:1} and \eqref{eqn:dphionebound} give a self contained Poisson Neumann problem for $\phione \in \magd \cup \boundd$.
 
-The equations~\eqref{eq:2} to \eqref{eqn:phibound} for $\phim$ combined with equations~\eqref{eq:21} to \eqref{eqn:phioneoutside} for $\phi_1$ give a number of conditions on $\phi_2$ must satisfy. Since the Laplacian operator is linear, \ie $\lap \phim = \lap \phi_1 + \lap \phi_2$, from \eqref{eq:2} and \eqref{eq:1} it follows that
+The equations~\eqref{eq:2} to \eqref{eqn:phibound} for $\phim$ combined with equations~\eqref{eq:21} to \eqref{eqn:phioneoutside} for $\phione$ give a number of conditions on $\phitwo$ must satisfy. Since the Laplacian operator is linear, \ie $\lap \phim = \lap \phione + \lap \phitwo$, from \eqref{eq:2} and \eqref{eq:1} it follows that
 \begin{equation}
   \label{eq:8}
-  \lap \phi_2(\xv) = 0 \qquad \forall \xv \in \fulld.
+  \lap \phitwo(\xv) = 0 \qquad \forall \xv \in \fulld.
 \end{equation}
 
-Equation~\eqref{eqn:phioneoutside} implies that $\pd{\phi^\exte_1(\xv)}{\nv} = 0$. Combining this with equations (\ref{eqn:dphionebound}) and (\ref{eqn:dphibound}) gives
+Equation~\eqref{eqn:phioneoutside} implies that $\pd{\phione^\exte(\xv)}{\nv} = 0$. Combining this with equations (\ref{eqn:dphionebound}) and (\ref{eqn:dphibound}) gives
 \begin{equation}
   \label{eq:5}
-  \pd{\phi^\inte_2(\xv)}{\nv} - \pd{\phi^\exte_2(\xv)}{\nv} = 0.
+  \pd{\phitwo^\inte(\xv)}{\nv} - \pd{\phitwo^\exte(\xv)}{\nv} = 0.
 \end{equation}
 
 Finally from equations (\ref{eqn:phibound}), \eqref{eq:21} and (\ref{eqn:phioneoutside}) we have
 \begin{equation*}
-  \phi^\inte_1 - \phi^\exte_1 + \phi^\inte_2 - \phi^\exte_2 = 0,
+  \phione^\inte - \phione^\exte + \phitwo^\inte - \phitwo^\exte = 0,
 \end{equation*}
 \begin{equation}
-  \phi^\inte_2 - \phi^\exte_2 = - \phi^\inte_1.
+  \phitwo^\inte - \phitwo^\exte = - \phione^\inte.
 \label{eq:4}
 \end{equation}
 
@@ -109,14 +112,14 @@ Finally from equations (\ref{eqn:phibound}), \eqref{eq:21} and (\ref{eqn:phioneo
   \label{fig:BEM-geometry}
 \end{figure}
 
-\section{Double Layer Potentials}
+\subsection{Double Layer Potentials}
 \label{sec:double-layer-potent}
-A double layer potential can be thought of as the potential due to a layer of dipoles of magnitude $\mu(\xv)$ in direction $\nv$ over the surface $S$.\cite{Sternberg1946} We will demonstrate that we can use a double layer potential to calculate $\phi^\inte_2$ in terms of $\phi^\inte_1$.
+A double layer potential can be thought of as the potential due to a layer of dipoles of magnitude $\mu(\xv)$ in direction $\nv$ over the surface $S$.\cite{Sternberg1946} We will demonstrate that we can use a double layer potential to calculate $\phitwo^\inte$ in terms of $\phione^\inte$.
 
 The double layer potential at a point $\xv \in \real^d$ is defined as \cite{eom_double_layer_potential}
 \begin{equation}
   \label{eq:3}
-  \phi(\xv) = \int_{S} \mu(\yv) \pd{\Green}{\nv} \d \yv,
+  \phim(\xv) = \int_{S} \mu(\yv) \pd{\Green}{\nv} \d \yv,
 \end{equation}
 where $G$ is the Green's function for a Laplacian operator.
 For $d=2$
@@ -134,13 +137,13 @@ We have the following results from potential theory:\cite{Sternberg1946}
 \item The double layer potential undergoes a jump of $\mu(\xv)$ moving in the direction $\nv$ across a smooth surface $S$, \ie
   \begin{equation}
     \label{eq:15}
-    \phi^\inte(\xv) - \phi^\exte(\xv) = \mu(\xv).
+    \phim^\inte(\xv) - \phim^\exte(\xv) = \mu(\xv).
   \end{equation}
 % pages 136-140
 
 \item For $\xv \in S$ the following relationship holds
   \begin{equation}
-    \phi^\inte(\xv) = (1 - \frac{\alpha(\xv)}{\alpha_{\text{max}}}) \mu(\xv) + \phi(\xv),
+    \phim^\inte(\xv) = (1 - \frac{\alpha(\xv)}{\alpha_{\text{max}}}) \mu(\xv) + \phim(\xv),
     \label{eq:22}
   \end{equation}
   where $\alpha(\xv)$ is the angle (or solid angle) in two (or three) dimensions subtended by the domain at $\xv$ and
@@ -154,7 +157,7 @@ We have the following results from potential theory:\cite{Sternberg1946}
 Note that $\alpha(\xv)$ is the angle at the exact point $\xv$, when the surface at $\xv$ is a Lyapunov surface (\ie not a sharp corner) $\frac{\alpha(\xv)}{\alpha_{\text{max}}}$ reduces to a factor of $1/2$. We write $\gamma(\xv) = \frac{\alpha(\xv)}{\alpha_{\text{max}}}$ for simplicity.
  % pages 137-139, page 155 for 2d
 
-\item If $\mu$ is continuous and has continuous first and second derivatives along the boundary (\ie $\mu(\xv) \in C^2[S]$) then the limits $\pd{\phi^\inte(\xv)}{\nv}$ and $\pd{\phi^\exte(\xv)}{\nv}$ exist and are equal. % pages 145-153.
+\item If $\mu$ is continuous and has continuous first and second derivatives along the boundary (\ie $\mu(\xv) \in C^2[S]$) then the limits $\pd{\phim^\inte(\xv)}{\nv}$ and $\pd{\phim^\exte(\xv)}{\nv}$ exist and are equal. % pages 145-153.
 
 \end{enumerate}
 
@@ -162,92 +165,110 @@ Some notes on the derivation of the above results in Sternberg 1946\cite{Sternbe
 \begin{itemize}
 \item Some derivations of the results above rely on the surface being a ``Lyapunov surface'' which imposes a number of smoothness conditions, in particular excluding surfaces with corners.
 The proofs given in Sternberg allow a finite number of sharp corners, \ie a polygonal domain.
-\item Our potentials are a factor of $\frac{-1}{4 \pi}$ different from those in the reference. Also our $\phi^\inte$ and $\phi^\exte$ definitions correspond respectively to $\phi^-$ and $\phi^+$ in the book.
+\item Our potentials are a factor of $\frac{-1}{4 \pi}$ different from those in the reference. Also our $\phim^\inte$ and $\phim^\exte$ definitions correspond respectively to $\phim^-$ and $\phim^+$ in the book.
 \end{itemize}
 
-\section{Application to Magnetostatic Calculations}
-From Section~\ref{sec:double-layer-potent} we can see that conditions \eqref{eq:8}, \eqref{eq:5} and \eqref{eq:4} on $\phi_2$ are satisfied by a double layer potential with magnitude
+\subsection{Application to Magnetostatic Calculations}
+\label{sec:appl-magn-calc}
+
+From Section~\ref{sec:double-layer-potent} we can see that conditions \eqref{eq:8}, \eqref{eq:5} and \eqref{eq:4} on $\phitwo$ are satisfied by a double layer potential with magnitude
 \begin{equation}
   \label{eq:24}
-  \mu(\xv) = - \phi^\inte_1(\xv).
+  \mu(\xv) = - \phione^\inte(\xv).
 \end{equation}
 
-By the uniqueness of solution for Poisson's equation this gives us, up to an additive constant, the only solution for $\phi_2(\xv)$ in the external region.
+By the uniqueness of solution for Poisson's equation this gives us, up to an additive constant, the only solution for $\phitwo(\xv)$ in the external region.
 This is good enough for a potential since it is only used in $\hms(\xv) = - \nabla \phim(\xv)$ so addition of a constant has no effect.
 
 From equations~\eqref{eq:3}, \eqref{eq:22} and \eqref{eq:24} we have:
 \begin{equation}
   \label{eq:6}
-  \phi^\inte_2(\xv) =  \big(\gamma(\xv) - 1 \big) \phi^\inte_1(\xv)
-  - \int_{\boundd} \phi^\inte_1(\yv) \pd{\Green}{\nv} \d \yv.
+  \phitwo^\inte(\xv) =  \big(\gamma(\xv) - 1 \big) \phione^\inte(\xv)
+  - \int_{\boundd} \phione^\inte(\yv) \pd{\Green}{\nv} \d \yv.
 \end{equation}
 After substituting in our definition for the three dimensional Green's function \eqref{eqn:greenslaplacian3d} we obtain the same equation as given by Koehler \cite{Koehler1997}.
 Similar equations are solved when using the standard boundary element method, hence the name.
 
-Also note that $\phim = \phi_1 + \phi_2$ everywhere and so
+Also note that $\phim = \phione + \phitwo$ everywhere and so
 \begin{align}
   \label{eq:18}
-  \phim^\inte(\xv) &= \bm \big[ \phi^\inte_1(\xv) \big] \\
-  &= \gamma(\xv) \phi^\inte_1(\xv)
-  - \int_{\boundd} \phi^\inte_1(\yv) \pd{\Green}{\nv} \d \yv. \notag
+  \phim^\inte(\xv) &= \bm \big[ \phione^\inte(\xv) \big] \\
+  &= \gamma(\xv) \phione^\inte(\xv)
+  - \int_{\boundd} \phione^\inte(\yv) \pd{\Green}{\nv} \d \yv. \notag
 \end{align}
 
-Either equation~\eqref{eq:6} or \eqref{eq:18} can be used to give boundary conditions for $\phi_2 \in \magd$ or $\phim \in \magd$ respectively. We will proceed using equation~\eqref{eq:18} for simplicity since it eliminates $\phi_2$ from later calculations.
+Either equation~\eqref{eq:6} or \eqref{eq:18} can be used to give boundary conditions for $\phitwo \in \magd$ or $\phim \in \magd$ respectively. We will proceed using equation~\eqref{eq:18} for simplicity since it eliminates $\phitwo$ from later calculations.
 
- Hence, given the solution for $\phi_1 \in \boundd$ (from solving \eqref{eq:1} and \eqref{eqn:dphionebound}) we have a complete Dirichlet Poisson problem for $\phim \in \magd \cup \boundd$:
-\begin{align}
-  \label{eq:phim-bem}
-  \lap \phim(\xv) = \nabla \cdot \mv(\xv) \quad \xv \in \magd, \\
-  \phim(\xv) = \bm \big[ \phi_1(\xv) \big] \quad \xv \in \boundd.
-\end{align}
+Hence, given the solution for $\mv(\xv) \in \magd$ the complete continuous problem is
+ \begin{subequations}
+   \label{eq:phi-bem-continuous}
+   \begin{align}
+     \label{eq:phim-bem-continuous}
+     \lap \phim(\xv) &= \div \mv(\xv) \quad & \xv \in \magd, \\
+     \label{eq:phi1-bem-continuous}
+     \lap \phione(\xv) &= \div \mv(\xv)    & \xv \in \magd,
+   \end{align}
+ \end{subequations}
+with boundary conditions
+ \begin{subequations}
+   \label{eq:phi-bem-continuous-bc}
+   \begin{align}
+     \label{eq:phim-bem-continuous-bc}
+     \phim(\xv) &= \bm \big[ \phione(\xv) \big]      & \xv \in \boundd, \\
+     \label{eq:phi1-bem-continuous-bc}
+       \pd{\phione(\xv)}{\nv} &= \mv \cdot \nv  & \xv \in \boundd.
+   \end{align}
+ \end{subequations}
+Here we have dropped the distinction between $\inte$ and $\exte$ since all exterior values have been eliminated.
+
 
 \section{Discretisation}
 \label{sec:discretisation}
 
-Given the operator $\bm$ the discretisation of equations~\eqref{eq:phim-bem}, \eqref{eq:1} and \eqref{eqn:dphionebound} is simple. We use standard finite elements as described in Section~\ref{sub:Actual-Finite-Elements}. We approximate $\phi^\inte_1$ and $\phi^\inte_2$ as the sum of a finite set of basis functions where each basis function corresponds a single node on the boundary $\boundd$. We will use test and shape functions identical except for boundary conditions to those used in Section~\ref{sec:spat-discr-resi}. So for $\phim$ the test functions are $\tbf_{\text{m}} \in \ts \cap \Dfs$, $\;\Dfs = \{ \tbf \st \tbf(\xv) \text{ satisfies the b.c. s } \; \forall \xv \in \boundd_D \}$. For $\phi_1$ they are $\tbf_1 \in \ts$ since we only have Neumann boundary conditions.
-
-Hence the calculation of $\phi_1$ proceeds exactly as described in Section~\ref{sec:spat-discr-resi} with pure Neumann boundary conditions ($\boundd_\Neu = \boundd$ and $g_\Neu = \mv \cdot \nv$). Once we have the boundary conditions the calculation of $\phim$ proceeds similarly but with pure Dirichlet conditions ($\boundd_D = \boundd$). Therefore all that remains to be discretised is the operator $\bm$. We let
+The bulk equations~\eqref{eq:phi-bem-continuous} and the boundary condition on $\phione$, equation~\eqref{eq:phi1-bem-continuous-bc}, are identical to those discussed in Section~\ref{sec:magn-field-resid}.
+As such the weak residual form, discretisation and Jacobian calculations are identical for these equations.
+Therefore all that remains to be discretised is the operator $\bm$. We let
 \begin{equation}
-  \phim^\inte = \sum_\ibasis \phim_{,\ibasis}^\inte \tbf_{\text{m},\ibasis}(\xv),
+  \phim = \sum_\ibasis \phim_{\ibasis} \tbf_{\text{m},\ibasis}(\xv),
   \qquad
-  \phi^\inte_1 = \sum_\ibasisb \phi^\inte_{1,\ibasisb} \tbf_{1,\ibasisb}(\xv),
+  \phione = \sum_\ibasisb \phione_{\ibasisb} \tbf_{1,\ibasisb}(\xv),
   \label{eq:25}
 \end{equation}
 where $\tbf_\ibasis(\xv_\ibasisb) = \delta_{\ibasis \ibasisb}$ on the boundary nodes and is linearly interpolated from $\tbf_\ibasis = 1$ at $\xv_\ibasis$ to $\tbf_\ibasis = 0$ at neighbouring nodes.
 
 Substituting equations~\eqref{eq:25} into \eqref{eq:18} we have
 \begin{equation*}
-  \sum_\ibasis \phim_{,\ibasis}^\inte \tbf_{\text{m},\ibasis}(\xv) =
-  - \int_{\boundd} \sum_\ibasisb \phi^\inte_{1,\ibasisb} \tbf_{1,\ibasisb}(\yv)
+  \sum_\ibasis \phim_{\ibasis} \tbf_{\text{m},\ibasis}(\xv) =
+  - \int_{\boundd} \sum_\ibasisb \phione_{\ibasisb} \tbf_{1,\ibasisb}(\yv)
   \pd{\Green}{\nv} \d \yv
-  \quad + \gamma(\xv) \sum_\ibasisb \phi^\inte_{1,\ibasisb} \tbf_{1,\ibasisb}(\xv).
+  \quad + \gamma(\xv) \sum_\ibasisb \phione_{\ibasisb} \tbf_{1,\ibasisb}(\xv).
 \end{equation*}
 
-To get the value of $\phim^\inte$ at node $\ibasisc$ we choose $\xv = \xv_\ibasisc$. Then using the property $\tbf_\ibasis(\xv_\ibasisc) = \delta_{\ibasis \ibasisc}$ and replacing $\ibasisc$ by $\ibasis$ we have
+To get the value of $\phim$ at node $\ibasisc$ we choose $\xv = \xv_\ibasisc$. Then using the property $\tbf_\ibasis(\xv_\ibasisc) = \delta_{\ibasis \ibasisc}$ and replacing $\ibasisc$ by $\ibasis$ we have
 \begin{equation}
-  \phim_{,\ibasis}^\inte =
-  - \int_{\boundd_\ibasisb} \sum_\ibasisb \phi^\inte_{1,\ibasisb} \tbf_{1,\ibasisb}(\yv)
+  \phim_{\ibasis} =
+  - \int_{\boundd_\ibasisb} \sum_\ibasisb \phione_{\ibasisb} \tbf_{1,\ibasisb}(\yv)
   \pd{\Green[\ibasis]}{\nv} \d \yv
-  \quad + \gamma(\xv_\ibasis) \phi^\inte_{1,\ibasis},
+  \quad + \gamma(\xv_\ibasis) \phione_{\ibasis},
   \label{eq:colocation}
 \end{equation}
 where ${\boundd_\ibasisb}$ is the region where $\tbf_{1,\ibasisb} \neq 0$, \ie the elements which contain node $\ibasisb$.
 
 Finally, since the integrands are continuous functions ??ds citation needed, we can move the sum outside the integral leaving
 \begin{equation}
-  \phim_{,\ibasis}^\inte =
-  - \sum_\ibasisb \phi^\inte_{1,\ibasisb} \Big[ \int_{\boundd_\ibasisb} \tbf_{1,\ibasisb}(\yv)
+  \phim_{\ibasis} =
+  - \sum_\ibasisb \phione_{\ibasisb} \Big[ \int_{\boundd_\ibasisb} \tbf_{1,\ibasisb}(\yv)
   \pd{\Green[\ibasis]}{\nv} \d \yv \Big]
-  \quad + \gamma(\xv_\ibasis) \phi^\inte_{1,\ibasis}.
+  \quad + \gamma(\xv_\ibasis) \phione_{\ibasis}.
 \label{eq:27}
 \end{equation}
 Notice that the expression inside the square brackets is independent of all the potentials: it depends only on the geometry and so can be pre-calculated and stored in many cases.
 
-So equation~\eqref{eq:27} gives $\phim^\inte$ at a boundary node in terms of a sum of geometric factors multiplied by $\phi^\inte_1$ at each boundary node.
-In other words, this is a dense matrix multiplication by a pre-computed matrix giving $\phim^\inte$ at all the boundary nodes in terms of $\phi^\inte_1$ at all boundary nodes:
+So equation~\eqref{eq:27} gives $\phim$ at a boundary node in terms of a sum of geometric factors multiplied by $\phione$ at each boundary node.
+In other words, this is a dense matrix multiplication by a pre-computed matrix giving $\phim$ at all the boundary nodes in terms of $\phione$ at all boundary nodes:
 \begin{equation}
   \label{eq:10}
-  \phim_{,\ibasis}^\inte = \bm_{\ibasis,\ibasisb} \cdot \phi_{1,\ibasisb}^\inte,
+  \phim_{,\ibasis} = \bm_{\ibasis,\ibasisb} \cdot \phione_{\ibasisb},
 \end{equation}
 where
 \begin{equation}
@@ -295,8 +316,6 @@ So the discretised boundary element matrix in $d=2,3$ dimensions is
 \end{equation}
 where the subscript on $\ruv_{\xv_{\ibasis} \rightarrow \yv}$ is to remind us that the unit vector goes from $\xv_j$ to $\yv$.  We denote the integral in this equation by $I_\bm$.
 
-\section{Discussion}
-
 \subsection{Discretisation Approaches: Co-location vs Galerkin}
 
 In deriving equation~\eqref{eq:colocation} we used a co-location approach rather than the Galerkin approach used in our FEM method.
@@ -304,15 +323,9 @@ The reason for this choice is that a Galerkin discretisation would lead to a dou
 
 Not sure what effect this has, if any, on the stability or accuracy of the scheme...
 
+\section{Implementation}
 
-\subsection{The Matrix $\bm$}
-Since $\bm$ is a dense matrix the processing and memeory requirements to compute, store and use $\bm$ scales as $\order{N_b^2}$ where $N_b$ is the number of boundary nodes. For some geometries (\eg nearly spherical objects) the overall computational complexity remains $\order{N}$ but for others (especially very thin films) the complexity can approach $\order{N^2}$.
-
-It should be noted that $\bm$ depends only on the geometry of the problem and so typically only needs to be computed once, at the beginning of the simulation. Hence the integral computation time is not too important. Although if spatial adaptivity is used the geometry will change with every adaptation and $\bm$ will need to be recalculated.
-
-One way to reduce the problems associated with the dense nature of $\bm$ is to use hierarchical matrix techniques. In this type of matrix the less important entries (\ie smaller) are lumped into a single entry similarly to multipole approximation methods. The cost of multiplication and storage of $\bm$ is thus reduced to only $\order{N \log(N)}$.\cite{Knittel2009}
-
-\subsection{The Integral $I_\bm$}
+\subsection{Calculation of the integral $I_\bm$}
 Another factor that should be considered is the apparent singularity in the integral $I_\bm$ when integrating over an element containing the source point $\xv_\ibasis$. There are two distinct cases to look at here: flat elements and curvilinear elements.
 
 In the case of flat elements if $\xv_\ibasisb$ is within the element being integrated over then we have
@@ -332,10 +345,7 @@ For curvilinear elements we no longer have the nice property that any potentiall
 
 % ??ds Rave, Thaville etc.
 
-
-\section{Calculation of the integral $I_\bm$}
-
-\subsection{Analytical solutions}
+\subsubsection{Analytical solutions}
 
 analytic formula given by.... for linear shape functions on triangles (implies flat element).
 
@@ -346,7 +356,7 @@ solution + notation
 comments on references
 
 
-\subsection{Numerical integration}
+\subsubsection{Numerical integration}
 
 Advantages of numerical: flexible wrt to element shape
 
@@ -354,6 +364,207 @@ potentially allows higher order elements
 
 potentially cheaper, at least for distance, non-near-singular elements
 
+
+
+\subsection{The Matrix $\bm$}
+
+Since $\bm$ is a dense matrix the processing and memeory requirements to compute, store and use $\bm$ scales as $\order{N_b^2}$ where $N_b$ is the number of boundary nodes. For some geometries (\eg nearly spherical objects) the overall computational complexity remains $\order{N}$ but for others (especially very thin films) the complexity can approach $\order{N^2}$.
+
+It should be noted that $\bm$ depends only on the geometry of the problem and so typically only needs to be computed once, at the beginning of the simulation. Hence the integral computation time is not too important. Although if spatial adaptivity is used the geometry will change with every adaptation and $\bm$ will need to be recalculated.
+
+One way to reduce the problems associated with the dense nature of $\bm$ is to use hierarchical matrix techniques. In this type of matrix the less important entries (\ie smaller) are lumped into a single entry similarly to multipole approximation methods. The cost of multiplication and storage of $\bm$ is thus reduced to only $\order{N \log(N)}$.\cite{Knittel2009}
+
+
+\section{Solution of the linear systems}
+\label{sec:solution-strategies}
+
+??ds new chapter?
+
+Two ways to proceed with solving the coupled system of equations~\eqref{eqn:ndllg-starting}, \eqref{eq:phi-bem-continuous-bc} and \eqref{eq:phi-bem-continuous-bc}.
+First is to solve the entire system as a single non-linear pde.
+Second is to make the assumption that magnetostatic field part is non-stiff and solve semi-implicitly as two sets of coupled pdes.
+Each method has its own advantages.
+
+\subsection{Fully implicit}
+
+Solve the entire system as one coupled non-linear pde.
+This means that we are using a well understood time integration scheme rather than some relatively unknown approximation.
+The downside is that the Jacobian will contain the dense matrix $\bm$, which makes solving the system in a naive manner extremely expensive.
+In this section we will discuss solvers which can make this process comparatively efficient.
+
+Another advantage of this method over the semi-implicit method arises when using IMR.
+The energy conservation property of IMR is the most unique of its geometrical integration properties\footnote{A number of explicit integration schemes can obtain length conservation: Cayley transform methods\cite{Lewis2003}, semi-analytical methods\cite{Wiele2010} and various types of semi-implicit midpoint rule methods\cite{Spargo2003a}\cite{Mentink2010} (including the one described in this section).}, but it is lost when a semi-implicit method is used.
+
+To enforce the Dirichlet boundary condition within the Newton solver we use the slightly odd residual
+\newcommand{\rphimb}{\rphi_b}
+\begin{equation}
+  \rphimb(\phim_b, \phione_b) = \phim_b - boundary cond.
+\end{equation}
+Everything else proceeds as normal.
+
+
+\subsubsection{Jacobian structure}
+\label{sec:bem-jacobian-structure}
+
+As mentioned in Section~\ref{sec:discretisation} the pair of Poisson equations for the FEM/BEM method are essentially the same as those in Section~\ref{sec:galerk-meth-llg}.
+The first difference is that there is no coupling from the auxilary potential $\phione$ to the LLG equations, and hence no corresponding $\Pm$ block.
+The second difference is that there is an additional coupling between the boundary values of the auxilary potential and the boundary values of the real potential $\phim$.
+
+With the order of blocks as: $\mv$, $\phim$, $\phione$, $\phione$ boundary.
+Then the Jacobian is
+\begin{equation}
+  \Jm = 
+  \begin{pmatrix}
+    \Fm       & \Pm     &  \\
+    \Qm       & \Am' &  \bm'  \\
+    \Qm       &         &   \Am
+  \end{pmatrix},
+\end{equation}
+
+%% all in one:
+% \begin{equation}
+%   \Jm = 
+%   \begin{pmatrix}
+%     \Fm       & \Pm     & \Pm_b  &         &           \\
+%     \Qm       & \Am     & \pd{\phim}{\phim_b}  &         &           \\
+%     &         & -\Idm  &         &  \bm      \\
+%     \Qm       &         &        & \Am     & \pd{\phione}{\phione_b}   \\
+%     \Qm_b     &         &        & \pd{\phione_b}{\phione} & \Am_b      
+%   \end{pmatrix}
+% \end{equation}
+
+where the primed blocks are ones where the boundary and bulk values must be split up because of the BEM boundary condition.
+So
+\begin{equation}
+  \Am' =
+  \begin{pmatrix}
+     \Am     & \pd{\phim}{\phim_b} \\
+       0      & -\Idm  
+  \end{pmatrix},
+\end{equation}
+and
+\begin{equation}
+  \bm' =
+  \begin{pmatrix}
+     0  & 0 \\
+     0  & \bm 
+  \end{pmatrix}.
+\end{equation}
+
+
+It is worth noting that a slightly different Jacobian struture could be obtained by modifying the derivation in Section~\ref{sec:appl-magn-calc}.
+Instead of using $\phim = \phione + \phitwo$ to eliminate $\phitwo$, we could have written $\hms = - \grad \phione - \grad \phitwo$.
+This would result in both of the potentials having a $\Pm$ block, but only one of them having a $\Qm$ block.
+It would also reduce the diagonal dominance of $\bm$, which is probably a bad thing ??ds check? are we sure?
+
+
+\subsubsection{Solver strategies}
+\label{sec:bem-solver-strategies}
+
+The first technique for an efficient strategy is to use a hierarchical matrix representation for $\bm$.
+This greatly increases the asymptotic efficiency of operations, for example multiplication only takes $\order{N_b \log N_b}$ instead of $\order{N_b^2}$ time where $N_b$ is the number of boundary nodes.
+However this rules out the use of a straightforward direct solver.
+Hence we need to use some form of block-wise solver where it is possible to treat seperate blocks differently.
+A simple way to do this is to use a Krylov subspace method.
+In such a solver all that is needed is a way to calculate matrix-vector products for $J$, which can easily be done in a block-wise manner.
+
+\newcommand{\prcd}{\mathcal{P}}
+
+First preconditioner: exact solve w/out $\bm$.
+\begin{equation}
+  \prcd_{1} = 
+  \begin{pmatrix}
+    \Fm       & \Pm     &  \\
+    \Qm       & \hat{\Am}&   \\
+    \Qm       &         &   \Am
+  \end{pmatrix}.
+\end{equation}
+
+Second preconditioner: block triangular with AMG, exact LLG blocks, drop $\Pm$ and $\bm$.
+\begin{equation}
+  \prcd_{2} = 
+  \begin{pmatrix}
+    \Fm       &      &  \\
+    \Qm       & \hat{\Am'}&   \\
+    \Qm       &         &   \hat{\Am}
+  \end{pmatrix}.
+\end{equation}
+
+Third preconditioner: nested block triangular with AMG, exact LLG blocks, drop $\Qm$ and $\bm$,
+\begin{equation}
+  \prcd_{2} = 
+  \begin{pmatrix}
+    \Fm       & \Pm  &  \\
+              & \hat{\Am'}&   \\
+    \Qm       &         &   \hat{\Am}
+  \end{pmatrix}.
+\end{equation}
+Use a nested block triangular preconditioner rather than reordering to avoid having varying Jacobian orders.
+
+Q is a much simpler block (linear, only one term) so probably best to drop that?
+
+??ds try exact A for each of these?
+
+
+\subsection{Semi-implicit}
+
+The alternative to a fully implicit solve is to come up with a semi implicit method.
+The idea is to approximate $\phim$ using an explicit time integration method while still using an implicit method for $\mv$.
+This means that the system no longer has the properties of the purely implicit method.
+We hope that despite this it will retain sufficient stability to allow long time steps.
+
+The strategy is as follows:
+\begin{enumerate}
+\item Calculate $\phim_0$ from initial condition $\mv_0$.
+\item Extrapolate $\phim_n$ to $t_{n+1}$ using a second order formula to get $\hat{\phim}_{n+1}$.
+\item Use $\hat{\phim}_{n+1}$ to calculate $\mv_{n+1}$ (implicitly in $\mv_{n+1}$).
+\item Calculate $\phione_{n+1}$ using $\mv_{n+1}$.
+\item Use boundary values of $\phione_{n+1}$ to get $\phim_{n+1}$.
+\item If not finished then goto 2.
+\end{enumerate}
+
+A simple second order extrapolation formula (based on Lagrange interpolation\cite[pg. 312]{Kincaid2002}) is 
+\begin{equation}
+  \label{eq:65}
+  f(t) = \frac{t - t_1}{t_0 - t_1}f(t_0) + \frac{t - t_0}{t_1 - t_0}f(t_1).
+\end{equation}
+After substituting in $t=t_{n+1}$, $t_1=t_n$ and $t_0=t_{n-1}$ this gives an expression for the predicted $\phim$ value
+\begin{equation}
+  \label{eq:66}
+  \hat{\phim}_{n+1} = \frac{-\dtx{n+1}}{\dtn} \phim_{n-1} + \frac{\dtx{n+1} + \dtn}{\dtn} \phim_n.
+\end{equation}
+
+Note that if we are using the implicit midpoint rule then we actually want to extrapolate $\phim$ to the midpoint, hence we actually use $\dtx{n+1} = \dtx{n+1} /2$ in the above equation.
+If we are using the implicit midpoint rule with constant time steps then the extrapolation formula becomes
+\begin{equation}
+  \label{eq:67}
+  \hat{\phim}_{n+1} = \frac{1}{2} \phim_{n-1} + \frac{3}{2} \phim_n,
+\end{equation}
+which matches with the extrapolation formula given for a different semi-implicit version of the midpoint rule\cite{Serpico2001}.
+
+Notes:
+\begin{itemize}
+\item stability uncertain: polynomial extrapolation can be dodgy..
+\item Need to find error expression for extrapolation
+\item talk about relation to FEM (Lagrange polynomials)?
+\end{itemize}
+
+\subsubsection{Jacobian structure}
+\label{sec:bem-jacobian-structure}
+
+Decoupling the system as discussed above means that we only need to solve the LLG system (as discussed in Section~\ref{sec:llg-jacobian}) along with two Poisson systems of size $\sim N$ (as given in Section~\ref{sec:poisson-jacobian}).
+Additionally we need to perform a single matrix multiply (of size $N_b$) to calculate the boundary conditions on the $\phim$ Poisson solve.
+
+
+\subsubsection{Solver strategies}
+\label{sec:semi-implicit-bem-solver-strategies}
+
+As discussed above we use a hierarchical matrix representation for the BEM operator $\bm$, to avoid large memory requirements and to speed up the dense matrix multiply.
+
+Efficient solver strategies for Poisson systems are extremely well studied.
+An efficent and robust method for solving Poisson systems on unstructured grids is to use the method of conjugate gradients with a single V-cycle of algebraic multigrid as a preconditioner \cite[Chap. 2]{HowardElmanDavidSilvester2006}.
+
+Solver strategies for the LLG system are discussed in Section~\ref{??ds llg preconditioning}.
 
 
 %%% Local Variables:

@@ -226,6 +226,10 @@
 \newcommand{\Jmts}{\mymatrix{J}_\text{ts}}
 \newcommand{\jts}{j_\text{ts}}
 
+% Brackets
+\newcommand{\bigb}[1]{{\left( #1 \right)}}
+\newcommand{\bigs}[1]{{\left[ #1 \right]}}
+
 
 
 % 3-component vector as a list of components
@@ -288,10 +292,13 @@
 \newsubcommand{\Heff}{\myvector{H}}{{\text{eff}}} %effective (total)
 \newsubcommand{\Happ}{\myvector{H}}{{\text{ap}}} %applied
 \newsubcommand{\Hms}{\myvector{H}}{\text{ms}} % magnetostatic/demag
-\newsubcommand{\phim}{\phi}{\text{m}} % magnetostatic potential
 \newsubcommand{\Hex}{\myvector{H}}{\text{ex}} % exchange
 \newsubcommand{\Hca}{\myvector{H}}{\text{ca}} % crystalline ansiotropy
 \newsubcommand{\Hthm}{\myvector{H}}{\text{th}} % thermal
+
+\newcommand{\phim}{\phi} % magnetostatic potential
+\newcommand{\phione}{u} % auxilary potential
+\newcommand{\phitwo}{v} % other auxilary potential
 
 % Normalised versions of the above fields (and M)
 \newcommand{\mv}{\myvector{m}}
