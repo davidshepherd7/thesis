@@ -349,6 +349,17 @@ Some properties are:
   \end{equation}
 
   ??ds is this the correct way to write it? Check tensor mul.
+
+\item From combining the points above
+  \begin{equation}
+    \begin{aligned}
+      \pd{}{\mv_l} \bigb{\skewm{\mv}\cdot \gv(\mv)} &= \skewm{\mv}\cdot \pd{\gv(\mv)}{\mv_l}
+           + \sbf_l \skewop_3 \cdot \gv(\mv), \\
+           &= \skewm{\mv}\cdot \pd{\gv(\mv)}{\mv_l} + \sbf_l \skewm{\gv(\mv)}.
+    \end{aligned}
+  \end{equation} 
+  Since $\pd{\gv(\mv)}{\mv_l}$ is typically some scalar multiplied by an identity matrix this results in a simple skew-symmetric structure for most of the derivative terms in the Jacobian.
+
 \end{itemize}
 
 As a simple example of how this can be used we first examine the differentiation of the $\mv \times (\happ + \hms)$ term of the Landau-Lifshitz equation residual (note that these two fields are not (directly) dependant on $\mv$).
