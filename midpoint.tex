@@ -324,12 +324,31 @@ For implicit midpoint rule this is
   \dtx{n+1} = \dtn \left( \frac{\toltt}{\lte^\IMP}  \right) ^{\frac{1}{3}}.
 \end{equation}
 
+If the ratio of step size to desired step size is too low, \ie if the step just taken was much too large to attain the desired accuracy then we reduce the step size by a factor of 2 and repeat the step.
+
 Actually we (should) include a slight safety factor to reduce the number of step rejections:
 
 ??ds but actually oomph-lib doesn't...
 
 
-\section{Numerical experiments}
+Additionally we impose a limitation on the maximum step size scaling to help improve stability ??ds does this actually do anything?
+
+
+??ds this is still flakey, test things? Use reltol? Ask Matthias?
+
+A final modification is to include limitations on the step size that prevent issues with numerical accuracy.
+We assume that the equations being modelled are non-dimensionalised so that the initial Newton residual (see Section~\ref{sec:newt-raph}) is $\sim \order{\dtn}$ (The initial guess is the value at the previous step, the change in the solution value in one step should be of size somewhere around $\dtn$).
+In this case the minimum time step we can take is approximately the Newton tolerance (otherwise the Newton method will converge ``early'' because the residual is small to begin with).
+Similarly the maximum time step we can take is $\sim \order{\frac{\texttt{newtontol}}{10^{-16}} = 10^{8}}$ before the Newton method will have difficulty converging due to numerical errors.
+
+
+Note that some alternative strategies try to minimise the number of modifications to the time step size\cite[chap. 6]{Iserles2009} \cite[Sec. 2.1]{cvode-manual}.
+The motivation for this is the use of a modified Newton-Raphson method where the Jacobian is not recalculated at each Newton step.
+In the case of ODE solvers this is extremely beneficial because the Jacobian is usually dense and direct solvers are used to solve it--by keeping the Jacobian constant the number of solves and Jacobian assemblys are greatly reduced.
+The downside is a reduction in the convergence speed of the Newton method.
+Keeping the step size constant for as long as possible is required here because modifications to the time step cause modifications to the Jacobian.
+However for PDE solvers, and in particular for iterative PDE solvers there is little-to-no benefit in using this technique (the reduction in convergence speed is worse than the gain of not assembling/solving the sparse Jacobian\cite[pg. 128]{Iserles2009}.
+
 
 \subsection{Implementation}
 
