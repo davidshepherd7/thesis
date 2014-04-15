@@ -1,5 +1,10 @@
 \documentclass[11pt,a4paper,pdftex]{book}
 
+% Define a boolean which says we are compiling my thesis
+\newif\ifthesis
+\thesistrue
+
+
 %% General packages
 %% ============================================================
 \usepackage{amsmath,amssymb,amsfonts,amsthm}   %Add maths commands, symbols and fonts
@@ -531,7 +536,6 @@
 
 \include{galerkin-llg}
 
-
 \include{./boundary_elements}
 
 %\include{./quadrature/quadrature}
@@ -539,6 +543,8 @@
 \include{./midpoint}
 \include{./imr_micromagnetics}
 %% \include{./midpoint_verification}
+
+\include{stiffness-analysis}
 
 %  preconditioners:
 % (very) basicis
