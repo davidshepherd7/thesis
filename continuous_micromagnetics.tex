@@ -198,6 +198,32 @@ Note that there is no spatial dependence directly contained in equations~\eqref{
 Examples of currently available micromagnetic models include the \texttt{OOMMF}\cite{oommf-website} and \texttt{nmag}\cite{Fischbacher2007} packages, which both use the dynamic method exclusively, along with \texttt{magpar}\cite{Scholz2003} and \texttt{FEMME}\cite{suessco-website} which can use either dynamic or energy based methods.
 
 
+\subsubsection{Magnetisation boundary conditions}
+\label{sec:magn-bound-cond}
+
+The boundary condition on the magnetisation $\mv$ (in dimensional form) is \cite[pgs. 178, 181]{Aharoni1996}
+\begin{equation}
+  \Mv \times \bigb{ C \dMdn + \pd{w_s}{\Mv}} = \zerov,
+\end{equation}
+where $C$ is some exchange coeff ??ds and $w_s$ is the surface anisotropy.
+Equivalently
+\begin{equation}
+    \Mv \times \dMdn = \frac{-1}{A} \Mv \times \pd{w_s}{\Mv}.
+\end{equation}
+
+For simplicity we commonly consider the case of zero surface anisotropy ($w_s \equiv 0$), in this case the boundary condition becomes
+\begin{equation}
+  \label{eq:llg-bc}
+  \Mv \times \dMdn = \zerov.
+\end{equation}
+This condition can be arranged into a simpler form: we first note that for equation~\eqref{eq:llg-bc} to hold either $\Mv = \zerov$, $\dMdn = \zerov$ or $\Mv$ is parallel to $\dMdn$.
+Clearly $\Mv$ is not the zero vector inside the ferromagnet.
+Also we know that the magnetisation length does not change, so $\pd{\Mv}{\av} \cdot \Mv = 0$ for any direction $\av$ since the change in magnetisation projected onto the magnetisation direction is the change in magnetisation length.
+Hence $\Mv$ and $\dMdn$ cannot be parallel and so
+\begin{equation}
+  \dMdn = \zerov.
+\end{equation}
+
 % \section{Accounting for Thermal Effects}
 % \label{sec:thermal-effects}
 % ??ds put in from other file when ready

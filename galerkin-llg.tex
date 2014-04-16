@@ -23,6 +23,19 @@ We choose the Gilbert form of the Landau--Lifshitz--Gilbert equation even though
 
 The applied field $\Happ$ is known. The crystalline anisotropy field $\Hca$ depends on the type of anisotropy in the magnetic material but it is always just an algebraic function of $\Mv$. For example the most commonly used case of perpendicular anisotropy (caused by hexagonal crystalline structure) gives equation~\eqref{eq:Hca}.
 
+After non-dimensionalisation (see Section~\ref{sec:land-lifsh-gilb-normalisation}) the Landau-Lifshitz-Gilbert equation with effective fields is given by
+\begin{equation}
+  \begin{aligned}
+    \dmdt &= - \mv \times \hv + \alpha \mv \times \dmdt, \\
+    \hv &= \happ - \nabla \phim + \lap \mv + \kone (\mv \cdot \ev) \ev, \\
+    \lap \phim &= \div \mv.
+    \label{eqn:ndllg-starting}
+  \end{aligned}
+\end{equation}
+
+\section{Boundary conditions}
+\label{sec:galerkin-bound-cond}
+
 For now we consider the magnetostatic potential only within the magnetic domain, $\magd$, with Neumann or Dirichlet boundary conditions on the boundary, $\boundd$ (see Section~\ref{sec:hybr-finit-elem} for details of the extension to include the external region). We define $\boundd_D$ to represent the region of the boundary domain where a Dirichlet condition is imposed on the magnetostatic potential. Similarly we define $\boundd_\Neu$ to be the region of the boundary where a Neumann condition is imposed. So $ \nabla \phim(\xv) \cdot \nv = g_\Neu(\xv) \; \forall \xv \in \boundd_\Neu$ and $\phim(\xv) = g_D(\xv) \; \forall \xv \in \boundd_D$. Typically we will have either $\boundd_D = \boundd$ or $\boundd_\Neu = \boundd$. We also define the following function spaces for convenience
 \begin{align}
   \label{eq:037}
@@ -30,14 +43,13 @@ For now we consider the magnetostatic potential only within the magnetic domain,
   \Dfs_0 &= \{ v \st v(\xv) = 0 \; \forall \xv \in \boundd_D \}.
 \end{align}
 
-After non-dimensionalisation (see Section~\ref{sec:land-lifsh-gilb-normalisation}) the Landau-Lifshitz-Gilbert equation with effective fields is given by
+Recall from Section~\ref{sec:magn-bound-cond} that we have a boundary condition on the magnetisation of the form
 \begin{equation}
-  \begin{aligned}
-    \dmdt &= - \mv \times \hv + \alpha \mv \times \dmdt, \\
-    \hv &= \happ - \nabla \phi + \lap \mv + \kone (\mv \cdot \ev) \ev.
-    \label{eqn:ndllg-starting}
-  \end{aligned}
+  \label{eq:m-bc}
+  \mv \times \dmdn = \av(\mv, \nv),
 \end{equation}
+where $\av$ represents any surface anisotropy, typically it is taken as $\av \equiv 0$.
+It turns out that this Neumann-like condition is exactly what is needed in the derivation of the residuals.
 
 
 \section{Conversion to Weak Form Residuals}
@@ -169,7 +181,7 @@ It can be shown that this is equivalent to
 \begin{equation}
   \label{eq:49}
   I = - \int_\magd  \mv \times \threevec{\nabla \test_0 \cdot \nabla m_1}{\nabla \test_1 \cdot \nabla m_2}{\nabla \test_2 \cdot \nabla m_2} \d\magd 
-  + \int_\boundd (\mv \times \pd{\mv}{\nv}) \cdot \testv \d\boundd,
+  + \int_\boundd (\mv \times \dmdn) \cdot \testv \d\boundd,
 \end{equation}
 using similar techniques to those in Section~\ref{sec:magn-field-resid}. %??ds derivation in appendix? I've written it down in notebook begining 22/9/11 near the end.
 
@@ -179,8 +191,12 @@ We write
   =\threevec{\grad a_0 \cdot \grad  b_0}{\grad a_1 \cdot \grad b_1}{\grad a_2 \cdot \grad b_2}
 \end{equation}
 
+From equation~\eqref{eq:m-bc} for zero surface anisotropy the boundary integral term is zero and so
+\begin{equation}
+  I = - \int_\magd  \mv \times \bigb{\grad \testv \compdot \grad  \mv} \d\magd.
+\end{equation}
+Non-zero surface anisotropy can be included easily by adding a boundary integral contribution to the residual, but we ignore this case in the remainder of this thesis for simplicity.
 
-??ds can we assume $(\mv \times \pd{\mv}{\nv}) = 0$? Others do... will do for now
 
 \section{Spatial Discretisation}
 \label{sec:spat-discr-resi}
