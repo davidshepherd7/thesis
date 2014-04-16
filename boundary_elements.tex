@@ -119,7 +119,7 @@ A double layer potential can be thought of as the potential due to a layer of di
 The double layer potential at a point $\xv \in \real^d$ is defined as \cite{eom_double_layer_potential}
 \begin{equation}
   \label{eq:3}
-  \phim(\xv) = \int_{S} \mu(\yv) \pd{\Green}{\nv} \d \yv,
+  \phim(\xv) = \int_{S} \mu(\yv) \pd{\Green}{\nv(\yv)} \d \yv,
 \end{equation}
 where $G$ is the Green's function for a Laplacian operator.
 For $d=2$
@@ -184,7 +184,7 @@ From equations~\eqref{eq:3}, \eqref{eq:22} and \eqref{eq:24} we have:
 \begin{equation}
   \label{eq:6}
   \phitwo^\inte(\xv) =  \big(\gamma(\xv) - 1 \big) \phione^\inte(\xv)
-  - \int_{\boundd} \phione^\inte(\yv) \pd{\Green}{\nv} \d \yv.
+  - \int_{\boundd} \phione^\inte(\yv) \pd{\Green}{\nv(\yv)} \d \yv.
 \end{equation}
 After substituting in our definition for the three dimensional Green's function \eqref{eqn:greenslaplacian3d} we obtain the same equation as given by Koehler \cite{Koehler1997}.
 Similar equations are solved when using the standard boundary element method, hence the name.
@@ -194,7 +194,7 @@ Also note that $\phim = \phione + \phitwo$ everywhere and so
   \label{eq:18}
   \phim^\inte(\xv) &= \bm \big[ \phione^\inte(\xv) \big] \\
   &= \gamma(\xv) \phione^\inte(\xv)
-  - \int_{\boundd} \phione^\inte(\yv) \pd{\Green}{\nv} \d \yv. \notag
+  - \int_{\boundd} \phione^\inte(\yv) \pd{\Green}{\nv(\yv)} \d \yv. \notag
 \end{align}
 
 Either equation~\eqref{eq:6} or \eqref{eq:18} can be used to give boundary conditions for $\phitwo \in \magd$ or $\phim \in \magd$ respectively. We will proceed using equation~\eqref{eq:18} for simplicity since it eliminates $\phitwo$ from later calculations.
@@ -240,7 +240,7 @@ Substituting equations~\eqref{eq:25} into \eqref{eq:18} we have
 \begin{equation*}
   \sum_\ibasis \phim_{\ibasis} \tbf_{\text{m},\ibasis}(\xv) =
   - \int_{\boundd} \sum_\ibasisb \phione_{\ibasisb} \tbf_{1,\ibasisb}(\yv)
-  \pd{\Green}{\nv} \d \yv
+  \pd{\Green}{\nv(\yv)} \d \yv
   \quad + \gamma(\xv) \sum_\ibasisb \phione_{\ibasisb} \tbf_{1,\ibasisb}(\xv).
 \end{equation*}
 
@@ -248,7 +248,7 @@ To get the value of $\phim$ at node $\ibasisc$ we choose $\xv = \xv_\ibasisc$. T
 \begin{equation}
   \phim_{\ibasis} =
   - \int_{\boundd_\ibasisb} \sum_\ibasisb \phione_{\ibasisb} \tbf_{1,\ibasisb}(\yv)
-  \pd{\Green[\ibasis]}{\nv} \d \yv
+  \pd{\Green[\ibasis]}{\nv(\yv)} \d \yv
   \quad + \gamma(\xv_\ibasis) \phione_{\ibasis},
   \label{eq:colocation}
 \end{equation}
@@ -258,7 +258,7 @@ Finally, since the integrands are continuous functions ??ds citation needed, we 
 \begin{equation}
   \phim_{\ibasis} =
   - \sum_\ibasisb \phione_{\ibasisb} \Big[ \int_{\boundd_\ibasisb} \tbf_{1,\ibasisb}(\yv)
-  \pd{\Green[\ibasis]}{\nv} \d \yv \Big]
+  \pd{\Green[\ibasis]}{\nv(\yv)} \d \yv \Big]
   \quad + \gamma(\xv_\ibasis) \phione_{\ibasis}.
 \label{eq:27}
 \end{equation}
@@ -268,12 +268,12 @@ So equation~\eqref{eq:27} gives $\phim$ at a boundary node in terms of a sum of 
 In other words, this is a dense matrix multiplication by a pre-computed matrix giving $\phim$ at all the boundary nodes in terms of $\phione$ at all boundary nodes:
 \begin{equation}
   \label{eq:10}
-  \phim_{,\ibasis} = \bm_{\ibasis,\ibasisb} \cdot \phione_{\ibasisb},
+  \phim_\ibasis = \bm_{\ibasis,\ibasisb} \cdot \phione_{\ibasisb},
 \end{equation}
 where
 \begin{equation}
   \label{eq:17}
-  \bm_{\ibasis\ibasisb} = - \int_{\boundd_\ibasisb} \tbf_{1,\ibasisb}(\yv) \pd{\Green[\ibasis]}{\nv} \d \yv
+  \bm_{\ibasis\ibasisb} = - \int_{\boundd_\ibasisb} \tbf_{1,\ibasisb}(\yv) \pd{\Green[\ibasis]}{\nv(\yv)} \d \yv
   \quad + \gamma(\xv_\ibasis)\delta_{\ibasis\ibasisb}.
 \end{equation}
 
@@ -290,31 +290,29 @@ In 3D
   \label{eq:11}
   \pd{\Green}{\nv} = \frac{-1}{4 \pi} \pd{}{\nv} \Gthreed = \frac{-1}{4 \pi} \nv \cdot \nabla \Big( \Gthreed \Big).
 \end{equation}
-Converting to spherical coordinates with the origin at $\xv_\ibasis$ ($r = \abs{\yv - \xv_\ibasis}$, $\ruv = \frac{\yv - \xv_\ibasis}{r}$) we have
+Converting to spherical coordinates with the origin at $\xv$ ($r = \abs{\yv - \xv}$, $\ruv = \frac{\yv - \xv}{r}$) we have\footnote{In spherical polar coordinates $\nabla = \ruv \pd{}{r} +  \phiv \frac{1}{r} \pd{}{\phi} + \thetav \frac{1}{r \sin \theta} \pd{}{\theta}$. Obviously $\frac{1}{r}$ has no angular dependence so only the derivative with respect to $r$ is non-zero.}
 \begin{equation}
   \label{eq:12}
   \pd{G(r)}{\nv} = \frac{-1}{4 \pi} \nv \cdot \ruv \pd{}{r} \Big( \frac{1}{r} \Big)
-  = \frac{+1}{4 \pi}  \frac{\nv \cdot \ruv}{r^2}
-  = \frac{\nv \cdot \rv}{4 \pi \abs{\rv}^3}
-  ,\footnote{In spherical polar coordinates $\nabla = \ruv \pd{}{r} +  \phiv \frac{1}{r} \pd{}{\phi} + \thetav \frac{1}{r \sin \theta} \pd{}{\theta}$. Obviously $\frac{1}{r}$ has no angular dependence so only the derivative with respect to $r$ is non-zero.}
+  = \frac{+1}{4 \pi}  \frac{\nv \cdot \ruv}{r^2},
 \end{equation}
 \begin{equation}
   \label{eq:13}
-  \pd{\Green}{\nv} = \frac{\nv \cdot \ruv}{4 \pi \abs{\yv - \xv_\ibasis} ^2} .
+  \pd{\Green}{\nv} = \frac{\nv \cdot (\yv - \xv)}{4 \pi \abs{\yv - \xv} ^2} .
 \end{equation}
 Similarly in 2D we find
 \begin{equation}
   \label{eq:14}
-  \pd{\Green}{\nv} = \frac{-1}{2 \pi} \pd{}{\nv} (\Gtwod) = \frac{\nv \cdot \ruv}{2 \pi \abs{\yv - \xv_\ibasis}}.
+  \pd{\Green}{\nv} = \frac{-1}{2 \pi} \pd{}{\nv} (\Gtwod) = \frac{\nv \cdot (\yv - \xv)}{2 \pi \abs{\yv - \xv}}.
 \end{equation}
 
 So the discretised boundary element matrix in $d=2,3$ dimensions is
 \begin{equation}
   \label{eq:19}
-  \bm_{\ibasis\ibasisb} =\frac{-1}{2^{(d-1)} \pi} \int_{\boundd_\ibasisb} \tbf_{1,\ibasisb}(\yv) \frac{\nv(\yv) \cdot \ruv_{\xv_{\ibasis} \rightarrow \yv}}{\abs{\yv - \xv_\ibasis} ^{d-1}} \d \yv
-   \quad + \gamma(\xv_\ibasis)\delta_{\ibasisb\ibasis},
+  \bm_{\ibasis\ibasisb} =\frac{-1}{2^{(d-1)} \pi} \int_{\boundd_\ibasisb} \tbf_{1,\ibasisb}(\yv) \frac{\nv(\yv) \cdot (\yv - \xv_\ibasis)}{\abs{\yv - \xv_\ibasis} ^{d-1}} \d \yv
+   \quad + \gamma(\xv_\ibasis)\delta_{\ibasisb\ibasis}.
 \end{equation}
-where the subscript on $\ruv_{\xv_{\ibasis} \rightarrow \yv}$ is to remind us that the unit vector goes from $\xv_j$ to $\yv$.  We denote the integral in this equation by $I_\bm$.
+We denote the integral in this equation by $I_\bm$.
 
 \subsection{Discretisation Approaches: Co-location vs Galerkin}
 
@@ -323,9 +321,12 @@ The reason for this choice is that a Galerkin discretisation would lead to a dou
 
 Not sure what effect this has, if any, on the stability or accuracy of the scheme...
 
-\section{Implementation}
+\section{Evaluation of the discrete boundary operator}
+\label{sec:calc-integr-i_bm}
 
-\subsection{Calculation of the integral $I_\bm$}
+\section{Singularity of the main integral}
+\label{sec:bem-singularity}
+
 Another factor that should be considered is the apparent singularity in the integral $I_\bm$ when integrating over an element containing the source point $\xv_\ibasis$. There are two distinct cases to look at here: flat elements and curvilinear elements.
 
 In the case of flat elements if $\xv_\ibasisb$ is within the element being integrated over then we have
@@ -337,33 +338,148 @@ So the integral is zero and the singularity is avoided. Unfortunately for neighb
 
 For curvilinear elements we no longer have the nice property that any potentially singular elements are automatically zero. However it can be shown that for reasonably shaped elements ??ds citation needed! there are still no real singular integrals only near-singular ones. This is due to the fact that $\nv(\yv) \cdot \ruv_{\xv_{\ibasis} \rightarrow \yv}$ tends to zero ``faster'' than $\abs{\yv - \xv_\ibasis}^2$ so the limit of the ratio as $\yv \rightarrow \xv_\ibasis$ is zero. In fact integrals like this are routinely evaluated in standard boundary element methods ??ds citation needed.
 
-% \subsection{Corner Singularities}
 
-% ??ds Think these are real...
+\subsection{Corner Singularities}
 
-% ??ds doesn't really go here...
+Have to handle calculation of angles/solid angles $\gamma(\xv)$ somehow.
 
-% ??ds Rave, Thaville etc.
+So far I've just assumed the information will be provided
 
-\subsubsection{Analytical solutions}
+Inderpretations: only count ``real'' sharp corners (\ie sphere has no corners) vs include all element corners (\ie sphere has sharp corners at every element join).
 
-analytic formula given by.... for linear shape functions on triangles (implies flat element).
 
-specifics of his shape functions
+\subsection{Analytical solutions}
 
-solution + notation
+??ds you need to thoroughly check the maths in this section at least once more
 
-comments on references
+For linear shape functions and triangular elements an exact analytical solution for the singular integral $I_G$ was given by Lindholm \cite[App. B]{Lindholm1984}\footnote{Note: Lindholm's definition of the 3d Green's function is a factor of -1 different to ours.}, the original derivation is due to Collie\cite{Collie1976}. 
+Combining equations (2) and (3) from \cite{Lindholm1984} with equation~\eqref{eq:13} and using our notation for positions, we see that Lindholm's $L$ operator is
+\begin{equation}
+  \begin{aligned}
+    L[U] &= \frac{-1}{4 \pi}\int_\boundd U(\yv) \frac{\nv(\yv) \cdot (\yv -
+      \xv)}{\abs{\xv - \yv}^2}
+    \d\yv, \\
+    &= -G[U] + \gamma(\xv) U(\xv).
+  \end{aligned}
+\end{equation}
+So $L[\tbf_{1,\ibasisb}]$ integrated over the surface triangle $\boundd_\ibasisb$ with $\xv = \xv_\ibasis$ corresponds exactly to the integral $I_{G,i,j}$ required in the calculation of $G_{i,j}$\footnote{The minus sign from the different definitions of the Green's function has cancelled with the minus sign from the fact that we are interested in calculating $-1$ times the operator.}.
+
+To clearly see the equivalence between the discretised operators we need to go through both discretisations simultaneously.
+Ignoring sharp corners we have that
+\begin{equation}
+  \begin{aligned}
+    \phim(\xv) = G[\phione](\xv) &= -L[\phione](\xv), \\
+    %
+    \sum_{n} \phim_n \tbf_n(\xv) 
+    &= - \sum_{\tri=1}^{N_\tri} \sum_{i=1}^{3} L_{\tri,i}(\xv) \phione_{\tri,i}, 
+    \quad\quad&\text{expand}\\
+    % 
+    \sum_{n} \phim_n \tbf_n(\xv) 
+    &= - \sum_{\tri=1}^{N_\tri} \sum_n L_{\tri,n}(\xv) \phione_n, 
+    &\text{equivalent to sum over all nodes--local support}\\
+    % 
+    \phim_k &= - \sum_{\tri=1}^{N_\tri} \sum_n L_{\tri,n}(\xv_k) \phione_n, 
+    &\text{use $\tbf_n(\xv_k) = \delta_{nk}$}\\
+    % 
+    \phim_k &= \sum_n \bigs{\sum_{\tri=1}^{N_\tri} -L_{\tri,n}(\xv_k)} \phione_n, 
+    &\text{reorder}\\
+    %
+    \phim_k &= \sum_n \bigs{\sum_{\tri \in \text{around}(n)} -L_{\tri,n}(\xv_k)} \phione_n,
+    &\text{reduce elements to sum over--local support again}\\
+    %
+    &= \sum_n G_{k,n} \phione_n. 
+    &\text{equation~\eqref{eq:10}}
+  \end{aligned}
+\end{equation}
+Therefore 
+\begin{equation}
+  IG_{i,j} = \sum_{\tri \in \text{around}(j)} L_{\tri,k}(\xv_i),
+\end{equation}
+where $k$ is the index of node $j$ within triangle $\tri$.
+
+Let
+\begin{equation}
+  \begin{aligned}
+    \rv_k(\xv) &= \zv_k - \xv, &\quad \text{(vector from triangle node $k$ to $\xv$)} \\
+    \sv_k &= \zv_{k+1} - \zv_k, & \text{(vector along an edge of the triangle)} \\
+  \end{aligned}
+\end{equation}
+and let $\hat{\sv}$, $\hat{\rv}$ be the equivalent unit vectors.
+Hence using the third (un-numbered) equation in appendix B of \cite{Lindholm1984}, converting to our notation and substituting in values from the rest of appendix B where practical we have
+\begin{equation}
+  \begin{aligned}
+    \label{eq:analytic-bem-integral}
+    I_{G,i,j} &= \sum_{\tri \in \text{around}(j)} \frac{\abs{\sv_{k+1}}}{8 \pi A_\tri} \bigb{
+      \bigb{(\nv_\tri \times \hat{\sv}_{k+1}) \cdot \rv_{k+1}(\xv_i)} \Omega_\tri(\xv_i) 
+      - \nv_\tri \cdot \rv_1(\xv_i) \sum_{l=1}^{3} (\hat{\sv}_{k+1} \cdot \hat{\sv}_l) P_l(\xv_i)
+    }, \\
+  \end{aligned}
+\end{equation} 
+where $A_\tri$ is the area of the triangle, $\zv_i$ denote the nodes of triangle $\tri$ (mod 3), and $\nv_\tri$ is the unit normal to the triangle. 
+The quantity $P_l(\xv)$ is given by
+\begin{equation}
+  P_l(\xv) = \ln\bigb{\frac{\abs{\rv_l(\xv)} + \abs{\rv_{l+1}(\xv)} + \abs{\sv_l}}
+    {\abs{\rv_l(\xv)} + \abs{\rv_{l+1}(\xv)} - \abs{\sv_l}}}.
+\end{equation}
+Finally we need $\Omega_\tri$, the solid angle subtended by the triangle at $\xv_i$:
+\begin{equation}
+  \label{eq:bem-triangle-solid-angle}
+  \Omega_\tri(\xv) = \text{sign}(\nv_\tri \cdot \rv_1) 2 \cos^{-1}\bigs{\frac
+    {\abs{\rv_1}\abs{\rv_2}\abs{\rv_3} + \abs{\rv_1} \rv_2\cdot\rv_3 + \abs{\rv_2}\rv_1\cdot \rv_2}
+    {\sqrt{2(\abs{\rv_2}\abs{\rv_3} + \rv_2\cdot\rv_3)
+        (\abs{\rv_3}\abs{\rv_1} + \rv_3\cdot\rv_1)
+        (\abs{\rv_1}\abs{\rv_2} + \rv_1\cdot\rv_2)}}},
+\end{equation}
+where we have dropped the $\xv$ argument from $\rv_i(\xv)$ for brevity.
+The use of $\rv_1(\xv)$ in equations~\eqref{eq:analytic-bem-integral} and \eqref{eq:bem-triangle-solid-angle} is not a typo: the results are independant of which node in the triangle is used.
+
+
+A useful open source implementation of this calculation in \texttt{C} is included in \texttt{magpar}\cite{magpar-website-dummy} and redistributed in \texttt{nmag}\cite{nmag-website-dummy}.
 
 
 \subsubsection{Numerical integration}
 
-Advantages of numerical: flexible wrt to element shape
+The analytical formula given in the previous Section is fast and accurate when applicable but also greatly limits the allowed meshes.
+It is very useful when testing code to be able to run 2D simulations, since the run time can be orders of magnitude smaller.
+It is also sometimes useful to be able to use structured quadrilateral meshes for simple geometries and for testing purposes.
+??ds higher order elements?
+Both of these approaches are impossible with the analytical formula above.
+It is likely that similar analytical results could be derived for each of these cases, but it is simpler and more general to use a numerical approach instead.
 
-potentially allows higher order elements
+As discussed in Section~\ref{sec:bem-singularity} the integral $I_G$ is non-singular, so no special techniques are needed for its integration (other than what is needed to attain good accuracy).
+As such an adaptive quadrature method can effectively calculate the integrals.
+Our algorithm is roughly as follows:
+\begin{enumerate}
+\item Calculate the integral twice with different orders of quadrature.
+\item If the difference is less than some tolerance then accept the result.
+\item Otherwise repeat the calculation with a higher order quadrature, and goto 2.
+\end{enumerate}
 
-potentially cheaper, at least for distance, non-near-singular elements
+Alternate adaptivity process: use h-refinement instead/as well (divide integral into chunks). ??ds did I consider this?
 
+Ideally we would like to include the calculations at lower order quadratures in the higher order ones, therefore use ??ds Clenshaw-Curtis quadrature\cite{Trefethen2008}.
+
+Rapid increase in quadrature order to avoid wasting time calculating many intermediate attempts.
+
+Formulae from ??ds.
+
+Potentially problems could arise when $\xv_i$ is extremely close to the surface element, but not in the same plane (so that $\nv \cdot \rv \neq 0$).
+This would occur, for example, in extremely thin or extremely sharp regions of magnetic material.
+Such regions are unlikely to be a problem in practice because sufficiently thin/sharp domains are likely to be outside the scope of micromagnetism in general.
+
+
+
+\section{Solution of the linear systems}
+\label{sec:solution-strategies}
+
+??ds new chapter?
+
+The BEM matrix is dense and so requires some tricks/discussion.
+
+Two ways to proceed with solving the coupled system of equations~\eqref{eqn:ndllg-starting}, \eqref{eq:phi-bem-continuous-bc} and \eqref{eq:phi-bem-continuous-bc}.
+First is to solve the entire system as a single non-linear pde.
+Second is to make the assumption that magnetostatic field part is non-stiff and solve semi-implicitly as two sets of coupled pdes.
+Each method has its own advantages.
 
 
 \subsection{The Matrix $\bm$}
@@ -374,16 +490,6 @@ It should be noted that $\bm$ depends only on the geometry of the problem and so
 
 One way to reduce the problems associated with the dense nature of $\bm$ is to use hierarchical matrix techniques. In this type of matrix the less important entries (\ie smaller) are lumped into a single entry similarly to multipole approximation methods. The cost of multiplication and storage of $\bm$ is thus reduced to only $\order{N \log(N)}$.\cite{Knittel2009}
 
-
-\section{Solution of the linear systems}
-\label{sec:solution-strategies}
-
-??ds new chapter?
-
-Two ways to proceed with solving the coupled system of equations~\eqref{eqn:ndllg-starting}, \eqref{eq:phi-bem-continuous-bc} and \eqref{eq:phi-bem-continuous-bc}.
-First is to solve the entire system as a single non-linear pde.
-Second is to make the assumption that magnetostatic field part is non-stiff and solve semi-implicitly as two sets of coupled pdes.
-Each method has its own advantages.
 
 \subsection{Fully implicit}
 
@@ -398,7 +504,7 @@ The energy conservation property of IMR is the most unique of its geometrical in
 To enforce the Dirichlet boundary condition within the Newton solver we use the slightly odd residual
 \newcommand{\rphimb}{\rphi_b}
 \begin{equation}
-  \rphimb(\phim_b, \phione_b) = \phim_b - boundary cond.
+  \rphimb(\phim_b, \phione_b) = \bm[\phione_b] - \phim_b.
 \end{equation}
 Everything else proceeds as normal.
 
@@ -416,7 +522,7 @@ Then the Jacobian is
   \Jm = 
   \begin{pmatrix}
     \Fm       & \Pm     &  \\
-    \Qm       & \Am' &  \bm'  \\
+    \Qm'      & \Am' &  \bm'  \\
     \Qm       &         &   \Am
   \end{pmatrix},
 \end{equation}
@@ -440,6 +546,13 @@ So
   \begin{pmatrix}
      \Am     & \pd{\phim}{\phim_b} \\
        0      & -\Idm  
+  \end{pmatrix},
+\end{equation}
+\begin{equation}
+  \Qm' =
+  \begin{pmatrix}
+    \Qm \\
+    0    
   \end{pmatrix},
 \end{equation}
 and
@@ -475,7 +588,7 @@ First preconditioner: exact solve w/out $\bm$.
   \prcd_{1} = 
   \begin{pmatrix}
     \Fm       & \Pm     &  \\
-    \Qm       & \hat{\Am}&   \\
+    \Qm'       & \Am'    &   \\
     \Qm       &         &   \Am
   \end{pmatrix}.
 \end{equation}
@@ -484,9 +597,9 @@ Second preconditioner: block triangular with AMG, exact LLG blocks, drop $\Pm$ a
 \begin{equation}
   \prcd_{2} = 
   \begin{pmatrix}
-    \Fm       &      &  \\
-    \Qm       & \hat{\Am'}&   \\
-    \Qm       &         &   \hat{\Am}
+    \Fm       &           &  \\
+    \Qm'       & \hat{\Am'}&   \\
+    \Qm       &           &   \hat{\Am}
   \end{pmatrix}.
 \end{equation}
 
@@ -494,9 +607,9 @@ Third preconditioner: nested block triangular with AMG, exact LLG blocks, drop $
 \begin{equation}
   \prcd_{2} = 
   \begin{pmatrix}
-    \Fm       & \Pm  &  \\
+    \Fm       & \Pm       &  \\
               & \hat{\Am'}&   \\
-    \Qm       &         &   \hat{\Am}
+    \Qm       &           &   \hat{\Am}
   \end{pmatrix}.
 \end{equation}
 Use a nested block triangular preconditioner rather than reordering to avoid having varying Jacobian orders.
