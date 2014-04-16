@@ -3,6 +3,15 @@
 \chapter{An adaptive implicit-midpoint-rule time-integrator}
 \label{sec:adaptive-imr}
 
+??ds write some introduction?
+- well known time integrator
+- IRK like\cite{somewhere in hairer?}, but only one function eval (one leg method \cite{somewhere in hairer?}) so can be easily used in Newton-Raphson like multistep (see Section~\ref{sec:newt-raph}).
+- Low trunction error, like TR (minimal truncation error cite...) for some examples
+- More ``stable'' than TR
+- Nice geometric properties for a number of equations (LLG duh, Navier-Stokes--energy conservation\cite{wind farms thesis}, symplectic?)
+- stochastic stuff?
+
+- But no adaptive scheme existed before!
 
 %*** other names?
 
@@ -86,6 +95,9 @@ See Section~\ref{sec:full-imr-lte-calculation} for details of the rest of the Ta
 
 \section{Construction of an LTE estimate}
 
+\subsection{Two integrator error estimation}
+\label{sec:two-integrator-error}
+
 Most truncation error estimators for implicit integrators (e.g. trapezoid rule, BDF2) use a Milne-device based method.\cite[pgs 707-716]{Gresho-Sani}
 This means that they compute two estimates of the value at $t_{n+1}$ to the same order of accuracy.
 They then use algebraic rearrangements of the two LTE expressions to calculate an approximation of the LTE (typically to one order of accuracy better than the original calculations).
@@ -102,6 +114,13 @@ Hence there is no way to reuse this evaluation in a higher order method without 
 Instead we use a little known explicit version of the third order backwards difference method (eBDF3).
 This requires only 3 history values and a single (explicit) derivative function evaluation at time $t_n$ in order to compute a 3rd order accurate step.
 Alternatively a 3rd order Adams-Bashforth scheme could be used, this would require one less start-up step but would require storage of an additional derivative value.
+
+With this approach our estimate for the local truncation error is
+\begin{equation}
+  \label{eq:aimr-lte-est}
+  \lte = \yv_{n+1}^{eBDF3} - \yv_{n+1}^\IMP + \order{\dtn^4}.
+\end{equation}
+
 
 \subsection{The variable step explicit backwards difference 3 method}
 
@@ -316,20 +335,22 @@ as expected for BDF2 \cite[pg. 715]{GreshoSani}.
 
 \subsection{Computing the size of the next step}
 
-We use a standard method for computing the next step size from the local truncation error and a target local truncation error \toltt:\cite[pg.268]{Gresho-Sani}
+\renewcommand{\toltt}{\epsilon}
+
+We use a standard method \cite[pg.268]{Gresho-Sani} for computing the next step size from the local truncation error and a target local truncation error $\toltt$
 \begin{equation}
 \dtx{n+1} = \dtn \left( \frac{\toltt}{\lte}  \right) ^{\frac{1}{\texttt{order}+1}}.
 \end{equation}
 For implicit midpoint rule this is
 \begin{equation}
-  \dtx{n+1} = \dtn \left( \frac{\toltt}{\lte^\IMP}  \right) ^{\frac{1}{3}}.
+  \dtx{n+1} = a \dtn \bigb{ \frac{\toltt}{\abs{\yv_{n+1}^{eBDF3} - \yv_{n+1}^\IMP}} }^{\frac{1}{3}}.
 \end{equation}
 
 If the ratio of step size to desired step size is too low, \ie if the step just taken was much too large to attain the desired accuracy then we reduce the step size by a factor of 2 and repeat the step.
 
-Actually we (should) include a slight safety factor to reduce the number of step rejections:
-
+Actually we (should) include a slight safety factor, $a \sim 1/2$ to reduce the number of step rejections:
 ??ds but actually oomph-lib doesn't...
+??ds check what CVODE, Iserles use as safety factor
 
 
 Additionally we impose a limitation on the maximum step size scaling to help improve stability ??ds does this actually do anything?
@@ -343,7 +364,7 @@ In this case the minimum time step we can take is approximately the Newton toler
 Similarly the maximum time step we can take is $\sim \order{\frac{\texttt{newtontol}}{10^{-16}} = 10^{8}}$ before the Newton method will have difficulty converging due to numerical errors.
 
 
-Note that some alternative strategies try to minimise the number of modifications to the time step size\cite[chap. 6]{Iserles2009} \cite[Sec. 2.1]{cvode-manual}.
+Note that some alternative strategies try to minimise the number of modifications to the time step size \cite[chap. 6]{Iserles2009} \cite[Sec. 2.1]{cvode-manual}.
 The motivation for this is the use of a modified Newton-Raphson method where the Jacobian is not recalculated at each Newton step.
 In the case of ODE solvers this is extremely beneficial because the Jacobian is usually dense and direct solvers are used to solve it--by keeping the Jacobian constant the number of solves and Jacobian assemblys are greatly reduced.
 The downside is a reduction in the convergence speed of the Newton method.
@@ -351,7 +372,15 @@ Keeping the step size constant for as long as possible is required here because 
 However for PDE solvers, and in particular for iterative PDE solvers there is little-to-no benefit in using this technique (the reduction in convergence speed is worse than the gain of not assembling/solving the sparse Jacobian\cite[pg. 128]{Iserles2009}.
 
 
+\section{Simple ODE tests}
+\label{sec:aimr-testing}
+
+In this Section we show the results of some initial testing of the adaptive IMR algorithm derived above on some simple ODE examples.
+Tests with the LLG equation are detailed in Section~\ref{sec:aimr-llg}.
+
+
 \subsection{Implementation}
+\label{sec:aimr-implementation}
 
 To increase relevance to realistic models including spatial discretisation we use a Newton method to solve \emph{all} equations (even linear ones).
 
@@ -363,65 +392,106 @@ All code used has been open sourced and is available on github.\cite{simple-ode-
 ??ds update
 Unless otherwise specified all examples in this section use a Newton tolerance of $1\E{-10}$ and an adaptive integrator tolerance of $\toltt = 1\E{-4}$.
 
+For each example:
+??ds exact solution (combine with below?)
+??ds step sizes plot - show bdf2, tr and imr?
+??ds convergence plot - shrink eps
 
-\subsection{Test functions}
+compared to a standard adaptive BDF2 scheme.\cite[pg. 715]{Gresho-Sani}
 
-To demonstrate the effectiveness of the adaptation scheme we use a simple ODE with known exact solution
-\begin{align}
-  f(t,y) &= - \beta e^{-\beta t} \sin(\omega t) + \omega e^{-\beta t} \cos(\omega t) \\
-  y(0) &= 0
-\end{align}
-which gives the exact solution
+\subsection{Polynomial example}
+\label{sec:imr-polynomial-example}
+
+To demonstrate the effectiveness of the adaptation scheme we use a few simple ODEs with known exact solutions.
+
+The first is an ode with exact solution a polynomial of order 2.
 \begin{equation}
-  \label{eq:59}
-  y(t) = e^{-\beta t} \sin(\omega t).
-\end{equation}
-The numerical experiments below all use $\omega = 2 \pi$ and $\beta = 0.3$.
-The exact solution for this case is shown in Figure~\ref{fig:mp-ode-exact}.
-Plots of the solutions given by the various numerical calculations below are all visually indistinguishable from Figure~\ref{fig:mp-ode-exact} (without zooming in) at the tolerances used, so they are not shown.
+  \label{eqn:imr-test-poly2}
+  \begin{aligned}
+    y(t) &= at^2 + bt + c, \\
+    f(t,y) &= 2at + b, \\
+    y(0) & = c.
+  \end{aligned}
+\end{equation} 
+This should be integrated exactly by IMR, or any other second order method, since $\lte \propto y'''(t) \equiv 0$.
+So the adaptivity should detect this and increase the time step at the maximum allowed rate.
 
+An exact solution for this problem is shown in Figure~\ref{fig:imr-poly2-exact}.
 
-\begin{figure}[ht!]
+\begin{figure}[h!]
   \centering
   \includegraphics{images/osc_damped_ode_exact}
-  \caption{A plot of equation~\eqref{eq:59}, the exact solution of our example ODE.}
-  \label{fig:mp-ode-exact}
+  \caption{}
+  \label{fig:imr-poly2-exact}
 \end{figure}
 
-\subsection{Results}
 
-\begin{figure}[ht!]
+
+\section{Oscillatory, damped example}
+\label{sec:oscill-damp-example}
+
+The next test is an oscillatory function with damping
+\begin{equation}
+  \label{eqn:imr-test-osc-damp}
+  \begin{aligned}
+    y(t) &= e^{-\beta t} \sin(\omega t), \\
+    f(t,y) &= - \beta e^{-\beta t} \sin(\omega t) + \omega e^{-\beta t} \cos(\omega t), \\
+    y(0) &= 0.
+  \end{aligned}
+\end{equation} 
+The adaptive algorithm should oscillate the step size in time with the oscillating truncation error ($\pd{}{t^3} \sin(t) = -\cos(t)$), while at the same time gradually increasing the step size as the solution damps to zero.
+
+An exact solution for this problem is shown in Figure~\ref{fig:imr-osc-exact}.
+% The numerical experiments below all use $\omega = 2 \pi$ and $\beta = 0.3$. ??ds?
+
+\begin{figure}[h!]
   \centering
-  \includegraphics{images/placeholder}
-  \caption{Adaptive IMR vs adaptive BDF2 for a simple ODE.}
-  \label{fig:mp-vs-bdf2}
+  \includegraphics{images/osc_damped_ode_exact}
+  \caption{}
+  \label{fig:imr-osc-exact}
 \end{figure}
 
-Figure~\ref{fig:mp-vs-bdf2} shows the performance of the adaptive midpoint scheme derived above compared to a standard adaptive BDF2 scheme.\cite[pg. 715]{Gresho-Sani}
-The step size selection of the adaptive midpoint scheme closely follows that of the BDF2 scheme.
 
 
-??ds discuss more about third derivative!
-The pattern of step sizes is as expected.
-There is a general trend of increasing step size as the solution is gradually damped out.
-Additionally there is an oscillation which peaks at integer and half-integer times, this corresponds to the peaks in $\cos(\omega t)$ and $\sin(\omega t)$.
-This is relevant because the truncation error is proportional to $y'''(t)$ which consists of terms in these two functions.
+\section{Stiff example}
+\label{sec:imr-stiff-example}
 
-Also of note is that the accuracy of IMR is much higher than that of BDF2 for the same step size in this example.
-??ds why? (Jacobian is zero)
+Another test is the simple and commonly discussed stiff example function \cite{??ds Iserles?}
+\begin{equation}
+  \label{eqn:imr-test-stiff}
+  \begin{aligned}
+    f(t, \yv) &= 
+    \begin{pmatrix}
+      &  \\
+      &  \\
+    \end{pmatrix} \yv, \\
+    \yv(t) &= , \\
+    \yv(0) &= .
+  \end{aligned}
+\end{equation} 
+This example will demonstrate that the single step of the eBDF method does not suffer from stability issues even in cases of extreme stiffness.
+The time steps should begin small but rapidly increase as the initial transient decays.
+
+An exact solution for this problem is shown in Figure~\ref{fig:imr-stiff-exact}.
+
+\begin{figure}[h!]
+  \centering
+  \includegraphics{images/osc_damped_ode_exact}
+  \caption{}
+  \label{fig:imr-stiff-exact}
+\end{figure}
+
+??ds multiple stiffness parameter values
 
 
-Figure~\ref{fig:mp-tols} compares mean error norms and step sizes of the adaptive midpoint scheme (with two interpolation points) for varying tolerances.
+\subsection{General discussion}
+\label{sec:aimr-general-discussion}
+
+Figures~??ds compare mean error norms and step sizes of the adaptive midpoint scheme (with two interpolation points) for varying tolerances.
 The IMR can be seen to have quadratic convergence by comparing with the $y=x^2$ line shown.
 Additionally it can be seen that decreasing the tolerance smoothly decreases the mean error (by smoothly decreasing the mean step size).
 
-\begin{figure}[ht!]
-  \centering
-  \includegraphics{images/placeholder}
-  \caption{Adaptive midpoint mean dt vs mean error for varying tolerance. The line is $y = x^2$.}
-  \label{fig:mp-tols}
-\end{figure}
-
+In general more accurate than bdf2 due to lower error coeff (see Appendix??ds), similar error to tr.
 
 \section{Additional Notes}
 
