@@ -62,12 +62,12 @@ From equation~\eqref{eq:f-taylor} we have
 However we cannot expand $\yv_{n+1}$ to get $\dyn$ in terms of only values at the midpoint.
 So we use the LTE of IMR to rewrite equation~\eqref{eq:51} as
 \begin{equation}
-  \dyn = \frac{\yv(t_n) + \yv(t_{n+1}) - \lte^\IMP}{2} - \yvhf.
+  \dyn = \frac{\yv(t_n) + \yv(t_{n+1}) - \lte^\imr}{2} - \yvhf.
 \end{equation}
 Substituting in the Taylor expansions for $\yv(t_n)$ and $\yv(t_{n+1})$ about $\thf$ (from equations~\eqref{eq:taylornp1} and \eqref{eq:taylorn}) gives
 \begin{align}
-  \dyn &= \yvhf + \frac{\dtn^2}{8} \yvhf[''] - \yvhf - \frac{1}{2} \lte^\IMP \porder{\dtn^4} \notag\\
-       &= \frac{\dtn^2}{8} \yvhf[''] - \frac{1}{2} \lte^\IMP \porder{\dtn^4}
+  \dyn &= \yvhf + \frac{\dtn^2}{8} \yvhf[''] - \yvhf - \frac{1}{2} \lte^\imr \porder{\dtn^4} \notag\\
+       &= \frac{\dtn^2}{8} \yvhf[''] - \frac{1}{2} \lte^\imr \porder{\dtn^4}
          \label{eq:dy-value}
 \end{align}
 
@@ -76,12 +76,12 @@ Substituting in the Taylor expansions for $\yv(t_n)$ and $\yv(t_{n+1})$ about $\
 Substituting the above value for $\dyn$ into the Taylor series expansion of $\fv$ from \eqref{eq:f-taylor} gives
 \begin{equation}
   \fv(\thf, \frac{\yv(t_n) + \yv_{n+1}}{2}) = \yvhf[']
-  + \frac{\dtn^2}{8} \dfdyhf \cdot \yvhf[''] - \frac{1}{2} \dfdyhf \cdot \lte^\IMP \porder{\dtn^4}
+  + \frac{\dtn^2}{8} \dfdyhf \cdot \yvhf[''] - \frac{1}{2} \dfdyhf \cdot \lte^\imr \porder{\dtn^4}
   . \label{eq:fy-taylor}
 \end{equation}
 and using \eqref{eq:fy-taylor} in \eqref{eq:trunc-mid} gives the local truncation error
 \begin{align}
-  (I + \frac{\dtn}{2}\dfdyhf) \cdot\lte^\IMP
+  (I + \frac{\dtn}{2}\dfdyhf) \cdot\lte^\imr
   &= \dtn \yvhf['] + \frac{\dtn^3}{24} \yvhf[''']
     - \dtn \yvhf[']
     - \frac{\dtn^3}{8} \dfdyhf \cdot \yvhf[''] \porder{\dtn^4}
@@ -98,7 +98,7 @@ Using a geometric series representation we can show that if all eigenvalues of  
 \end{equation}
 and so\footnote{Assuming that $\dfdyhf$ is not inversely proportional to $\dtn$.}
 \begin{equation}
-  \lte^\IMP = \frac{\dtn^3}{24} \left[\yvhf['''] - 3 \dfdyhf \cdot \yvhf[''] \right]
+  \lte^\imr = \frac{\dtn^3}{24} \left[\yvhf['''] - 3 \dfdyhf \cdot \yvhf[''] \right]
   \quad +\order{\dtn^4}.
   \label{eq:trunc-final}
 \end{equation}

@@ -61,8 +61,8 @@ It can be calculated by substituting $\yv_n = \yv(t_n)$ into the approximation f
 
 Using this definition the local truncation error of IMR is
 \begin{align}
-  \lte^\IMP &= \yv(t_{n+1}) - \yv_{n+1}^\IMP, \notag\\
-  &= \yv(t_{n+1}) - \yv(t_n) - \dtn \fv\left( \thf, \frac{\yv(t_n) + \yv_{n+1}^\IMP}{2} \right).
+  \lte^\imr &= \yv(t_{n+1}) - \yv_{n+1}^\imr, \notag\\
+  &= \yv(t_{n+1}) - \yv(t_n) - \dtn \fv\left( \thf, \frac{\yv(t_n) + \yv_{n+1}^\imr}{2} \right).
   \label{eq:trunc-start}
 \end{align}
 
@@ -81,7 +81,7 @@ Similarly the expansion at $t_n$ is
 
 Substituting equations~\eqref{eq:taylornp1} and \eqref{eq:taylorn} into equation~\eqref{eq:trunc-start} gives
 \begin{equation}
-  \lte^\IMP = \yv(t_{n+1}) - \yv_{n+1}^\IMP
+  \lte^\imr = \yv(t_{n+1}) - \yv_{n+1}^\imr
   = \frac{\dtn^3}{24} \yvhf[''']  + \dtn  \left[ \yvhf[']
   - \fv\left( \thf, \frac{\yv(t_n) + \yv_{n+1}}{2} \right) \right]  \porder{\dtn^4}.
   \label{eq:trunc-mid}
@@ -118,7 +118,7 @@ Alternatively a 3rd order Adams-Bashforth scheme could be used, this would requi
 With this approach our estimate for the local truncation error is
 \begin{equation}
   \label{eq:aimr-lte-est}
-  \lte = \yv_{n+1}^{eBDF3} - \yv_{n+1}^\IMP + \order{\dtn^4}.
+  \lte = \yv_{n+1}^{eBDF3} - \yv_{n+1}^\imr + \order{\dtn^4}.
 \end{equation}
 
 
@@ -343,7 +343,7 @@ We use a standard method \cite[pg.268]{Gresho-Sani} for computing the next step 
 \end{equation}
 For implicit midpoint rule this is
 \begin{equation}
-  \dtx{n+1} = a \dtn \bigb{ \frac{\toltt}{\abs{\yv_{n+1}^{eBDF3} - \yv_{n+1}^\IMP}} }^{\frac{1}{3}}.
+  \dtx{n+1} = a \dtn \bigb{ \frac{\toltt}{\abs{\yv_{n+1}^{eBDF3} - \yv_{n+1}^\imr}} }^{\frac{1}{3}}.
 \end{equation}
 
 If the ratio of step size to desired step size is too low, \ie if the step just taken was much too large to attain the desired accuracy then we reduce the step size by a factor of 2 and repeat the step.
