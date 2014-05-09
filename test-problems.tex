@@ -1,0 +1,61 @@
+\chapter{Test problems}
+\label{sec:test-problems}
+
+
+Ideally test problems should have the following characteristics
+
+\begin{itemize}
+\item Contains effects from all effective fields
+\item Has magnetisation variations in both time and space
+\item Has known analytical solutions
+\item Has solutions using other software for comparision
+\end{itemize}
+
+unfortunately there are no such problems. 
+So instead we use a collection of different problems as appropriate.
+
+\section{Problems with analytical solutions}
+
+As far as the authors are aware there are no solutions to the LLG with both magnetostatics and exchange coupling and spatial variations in magnetisation. 
+So again we need multiple problems.
+
+\subsection{Switching of a single domain ellipsodial particle}
+
+The first problem is a simple coherrent reversal of 
+
+
+\subsection{Wave-like solution}
+
+Only exchange effective field
+
+Applicable to any number of dimensions
+
+Damping allowed
+
+
+\section{Problems with no analytical solution}
+
+Both of the above problems are vastly simpler than the problems typical solved in micromagnetic models.
+
+\subsection{$\mu$-mag standard problem 4}
+
+Widely used to test micromagnetic codes
+
+Reversal of a thin film of permalloy under two different fields
+
+Unfortunately FEM/BEM magnetostatic calcultations are extremely unsuited to thin film problems (the dense BEM matrix size is proportional to the size of the boundary, in thin films the entire problem is on the boundary. The addition geometric flexibility is not needed for simple cubeoid shapes.)
+
+
+\subsection{Reversal of a cylinder}
+
+More relevant problem for FEM/BEM methods--non-trivial geometry.
+
+
+
+
+
+
+%%% Local Variables:
+%%% mode: latex
+%%% TeX-master: t
+%%% End:
