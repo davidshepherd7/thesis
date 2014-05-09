@@ -1,7 +1,0 @@
-"#","Package","Const. $M_s$ enforcement","Magnetostatic Calculations","Notes"
-1,"Oomph-lib \cite{oomph-lib-website}","by mid-point method","Hybrid BEM/FEM","My code, multi-physics support"
-2,"Magpar \cite{magpar-website}\cite{Scholz2003}","spherical polar coordinates","Hybrid BEM/FEM","Related to FEMME"
-3,"Nmag \cite{nmag-website}","?","Hybrid BEM/FEM","Multi-physics support, BEM uses hierarchical matrix compression"
-4,"OOMMF \cite{oommf-website}","renormalisation","FFT","Possibly the most commonly used micromagnetics package"
-"\hline 5","FastMag \cite{fastmag-website}\cite{Chang2011}","?","FMM","GPU based, closed source"
-6,"FEMME \cite{suessco-website}","?","Hybrid BEM/FEM","Commonly used in industry, closed source"

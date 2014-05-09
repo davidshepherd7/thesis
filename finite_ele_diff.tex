@@ -1,7 +1,8 @@
-\chapter{Introduction to Finite Difference and Finite Element Approximations}
+\chapter{Introduction to the finite element method}
 \label{sec:intr-finite-ele-diff}
 
-The finite difference and finite element methods allow the \emph{discretisation} of a continuous differential equation to allow for solution by computational methods. The finite element method allows for more complex geometries than the finite difference method, at the cost of increased complexity and setup time.
+The finite element method allow the \emph{discretisation} of a continuous differential equation to allow for solution by computational methods. 
+It allows for more complex geometries than the finite difference method, at the cost of increased complexity and setup time.
 
 A simple problem is used to illustrate these methods: solving the Poisson
 equation in one spatial dimension. Find\footnote{A function $g\in C^{k}(0,1)$ if $g$ and it's first $k$ derivatives are continuous on $(0,1)$.} $y(x)\in C^{2}(0,1)$ such that
@@ -13,181 +14,8 @@ equation in one spatial dimension. Find\footnote{A function $g\in C^{k}(0,1)$ if
   y(0)=y_{a},\quad y(1)=y_{b},\quad f=f(x)\in C(0,1).
 \end{equation*}
 
-\section{Finite Difference Approximation}
-\label{sec:finite-diff-appr}
 
-We start with the equation~\eqref{eq:poisson1} and subdivide this interval into
-$N$ sub intervals each of length $h = \frac{1}{N}$ as shown in Figure
-\ref{fig:The-subdivision}. The points $x_{i}$ are the points where we will
-approximate $y(x)$ (\ie we will compute a discrete solution $y(x_{i})$ for
-$i=0, \, \ldots \, ,N$).
-
-\begin{figure}[!ht]
-  \center
-  \includegraphics[width=1\textwidth]{./images/finite_diff_discretisation}
-  \caption{Subdivision of the unit interval for finite difference approximation.}
-  \label{fig:The-subdivision}
-\end{figure}
-
-The Taylor series for a function $y(x)$ at a point $x$ near $a$
-is defined as
-\begin{equation*}
-  y(x)=y(a)+y'(a)(x-a)+\dfrac{y''(a)}{2!}(x-a)^{2}
-  + \dfrac{y'''(a)}{3!}(x-a)^{3}+\dfrac{y^{(4)}(a)}{4!}(x-a)^{4}\ldots.
-\end{equation*}
-
-Using $a=x_{i}$ and $x=x_{i+1}$ we get
-\begin{equation}
-  y(x_{i+1})=y(x_{i})+hy'(x_{i})+\dfrac{h^{2}}{2}y''(x_{i})+\dfrac{h^{3}}{3!}y'''(a)+\order{h^{4}},
-  \label{eq:taylor1}
-\end{equation}
-where $\order{h^{4}}$ is the residual. Similarly for $x=x_{i-1}$
-\begin{equation}
-  y(x_{i-1})=y(x_{i})-hy'(x_{i})+\dfrac{h^{2}}{2}y''(x_{i})-\dfrac{h^{3}}{3!}y'''(a)+\order{h^{4}}.
-  \label{eq:taylor2}
-\end{equation}
-
-Adding equations~\eqref{eq:taylor1} and \eqref{eq:taylor2} gives
-\begin{equation*}
-  y(x_{i+1})+y(x_{i-1})=2y(x_{i})+h^{2}y''(x_{i})+\order{h^{4}}.
-\end{equation*}
-We then rearrange to get an expression for $y''(x_{i})$ in terms of $y$:
-\begin{equation*}
-  y''(x_{i})=\dfrac{1}{h^{2}}\Big[y(x_{i+1})+y(x_{i-1})-2y(x_{i})\Big]+\order{h^{4}}.
-  % Milan says error is O(h^{4}) but I can't see why it's not O(h^{2})...
-\end{equation*}
-
-We now drop the $\order{h^{4}}$ term leaving an approximation for $y''(x_{i})$
-\begin{equation}
-  y''(x_{i})=\dfrac{1}{h^{2}}\Big[y(x_{i+1})+y(x_{i-1})-2y(x_{i})\Big],
-  \label{eq:y''approx}
-\end{equation}
-
-with an error of order $h^{4}$ (so the error rapidly decreases with small
-sub intervals). Similar manipulation of the Taylor series can be used to obtain
-other derivatives of $y$ for use when solving differential equations other than
-the Poisson equation. For example $y'$ can be found by subtracting equation
-\eqref{eq:taylor2} from equation~\eqref{eq:taylor1}.
-
-Substituting the approximations for $y''(x_{i})$ from equation~\eqref{eq:y''approx}
-into \eqref{eq:poisson1} at each $x_{i}$ gives a set of $n$ linear
-equations for the unknowns $y(x_i) = y_i \, (i=1 , \, \ldots \, , n)$
-
-\begin{equation*}
-  \dfrac{1}{h^{2}}\Big[y(x_{i+1})-2y(x_{i})+y(x_{i-1})\Big]=-f(x_{i}).
-\end{equation*}
-
-We introduce a shorthand notation often used in this area: $y_{i}=y_{h}(x_{i})$
-and $f_{i}=f(x_{i})$. Multiplying by $-1$ and changing to the new
-notation gives
-\begin{equation}
-  \dfrac{1}{h^{2}}\Big[-y_{i+1}+2y_{i}-y_{i-1}\Big]=f_{i}.
-  \label{eq:23}
-\end{equation}
-
-So far we have not included the boundary conditions in \eqref{eq:23}. We know
-from the problem specification that $y(x_{0})=y_{a}$ and $y(x_{n+1})=y_{b}$.  A
-simple way to enforce these conditions is to include them as two additional
-trivial equations in our linear system. For example the linear system
-approximating the Poisson equation at three points (since $y(x_{0})$ and
-$y(x_{4})$ are known) is then:
-
-\begin{equation*}
-  \dfrac{1}{h^{2}}\left[
-    \begin{array}{ccccc}
-      h^{2} & 0 & 0 & 0 & 0\\
-      -1 & 2 & -1 & 0 & 0\\
-      0 & -1 & 2 & -1 & 0\\
-      0 & 0 & -1 & 2 & -1\\
-      0 & 0 & 0 & 0 & h^{2}
-    \end{array}
-  \right]\left[
-    \begin{array}{c}
-      y_{0}\\ y_{1}\\ y_{2}\\ y_{3}\\ y_{4}
-    \end{array}
-  \right]  =  \left[
-    \begin{array}{c}
-      y_{a}\\ f_{1}\\ f_{2}\\ f_{3}\\ y_{b}
-    \end{array}
-  \right],
-\end{equation*}
-
-which simplifies to
-
-\begin{equation}
-  \dfrac{1}{h^{2}}\left[
-    \begin{array}{ccc}
-      2 & -1 & 0\\
-      -1 & 2 & -1\\
-      0 & -1 & 2
-    \end{array}
-  \right]\left[
-    \begin{array}{c}
-      y_{1}\\ y_{2}\\ y_{3}
-    \end{array}
-  \right]=\left[
-    \begin{array}{c}
-      f_{1}+y_{a}/h^{2}\\ f_{2}\\ f_{3}+y_{b}/h^{2}
-    \end{array}
-  \right].
-  \label{eq:simple-linear-eq-finite-diff-1}
-\end{equation}
-
-This can be easily solved computationally by using standard linear algebra solvers.
-
-
-\subsection{Example}
-
-\begin{figure}[!ht]
-  \includegraphics[width=1\textwidth]{./images/finitediffexample}
-  \caption{A finite difference approximation for $y''(x)=-\pi^{2}\sin(\pi x)$,
-    $y(0)=0$ and $y(1)=0$ for $x\in[0,1]$. The exact solution is $y(x)=\sin(\pi x)$.}
-  \label{fig:A-finite-difference-example}
-\end{figure}
-
-We will use an $f(x)$ which corresponds to an exact solution. Let
-$y(x)=\sin(\pi x)$, then $f(x)=\pi^{2}\sin(\pi x)$, $y(0)=0$ and
-$y(1)=0$. Let $N=5$, then the linear system to be solved is:
-
-\begin{equation*}
-  \dfrac{1}{(0.25)^{2}}\left[
-    \begin{array}{ccc}
-      2 & -1 & 0\\
-      -1 & 2 & -1\\
-      0 & -1 & 2
-    \end{array}
-  \right]\left[
-    \begin{array}{c}
-      y_{1}\\ y_{2}\\ y_{3}
-    \end{array}
-  \right] = \left[
-    \begin{array}{c}
-      \dfrac{\pi^{2}}{\sqrt{2}}+0\\
-      \pi^{2}\\
-      \dfrac{\pi^{2}}{\sqrt{2}}+0
-    \end{array}
-  \right].
-\end{equation*}
-
-Solving for $\mathbf{y} = [ y_1, y_2, y_3]$ gives
-\begin{equation*}
-  \left[
-    \begin{array}{c}
-      y_{1}\\ y_{2}\\ y_{3}
-    \end{array}
-  \right]=\left[
-    \begin{array}{c}
-      0.74\\ 1.05\\ 0.74
-    \end{array}
-  \right],
-\end{equation*}
-which is plotted in Figure~\ref{fig:A-finite-difference-example}.
-
-
-\section{Finite Elements}
-\label{sec:finite-elements-one-d}
-
-\subsection{Definitions}
+\section{Definitions}
 \label{sec:fem-definitions}
 
 The function space $L^{2}$ is the set of all functions $f(x)$ such
@@ -208,7 +36,7 @@ The $n$-th Sobelov space is the space of all functions such that they and their 
   \sob^1(\magd) = \{ y \st y, \pd{y}{x_i} \in L^2(\magd) \; \forall x_i \}
 \end{equation}
 
-\subsection{The Weak Formulation \& A Discretisation}
+\section{The Weak Formulation \& A Discretisation}
 \label{Derivation-of-weighted-residuals}
 
 The method of weighted residuals is a way to convert a differential equation
@@ -343,7 +171,7 @@ and the problem is reduced to a system of linear equations
 This can be solved to find the vector of unknown coefficients $\mathbf{c}$ which can be substituted into \eqref{eq:y-spans} to give an approximation for $y$.
 
 
-\subsection{Finite Elements in One Dimension}
+\section{Finite Elements in One Dimension}
 \label{sub:Actual-Finite-Elements}
 
 To create a useable implementation of the methodology derived in Section~\ref{Derivation-of-weighted-residuals} we must first define a set of basis functions $\tbf_\ndi$ for the space $V_{T}^{h}$ and a set of $\sbf_l$ for the space $V_S^h$. For simplicity we choose the two types of basis functions to be the same: $\sbf_l = \tbf_l$. This choice defines the Galerkin method (and often results in symmetric matrix $A$).\cite[pg. 215]{Zeinkiewicz1967}
@@ -469,7 +297,7 @@ which we compute numerically since the entries depend on $f(x)$ which is not yet
 decided.
 
 
-\section{Extensions of the Finite Element Method}
+\section{Extension to other problems}
 
 \subsection{Non-Dirichlet Boundary Conditions}
 \label{sub:Non-Dirichlet-Boundary-Conditions}
@@ -486,12 +314,6 @@ boundary. Then the first term in equation~\eqref{eq:29} naturally gives an
 additional equation for the Neumann condition on each boundary node.
 
 Combinations of Neumann and Dirichlet conditions on different parts of the boundary can be treated the same way, by restricting the shape and test functions only on the Dirichlet parts.
-
-
-\subsection{Other Equations}
-\label{sec:fem-other-equations}
-
-Finite element models are used to solve a wide range of equations including for example applications in fluid/solid mechanics, electrostatics and magnetostatics. There can be various subtleties in the application to different equations but the main difference in the method described so far is the derivation of the weak form. However the same steps of multiplying by a test function and transferring derivatives to the test functions are still used.
 
 
 \subsection{Higher Order Shape/Test Functions}

@@ -1,7 +1,0 @@
-"#","Package","Programming Language","Dynamic/Energy","Parallel","Adaptive","Spatial Discretisation","Time Discretisation"
-1,"Oomph-lib \cite{oomph-lib-website}","C++","dynamic","yes","yes","finite element","mid-point method (or BDF)"
-"\hline 2","Magpar \cite{magpar-website}\cite{Scholz2003}","C","either","yes","no","finite element","CVODE"
-3,"Nmag \cite{nmag-website}","C, Ocaml and Python","dynamic","yes","no","finite element","CVODE"
-4,"OOMMF \cite{oommf-website}","C++ and Tcl/Tk","dynamic","no","no","finite difference","Adams predictor-corrector"
-"\hline 5","FastMag \cite{fastmag-website}\cite{Chang2011}","? (with CUDA)","either","highly","no","other (similar to FEM)","CVODE"
-6,"FEMME \cite{suessco-website}","?","either","?","yes","finite element","?"
