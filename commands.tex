@@ -277,10 +277,21 @@
 % Denote various time steppers
 \newcommand{\AB}{\text{AB}} % Adams-Bashforth 2
 \newcommand{\imr}{\text{IMR}} % Implicit midpoint
+\newcommand{\tr}{\text{TR}}
+\newcommand{\bdf}{\text{BDF2}}
 \newcommand{\FE}{\text{FE}} % Forward Euler (like)
 
 % Local truncation errors
 \newcommand{\lte}{T_n}
+
+% Tol
+\newcommand{\toltt}{\epsilon_{\dtx{}}}
+
+% Newton's method
+% ============================================================
+
+% tol
+\newcommand{\newtontol}{\epsilon_{\text{N}}}
 
 
 % Operators
@@ -313,7 +324,8 @@
 % afterwards at the correct times without having to explicitly write the
 % empty argument (i.e. \toltt{}). It can be suppressed by writing the empty
 % argument.
-\newcommand{\toltt}{{\textrm{\textup{\texttt{tol}}}\xspace}}
+% \newcommand{\toltt}{{\textrm{\textup{\texttt{tol}}}\xspace}}
+%% Didn't want this anyway in the end
 
 
 % Stuff needed for galerkin
@@ -382,6 +394,16 @@
 \newcommand{\dtmax}{\dtx{\text{max}}}
 \newcommand{\zerov}{\mathbf{0}}
 \newcommand{\mvtemp}{\tilde{\mv}}
+
+
+% Paper/thesis commands
+% ============================================================
+
+\ifthesis
+\newcommand{\secpaper}{Section}
+\else
+\newcommand{\secpaper}{paper}
+\fi
 
 
 %%% Local Variables:
