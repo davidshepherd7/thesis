@@ -31,7 +31,7 @@ We have a number of reasons to believe that such improvements in the accuracy of
 
 \item It is well known that geometric integration schemes (\ie schemes that preserve properties of the system) typically result in much smaller long-timescale error-build-up than schemes that do not preserve such quantities.\cite[pg. 77]{Iserles2009}
 
-\item The non-linear modification to the Landau-Lifshitz-Gilbert equation caused by renormalisation of the magnetisation length (as commonly used to maintain correct magnetisation length in non-conservative time integrators) is may cause significant changes in the magnetostatic field.\cite{Lewis2003}
+\item The non-linear modification to the Landau-Lifshitz-Gilbert equation caused by renormalisation of the magnetisation length (as commonly used to maintain correct magnetisation length in non-conservative time integrators) may cause significant changes in the magnetostatic field.\cite{Lewis2003}
 
 \item Renormalisation of the magnetisation modifies the balance between the various energy terms.
   This is similar to the methods that lead to the ``flying ice cube'' problem in molecular dynamics\footnote{In such simulations rescaling of particle velocities (to maintain constant temperature despite numerical error accumulation) can result in large amounts of kinetic energy being transferred from the motion of internal degrees of freedom to motion of the centre of mass.}.\cite{Harvey1998}
@@ -94,6 +94,11 @@ In fact the first term of equation~\eqref{eq:energy-decay} can be easily derived
 
 Note that length conservation is a \emph{pointwise} property, \ie $\abs{\mv} = 1$ at every point in space, whereas the energy decay property is a \emph{global} property.
 This is related to the use of the dot product and the $\ltwo$ inner product respectively in their proofs.
+
+
+\subsection{Symplecity}
+
+??ds I basically have no idea about this stuff.
 
 
 \section{Properties of the IMR-discretised LLG}
@@ -213,6 +218,15 @@ which is exactly the midpoint discretisation of the continuous energy balance eq
 Note that nothing in the above derivations depends in previous step sizes, hence these properties should hold regardless of any variations in step size (\ie in an adaptive time integrator).
 
 
+\subsection{symplecticity}
+\label{sec:symplecticity-imr-llg}
+
+
+The fixed step midpoint method is ``almost symplectic'' for the LLG equation with zero damping (Hamiltonian structure is preserved up to a small error).\cite{Austin1993}
+
+??ds MORE
+
+
 \section{Limitations of conservation properties}
 
 \subsection{Non-linear applied fields}
@@ -245,6 +259,13 @@ Unfortunately in this case the energy properties will be lost (or at least reduc
 However the magnetisation length property will be retained because this only relies on $\mv$ itself being calculated implicitly.
 
 Efficient, fully-implicit solvers, as required to realise the full potential of the implicit midpoint rule, are certainly possible: one example was implemented by d'Aquino \etal.\cite{DAquino2005}
+
+\subsection{Non-constant step size and symplecity}
+\label{sec:non-constant-step}
+
+It is well known that most adaptive schemes are not symplectic\cite[pg. 91]{Iserles2009} because they constantly change the nearby Hamiltonian that is followed by the symplectic integrator.
+Therefore the adaptive IMR is not expected to have the almost-symplectic property discussed in Section~\ref{??ds}
+
 
 
 \section{Numerical Experiments}
@@ -322,17 +343,6 @@ Rigorous time error estimates for the LLG with limited effective field terms wit
 ??ds do these work, why does no one use them?
 By comparison our adaptive method is much more general in that it can be applied to any differential equation and any discretisation scheme which uses the method of lines for time.
 It is also simpler to implement (requiring only an additional explicit time step, which can easily be handled by existing ODE solver packages) and easy to understand.
-
-\subsection{Symplecity}
-
-??ds I basically have no idea about this stuff.
-
-The fixed step midpoint method is ``almost symplectic'' for the LLG equation with zero damping (Hamiltonian structure is preserved up to a small error).\cite{Austin1993}
-However it is well known that most adaptive schemes are not symplectic\cite{Iserles2009} % pg. 91
-because they constantly change the nearby Hamiltonian that is followed by the symplectic integrator.
-
-??ds MORE
-
 
 
 %%% Local Variables:

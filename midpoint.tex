@@ -4,8 +4,7 @@
 \label{sec:adaptive-imr}
 
 
-The implicit midpoint rule (IMR)is a well known time integration method\cite[??ds]{HairerWanner} with a number of favourable properties as discussed in Section~\ref{sec:fixed-step-implicit}.
-It is also known as the midpoint method and the ??ds.
+The implicit midpoint rule (IMR)is a well known time integration method\cite[pg. 204]{HairerNorsettWanner} with a number of favourable properties as discussed in Section~\ref{sec:fixed-step-implicit}.
 
 % It is an implicit Runge-Kutta method, but unlike most such methods it only requires a single fuction evaluation per time step (a ``one-leg-method''\cite[??ds]{Hairer..}), making it applicable in cases where multistep methods would typically be applied.
 
@@ -18,8 +17,8 @@ It is also known as the midpoint method and the ??ds.
 % Additionally, for linear problems, it is equivalent to the trapezoid rule which has the lowest possible local trunction error in an A-stable method\cite{??ds}.
 % For non-linear problems the local truncation error is more complex, but still small...
 
-The implicit midpoint rule also beneficial ``geometric integration'' properties when applied the Landau-Lifshitz-Gilbert equation, this is discussed in Section~\ref{sec:aimr-llg}.
-It also has energy conservation properties when applied to the Navier-Stokes equations \cite{wind farms thesis}.
+It also has beneficial ``geometric integration'' properties when applied the Landau-Lifshitz-Gilbert equation, this is discussed in Section~\ref{sec:aimr-llg}. 
+Additionally it has energy conservation properties when applied to the Navier-Stokes equations \cite{Sanderse2013}.
 
 
 In this \secpaper{} we describe an efficient adaptive time step selection algorithm for the implicit midpoint rule. To our knowledge this is the first such algorithm.
@@ -109,7 +108,7 @@ However the second term is more complex, applying a Taylor expansion approach he
 Hence we avoid expanding it further.
 See Section~\ref{sec:full-imr-lte-calculation} for details of the rest of the Taylor expansion, which also proves that IMR is indeed a second order method.
 
-The TR\cite[pg. 261]{Gresho-Sani} and BDF2\cite[pg. 715]{Gresho-Sani} methods are also second order, their local truncation errors are simpler:
+The TR\cite[pg. 261]{GreshoSani} and BDF2\cite[pg. 715]{GreshoSani} methods are also second order, their local truncation errors are simpler:
 \begin{equation}
   \label{eq:tr-lte}
   \lte^\tr = \yv_{n+1} - \yv(t_{n+1}) = -\frac{\dtn^3 \yv_n'''}{12}
@@ -159,7 +158,7 @@ For comparison: TR and the BDF methods do not suffer from order reduction\cite[p
 \subsection{Error estimation approaches}
 \label{sec:two-integrator-error}
 
-Most truncation error estimators for implicit integrators (e.g. trapezoid rule, BDF2) use a Milne-device based method.\cite[pgs 707-716]{Gresho-Sani}
+Most truncation error estimators for implicit integrators (e.g. trapezoid rule, BDF2) use a Milne-device based method.\cite[pgs 707-716]{GreshoSani}
 This means that they compute an additional explicit estimate of $y_{n+1}$ using the same input values/derivatives as the implicit method and to the same order of accuracy.
 They then use algebraic rearrangements of the two LTE expressions to calculate an approximation of the LTE (typically to one order of accuracy better than the original calculations).
 However due to the complexity of the local truncation error of the implicit midpoint rule there are some difficulties with this approach.
@@ -301,7 +300,7 @@ Unfortunately we are interested in the third order method, so:
          }.
   \end{aligned}
 \end{equation}
-Doing this by hand is complex and error prone so a script was written to carry out algebraic rearrangement into coefficient form using the \texttt{python} programming language with the \texttt{sympy} library\cite{sympy}.
+Doing this by hand is complex and error prone so a script was written to carry out algebraic rearrangement into coefficient form using the \texttt{python} programming language with the \texttt{SymPy} library\cite{sympy}.
 The output is \texttt{c++} source code for the coefficient vector (to avoid translation errors).
 The resulting method (machine translated from the source code\cite[src/generic/explicit_timesteppers.cc:EBDF3::set_weights]{oomph-lib-source}) is
 \begin{equation}
@@ -401,7 +400,7 @@ as expected for BDF2 \cite[pg. 715]{GreshoSani}.
 
 \subsection{Computing the size of the next step}
 
-We use a standard method \cite[pg.268]{Gresho-Sani} for computing the next step size from the local truncation error and a target local truncation error $\toltt$
+We use a standard method \cite[pg.268]{GreshoSani} for computing the next step size from the local truncation error and a target local truncation error $\toltt$
 \begin{equation}
 \dtx{n+1} = \dtn \left( \frac{\toltt}{\lte}  \right) ^{\frac{1}{\texttt{order}+1}}.
 \end{equation}
@@ -433,11 +432,18 @@ The motivation for this is the use of a modified Newton-Raphson method where the
 In the case of ODE solvers this is extremely beneficial because the Jacobian is usually dense and direct solvers are used to solve it--by keeping the Jacobian constant the number of solves and Jacobian assemblys are greatly reduced.
 The downside is a reduction in the convergence speed of the Newton method.
 Keeping the step size constant for as long as possible is required here because modifications to the time step cause modifications to the Jacobian.
-However for PDE solvers, and in particular for iterative PDE solvers there is little-to-no benefit in using this technique (the reduction in convergence speed is worse than the gain of not assembling/solving the sparse Jacobian\cite[pg. 128]{Iserles2009}.
+However for PDE solvers, and in particular for iterative PDE solvers there is little-to-no benefit in using this technique (the reduction in convergence speed is worse than the gain of not assembling/solving the sparse Jacobian)\cite[pg. 128]{Iserles2009}.
 
 
 \section{Numerical experiments}
 \label{sec:aimr-testing}
+
+
+% % Regenerate data by running (in control_scripts folder)
+% ./parameter-sweep.py -p aimr_odes_order_reduction -p aimr_odes --clean && \
+%  # Generate and update plots
+%  parse.py -d ../experiments/parameter_sweeps/aimr_odes/ -s=-exact --scatter-split=-ts -d ../experiments/parameter_sweeps/aimr_odes_order_reduction/ -p err --save-to-dir /home/david/Dropbox/phd/reports/ongoing-writeup/aimr --save-data-to-dir --ssh-mode -f '("-tol", 1e-4)' && \
+% parse.py -d ../experiments/parameter_sweeps/aimr_odes/ -p scatter-err-tols -s=-exact --scatter-split=-ts -d ../experiments/parameter_sweeps/aimr_odes_order_reduction/ -p scatter-err-dts --save-to-dir /home/david/Dropbox/phd/reports/ongoing-writeup/aimr --save-data-to-dir --ssh-mode
 
 In this Section we show the results of some initial testing of the adaptive IMR algorithm derived above on some simple ODE examples.
 Numerical experiments with the LLG equation are detailed in Section~\ref{sec:aimr-llg}.
@@ -463,12 +469,6 @@ Any initial conditions required are calculated from the exact solutions.
 
 In all cases the exact solution is visually indistinguishable from the approxmated solutions on the scale of the plots.
 
-For each example:
-??ds exact solution (combine with below?)
-??ds step sizes plot - show bdf2, tr and imr?
-??ds convergence plot - shrink eps
-??ds plot lte est and y'''?
-
 
 \subsection{Polynomial example}
 \label{sec:imr-polynomial-example}
@@ -492,7 +492,7 @@ The computed solution does not look much like a polynomial because the distance 
 
 \begin{figure}[h!]
   \centering
-  \includegraphics[width=1\textwidth]{images/poly2-errornormsvs-dtsvs-tracevaluesvstimes}
+  \includegraphics[width=1\textwidth]{aimr/poly2-errornormsvs-dtsvs-tracevaluesvstimes}
   \caption{Absolute error, time step size and computed solutions for the example ODE with exact solution $y(t) = at^2 + bt + c$.}
   \label{fig:imr-poly2-example}
 \end{figure}
@@ -511,7 +511,7 @@ The next test is an oscillatory function with damping
 The adaptive algorithm should oscillate the step size in time with the oscillating truncation error ($\pd{}{t^3} \sin(t) = -\cos(t)$), while at the same time gradually increasing the step size as the solution damps to zero.
 
 \begin{figure}[h!]
-  \centering \includegraphics[width=1\textwidth]{images/damped_oscillation-errornormsvs-dtsvs-tracevaluesvstimes}
+  \centering \includegraphics[width=1\textwidth]{aimr/damped_oscillation-errornormsvs-dtsvs-tracevaluesvstimes}
   \caption{Absolute error, time step size and computed solutions for the oscillatory, damped example ODE with exact solution $y(t) = e^{-\beta t} \sin(\omega t)$.}
   \label{fig:imr-osc-example}
 \end{figure}
@@ -527,8 +527,16 @@ Hence the fact that the errors increase above the tolerance is not suprising.
 Interestingly there is a slight lag on the time step response of the IMR method as time steps become larger.
 This could be due to the fact that IMR uses data from three previous steps in its LTE estimate, whereas the others only use two previous steps.
 
+In Figure~\ref{fig:imr-osc-example-scatter} we show plots of the decrease in (global) error norm as the tolerence is decreased. 
+The consistent decreases of the error norms indicate that the all of the adaptive methods are able to control the error in the expected manner.
+Plots for other example problems are very similar and so are not shown.
+??ds should I show it for order reduction case? Slightly interesting (but expected) that it controls error in the same way as BDF1.
 
-
+\begin{figure}[h!]
+  \centering \includegraphics[width=1\textwidth]{aimr/damped_oscillation-maxoferrornormsvs-tol}
+  \caption{Behaviour of the global error norm with varying tolerance for the oscillatory, damped example ODE with exact solution $y(t) = e^{-\beta t} \sin(\omega t)$.}
+  \label{fig:imr-osc-example-scatter}
+\end{figure}
 
 \subsection{Stiff example}
 \label{sec:imr-stiff-example}
@@ -551,12 +559,12 @@ Another test is the simple and commonly discussed stiff example function \cite{?
 This example will demonstrate that the single step of the eBDF method does not suffer from stability issues even in cases of extreme stiffness.
 The time steps should begin small but rapidly increase as the initial transient decays.
 
-The results of the applying the three methods to problem~\eqref{eqn:imr-test-stiff} with $\lambda = -100$ (fairly stiff) are shown in Figure~\ref{fig:imr-stiff-example}.
+The results of the applying the three methods to problem~\eqref{eqn:imr-test-stiff} with $\lambda = 100$ (fairly stiff) are shown in Figure~\ref{fig:imr-stiff-example}.
 The behaviour of the three time integrators is essentially the same, indicating that our adaptive IMR has no issues with stiffness.
 
 \begin{figure}[h!]
   \centering
-  \includegraphics[width=1\textwidth]{images/stiff_test-errornormsvs-dtsvs-tracevaluesvstimes}
+  \includegraphics[width=1\textwidth]{aimr/stiff_test-errornormsvs-dtsvs-tracevaluesvstimes}
   \caption{Error $2$-norm, time step size and computed solutions for the stiff example ODE.}
   \label{fig:imr-stiff-example}
 \end{figure}
@@ -567,15 +575,15 @@ The behaviour of the three time integrators is essentially the same, indicating 
 \subsection{Order reduction example}
 \label{sec:order-reduct-example}
 
-As a final example we use a test ODE for order reduction/extreme stiffness\cite[pg. 156]{Atkinson2009}
+As a final example we study a test ODE displaying order reduction/extreme stiffness\cite[pg. 156]{Atkinson2009}
 \begin{equation}
   \label{eqn:imr-test-order-reduction}
   \begin{aligned}
-    f(t, y) &= \lambda (y - g(t)) + g'(t), \\
+    f(t, y) &= -\lambda (y - g(t)) + g'(t), \\
     y(t) &= g(t), \\
   \end{aligned}
 \end{equation}
-for some function $g(t)$ and large negative parameter $\lambda$.
+for some function $g(t)$ and large parameter $\lambda$.
 
 This causes an order reduction effect when solved using IMR because $\pd{f}{y} = \lambda$, and so when $\lambda$ is large the second term of the LTE expression~\eqref{eq:trunc-mid} becomes large.
 
@@ -589,24 +597,15 @@ As in the previous example we choose $\lambda = 100$.
 
 
 \begin{figure}[h!]
-  \centering  \includegraphics[width=1\textwidth]{images/order_reduction_test-errornormsvs-dtsvs-tracevaluesvstimes}
+  \centering  \includegraphics[width=1\textwidth]{aimr/strong_order_reduction-errornormsvs-dtsvs-tracevaluesvstimes}
   \caption{Absolute error, time step size and computed solutions for the stiff order reduction example ODE given in equation~\eqref{eqn:imr-test-order-reduction}
 .}
   \label{fig:imr-order-reduction-example}
 \end{figure}
 
 The results are shown in Figure~\ref{fig:imr-order-reduction-example}. 
-??ds discussion
+As expected the implicit midpoint rule selects time step sizes similarly to the first order BDF1 method due to order reduction.
 
-
-\subsection{General discussion}
-\label{sec:aimr-general-discussion}
-
-Figures~??ds compare mean error norms and step sizes of the adaptive midpoint scheme (with two interpolation points) for varying tolerances.
-The IMR can be seen to have quadratic convergence by comparing with the $y=x^2$ line shown.
-Additionally it can be seen that decreasing the tolerance smoothly decreases the mean error (by smoothly decreasing the mean step size).
-
-In general more accurate than bdf2 due to lower error coeff (see Appendix??ds), similar error to tr.
 
 \section{Additional Notes}
 
@@ -632,6 +631,11 @@ For implicitly defined functions this is expensive, so this adaptive method is n
 
 
 
+\section{Conclusions}
+
+We have implemented an efficent algorithm for adaptive time integration.
+The algorithm has been tested on a number of ODEs and found to choose similar time steps to other second order time integrators as expected.
+The algorithm has also been shown to be robust against stiffness and to control the error effectively when order reduction phenomena are encountered.
 
 
 %%% Local Variables:
