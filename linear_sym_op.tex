@@ -158,6 +158,32 @@ We can easily see that the operator is symmetrical by writing out the definition
 \end{equation}
 
 
+\section{Effective field and energy}
+\label{sec:energy-field-relation}
+
+The effective field is derived from the energy.
+
+
+Similarly there is an integral relationship between the effective field and the energy:
+
+\begin{equation}
+  \frac{-1}{2} \ip{\mv}{\hop[\mv]} = \frac{-1}{2} \intd{\mv \cdot \hop[\mv]} = \e
+\end{equation}
+
+??ds general proof?
+
+??ds individually obvious for most fields
+
+For the exchange effective field we use a trick (from \cite[pg. 179]{Aharoni1996}):
+\begin{equation}
+  \mv \cdot \lap \mv = \frac{1}{2} \lap \abs{\mv}^2 - (\grad \mv)^2.
+\end{equation}
+Then since $\abs{\mv}^2$ is constant we have that
+\begin{equation}
+  \frac{-1}{2} \intd{\mv \cdot \lap \mv} = \frac{1}{2} \intd{(\grad \mv)^2} = \eex.
+\end{equation}
+
+
 %%% Local Variables:
 %%% mode: latex
 %%% TeX-master: "./main"
