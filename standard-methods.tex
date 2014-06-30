@@ -121,11 +121,15 @@ where $f(t,y)$ is a known function and $T$ is the end time. The idea is to use t
 Some key attributes of a time discretisation scheme are:\cite{Atkinson2009}
 \begin{itemize}
 
-\item \textbf{Stability} -- A scheme is stable if the approximated solution stays close to the exact solution, even after a large number of time-steps. A scheme is called conditionally stable if it is stable only for time-steps smaller than some maximum time-step or unconditionally stable if it is stable even for very large time-steps (although for very large time-steps the accuracy may be compromised).
+\item \textbf{Accuracy (order)} -- An estimate of how rapidly the error decreases as the time-step, $h$, is reduced.
 
-\item \textbf{Convergence speed} -- An estimate of how rapidly the local truncation error decreases as the time-step, $h$, is reduced.
+\item \textbf{Stability} -- A scheme is stable if the approximated solution stays close to the exact solution, even after a large number of time-steps. 
+A scheme is called conditionally stable if it is stable only for time-steps smaller than some maximum time-step or unconditionally stable if it is stable even for very large time-steps (although for very large time-steps the accuracy may be compromised).
 
-\item \textbf{Ability to deal with stiffness} -- Some ODEs have terms which vary on very different time scales, this is referred to as stiffness. Stiff ODEs causes some solvers to require extremely small time-steps in order to remain stable. The Landau--Lifshitz--Gilbert equation is sometimes stiff because the precession and damping terms usually operate on very different timescales but are both important for determination of the dynamics.\cite{Fidler2000}
+% \item \textbf{Ability to deal with stiffness} -- Some ODEs have terms which vary on very different time scales, this is referred to as stiffness. Stiff ODEs causes some solvers to require extremely small time-steps in order to remain stable. The Landau--Lifshitz--Gilbert equation is sometimes stiff because the precession and damping terms usually operate on very different timescales but are both important for determination of the dynamics.\cite{Fidler2000}
+
+\item \textbf{No spurious modes} -- Many schemes have ??ds additional roots.
+This can cause incorrect (numerical) damping of oscillations in the solutions.
 
 \item \textbf{Preservation of geometrical properties} -- Some differential equations have properties which should ideally be conserved in the discretised system. For example $\abs{\Mv}$ should remain constant over time in the Landau--Lifshitz--Gilbert equation but this property is often lost after discretisation.\cite{DAquino2005}
 
@@ -207,17 +211,7 @@ However to extend this to systems where $\Mv$ varies with space we have to use a
 % Some people have used special test functions to keep $\abs{\Mv}$ fixed, don't understand that method yet though
 
 ``Geometrical'' integration schemes aim to solve this problem by constructing a time discretisation scheme that naturally preserves the value of $|M_s|$. An example of such a scheme is the midpoint method as used by d'Aquino. The midpoint method also has other desirable properties -- it conserves energy when the damping term is zero and it ensures that the energy is a decreasing function of time when the damping is non-zero.\cite{DAquino2005} Alternatively geometrical integration methods based on Cayley transforms can be used.\cite{Lewis2003}\cite{Bottauscio2011}
-% ??ds however the proofs do not work for a weak formulation...
 
-
-% \subsection{Preconditioning}
-
-% \begin{itemize}
-% \item If implicit time-stepping is used solution of the linear systems created at each time-step can be troublesome.
-% \item We can speed this up using a preconditioner.
-% \item Some work has been done on preconditioning by Suess et. al. \cite{Suess2002}.
-% \item Also Banas et. al.\cite{Banas2008} \cite{Banas2010} used a multigrid preconditioner for the Maxwell-LLG equation( magnetostatic field is computed via Maxwell's equations, exchange field is also accounted for, crystalline anisotropy is not). The use of Maxwell's equations introduces complications because of the curls.
-% \end{itemize}
 
 \subsection{Specific micromagnetics time discretisation schemes}
 
@@ -352,6 +346,16 @@ Based on Krylov subspace (polynomial of $\Am$ multiplied by $\xv$).
 Can be extremely efficent
 
 Rely on effective preconditioning, can also be thought of as convergence acceleration for another method--the preconditioner.
+
+
+% \subsection{Preconditioning}
+
+% \begin{itemize}
+% \item If implicit time-stepping is used solution of the linear systems created at each time-step can be troublesome.
+% \item We can speed this up using a preconditioner.
+% \item Some work has been done on preconditioning by Suess et. al. \cite{Suess2002}.
+% \item Also Banas et. al.\cite{Banas2008} \cite{Banas2010} used a multigrid preconditioner for the Maxwell-LLG equation( magnetostatic field is computed via Maxwell's equations, exchange field is also accounted for, crystalline anisotropy is not). The use of Maxwell's equations introduces complications because of the curls.
+% \end{itemize}
 
 
 \section{Magnetostatic Field Calculations}

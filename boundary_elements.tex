@@ -493,6 +493,8 @@ One way to reduce the problems associated with the dense nature of $\bm$ is to u
 
 \subsection{Fully implicit}
 
+??ds mention TR blows up with semi-implicit + numerical experiments
+
 Solve the entire system as one coupled non-linear pde.
 This means that we are using a well understood time integration scheme rather than some relatively unknown approximation.
 The downside is that the Jacobian will contain the dense matrix $\bm$, which makes solving the system in a naive manner extremely expensive.
