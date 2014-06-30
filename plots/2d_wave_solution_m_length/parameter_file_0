@@ -1,0 +1,22 @@
+{
+# Problem specification
+'-driver' : ['llg'],
+'-ms-method' : ['disabled'],
+'-mesh' : ['sq_square_periodic'],
+'-initial-m' : 'periodic_exact',
+'-initial-is-exact' : 1,
+'-h-app' : 'zero',
+'-damping' : [1, 0.1, 0.001, 0],
+'-tmax' : 1,
+
+# Integration/calculation details
+'-ts' : ["imr"],
+'-ref' : [1, 3, 5],
+'-tol' : [0],
+'-dt' : [0.1, 1e-2, 1e-3],
+'-newton-tol' : [1e-14],
+'-renormalise' : [0],
+'-integration' : ['gauss', 'lnodal'],
+'-solver' : 'gmres',
+'-prec' : 'ilu-1',
+}

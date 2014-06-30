@@ -223,24 +223,23 @@ The final result is
 
 \subsection{Numerical experiments on $\abs{\mv}$ conservation}
 
-We use the wave exact solution (see \autoref{wave-solution} for simplicity with examples in one and two dimensions.
+We use the wave exact solution (see \autoref{wave-solution}) for simplicity.
+Newton tolerance is set to $\E{-14}$.
+Solved using GMRES with an ilu-1 preconditioner.
 
 \begin{figure}[ht!]
   \centering
-  \includegraphics{images/placeholder}
-  \caption{Evolution of the error of magnetisation length in the 1D wave example with Gaussian and nodal quadrature schemes.}
-  \label{fig:mean-ml-error-1d}
+  \includegraphics[width=0.8\textwidth]{plots/2d_wave_solution_m_length/gauss-meanmathbfm-1vst.pdf}
+  \caption{Evolution of the error of magnetisation length in the 2D wave example with a standard Gaussian quadrature scheme.}
+  \label{fig:mean-ml-error-2d-gauss}
 \end{figure}
 
 \begin{figure}[ht!]
   \centering
-  \includegraphics{images/placeholder}
-  \caption{Evolution of the error of magnetisation length in the 2D wave example with Gaussian and nodal quadrature schemes.}
-  \label{fig:mean-ml-error-2d}
+  \includegraphics[width=0.8\textwidth]{plots/2d_wave_solution_m_length/lnodal-meanmathbfm-1vst.pdf}
+  \caption{Evolution of the error of magnetisation length in the 2D wave example with the nodal quadrature scheme introduced above.}
+  \label{fig:mean-ml-error-2d-nodal}
 \end{figure}
-
-
-
 
 
 
