@@ -1,0 +1,251 @@
+\section{Nodal integration}
+
+
+In weak form methods it turns out that normal integration schemes do not retain the conservation properties of the IMR.
+The problem is that (outside of the infinite node limit) weak form equations make statements about the integral properties of the solution, whereas magnetisation length is a nodal property.
+The solution is to use a non-typical quadrature scheme which directly links the nodal values with the integral values.
+The downside of such schemes is that the accuracy of the evaluation of integrals is reduced.
+
+In the micromagnetics literature this is known as reduced integration\cite{Cimrak2008}.
+However in other finite element literature ``reduced integration'' refers to using lower order gaussian quadrature than needed to exactly integrate the shape and test functions.
+The term ``Nodal integration'' is more the standard term for schemes where the nodal values are used directly in the quadrature (typically with mesh-free methods \eg \cite{Puso2008}).
+
+In this section we first show why standard quadrature schemes cannot have the required conservation properties.
+We then show that the introduction of nodal integration schemes reattains the conservation properties.
+Finally we present some numerical experiments.
+
+
+
+\subsection{Failure of $\abs{\mv}$ conservation with Gaussian quadrature}
+
+\newcommand{\ipg}[2]{\intd{{#1} \cdot {#2}}}
+
+We begin with the weak form of the LLG equation
+\begin{equation}
+  \label{eq:weak-llg}
+  \intd{\dmdt \cdot \testv + \mv \times \hv[t, \mv] \cdot \testv - \dampc \mv \times \dmdt \cdot \testv} = 0, \quad \forall \testv
+\end{equation}
+where $\testv = \threevec{\test}{\test}{\test}$ and $\test \in \ts$ is a scalar test function.
+
+\newcommand{\midpoint}[1]{\hat{#1}}
+\newsubcommand{\mvm}{\midpoint{\mv}}{n}
+\newcommand{\tm}{\midpoint{t}_n}
+
+\newcommand{\dtop}{\delta}
+\newcommand{\dmdtm}{\dtop \mv_n}
+
+% To simplify the notation we use inner product notation for the integral of a dot product:
+% \begin{equation}
+%   \intd{\av \cdot \bv} = \ipg{\av}{\bv}.
+% \end{equation}
+
+Substituting in the IMR we obtain
+\begin{equation}
+  \label{eq:weak-llg-imr}
+  \ipg{\dmdtm}{\testv} + \ipg{(\mvm \times \hv[\tm, \mvm])}{\testv} - \dampc \ipg{(\mvm \times \dmdtm)}{\testv} = 0, \quad \forall \testv .
+\end{equation}
+
+where $\midpoint{x} = \frac{x_{n+1} + x_{n}}{2}$ is the midpoint value of $x$ and $\dtop x = \frac{x_{n+1} - x_n}{\dtn}$ is the midpoint derivative.
+
+To obtain our result we examine the case where $\testv = \mvm$.
+Note that $\mvm$ is in the vector space of test functions because we are using identical test and shape function spaces and $\mvm$ at any point must only be a linear combination of shape functions.
+So by \ref{eq:weak-llg-imr}, and using the fact that $(\av \times \bv) \cdot \av) = 0$ we have
+\begin{equation}
+\label{eq:23}
+  \begin{aligned}
+    0 &= \ipg{\dmdtm}{\mvm}, \\
+    &= \frac{1}{2\dtn} \intd{(\mv_{n+1} + \mv_{n}) \cdot (\mv_{n+1} - \mv_n)}, \\
+    &= \frac{1}{2\dtn} \intd{\abs{\mv_{n+1}}^2 - \abs{\mv_{n}}^2}.
+  \end{aligned}
+\end{equation}
+
+At first glance it appears that we have achieved conservation. However this is only an integral relationship, meaning that the values of the integrand at the nodes are not constrained.
+We can see this in more detail by substituting in the space interpolation of $\mv$ at the Gaussian integral evaluation points.
+Dropping the constant factor of $2\dtn$ and assuming that $\abs{\mv_n} = 1$ everywhere this gives
+\begin{equation}
+  \begin{aligned} 
+    1 &= \intd{\abs{\sum_k \mv_{n+1, k} \tbf_k(\xv)}^2}, \\
+    &= \sum_l w_l \abs{\sum_k \mv_{n+1, k} \tbf_k(\xv_l)}^2.
+  \end{aligned} 
+\end{equation}
+
+This can be satisfied without requiring that all $\abs{\mv_{n+1, k}} = 1$.
+For example if we set the number of nodes to two (a 1D problem with linear shape functions) and assume magnetisation only along the $z$-axis then this condition becomes:
+\begin{equation}
+  \begin{aligned}
+    1 &= \sum_l w_l \abs{\sum_k \mv_{n+1, k} \tbf_k(\xv_l)}^2, \\
+    &= w_0 (m_0 a + m_1 b)(m_0 a + m_1 b) + w_1 (m_0 c + m_1 d)(m_0 c + m_1 d), \\
+    &= m_0^2 (w_0 a^2 + w_1 c^2) + m_1^2 (w_0 b^2 + w_1 c^2) + m_0 m_1 (2w_0ab + 2w_1cd), \\
+    &= m_0^2 \alpha + m_1^2 \beta + m_0 m_1 \gamma, \\
+  \end{aligned}
+\end{equation}
+where $a,b,c,d$ are the values of shape functions at the integration points, $m_l = m_{z}$ at node l and $\alpha, \beta, \gamma$ are constants.
+So given any $m_{z,0}$ we can solve the above expression to find an $m_{z,1}$ that satisfies the constraint.
+Since $m_z$ all magnetisation is along the $z$-axis in this example we can vary magnetisation length arbitraily while still satisfying the constraint.
+
+A similar expression is obtained if nodal magnetistations are chosen for the test function used in \eqref{eq:23} instead of the magnetisation function, as in Section~\ref{sec:weak-cons-absmv}.
+
+Finally it is interesting to note that if the magnetisation is constant in space at times $t_n$ and $t_{n+1}$ then the integral condition in equation~\ref{eq:23} \emph{is} sufficient to give conservation of the magnetisation length at nodes.
+
+
+\subsection{Failure of energy conservation with Gaussian quadrature}
+
+The proof of energy conservation does not fail directly.
+However, non-constant magnetisation length means that the derivation of the boundary condition is no longer applicable (??ds check this, non-constant |m| should destroy neumann condition therefore symmetry is gone).
+Hence the effective field is no longer symmetrical and the proof of energy conservation no longer applies.
+
+\subsection{Nodal integration}
+
+In order to regain conservation properties in a weak-form-based method we introduce a nodal integration scheme based on that used by Bartels et. al.\cite{Bartels2006}:
+\begin{equation}
+  \label{eq:nodal-integration}
+  \int f(\xv) \d \xv \approx \sum_{l\in \text{nodes}} \beta_l f(\xv_l),
+\end{equation}
+where $\beta_l$ is a weight.
+This is simply the weighted sum of the value of the integrand at nodes.
+
+As an additional benefit this greatly simplifies the calculations since no interpolation of the values to the integration points is needed.
+For example with reduced integration (and using that $\tbf_k(\xv_l) = \delta_{kl}$) the residual contribution of the time derivative term of LLG of test function $k$ becomes
+\begin{equation}
+  \begin{aligned}
+    \intd{\dmdt \cdot \tbfv_k} &= \frac{1}{\dtn} \intd{(\mv_{n+1}(\xv) + \mv_{n}(\xv)) \cdot \tbfv_k(\xv)}, \\
+    & = \frac{1}{\dtn} \sum_{l\in \text{nodes}} \beta_l (\mv_{n+1, l} + \mv_{n, l}) \cdot \tbfv_k(\xv_l), \\
+    & = \frac{1}{\dtn} \beta_k (\mv_{n+1, k} + \mv_{n, k}) \cdot \threevec{1}{1}{1}.
+  \end{aligned}
+\end{equation}
+
+
+\subsubsection{Derivation of weights}
+
+We now need to derive a suitable $\beta_l$.
+To do so we represent the quadrature scheme as an integral of an interpolating polynomial which matches the desired integration, then we rearrange the equation to find the weights \cite[pg. 480]{Kincaid2002}.
+In \texttt{oomph-lib} all integration is done in local co-ordinates (as discussed in Section~??ds), so we calculate weights applicable in this case.
+
+A suitable polynomial for our case is the shape/test function for the node.
+So we have:
+\begin{equation}
+\label{eq:nodal-quad-weights}
+  \begin{aligned}
+    \int_{\magd_e} f(\xv) \d \xv &= \int_{\magd_e} f(\sv) \pd{\sv}{\xv} \d \sv, \\
+    &\approx \int_{\magd_e} \sum_l f(\sv_l) \tbf_l(\sv) J_l \d \sv, \\
+    &\approx  \sum_l f(\sv_l) J_l \int_{\magd_e} \tbf_l(\sv)  \d \sv,
+  \end{aligned} 
+\end{equation}
+where $J_l =  \evalat{\pd{\sv}{\xv}}_{\sv=\sv_l}$ is the Jacobian of the transformation from local to global coordinates evaluated at the $l$-th integration point.
+So 
+Comparing \eqref{eq:nodal-integration} with \eqref{eq:nodal-quad-weights} we see that
+\begin{equation}
+  \beta_l =  \int_{\magd_e} \tbf_l(\sv)  \d \sv.
+\end{equation}
+
+The equivalent weight for global integration is $\beta_l = \int_{\magd} \tbf_l(\xv) \d \xv$, as used by Bartels \etal\cite{Bartels2006}.
+
+\subsection{Conservation of $\abs{\mv}$ at nodes}
+\label{sec:weak-cons-absmv}
+
+Starting from the IMR discretised weak form of the LLG \eqref{eq:weak-llg-imr}:
+\begin{equation}
+  \intd{\dmdtm \cdot \testv + (\mvm \times \hv[\tm, \mvm]) \cdot \testv - \dampc (\mvm \times \dmdtm) \cdot \testv }= 0, \quad \forall \testv .
+\end{equation}
+
+\newcommand{\dmdtml}{\dtop \mv_{n,l}}
+\newcommand{\dmdtmj}{\dtop \mv_{n,j}}
+
+We examine the choice of the test function as the midpoint nodal value of $\mv$ at node j multiplied by the $j$th test basis function, $\testv = \mvm_{,j} \tbf_j$.
+This choice is clearly in the vector space of test functions because it is simply a constant multiple of a basis function.
+\begin{equation}
+  \sum_l \beta_l \bigs{\dmdtml \cdot \mvm_{,j}\tbf_j(\xv_l) + (\mvm_{,l} \times \hv[\tm, \mvm_{,l}]) \cdot \mvm_{,j}\tbf_j(\xv_l) - \dampc (\mvm_{,l} \times \dmdtml) \cdot \mvm_{,j}\tbf_j(\xv_l)} = 0.
+\end{equation}
+
+Using $\tbf_k(\xv_l) = \delta_{kl}$ we can eliminate the summation
+\begin{equation}
+  \beta_j \bigs{\dmdtmj \cdot \mvm_{,j} + (\mvm_{,j} \times \hv[\tm, \mvm_{,j}]) \cdot \mvm_{,j} - \dampc (\mvm_{,j} \times \dmdtmj) \cdot \mvm_{,j}} = 0.
+\end{equation}
+By the properties of the triple product the procession and damping terms vanish. Then expanding the midpoint values gives us our conservation result:
+\begin{equation}
+  \begin{aligned}
+    \frac{\beta_l}{2\dtn}(\mv_{n+1,j} - \mv_{n,j}) \cdot (\mv_{n+1, j} + \mv_{n, j}) &= 0, \\
+    \abs{\mv_{n+1, j}}^2 - \abs{\mv_{n, j}}^2 &= 0.
+  \end{aligned}
+\end{equation}
+
+This can obviously be repeated for all nodes $j$, hence each nodal magnetisation length is conserved.
+
+
+\subsection{Energy loss}
+
+Again we start from the IMR discretised weak form of the LLG \eqref{eq:weak-llg-imr} and proceed by choosing specific test functions.
+In this case we first choose $\testv = \dmdtm$, which gives:
+\begin{equation}
+  \label{eq:test-dmdt}
+  \begin{aligned}
+    0 &= \intd{\dmdtm \cdot \dmdtm} - \intd{\dmdtm  \cdot (\mvm \times \hv[\tm, \mvm])}.
+  \end{aligned}
+\end{equation}
+
+Secondly we choose $\testv = \hv[\tm, \mvm]$ to obtain:
+\begin{equation}
+  \label{eq:test-h}
+  \begin{aligned}
+    0 &= \intd{\dmdtm \cdot \hv[\tm, \mvm]} - \dampc \intd{\hv[\tm, \mvm] \cdot (\mvm \times \dmdtm)}, \\
+    & = \intd{\dmdtm \cdot \hv[\tm, \mvm]} - \dampc \intd{\dmdtm \cdot (\hv[\tm, \mvm] \times \mvm)}, \\
+    & = \intd{\dmdtm \cdot \hv[\tm, \mvm]} + \dampc \intd{\dmdtm \cdot (\mvm \times \hv[\tm, \mvm])}.
+  \end{aligned}
+\end{equation}
+
+Combining equations~\eqref{eq:test-dmdt} and \eqref{eq:test-dmdt} results in
+\begin{equation}
+  0 = \intd{\dmdtm \cdot \hv[\tm, \mvm]} + \dampc \intd{\dmdtm \cdot \dmdtm},
+\end{equation}
+\ie
+\begin{equation}
+  \intd{\mv_{n+1} \cdot \hv[\tm, \mvm]} = \intd{\mv_n \cdot \hv[\tm, \mvm]} - \dtn \dampc \intd{\dmdtm \cdot \dmdtm}.
+\end{equation}
+With zero applied field $\hv[t, \mv] = \hv[\mv]$ is a symmetrical linear operator on $\mv$ with respect to the inner product $\intd{\av \cdot \bv}$ (see \autoref{sec:energy-field-relation}), using this property in a similar manner to Section~\ref{sec:prop-imr-llg} we obtain
+\begin{equation}
+  \frac{1}{2}\intd{\mv_{n+1} \cdot \hv[\mv_{n+1}]} = \frac{1}{2}\intd{\mv_n \cdot \hv[\mv_n]} - \dtn \dampc \intd{\dmdtm \cdot \dmdtm}.
+\end{equation}
+But, as mentioned in Section~\ref{sec:prop-imr-llg} $\frac{1}{2}\intd{\mv \cdot \hv[\mv]}$ is the total micromagnetic energy of the domain (when $\happ = \zerov$), hence we have
+\begin{equation}
+  \e_{n+1} = \e_n - \dtn \dampc \intd{\dmdtm \cdot \dmdtm},
+\end{equation}
+which is the midpoint discretisation of the analytical energy loss rate given by equation~\eqref{eq:energy-decay}.
+In particular when $\dampc = 0$ the energy is conserved.
+
+The extension to the case with the applied field proceeds exactly as for the strong form of the LLG, as discussed in Section~\ref{sec:prop-imr-llg}.
+The final result is
+\begin{equation}
+  ??ds
+\end{equation}
+
+\subsection{Numerical experiments with nodal integration schemes}
+
+
+\subsection{Numerical experiments on $\abs{\mv}$ conservation}
+
+We use the wave exact solution (see Section~\ref{wave-solution} for simplicity with examples in one and two dimensions.
+
+\begin{figure}[ht!]
+  \centering
+  \includegraphics{images/placeholder}
+  \caption{Evolution of the error of magnetisation length in the 1D wave example with Gaussian and nodal quadrature schemes.}
+  \label{fig:mean-ml-error-1d}
+\end{figure}
+
+\begin{figure}[ht!]
+  \centering
+  \includegraphics{images/placeholder}
+  \caption{Evolution of the error of magnetisation length in the 2D wave example with Gaussian and nodal quadrature schemes.}
+  \label{fig:mean-ml-error-2d}
+\end{figure}
+
+
+
+
+
+
+
+%%% Local Variables:
+%%% mode: latex
+%%% TeX-master: "main"
+%%% End:
