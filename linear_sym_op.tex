@@ -161,18 +161,21 @@ We can easily see that the operator is symmetrical by writing out the definition
 \section{Effective field and energy}
 \label{sec:energy-field-relation}
 
-The effective field is derived from the energy.
-
-
-Similarly there is an integral relationship between the effective field and the energy:
-
+A useful relationship between the effective field and the energy is:
 \begin{equation}
-  \frac{-1}{2} \ip{\mv}{\hop[\mv]} = \frac{-1}{2} \intd{\mv \cdot \hop[\mv]} = \e
+  \begin{aligned}
+    \hop[\mv] &=  \lap \mv + \hms + \hca, \\
+    \frac{-1}{2} \ip{\mv}{\hop[\mv]} &= \frac{-1}{2} \intd{\mv \cdot
+      \hop[\mv]} = \e,
+  \end{aligned}
 \end{equation}
+(note that this does not include the applied field energy).
 
-??ds general proof?
-
-??ds individually obvious for most fields
+For the magnetostatic field this is obvious from the definition of $\ems$. 
+For a uniaxial magnetocrystalline anisotropy effective field the derivation is very simple:
+\begin{equation}
+  \frac{-1}{2} \intd{\bigb{\kone (\mv \cdot \ev) \ev} \cdot \mv} =  \frac{-\kone}{2}\intd{(\mv \cdot \ev)^2} = \eca.
+\end{equation}
 
 For the exchange effective field we use a trick (from \cite[pg. 179]{Aharoni1996}):
 \begin{equation}
