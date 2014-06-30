@@ -7,7 +7,7 @@ The solution is to use a non-typical quadrature scheme which directly links the 
 The downside of such schemes is that the accuracy of the evaluation of integrals is reduced.
 
 In the micromagnetics literature this is known as reduced integration\cite{Cimrak2008}.
-However in other finite element literature ``reduced integration'' refers to using lower order gaussian quadrature than needed to exactly integrate the shape and test functions.
+However in other finite element literature ``reduced integration'' refers to using lower order Gaussian quadrature than needed to exactly integrate the shape and test functions.
 The term ``Nodal integration'' is more the standard term for schemes where the nodal values are used directly in the quadrature (typically with mesh-free methods \eg \cite{Puso2008}).
 
 In this section we first show why standard quadrature schemes cannot have the required conservation properties.
@@ -81,7 +81,7 @@ For example if we set the number of nodes to two (a 1D problem with linear shape
 \end{equation}
 where $a,b,c,d$ are the values of shape functions at the integration points, $m_l = m_{z}$ at node l and $\alpha, \beta, \gamma$ are constants.
 So given any $m_{z,0}$ we can solve the above expression to find an $m_{z,1}$ that satisfies the constraint.
-Since $m_z$ all magnetisation is along the $z$-axis in this example we can vary magnetisation length arbitraily while still satisfying the constraint.
+Since $m_z$ all magnetisation is along the $z$-axis in this example we can vary magnetisation length arbitrarily while still satisfying the constraint.
 
 A similar expression is obtained if nodal magnetistations are chosen for the test function used in \eqref{eq:23} instead of the magnetisation function, as in \autoref{sec:weak-cons-absmv}.
 
@@ -91,7 +91,7 @@ Finally it is interesting to note that if the magnetisation is constant in space
 \subsection{Failure of energy conservation with Gaussian quadrature}
 
 The proof of energy conservation does not fail directly.
-However, non-constant magnetisation length means that the derivation of the boundary condition is no longer applicable (??ds check this, non-constant |m| should destroy neumann condition therefore symmetry is gone).
+However, non-constant magnetisation length means that the derivation of the boundary condition is no longer applicable (??ds check this, non-constant |m| should destroy Neumann condition therefore symmetry is gone).
 Hence the effective field is no longer symmetrical and the proof of energy conservation no longer applies.
 
 \subsection{Nodal integration}
