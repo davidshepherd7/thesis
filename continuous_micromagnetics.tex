@@ -218,26 +218,187 @@ For simplicity we commonly consider the case of zero surface anisotropy ($w_s \e
 \end{equation}
 This condition can be arranged into a simpler form: we first note that for equation~\eqref{eq:llg-bc} to hold either $\Mv = \zerov$, $\dMdn = \zerov$ or $\Mv$ is parallel to $\dMdn$.
 Clearly $\Mv$ is not the zero vector inside the ferromagnet.
-Also we know that the magnetisation length does not change, so $\pd{\Mv}{\av} \cdot \Mv = 0$ for any direction $\av$ since the change in magnetisation projected onto the magnetisation direction is the change in magnetisation length.
-Hence $\Mv$ and $\dMdn$ cannot be parallel and so
+Also we know that the magnetisation length does not change, so $\pd{\Mv}{\av} \cdot \Mv = 0$ for any direction $\av$ (since the change in magnetisation projected onto the magnetisation direction is the change in magnetisation length) hence $\Mv$ and $\dMdn$ cannot be parallel.
+So the final boundary condition is simply
 \begin{equation}
   \dMdn = \zerov.
 \end{equation}
 
-% \section{Accounting for Thermal Effects}
-% \label{sec:thermal-effects}
-% ??ds put in from other file when ready
+
+\section{Non-dimensionalisation}
+\label{sec:normalisations-appendix}
+
+% ??ds talk about why?
+
+% no unecessary (for the maths) parameters
+% improves accuracy by minimising round off error
+
+\subsection{The Landau-Lifshitz-Gilbert equation}
+\label{sec:land-lifsh-gilb-normalisation}
+
+We start from the Landau--Lifshitz--Gilbert equation with the magnetostatic, applied, exchange and magnetocrystalline (effective) fields. 
+\begin{align}
+  \pd{\Mv^*}{t^*} &= - \gymagc \Mv^* \times \Hv^* + \frac{\alpha}{M_s} \Mv^* \times \pd{\Mv^*}{t^*}, \label{eqn:llgnd} \\
+  \Hv^* &= \Happ^* - \nabla^* \phi^* + \frac{2\Exchc^*}{\mu_0 M_s} \nabla^{*2} \mv + \frac{2\Kone^*}{\mu_0 M_s} (\mv \cdot \ev) \ev,
+          \label{eqn:effnd} \\
+  \nabla^{*2} \phi^* &= \nabla^* \cdot \Mv^*, \label{eqn:phind}
+\end{align}
+where we use $^*$ to denote the dimensional variables, operators and constants that will be non-dimensionalised. We assume for simplicity that $M_s$, $\Exchc$ and $\Kone$ are all
+constant throughout the magnetic materials used.
+
+Let
+\begin{equation}
+  \label{eqn:nddefs}
+  \begin{aligned}
+    \Mv^* &= M_s \mv,  \\
+    \phi^* &= \Phi \phi,  \\
+    \Hv^* &= M_s \hv,  \\
+    \Kone^* &= \nK \kone,  \\
+    t^* &= \frac{1}{\gymagc M_s} t,  \\
+    x_i^* &= l x_i. 
+  \end{aligned}
+\end{equation}
+Note that $\Mv$ and $\Hv$ have the same units so we use the same normalisation factor. For dimensional purposes derivatives are equivalent to division by the variable differentiated with respect to, so $\nabla^* = \frac{1}{l} \nabla$, $\pd{a}{t^*} = \gymagc M_s \pd{a}{t}$ etc.
+
+Combining equation~\eqref{eqn:llgnd} with the definitions~\eqref{eqn:nddefs} gives
+\begin{equation}
+  \notag
+  \dmdt \gymagc M_s^2 =
+  - \gymagc M_s^2 \mv \times \hv + \frac{\alpha}{M_s} \gymagc M_s^3 \mv \times \dmdt,
+\end{equation}
+
+cancelling the various constants results in the non-dimensionalised Landau--Lifshitz--Gilbert equation
+\begin{equation}
+  \label{eq:53}
+  \dmdt = - (\mv \times \hv) + \alpha (\mv \times \dmdt).
+\end{equation}
+
+Similarly for equation~\eqref{eqn:phind}
+\begin{align*}
+  \frac{1}{l^2} \Phi \nabla^{2} \phi &= \frac{1}{l} M_s \nabla \cdot \mv, \\
+  \frac{\Phi}{M_s l} \nabla^{2} \phi &= \nabla \cdot \mv.
+\end{align*}
+
+Letting $\Phi = M_s l$ we obtain
+\begin{equation}
+  \label{eq:57}
+  \lap \phi = \nabla \cdot \mv.
+\end{equation}
+
+Repeating the substitutions for equation~\eqref{eqn:effnd} gives
+\begin{align*}
+  M_s \hv &= M_s \happ - \frac{\Phi}{l} \nabla \phi + \frac{2 \Exchc }{\mu_0 M_s} \frac{1}{l^2} \lap \mv + \frac{2\kone}{\mu_0 M_s}  \nK (\mv \cdot \ev) \ev, \\
+  \hv &= \frac{M_s}{M_s} \happ - \frac{M_s}{M_s} \nabla \phi + \frac{2 \Exchc}{\mu_0 M_s^2} \frac{1}{l^2} \lap \mv + \frac{2\kone}{\mu_0 M_s^2} \nK (\mv \cdot \ev) \ev, \\
+  \hv &= \happ - \nabla \phi + \frac{2 \Exchc}{\mu_0 M_s^2} \frac{1}{l^2} \lap \mv + \frac{2\kone}{\mu_0 M_s^2} \nK (\mv \cdot \ev) \ev, \\
+\end{align*}
+
+This can be further simplified by choosing the exchange length\footnote{There are actually two exchange lengths: one based on the strength of exchange as compared with the magnetostatic field and another by comparison with the magnetocrystalline anisotropy. We use the magnetostatic-field-based exchange length for normalisation to avoid division by zero in the case of zero magnetocrystalline anisotropy.} as the characteristic length scale
+\begin{equation}
+  \label{eqn:l-normalisation}
+  l = \sqrt{ \frac{2 \Exchc}{\mu_0 M_s^2} },
+\end{equation}
+
+and
+\begin{equation}
+  \label{k-normalisation}
+  \nK = \frac{ \mu_0 M_S^2}{2}.
+\end{equation}
+
+So the final system of equations is
+\begin{equation}
+  \begin{aligned}
+    \dmdt &= - \mv \times \hv + \alpha \mv \times \dmdt, \\
+    \hv &= \happ - \nabla \phi + \lap \mv + \kone (\mv \cdot \ev) \ev.
+    \label{eqn:nd-llg-full}
+  \end{aligned}
+\end{equation}
+
+\subsection{The Landau-Lifshitz form of the LLG}
+\label{sec:land-lifsh-normalisation}
+
+The dimensional Landau-Lifshitz equation is given in equation~\eqref{eq:LLG}:
+\begin{equation}
+  \label{eq:LLG-dim}
+  (1 + \dampc^2) \pd{\Mv^*}{t^*} = - \gymagc \Mv^* \times \Hv^*
+  - \frac{\gymagc \dampc}{M_s} \Mv^* \times (\Mv^* \times \Hv^*).
+\end{equation}
+The non-dimensionalisation process is essentially the same as for the Gilbert form, by substituting in the normalisations in equation~\eqref{eqn:nddefs} we obtain
+\begin{equation}
+  (1 + \dampc^2) \dmdt = - \mv \times \hv - \dampc \mv \times (\mv \times \hv).
+\end{equation}
+The field equations are obviously identical to those in equation~\eqref{eqn:nd-llg-full}.
+
+
+Alternatively the time variable could be normalised differently to remove the factor of $(1 + \dampc^2)$ by using
+\begin{equation}
+  t^* = \frac{1 + \dampc^2}{\gymagc M_s} t.
+\end{equation}
+This results in
+\begin{equation}
+  \dmdt = -\mxh -\dampc \mxmxh.
+\end{equation}
+However this means that time scale changes when switching between the two forms, making comparisons more difficult.
+
+\subsection{Boundary conditions}
+\label{sec:non-dim-boundary-conditions}
+
+The boundary conditions on the LLG are
+\begin{equation}
+  \Mv^* \times \pd{\Mv^*}{\nv*} = \frac{-1}{A} \Mv^* \times \pd{w_s^*}{\Mv^*}.
+\end{equation}
+Using the substitutions from above this becomes
+\begin{equation}
+  \begin{aligned}
+    \frac{M_s^2}{l} \mv \times \dmdn &= \frac{-2}{l^2 M_s^2 \mu_0} \frac{M_s W}{M_s} \mv \times \pd{w_s}{\mv}, \\
+    \mv \times \dmdn &= \frac{-2 W}{l \mu_0}  \mv \times \pd{w_s}{\mv}
+  \end{aligned}
+\end{equation}
+
+??ds not sure what to do next, not important since no surface anisotropy for me...
 
 
 
+\subsection{Energy}
+\label{sec:energy-calculations}
 
-% \subsection{Magnetostrictive Effects}
-% \label{sec:magstric-effects}
-% probably will never include this...
+Sometimes we may need to know the non-dimensional energy of a micromagnetic state in a form consistent with that used for the LLG equation. One example is for the computation of an effective damping constant, see section ??ds.
 
+We repeat the process used in \autoref{sec:land-lifsh-gilb-normalisation} to get a set of non-dimensionalised energy equations, starting from the equations given in \autoref{sec:energy-magnetic-body}:
 
-% \section{Limitations of Micromagnetics}
-% ??ds put in from another file when ready
+\begin{equation*}
+  \Eapp^* = - \mu_0 \int_{\magd} \Mv^* \cdot \Happ^* \d \magd^*,
+\end{equation*}
+\begin{equation}
+  \Ems^* =  \frac{-\mu_0}{2} \int_{\magd} \Mv^* \cdot \Hms^* \d \magd^*,
+\end{equation}
+\begin{equation*}
+  \Eex^* =  \Exchc \int_{\magd} (\nabla^* \mv)^2 \d \magd^*,
+\end{equation*}
+\begin{equation*}
+  \Eca^* =  -\Kone^* \int_\magd (\mv \cdot \ev)^2 \d \magd^*.
+\end{equation*}
+
+We substitute definitions~\eqref{eqn:nddefs}, \eqref{eqn:l-normalisation}, \eqref{k-normalisation} and $E^* = \nE e = \mu_0 M_s^2 l^d \, e$ where $d$ denotes the number of spatial dimensions:
+\begin{equation*}
+  \eapp = -\mu_0 M_s^2 l^d \frac{1}{\nE} \int_{\magd} \mv \cdot \happ \d \magd
+  = - \int_{\magd} \mv \cdot \happ \d \magd,
+\end{equation*}
+\begin{equation}
+  \ems = \frac{-\mu_0 M_s^2 l^d}{2} \frac{1}{\nE} \int_{\magd} \mv \cdot \hms \d \magd
+  = -\frac{1}{2} \int_{\magd} \mv \cdot \hms \d \magd,
+\end{equation}
+\begin{equation*}
+  \eex =  \frac{\mu_0 M_s^2 l^2}{2} \frac{l^d}{l^2} \frac{1}{\nE} \int_{\magd} (\nabla \mv)^2 \d \magd
+  = \frac{1}{2} \int_{\magd} (\nabla \mv)^2 \d \magd,
+\end{equation*}
+\begin{equation*}
+  \eca = - \frac{\mu_0 M_s^2}{2 } l^d \kone \frac{1}{\nE} \int_\magd (\mv \cdot \ev)^2 \d \magd
+  = \frac{-\kone}{2} \int_\magd (\mv \cdot \ev)^2 \d \magd.
+\end{equation*}
+Note that we have used
+\begin{equation}
+  \d \magd^* = \d (x^*)^d = l^d \d x^d = l^d \d \magd.
+\end{equation}
 
 
 %%% Local Variables:
