@@ -2,7 +2,7 @@
 \label{sec:numer-meth-micr}
 
 In this Chapter we give an overview of numerical methods that have previously been used in dynamic micromagnetic calculations.
-These calculations involve solving some form of the LLG (or sometimes a related equation to incorporate additional physics) with fields determined by energy derivatives as discussed in Chapter~\ref{sec:cont-micromag}.
+These calculations involve solving some form of the LLG (or sometimes a related equation to incorporate additional physics) with fields determined by energy derivatives as discussed in \autoref{sec:cont-micromag}.
 These systems of partial differential equations (PDEs) can only be solved analytically in a few extremely simple cases,\footnote{For example the Stoner-Wolfarth theory for the rotation of a single grain.\cite{Stoner1948a}}\cite{Aharoni1996} so numerical solutions are commonly required.
 
 Many numerical methods for solving non-linear PDEs, such as \eqref{eq:LLG}, can be thought of as a combination of various component methods which each handle different parts of the conversion from a differential equation to a sequence of add/multiply/divide operations which can be performed by a computer\footnote{Technically proofs of convergence etc. should be carried out for every combination of time and space discretisation\cite[pg. 382]{Iserles2009}; in practice suprises seem to be rare, at least within micromagnetics.}.
