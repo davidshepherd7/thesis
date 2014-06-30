@@ -496,7 +496,7 @@ The adaptive algorithm should oscillate the step size in time with the oscillati
   \label{fig:imr-osc-example}
 \end{figure}
 
-The ODE was solved with parameters $\omega = 2 \pi$ and $\beta = 0.5$, the results are shown in Figure~\ref{fig:imr-osc-example}.
+The ODE was solved with parameters $\omega = 2 \pi$ and $\beta = 0.5$, the results are shown in \autoref{fig:imr-osc-example}.
 All three methods have similar errors and time step sizes.
 The IMR method choses slighly smaller steps than TR (which probably explains the slightly lower error magnitudes.
 BDF2 has the worst errors as expected because its error coefficient is the largest.
@@ -507,7 +507,7 @@ Hence the fact that the errors increase above the tolerance is not suprising.
 Interestingly there is a slight lag on the time step response of the IMR method as time steps become larger.
 This could be due to the fact that IMR uses data from three previous steps in its LTE estimate, whereas the others only use two previous steps.
 
-In Figure~\ref{fig:imr-osc-example-scatter} we show plots of the decrease in (global) error norm as the tolerence is decreased. 
+In \autoref{fig:imr-osc-example-scatter} we show plots of the decrease in (global) error norm as the tolerence is decreased. 
 The consistent decreases of the error norms indicate that the all of the adaptive methods are able to control the error in the expected manner.
 Plots for other example problems are very similar and so are not shown.
 ??ds should I show it for order reduction case? Slightly interesting (but expected) that it controls error in the same way as BDF1.
@@ -539,7 +539,7 @@ Another test is the simple and commonly discussed stiff example function \cite{?
 This example will demonstrate that the single step of the eBDF method does not suffer from stability issues even in cases of extreme stiffness.
 The time steps should begin small but rapidly increase as the initial transient decays.
 
-The results of the applying the three methods to problem~\eqref{eqn:imr-test-stiff} with $\lambda = 100$ (fairly stiff) are shown in Figure~\ref{fig:imr-stiff-example}.
+The results of the applying the three methods to problem~\eqref{eqn:imr-test-stiff} with $\lambda = 100$ (fairly stiff) are shown in \autoref{fig:imr-stiff-example}.
 The behaviour of the three time integrators is essentially the same, indicating that our adaptive IMR has no issues with stiffness.
 
 \begin{figure}[h!]
@@ -583,7 +583,7 @@ As in the previous example we choose $\lambda = 100$.
   \label{fig:imr-order-reduction-example}
 \end{figure}
 
-The results are shown in Figure~\ref{fig:imr-order-reduction-example}. 
+The results are shown in \autoref{fig:imr-order-reduction-example}. 
 As expected the implicit midpoint rule selects time step sizes similarly to the first order BDF1 method due to order reduction.
 
 

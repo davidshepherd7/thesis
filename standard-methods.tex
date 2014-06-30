@@ -28,7 +28,7 @@ It should be noted that not all methods fit into this framework of independant m
 In particular one example which uses a combined space/time discretisation to obtain some interesting properties is discussed (briefly) in \autoref{sec:advanced-lin}.
 In general however, the increased modularity of ideas and code is useful.
 
-Diagrams showing how the various methods are related are given for space discretisation in Figure~\ref{fig:types-spat-discl}, time discretisation in Figure~\ref{fig:types-time-disc}, and magnetostatic field calculations in Figure~\ref{fig:types-mag-stat}.
+Diagrams showing how the various methods are related are given for space discretisation in \autoref{fig:types-spat-discl}, time discretisation in \autoref{fig:types-time-disc}, and magnetostatic field calculations in \autoref{fig:types-mag-stat}.
 
 \section{Spatial Discretisation}
 \label{sec:spat-discr}
@@ -38,7 +38,7 @@ Diagrams showing how the various methods are related are given for space discret
 
 ??ds does this really belong here? macropins kind of not micromagnetics...
 
-In a granular material (a material consisting of magnetic grains separated by a non-magnetic material%% , see Figure~\ref{fig:Layouts-for-magnetic}
+In a granular material (a material consisting of magnetic grains separated by a non-magnetic material%% , see \autoref{fig:Layouts-for-magnetic}
 ) the simplest way to discretise the problem is to assume that within each grain the exchange coupling is so strong that it rotates as a single \emph{macrospin}. We assign a single value of $\Mv$ to each macrospin and proceed to calculate energy, effective field and/or magnetisation of each macrospin as required. One caveat is that the magnetostatic self field is not automatically accounted for since there is no modelling of intra-grain effects. Hence it must be calculated and added separately to the magnetostatic interactions between grains. When applied like this the magnetostatic self field is often called the \emph{shape anisotropy} since it is dependant on the shape of the grain and acts very similarly to the magnetocrystalline anisotropy. The same approach may be used with any system in which there are a number of ``small'',\footnote{All dimensions of the bodies must be much smaller than the exchange length so that all magnetisation within the body is approximately parallel.} separate magnetic bodies with approximately uniform magnetisation inside the body.
 
 The obvious downside of a macrospin approach is that it only applies to fairly specific geometrical cases, although the case of a granular media has been of much interest for magnetic data storage. Additionally, if there are non-uniformities in magnetisation within the regions where it has been assumed constant the model may be inaccurate. However it is often simpler to construct a macrospin model than to use the methods described in \autoref{sec:sd-finite-diff-meth} and~\ref{sec:sd-finite-elem-meth}. Also the assumption that each grain has uniform magnetisation will reduce the number of calculations needed.
