@@ -4,7 +4,7 @@
 \label{sec:adaptive-imr}
 
 
-The implicit midpoint rule (IMR)is a well known time integration method\cite[pg. 204]{HairerNorsettWanner} with a number of favourable properties as discussed in Section~\ref{sec:fixed-step-implicit}.
+The implicit midpoint rule (IMR)is a well known time integration method\cite[pg. 204]{HairerNorsettWanner} with a number of favourable properties as discussed in \autoref{sec:fixed-step-implicit}.
 
 % It is an implicit Runge-Kutta method, but unlike most such methods it only requires a single fuction evaluation per time step (a ``one-leg-method''\cite[??ds]{Hairer..}), making it applicable in cases where multistep methods would typically be applied.
 
@@ -17,7 +17,7 @@ The implicit midpoint rule (IMR)is a well known time integration method\cite[pg.
 % Additionally, for linear problems, it is equivalent to the trapezoid rule which has the lowest possible local trunction error in an A-stable method\cite{??ds}.
 % For non-linear problems the local truncation error is more complex, but still small...
 
-It also has beneficial ``geometric integration'' properties when applied the Landau-Lifshitz-Gilbert equation, this is discussed in Section~\ref{sec:aimr-llg}. 
+It also has beneficial ``geometric integration'' properties when applied the Landau-Lifshitz-Gilbert equation, this is discussed in \autoref{sec:aimr-llg}. 
 Additionally it has energy conservation properties when applied to the Navier-Stokes equations \cite{Sanderse2013}.
 
 
@@ -106,7 +106,7 @@ Substituting equations~\eqref{eq:taylornp1} and \eqref{eq:taylorn} into equation
 There are two parts to this error: the first term (with $\yv'''_n$) is fairly standard in second order multistep time integrators.
 However the second term is more complex, applying a Taylor expansion approach here would result in a Jacobian-like matrix of derivatives of $\fv$ with respect to $\yv$.
 Hence we avoid expanding it further.
-See Section~\ref{sec:full-imr-lte-calculation} for details of the rest of the Taylor expansion, which also proves that IMR is indeed a second order method.
+See \autoref{sec:full-imr-lte-calculation} for details of the rest of the Taylor expansion, which also proves that IMR is indeed a second order method.
 
 The TR\cite[pg. 261]{GreshoSani} and BDF2\cite[pg. 715]{GreshoSani} methods are also second order, their local truncation errors are simpler:
 \begin{equation}
@@ -402,7 +402,7 @@ Additionally we impose a limitation on the maximum step size scaling to help imp
 ??ds this is still flakey, test things? Use reltol? Ask Matthias?
 
 A final modification is to include limitations on the step size that prevent issues with numerical accuracy.
-We assume that the equations being modelled are non-dimensionalised so that the initial Newton residual (see Section~\ref{sec:newt-raph}) is $\sim \order{\dtn}$ (The initial guess is the value at the previous step, the change in the solution value in one step should be of size somewhere around $\dtn$).
+We assume that the equations being modelled are non-dimensionalised so that the initial Newton residual (see \autoref{sec:newt-raph}) is $\sim \order{\dtn}$ (The initial guess is the value at the previous step, the change in the solution value in one step should be of size somewhere around $\dtn$).
 In this case the minimum time step we can take is approximately the Newton tolerance (otherwise the Newton method will converge ``early'' because the residual is small to begin with).
 Similarly the maximum time step we can take is $\sim \order{\frac{\texttt{newtontol}}{10^{-16}} = 10^{8}}$ before the Newton method will have difficulty converging due to numerical errors.
 
@@ -426,7 +426,7 @@ However for PDE solvers, and in particular for iterative PDE solvers there is li
 % parse.py -d ../experiments/parameter_sweeps/aimr_odes/ -p scatter-err-tols -s=-exact --scatter-split=-ts -d ../experiments/parameter_sweeps/aimr_odes_order_reduction/ -p scatter-err-dts --save-to-dir /home/david/Dropbox/phd/reports/ongoing-writeup/aimr --save-data-to-dir --ssh-mode
 
 In this Section we show the results of some initial testing of the adaptive IMR algorithm derived above on some simple ODE examples.
-Numerical experiments with the LLG equation are detailed in Section~\ref{sec:aimr-llg}.
+Numerical experiments with the LLG equation are detailed in \autoref{sec:aimr-llg}.
 
 
 \subsection{Implementation}

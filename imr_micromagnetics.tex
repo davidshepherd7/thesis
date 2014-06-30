@@ -14,7 +14,7 @@ The non-dimensional form of the Landau-Lifshitz-Gilbert equation is
 where $\hv$ is the effective field due to various effects depending on the system being modelled.
 It is mathematically equivalent to the Landau-Lifshitz equation (with slightly different non-dimensionalisation), however some derivations in this section are easier when starting with this form.
 
-The Landau-Lifshitz-Gilbert equation with constant applied field has certain fundamental properties (see Section~\ref{sec:prop-cont-llg} for a derivation of these properties):
+The Landau-Lifshitz-Gilbert equation with constant applied field has certain fundamental properties (see \autoref{sec:prop-cont-llg} for a derivation of these properties):
 \begin{itemize}
 \item Magnetisation length is constant.
 \item Energy is dissipated at a rate determined only by the damping constant.
@@ -23,7 +23,7 @@ The Landau-Lifshitz-Gilbert equation with constant applied field has certain fun
 In a varying applied field the Zeeman energy may vary independently of damping, which can drive other effects.
 However similar energy balance equations can still be derived.
 
-In contrast to most time integrators the implicit midpoint rule conserves the magnetisation length, conserves energy at zero damping in constant applied field and gives highly accurate energy dissipation in linear applied fields\cite{DAquino2005} (see Section~\ref{sec:prop-imr-llg} for details).
+In contrast to most time integrators the implicit midpoint rule conserves the magnetisation length, conserves energy at zero damping in constant applied field and gives highly accurate energy dissipation in linear applied fields\cite{DAquino2005} (see \autoref{sec:prop-imr-llg} for details).
 
 We have a number of reasons to believe that such improvements in the accuracy of these properties will translate into an improvement in the accuracy and robustness of the overall solver:
 \begin{itemize}
@@ -106,7 +106,7 @@ This is related to the use of the dot product and the $\ltwo$ inner product resp
 
 We now repeat the above procedures for the discrete form of the Landau-Lifshitz-Gilbert equation that results from the use of the implicit midpoint rule.
 
-As noted in Section~\ref{sec:extens-impl-odes} IMR is defined by the following substitutions:
+As noted in \autoref{sec:extens-impl-odes} IMR is defined by the following substitutions:
 \begin{align}
   \label{eq:55}
   \pd{\mv}{t} &\rightarrow \frac{\mv_{n+1} - \mv_n}{\dtn}, \\
@@ -142,7 +142,7 @@ Intuitively the conservation properties of the IMR discretisation come from the 
   \end{aligned}
 \end{equation}
 
-We can examine the change in magnetisation length similarly to in Section~\ref{sec:prop-cont-llg}: take the dot product with $\frac{\mv_{n+1} + \mv_n}{2}$ on both sides of~\eqref{eqn:disc-llg} and use~\eqref{eq:dot-cross-id} to get
+We can examine the change in magnetisation length similarly to in \autoref{sec:prop-cont-llg}: take the dot product with $\frac{\mv_{n+1} + \mv_n}{2}$ on both sides of~\eqref{eqn:disc-llg} and use~\eqref{eq:dot-cross-id} to get
 \begin{equation}
   \frac{\mv_{n+1} + \mv_n}{2} \cdot \frac{\mv_{n+1} - \mv_n}{\dtn} = 0.
 \end{equation}
@@ -161,7 +161,7 @@ We split the effective field into one operator containing the exchange, magnetos
   \label{eq:hop}
   \hv(\xv, t)[\mv(\xv)] = \hop [\mv(\xv)] + \happ(\xv, t).
 \end{equation}
-It can be shown (see Section~\ref{sec:linear-symm-field-operators}) that $\hop[\mv]$ is a linear symmetric operator on $\mv$ provided that there is no surface anisotropy and that the magnetocrystalline anisotropy is uniaxial (extensions may be possible.. not really checked).
+It can be shown (see \autoref{sec:linear-symm-field-operators}) that $\hop[\mv]$ is a linear symmetric operator on $\mv$ provided that there is no surface anisotropy and that the magnetocrystalline anisotropy is uniaxial (extensions may be possible.. not really checked).
 The applied field is not an operator at all so we treat it separately. The energy can be written using this operator (see \autoref{sec:energy-field-relation}) as
 \begin{equation}
   \label{eq:energy-hop}
@@ -172,7 +172,7 @@ We also expand $\mphapp$ into a midpoint-like form
   \mphapp = \frac{\happ(t_{n+1}) + \happ(t_n)}{2} + \order{\dtn^2 \spd{\happ}{t}}.
   \label{eq:happ-midpoint}
 \end{equation}
-For now we will assume that $\happ$ is linear within each step so that the error term is zero, for details about this see Section~\ref{sec:non-linear-applied}.
+For now we will assume that $\happ$ is linear within each step so that the error term is zero, for details about this see \autoref{sec:non-linear-applied}.
 
 Again in the same manner as the previous section we derive the change in energy of the discrete LLG by taking the $\ltwo$ inner product of equation~\eqref{eqn:disc-llg} with
 \begin{equation}
@@ -267,7 +267,7 @@ Efficient, fully-implicit solvers, as required to realise the full potential of 
 \label{sec:non-constant-step}
 
 It is well known that most adaptive schemes are not symplectic\cite[pg. 91]{Iserles2009} because they constantly change the nearby Hamiltonian that is followed by the symplectic integrator.
-Therefore the adaptive IMR is not expected to have the almost-symplectic property discussed in Section~\ref{??ds}
+Therefore the adaptive IMR is not expected to have the almost-symplectic property discussed in \autoref{??ds}
 
 
 

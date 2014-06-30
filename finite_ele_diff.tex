@@ -174,7 +174,7 @@ This can be solved to find the vector of unknown coefficients $\mathbf{c}$ which
 \section{Finite Elements in One Dimension}
 \label{sub:Actual-Finite-Elements}
 
-To create a useable implementation of the methodology derived in Section~\ref{Derivation-of-weighted-residuals} we must first define a set of basis functions $\tbf_\ndi$ for the space $V_{T}^{h}$ and a set of $\sbf_l$ for the space $V_S^h$. For simplicity we choose the two types of basis functions to be the same: $\sbf_l = \tbf_l$. This choice defines the Galerkin method (and often results in symmetric matrix $A$).\cite[pg. 215]{Zeinkiewicz1967}
+To create a useable implementation of the methodology derived in \autoref{Derivation-of-weighted-residuals} we must first define a set of basis functions $\tbf_\ndi$ for the space $V_{T}^{h}$ and a set of $\sbf_l$ for the space $V_S^h$. For simplicity we choose the two types of basis functions to be the same: $\sbf_l = \tbf_l$. This choice defines the Galerkin method (and often results in symmetric matrix $A$).\cite[pg. 215]{Zeinkiewicz1967}
 
 
 The overall aim is to approximate an arbitrary function at a finite set of \emph{nodes}, $x_\ndi$, by a linear combination of a finite set of simple functions, $\tbf_\ndi$. There are a variety of useful choices for $\tbf_\ndi$ but we will focus on a carefully constructed set of polynomials -- the Lagrange interpolation basis functions, defined as
@@ -325,7 +325,7 @@ The shape and test functions can also be chosen to be of quadratic, cubic or hig
 \subsection{Higher Dimensions}
 \label{sec:fem-higher-dimensions}
 
-The same basic method as given in Sections~\ref{Derivation-of-weighted-residuals} and \ref{sub:Actual-Finite-Elements} can be applied to two and three dimensional problems. Different polynomials for the shape/test functions must be chosen but the basic orthogonality property from equation~\eqref{eq:35} is kept. A larger variety of element shapes are possible -- typically triangular or quadrilateral elements are used in two dimensions and their higher dimension equivalents (tetrahedrons and ``bricks'') are used in three dimensions.
+The same basic method as given in \autoref{Derivation-of-weighted-residuals} and \autoref{sub:Actual-Finite-Elements} can be applied to two and three dimensional problems. Different polynomials for the shape/test functions must be chosen but the basic orthogonality property from equation~\eqref{eq:35} is kept. A larger variety of element shapes are possible -- typically triangular or quadrilateral elements are used in two dimensions and their higher dimension equivalents (tetrahedrons and ``bricks'') are used in three dimensions.
 
 
 %%% Local Variables:

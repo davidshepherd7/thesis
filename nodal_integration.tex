@@ -83,7 +83,7 @@ where $a,b,c,d$ are the values of shape functions at the integration points, $m_
 So given any $m_{z,0}$ we can solve the above expression to find an $m_{z,1}$ that satisfies the constraint.
 Since $m_z$ all magnetisation is along the $z$-axis in this example we can vary magnetisation length arbitraily while still satisfying the constraint.
 
-A similar expression is obtained if nodal magnetistations are chosen for the test function used in \eqref{eq:23} instead of the magnetisation function, as in Section~\ref{sec:weak-cons-absmv}.
+A similar expression is obtained if nodal magnetistations are chosen for the test function used in \eqref{eq:23} instead of the magnetisation function, as in \autoref{sec:weak-cons-absmv}.
 
 Finally it is interesting to note that if the magnetisation is constant in space at times $t_n$ and $t_{n+1}$ then the integral condition in equation~\ref{eq:23} \emph{is} sufficient to give conservation of the magnetisation length at nodes.
 
@@ -119,7 +119,7 @@ For example with reduced integration (and using that $\tbf_k(\xv_l) = \delta_{kl
 
 We now need to derive a suitable $\beta_l$.
 To do so we represent the quadrature scheme as an integral of an interpolating polynomial which matches the desired integration, then we rearrange the equation to find the weights \cite[pg. 480]{Kincaid2002}.
-In \texttt{oomph-lib} all integration is done in local co-ordinates (as discussed in Section~??ds), so we calculate weights applicable in this case.
+In \texttt{oomph-lib} all integration is done in local co-ordinates (as discussed in \autoref{sec:fem-integration-??ds}), so we calculate weights applicable in this case.
 
 A suitable polynomial for our case is the shape/test function for the node.
 So we have:
@@ -201,18 +201,18 @@ Combining equations~\eqref{eq:test-dmdt} and \eqref{eq:test-dmdt} results in
 \begin{equation}
   \intd{\mv_{n+1} \cdot \hv[\tm, \mvm]} = \intd{\mv_n \cdot \hv[\tm, \mvm]} - \dtn \dampc \intd{\dmdtm \cdot \dmdtm}.
 \end{equation}
-With zero applied field $\hv[t, \mv] = \hv[\mv]$ is a symmetrical linear operator on $\mv$ with respect to the inner product $\intd{\av \cdot \bv}$ (see \autoref{sec:energy-field-relation}), using this property in a similar manner to Section~\ref{sec:prop-imr-llg} we obtain
+With zero applied field $\hv[t, \mv] = \hv[\mv]$ is a symmetrical linear operator on $\mv$ with respect to the inner product $\intd{\av \cdot \bv}$ (see \autoref{sec:energy-field-relation}), using this property in a similar manner to \autoref{sec:prop-imr-llg} we obtain
 \begin{equation}
   \frac{1}{2}\intd{\mv_{n+1} \cdot \hv[\mv_{n+1}]} = \frac{1}{2}\intd{\mv_n \cdot \hv[\mv_n]} - \dtn \dampc \intd{\dmdtm \cdot \dmdtm}.
 \end{equation}
-But, as mentioned in Section~\ref{sec:prop-imr-llg} $\frac{1}{2}\intd{\mv \cdot \hv[\mv]}$ is the total micromagnetic energy of the domain (when $\happ = \zerov$), hence we have
+But, as mentioned in \autoref{sec:prop-imr-llg} $\frac{1}{2}\intd{\mv \cdot \hv[\mv]}$ is the total micromagnetic energy of the domain (when $\happ = \zerov$), hence we have
 \begin{equation}
   \e_{n+1} = \e_n - \dtn \dampc \intd{\dmdtm \cdot \dmdtm},
 \end{equation}
 which is the midpoint discretisation of the analytical energy loss rate given by equation~\eqref{eq:energy-decay}.
 In particular when $\dampc = 0$ the energy is conserved.
 
-The extension to the case with the applied field proceeds exactly as for the strong form of the LLG, as discussed in Section~\ref{sec:prop-imr-llg}.
+The extension to the case with the applied field proceeds exactly as for the strong form of the LLG, as discussed in \autoref{sec:prop-imr-llg}.
 The final result is
 \begin{equation}
   ??ds
@@ -223,7 +223,7 @@ The final result is
 
 \subsection{Numerical experiments on $\abs{\mv}$ conservation}
 
-We use the wave exact solution (see Section~\ref{wave-solution} for simplicity with examples in one and two dimensions.
+We use the wave exact solution (see \autoref{wave-solution} for simplicity with examples in one and two dimensions.
 
 \begin{figure}[ht!]
   \centering

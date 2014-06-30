@@ -28,7 +28,7 @@ By the uniqueness of solution for Poisson's equation with Dirichlet and/or Neuma
 
 \subsection{Problem Description}
 \label{sec:problem-description}
-Let $\phim^\inte$ be the value of $\phim$ (with subscripts as appropriate) close to the boundary $\boundd$ and just inside the magnetic domain  and $\phim^\exte$ the value of $\phim$ just outside the magnetic domain\footnote{More precisely $\phim^\inte(\xv) = \lim_{\xv \rightarrow \boundd} \phim(\xv)$ from inside the magnetic domain, $\phim^\exte(\xv) = \lim_{\xv \rightarrow \boundd} \phim(\xv)$ from outside the magnetic domain.} (see Figure~\ref{fig:BEM-geometry}).
+Let $\phim^\inte$ be the value of $\phim$ (with subscripts as appropriate) close to the boundary $\boundd$ and just inside the magnetic domain  and $\phim^\exte$ the value of $\phim$ just outside the magnetic domain\footnote{More precisely $\phim^\inte(\xv) = \lim_{\xv \rightarrow \boundd} \phim(\xv)$ from inside the magnetic domain, $\phim^\exte(\xv) = \lim_{\xv \rightarrow \boundd} \phim(\xv)$ from outside the magnetic domain.} (see \autoref{fig:BEM-geometry}).
 
 We have the following \emph{physical} conditions\footnote{Equations~\eqref{eq:2}-\eqref{eqn:phibound} come from the definition of $\phim$, requirement for finite total energy, $\Bv^\text{int} \cdot \nv = \Bv^\text{ext} \cdot \nv$ and ??ds respectively.} on the total magnetostatic potential $\phim$:
 \begin{equation}
@@ -171,7 +171,7 @@ The proofs given in Sternberg allow a finite number of sharp corners, \ie a poly
 \subsection{Application to Magnetostatic Calculations}
 \label{sec:appl-magn-calc}
 
-From Section~\ref{sec:double-layer-potent} we can see that conditions \eqref{eq:8}, \eqref{eq:5} and \eqref{eq:4} on $\phitwo$ are satisfied by a double layer potential with magnitude
+From \autoref{sec:double-layer-potent} we can see that conditions \eqref{eq:8}, \eqref{eq:5} and \eqref{eq:4} on $\phitwo$ are satisfied by a double layer potential with magnitude
 \begin{equation}
   \label{eq:24}
   \mu(\xv) = - \phione^\inte(\xv).
@@ -225,7 +225,7 @@ Here we have dropped the distinction between $\inte$ and $\exte$ since all exter
 \section{Discretisation}
 \label{sec:discretisation}
 
-The bulk equations~\eqref{eq:phi-bem-continuous} and the boundary condition on $\phione$, equation~\eqref{eq:phi1-bem-continuous-bc}, are identical to those discussed in Section~\ref{sec:magn-field-resid}.
+The bulk equations~\eqref{eq:phi-bem-continuous} and the boundary condition on $\phione$, equation~\eqref{eq:phi1-bem-continuous-bc}, are identical to those discussed in \autoref{sec:magn-field-resid}.
 As such the weak residual form, discretisation and Jacobian calculations are identical for these equations.
 Therefore all that remains to be discretised is the operator $\bm$. We let
 \begin{equation}
@@ -446,7 +446,7 @@ It is also sometimes useful to be able to use structured quadrilateral meshes fo
 Both of these approaches are impossible with the analytical formula above.
 It is likely that similar analytical results could be derived for each of these cases, but it is simpler and more general to use a numerical approach instead.
 
-As discussed in Section~\ref{sec:bem-singularity} the integral $I_G$ is non-singular, so no special techniques are needed for its integration (other than what is needed to attain good accuracy).
+As discussed in \autoref{sec:bem-singularity} the integral $I_G$ is non-singular, so no special techniques are needed for its integration (other than what is needed to attain good accuracy).
 As such an adaptive quadrature method can effectively calculate the integrals.
 Our algorithm is roughly as follows:
 \begin{enumerate}
@@ -514,7 +514,7 @@ Everything else proceeds as normal.
 \subsubsection{Jacobian structure}
 \label{sec:bem-jacobian-structure}
 
-As mentioned in Section~\ref{sec:discretisation} the pair of Poisson equations for the FEM/BEM method are essentially the same as those in Section~\ref{sec:galerk-meth-llg}.
+As mentioned in \autoref{sec:discretisation} the pair of Poisson equations for the FEM/BEM method are essentially the same as those in \autoref{sec:galerk-meth-llg}.
 The first difference is that there is no coupling from the auxilary potential $\phione$ to the LLG equations, and hence no corresponding $\Pm$ block.
 The second difference is that there is an additional coupling between the boundary values of the auxilary potential and the boundary values of the real potential $\phim$.
 
@@ -567,7 +567,7 @@ and
 \end{equation}
 
 
-It is worth noting that a slightly different Jacobian struture could be obtained by modifying the derivation in Section~\ref{sec:appl-magn-calc}.
+It is worth noting that a slightly different Jacobian struture could be obtained by modifying the derivation in \autoref{sec:appl-magn-calc}.
 Instead of using $\phim = \phione + \phitwo$ to eliminate $\phitwo$, we could have written $\hms = - \grad \phione - \grad \phitwo$.
 This would result in both of the potentials having a $\Pm$ block, but only one of them having a $\Qm$ block.
 It would also reduce the diagonal dominance of $\bm$, which is probably a bad thing ??ds check? are we sure?
@@ -668,7 +668,7 @@ Notes:
 \subsubsection{Jacobian structure}
 \label{sec:bem-jacobian-structure}
 
-Decoupling the system as discussed above means that we only need to solve the LLG system (as discussed in Section~\ref{sec:llg-jacobian}) along with two Poisson systems of size $\sim N$ (as given in Section~\ref{sec:poisson-jacobian}).
+Decoupling the system as discussed above means that we only need to solve the LLG system (as discussed in \autoref{sec:llg-jacobian}) along with two Poisson systems of size $\sim N$ (as given in \autoref{sec:poisson-jacobian}).
 Additionally we need to perform a single matrix multiply (of size $N_b$) to calculate the boundary conditions on the $\phim$ Poisson solve.
 
 
@@ -680,7 +680,7 @@ As discussed above we use a hierarchical matrix representation for the BEM opera
 Efficient solver strategies for Poisson systems are extremely well studied.
 An efficent and robust method for solving Poisson systems on unstructured grids is to use the method of conjugate gradients with a single V-cycle of algebraic multigrid as a preconditioner \cite[Chap. 2]{HowardElmanDavidSilvester2006}.
 
-Solver strategies for the LLG system are discussed in Section~\ref{??ds llg preconditioning}.
+Solver strategies for the LLG system are discussed in \autoref{??ds llg preconditioning}.
 
 
 %%% Local Variables:

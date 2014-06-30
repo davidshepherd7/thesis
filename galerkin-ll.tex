@@ -2,7 +2,7 @@
 \chapter{Galerkin's Method for the Landau-Lifshitz Equation}
 \label{sec:galerk-meth-ll}
 
-Similarly to section Section~\ref{sec:llg-initial-equations}.
+Similarly to section \autoref{sec:llg-initial-equations}.
 
 Final equations to be solved are... ??ds copy from appendix
 
@@ -42,7 +42,7 @@ First we reduce the derivative order in the simpler exchange term, $\mxex$:
       {m_1 \lap m_2 - m_2 \lap m_1 }}
   \notag
 \end{equation}
-Considering the first term of a single component of this we can use the same techniques as in Section~\ref{sec:magn-field-resid} to give
+Considering the first term of a single component of this we can use the same techniques as in \autoref{sec:magn-field-resid} to give
 \begin{align}
   \intd{(\tbf m_i) \lap m_j}
   &= \int_\boundd (\tbf m_i) \ddn{m_j} \d\boundd
@@ -90,7 +90,7 @@ and $\mv \cdot \mv = \abs{\mv} = 1$ to slightly reduce the complexity of $\mxmxe
   \mxmxex = \underbrace{\intd{\tbf \mv (\mv \cdot \lap \mv)}}_{\mxmxex_1} \;\;
   \underbrace{- \intd{\tbf \lap \mv}}_{\mxmxex_2}.
 \end{equation}
-Term $\mxmxex_2$ can again be dealt with by the same tricks as in Section~\ref{sec:magn-field-resid}:
+Term $\mxmxex_2$ can again be dealt with by the same tricks as in \autoref{sec:magn-field-resid}:
 \begin{equation}
   \left[ \mxmxex_2 \right]_i = -0 + \intd{\nabla \tbf \cdot \nabla m_i},
 \end{equation}
@@ -123,7 +123,7 @@ So finally we have the exchange contribution to the Landau-Lifshitz-Gilbert equa
 \section{Spatial Discretisation}
 \label{sec:spat-discr-resi}
 
-The next step is to discretise the residuals in space. As in Section~\ref{Derivation-of-weighted-residuals} and \ref{sub:Actual-Finite-Elements} we replace continuous variables and functions by a basis representation using a finite space of shape functions. We also replace the infinite spaces of test functions used so far by finite dimensional approximations.
+The next step is to discretise the residuals in space. As in \autoref{Derivation-of-weighted-residuals} and \ref{sub:Actual-Finite-Elements} we replace continuous variables and functions by a basis representation using a finite space of shape functions. We also replace the infinite spaces of test functions used so far by finite dimensional approximations.
 
 We choose the solution space to be the same as the test function space (except for boundary conditions), this choice makes our method a Galerkin method. We also choose the shape/test functions to be the same for all residuals/unknowns. So the infinite dimensional space used for all shape and test functions is $\sob^1(\magd)$ with appropriate boundary conditions.
 
@@ -170,7 +170,7 @@ Note that we could move the discretised values of the unknowns outside of the in
 
 Also note that we have $7N$ equations in $7N$ unknowns and each of the integrals in the equations can be evaluated only in terms of the shape/test functions, their derivatives, the outward unit normal vector and the Neumann boundary condition. Hence we have a system of algebraic equations which we can solve.
 
-As described in Section~\ref{sub:Actual-Finite-Elements} we can convert this ``global'' representation into a number of ``local'' representations -- one on each element. We first split the domain into $N_e$ elements. We then define the basis functions such that they are only non-zero on elements in which they are contained (\ie we are using a finite element method). Then the global residuals can be split into the local contributions each element which are easy to calculate since they only depend on nodes within the element.\footnote{Unfortunately this property will be lost to some extent when we introduce the hybrid FEM/BEM in Section~\ref{sec:hybr-finit-elem}.}
+As described in \autoref{sub:Actual-Finite-Elements} we can convert this ``global'' representation into a number of ``local'' representations -- one on each element. We first split the domain into $N_e$ elements. We then define the basis functions such that they are only non-zero on elements in which they are contained (\ie we are using a finite element method). Then the global residuals can be split into the local contributions each element which are easy to calculate since they only depend on nodes within the element.\footnote{Unfortunately this property will be lost to some extent when we introduce the hybrid FEM/BEM in \autoref{sec:hybr-finit-elem}.}
 
 Let $\magd_\eli$ represent the volume of element $e$, let $\boundd_\eli$ represent any part of the boundary of the element which is on $\boundd$ (nothing for most elements). Then the contribution of element $\eli$ to the residuals at node $\ndi$ is exactly as given above except that the integrations only need to be performed over $\magd_\eli$ and $\boundd_\eli$ rather than $\magd$ and $\boundd$. Also note that the sums only need to consider values of $k$ such that node $k$ is in element $\eli$ and that residual contributions only need to be calculated for nodes $\ndi$ such that node $\ndi$ is in element $\eli$.
 
@@ -180,7 +180,7 @@ Let $\magd_\eli$ represent the volume of element $e$, let $\boundd_\eli$ represe
 \section{Jacobian calculation}
 \label{sec:ll-jacobian-calculation}
 
-Similarly to calculations in Section~\ref{sec:llg-jacobian-calculation}.
+Similarly to calculations in \autoref{sec:llg-jacobian-calculation}.
 
 First note that the part of the residual corresponding to the double-cross-product exchange field term ($\mv \times \mv \times \lap \mv$) is more complex and cannot be written in terms of skew operators (as far as I can tell).
 We will calculate it separately later, but for now we write it as $\rexh$.

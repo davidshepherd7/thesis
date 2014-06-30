@@ -19,11 +19,11 @@ Our labelling of the domains is shown in Figure~\ref{fig:domain_labels}. We labe
 
 We start with the Gilbert form of the Landau--Lifshitz--Gilbert equation~\eqref{eq:Gilbert}, the sum of effective fields \eqref{eq:Heff}, the exchange field \eqref{eq:Hex} and the potential method for calculating the magnetostatic field \eqref{eq:Hms} \& \eqref{eq:nnphim}. Note that for simplicity from now on we do not explicitly specify when things are functions of $\xv$ and $t$.
 
-We choose the Gilbert form of the Landau--Lifshitz--Gilbert equation even though it is less immediately intuitive because it greatly reduces the complexity of all derivatations - the Landau--Lifshitz form contains a double cross product and has two terms containing the potentially complicated total field. A side effect of this choice is that explict timestepping schemes cannot be used (since the time dependence is defined implicitly), but as discussed in Section~\ref{sec:model-conclusions} we will always use implicit timestepping schemes anyway.
+We choose the Gilbert form of the Landau--Lifshitz--Gilbert equation even though it is less immediately intuitive because it greatly reduces the complexity of all derivatations - the Landau--Lifshitz form contains a double cross product and has two terms containing the potentially complicated total field. A side effect of this choice is that explict timestepping schemes cannot be used (since the time dependence is defined implicitly), but as discussed in \autoref{sec:model-conclusions} we will always use implicit timestepping schemes anyway.
 
 The applied field $\Happ$ is known. The crystalline anisotropy field $\Hca$ depends on the type of anisotropy in the magnetic material but it is always just an algebraic function of $\Mv$. For example the most commonly used case of perpendicular anisotropy (caused by hexagonal crystalline structure) gives equation~\eqref{eq:Hca}.
 
-After non-dimensionalisation (see Section~\ref{sec:land-lifsh-gilb-normalisation}) the Landau-Lifshitz-Gilbert equation with effective fields is given by
+After non-dimensionalisation (see \autoref{sec:land-lifsh-gilb-normalisation}) the Landau-Lifshitz-Gilbert equation with effective fields is given by
 \begin{equation}
   \begin{aligned}
     \dmdt &= - \mv \times \hv + \alpha \mv \times \dmdt, \\
@@ -36,14 +36,14 @@ After non-dimensionalisation (see Section~\ref{sec:land-lifsh-gilb-normalisation
 \section{Boundary conditions}
 \label{sec:galerkin-bound-cond}
 
-For now we consider the magnetostatic potential only within the magnetic domain, $\magd$, with Neumann or Dirichlet boundary conditions on the boundary, $\boundd$ (see Section~\ref{sec:hybr-finit-elem} for details of the extension to include the external region). We define $\boundd_D$ to represent the region of the boundary domain where a Dirichlet condition is imposed on the magnetostatic potential. Similarly we define $\boundd_\Neu$ to be the region of the boundary where a Neumann condition is imposed. So $ \nabla \phim(\xv) \cdot \nv = g_\Neu(\xv) \; \forall \xv \in \boundd_\Neu$ and $\phim(\xv) = g_D(\xv) \; \forall \xv \in \boundd_D$. Typically we will have either $\boundd_D = \boundd$ or $\boundd_\Neu = \boundd$. We also define the following function spaces for convenience
+For now we consider the magnetostatic potential only within the magnetic domain, $\magd$, with Neumann or Dirichlet boundary conditions on the boundary, $\boundd$ (see \autoref{sec:hybr-finit-elem} for details of the extension to include the external region). We define $\boundd_D$ to represent the region of the boundary domain where a Dirichlet condition is imposed on the magnetostatic potential. Similarly we define $\boundd_\Neu$ to be the region of the boundary where a Neumann condition is imposed. So $ \nabla \phim(\xv) \cdot \nv = g_\Neu(\xv) \; \forall \xv \in \boundd_\Neu$ and $\phim(\xv) = g_D(\xv) \; \forall \xv \in \boundd_D$. Typically we will have either $\boundd_D = \boundd$ or $\boundd_\Neu = \boundd$. We also define the following function spaces for convenience
 \begin{align}
   \label{eq:037}
   \Dfs & = \{ v \st v(\xv) \text{ satisfies the b.c. s } \; \forall \xv \in \boundd_D \}, \\
   \Dfs_0 &= \{ v \st v(\xv) = 0 \; \forall \xv \in \boundd_D \}.
 \end{align}
 
-Recall from Section~\ref{sec:magn-bound-cond} that we have a boundary condition on the magnetisation of the form
+Recall from \autoref{sec:magn-bound-cond} that we have a boundary condition on the magnetisation of the form
 \begin{equation}
   \label{eq:m-bc}
   \mv \times \dmdn = \av(\mv, \nv),
@@ -54,7 +54,7 @@ It turns out that this Neumann-like condition is exactly what is needed in the d
 
 \section{Conversion to Weak Form Residuals}
 
-We convert some of the above equations into their residual weak forms as described in Section~\ref{Derivation-of-weighted-residuals}.
+We convert some of the above equations into their residual weak forms as described in \autoref{Derivation-of-weighted-residuals}.
 Each residual equation used increases the complexity of our system of equations, hence we do not rewrite the simple equations for crystalline anisotropy effective field or for the magnetostatic field (in terms of $\phim$) as residuals.
 
 
@@ -70,7 +70,7 @@ The equation for the magnetostatic potential becomes \eqref{eq:phim} becomes:
 \end{gather}
 
 The above equation for calculating $\phim$ contains second order derivatives.
-We would like to reduce the order of these derivatives as discussed in Section~\ref{Derivation-of-weighted-residuals} to relieve the smoothness requirements on our solution.
+We would like to reduce the order of these derivatives as discussed in \autoref{Derivation-of-weighted-residuals} to relieve the smoothness requirements on our solution.
 We do this by ``transferring'' the derivatives onto the test functions \cite{HowardElmanDavidSilvester2006}.
 
 First we need the following identity\footnote{This can be easily derived by applying the product rule to $\nabla \cdot (v \nabla \phim)$.}
@@ -183,7 +183,7 @@ It can be shown that this is equivalent to
   I = - \int_\magd  \mv \times \threevec{\nabla \test_0 \cdot \nabla m_1}{\nabla \test_1 \cdot \nabla m_2}{\nabla \test_2 \cdot \nabla m_2} \d\magd 
   + \int_\boundd (\mv \times \dmdn) \cdot \testv \d\boundd,
 \end{equation}
-using similar techniques to those in Section~\ref{sec:magn-field-resid}. %??ds derivation in appendix? I've written it down in notebook begining 22/9/11 near the end.
+using similar techniques to those in \autoref{sec:magn-field-resid}. %??ds derivation in appendix? I've written it down in notebook begining 22/9/11 near the end.
 
 We write 
 \begin{equation} 
@@ -201,7 +201,7 @@ Non-zero surface anisotropy can be included easily by adding a boundary integral
 \section{Spatial Discretisation}
 \label{sec:spat-discr-resi}
 
-The next step is to discretise the residuals in space. As in Section~\ref{Derivation-of-weighted-residuals} and \ref{sub:Actual-Finite-Elements} we replace continuous variables and functions by a basis representation using a finite space of shape functions. We also replace the infinite spaces of test functions used so far by finite dimensional approximations.
+The next step is to discretise the residuals in space. As in \autoref{Derivation-of-weighted-residuals} and \ref{sub:Actual-Finite-Elements} we replace continuous variables and functions by a basis representation using a finite space of shape functions. We also replace the infinite spaces of test functions used so far by finite dimensional approximations.
 
 We choose the solution space to be the same as the test function space (except for boundary conditions), this choice makes our method a Galerkin method. We also choose the shape/test functions to be the same for all residuals/unknowns. So the infinite dimensional space used for all shape and test functions is $\sob^1(\magd)$ with appropriate boundary conditions.
 
@@ -255,7 +255,7 @@ Note that we could move the discretised values of the unknowns outside of the in
 
 Also note that we have $7N$ equations in $7N$ unknowns and each of the integrals in the equations can be evaluated only in terms of the shape/test functions, their derivatives, the outward unit normal vector and the Neumann boundary condition. Hence we have a system of algebraic equations which we can solve.
 
-As described in Section~\ref{sub:Actual-Finite-Elements} we can convert this ``global'' representation into a number of ``local'' representations -- one on each element. We first split the domain into $N_e$ elements. We then define the basis functions such that they are only non-zero on elements in which they are contained (\ie we are using a finite element method). Then the global residuals can be split into the local contributions each element which are easy to calculate since they only depend on nodes within the element.\footnote{Unfortunately this property will be lost to some extent when we introduce the hybrid FEM/BEM in Section~\ref{sec:hybr-finit-elem}.}
+As described in \autoref{sub:Actual-Finite-Elements} we can convert this ``global'' representation into a number of ``local'' representations -- one on each element. We first split the domain into $N_e$ elements. We then define the basis functions such that they are only non-zero on elements in which they are contained (\ie we are using a finite element method). Then the global residuals can be split into the local contributions each element which are easy to calculate since they only depend on nodes within the element.\footnote{Unfortunately this property will be lost to some extent when we introduce the hybrid FEM/BEM in \autoref{sec:hybr-finit-elem}.}
 
 Let $\magd_\eli$ represent the volume of element $e$, let $\boundd_\eli$ represent any part of the boundary of the element which is on $\boundd$ (nothing for most elements). Then the contribution of element $\eli$ to the residuals at node $\ndi$ is exactly as given in equations~\eqref{res:tintro}-\eqref{res:tllg} except that the integrations are performed over $\magd_\eli$ and $\boundd_\eli$ rather than $\magd$ and $\boundd$. Also note that the sums only need to consider values of $k$ such that node $k$ is in element $\eli$ and that residual contributions only need to be calculated for nodes $\ndi$ such that node $\ndi$ is in element $\eli$.
 
@@ -263,7 +263,7 @@ Let $\magd_\eli$ represent the volume of element $e$, let $\boundd_\eli$ represe
 \section{Time Discretisation}
 \label{sec:time-discretisation-resi}
 
-To deal with the time derivative in the residual we apply a time discretisation scheme (\ie we use the method of lines). As discussed in Section~\ref{sec:model-conclusions} we aim to use the implicit midpoint rule in our final model but other methods are useful for comparison.
+To deal with the time derivative in the residual we apply a time discretisation scheme (\ie we use the method of lines). As discussed in \autoref{sec:model-conclusions} we aim to use the implicit midpoint rule in our final model but other methods are useful for comparison.
 
 Let $\dtn$ be the time-step, let $\mv_k^\tl$ denote the value of $\mv_k$ at the $\tl$-th time-step, and consider only the value of $\mv_k$ at a single node. Then the mid-point method is defined by d'Aquino\cite{DAquino2005} as
 \begin{equation}

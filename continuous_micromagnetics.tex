@@ -53,7 +53,7 @@ We write the vector Laplacian as $\lap \Mv = (\lap M_x,\lap M_y, \lap M_z )$. Th
 \subsection{Magnetostatic Field}
 \label{sec:magnetostatic-field}
 
-Magnetic materials generate magnetic fields, which in turn affects the magnetic material. This type of field is also known as the demagnetising field since it tends to oppose the magnetisation of the body. The magnetostatic field, $\Hms$, can be calculated in two ways: an integral based method or a potential based method. These methods are discussed in Sections~\ref{sec:magstat-field-calc-inte} and \ref{sec:magstat-field-calc-pote} respectively.
+Magnetic materials generate magnetic fields, which in turn affects the magnetic material. This type of field is also known as the demagnetising field since it tends to oppose the magnetisation of the body. The magnetostatic field, $\Hms$, can be calculated in two ways: an integral based method or a potential based method. These methods are discussed in \autoref{sec:magstat-field-calc-inte} and \ref{sec:magstat-field-calc-pote} respectively.
 
 Once the self field has been calculated the energy contribution due to it is given by
 \begin{equation}
@@ -191,7 +191,7 @@ where $\dampc \neq \dampc_L$. Equation~\eqref{eq:Gilbert} can be rearranged into
   \dMdt = \frac{-\gymagc}{1 + \dampc^2} \Big[ (\MxH) + \frac{\dampc}{M_s} \Big(\Mv \times (\MxH) \Big) \Big].
 \end{equation}
 
-Equations~\eqref{eq:LL}, \eqref{eq:Gilbert} and \eqref{eq:LLG} link the unknown magnetisation vector as a function of time $\Mv(t)$ with the effective field $\Hv$. To determine $\Mv$ at an arbitrary time $t \neq 0$ we need to integrate one of the above equations with respect to time. This is usually done numerically by employing a time discretisation method as discussed in Section~\ref{sec:time-discretisation}.
+Equations~\eqref{eq:LL}, \eqref{eq:Gilbert} and \eqref{eq:LLG} link the unknown magnetisation vector as a function of time $\Mv(t)$ with the effective field $\Hv$. To determine $\Mv$ at an arbitrary time $t \neq 0$ we need to integrate one of the above equations with respect to time. This is usually done numerically by employing a time discretisation method as discussed in \autoref{sec:time-discretisation}.
 
 Note that there is no spatial dependence directly contained in equations~\eqref{eq:LL}, \eqref{eq:Gilbert} and \eqref{eq:LLG}. However the exchange effective field and magnetostatic field do contain spatial dependence, so usually the final equation to be solved after all substitutions really is a partial differential equation.
 
