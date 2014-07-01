@@ -93,26 +93,77 @@ An example of a complete solution is
 
 Then $\lap \mv = - \mv$ as required.
 
-\section{Wave-like solutions in an infinite domain}
+\section{Wave-like solution in an infinite domains}
+\label{sec:wave-like-solution}
 
 These solutions are taken from \cite{Jeong2014}, \cite{Fuwa2006}. It was originally published (as far as I can tell) in \cite{Lakshmanan1976} but in a much harder to understand form.
+For most parameters the solution is just a wave-like excitation in $m_x$ and $m_y$ whose oscillations are damped towards a uniform $m_z = \pm 1$ state over time.
 
-For an infinite magnetic domain. Let $a \in \real$, choose $l \in \integers$ so that the solution is periodic in a square/cube domain of unit size. Let $D$ be the dimension of the problem and $\lv$ the $D$ dimensional vector of l. Lte
+For an infinite magnetic domain (\ie periodic boundary conditions) of dimension $D$ choose some constant $c \in \real$ and $\kvec \in \real^D$.
+Write
 \begin{equation}
   \begin{aligned}
-    b(t) &= \pi^2 l^2 \dampc t, \\
-    d(t) &= \sqrt{\sin^2(a) + e^{2 D b(t)} \cos^2(a)}, \\
-    g(t) &= \frac{1}{\dampc} \log \left( \frac{d(t) + e^{D b(t)} \cos(a)}{1 + \cos(a)} \right).
+    \that(t) &= \frac{t}{1 + \dampc^2}, \\
+    b(t) &= \abs{\kvec}^2 \dampc \that(t), \\
+    d(t) &= \sqrt{\sin^2(c) + \cos^2(c)e^{2 b(t)}}, \\
+    g(t) &= \frac{1}{\dampc} \log \left( \frac{d(t) + \cos(c) e^{b(t)}}{1 + \cos(c)} \right).
   \end{aligned}
 \end{equation}
-
-Then the solution is:
+Then
 \begin{equation}
   \begin{aligned}
-    m_x &= \frac{1}{d(t)} \sin(a) \cos\left[\pi \l \cdot \xv + g(t) \right], \\
-    m_y &= \frac{1}{d(t)} \sin(a) \sin\left[\pi \l \cdot \xv + g(t) \right], \\
-    m_z &= \frac{1}{d(t)} \cos(a) e^{D b(t)}.
+    m_x(t) &= \frac{1}{d(t)} \sin(c) \cos\bigb{\kvec \cdot \xv + g(t) }, \\
+    m_y(t) &= \frac{1}{d(t)} \sin(c) \sin\bigb{\kvec \cdot \xv + g(t) }, \\
+    m_z(t) &= \frac{1}{d(t)} \cos(c) e^{b(t)},
   \end{aligned}
 \end{equation}
+is a solution of the Landau-Lifshitz-Gilbert equation with $\heff = \lap \mv$.
+
+The rescaling of time given by $\that(t)$ is needed to convert from a solution of the Landau-Lifshitz equation \eqref{eq:ll-nd-simpler} to a solution of the Landau-Lifshitz form of the Landau-Lifshitz-Gilbert equation \eqref{eq:ll-nd-llglike}, \ie to account for the correction to the form of the damping as introduced by Gilbert.
+
+The function $d(t)$ is a normalisation parameter to keep $\abs{\mv(\xv, t)} = 1$ everywhere.
+To see this note that $\sin^2(c) \cos^2\bigb{f(\xv)} + \sin^2(c) \sin^2\bigb{f(\xv)} = \sin^2(c)$, so the length contribution of the $x$ and $y$ terms is $\sin^2(c)$.
+
+The vector $\kvec$ is the wave vector, it determines the direction and speed of propagation of the wave.
+
+The parameter $c$ represents in some way the fraction of the initial magnetisation which takes part in the oscillations.
+If $c = 0$ then $m_x, m_y = 0$ and there is no wave. 
+
+\begin{figure}
+  \centering
+  \includegraphics[width=0.8\textwidth]{plots/wave_exact_solution_parameters/exact_solution_parameters.pdf}
+  \caption{One dimensional wave solution values over time at $x=0$ with $k = 2\pi$, $\dampc = 0.05$ and various $c$ well away from $\frac{\pi}{2}$.}
+  \label{fig:wave-solution-vary-c}
+\end{figure}
+
+\autoref{fig:wave-solution-vary-c} shows the effect of increasing $c$ on the evolution of the magnetisation at $\xv = 0$ in one dimension and with $k = 2\pi$ and $\dampc = 0.05$.
+As $c$ the initial value of $m_z$ decreases and the amplitude of the oscillations in $m_x$ and $m_y$ increase.
+
+As $c$ approaches $\frac{\pi}{2}$ the behaviour becomes more complex, this is shown in \autoref{fig:wave-solution-vary-c-complex}.
+Essentially there is an additional initial exponential decay towards a state with moderate $m_z$, after which the dynamics are similar to the lower-$c$ case.
+At $c=\frac{\pi}{2}$ then $\mv(\xv, t)= (\cos(\kv\cdot\xv), \sin(\kv\cdot\xv), 0)$ and there are no dynamics.
+Above $c=\frac{\pi}{2}$ the initial $m_z$ goes negative and the behaviour is symmetrical with that below $c=\frac{\pi}{2}$
+
+\begin{figure}
+  \centering
+  \includegraphics[width=0.8\textwidth]{plots/wave_exact_solution_parameters/exact_solution_parameters_complex.pdf}
+  \caption{One dimensional wave solution values over time at $x=0$ with $k = 2\pi$, $\dampc = 0.05$ and $c$ approaching the critical value $\frac{\pi}{2}$.}
+  \label{fig:wave-solution-vary-c-complex}
+\end{figure}
 
 
+In the limit of $\dampc \goesto 0+$ the solution becomes\cite{Fuwa2006}:
+\begin{equation}
+  \begin{aligned}
+    m_x &= \sin(c) \cos\bigb{\kvec \cdot \xv + \abs{\kvec}^2 \cos(a) t}, \\
+    m_y &= \sin(c) \sin\bigb{\kvec \cdot \xv + \abs{\kvec}^2 \cos(a) t}, \\
+    m_z &= \cos(c).
+  \end{aligned}
+\end{equation}
+This is just a simple wave in space and time.
+
+
+%%% Local Variables:
+%%% mode: latex
+%%% TeX-master: "main"
+%%% End:

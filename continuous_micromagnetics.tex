@@ -318,13 +318,14 @@ So the final system of equations is
 
 The dimensional Landau-Lifshitz equation is given in equation~\eqref{eq:LLG}:
 \begin{equation}
-  \label{eq:LLG-dim}
+  \label{eq:ll-nd}
   (1 + \dampc^2) \pd{\Mv^*}{t^*} = - \gymagc \Mv^* \times \Hv^*
   - \frac{\gymagc \dampc}{M_s} \Mv^* \times (\Mv^* \times \Hv^*).
 \end{equation}
 The non-dimensionalisation process is essentially the same as for the Gilbert form, by substituting in the normalisations in equation~\eqref{eqn:nddefs} we obtain
 \begin{equation}
   (1 + \dampc^2) \dmdt = - \mv \times \hv - \dampc \mv \times (\mv \times \hv).
+  \label{eq:ll-nd-llglike}
 \end{equation}
 The field equations are obviously identical to those in equation~\eqref{eqn:nd-llg-full}.
 
@@ -336,6 +337,7 @@ Alternatively the time variable could be normalised differently to remove the fa
 This results in
 \begin{equation}
   \dmdt = -\mxh -\dampc \mxmxh.
+  \label{eq:ll-nd-simpler}
 \end{equation}
 However this means that time scale changes when switching between the two forms, making comparisons more difficult.
 
