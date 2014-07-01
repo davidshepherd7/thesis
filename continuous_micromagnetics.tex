@@ -132,8 +132,8 @@ The general aim of a micromagnetic model is to predict the behaviour of a magnet
     \node[block] {\textbf{Micromagnetics models}}
     child {node[block] {Energy Based}}
     child {node[block] {Dynamic}
-      child {node[block] {Landau--Lifshitz Equation}}
-      child {node[block] {Landau--Lifshitz--Gilbert Equation}}
+      child {node[block] {Landau-Lifshitz Equation}}
+      child {node[block] {Landau-Lifshitz-Gilbert Equation}}
     };
   \end{tikzpicture}
   \caption{Possible approaches of a standard numerical micromagnetic model.}
@@ -168,18 +168,18 @@ However equation~\eqref{eq:38} implies that the precession motion is undamped, \
   \label{eq:LL}
   \dMdt = - \gymagc \Mv \times \Hv - \frac{\dampc \gymagc}{M_s} \Big( \Mv \times (\Mv \times \Hv) \Big),
 \end{equation}
-where $\dampc$ is an experimentally determined material parameter related to the strength of the damping. Equation~\eqref{eq:LL} is referred to as the Landau--Lifshitz.\cite{Landau1935} The effects of the precession and damping terms are shown in \autoref{fig:LLG-terms}.
+where $\dampc$ is an experimentally determined material parameter related to the strength of the damping. Equation~\eqref{eq:LL} is referred to as the Landau-Lifshitz.\cite{Landau1935} The effects of the precession and damping terms are shown in \autoref{fig:LLG-terms}.
 
 \begin{figure}[ht!]
   \centering
   \includegraphics[width=0.6\textwidth]{./images/LLG-terms}
-  \caption{The effects of the precession and damping terms in the Landau--Lifshitz and Landau--Lifshitz--Gilbert equations on the magnetisation direction, $\Mv$, of a single magnetic moment with a constant effective field
+  \caption{The effects of the precession and damping terms in the Landau-Lifshitz and Landau-Lifshitz-Gilbert equations on the magnetisation direction, $\Mv$, of a single magnetic moment with a constant effective field
 .}
   \label{fig:LLG-terms}
 \end{figure}
 
 However, there are still problems with this equation: for large damping the overall speed of the
-motion increases without any increase in the precession speed. Hence the damping dominates and the switching time increases as damping is increased which is physically incorrect.\cite{Mallinson1987} There is another form of equation~\eqref{eq:LL} due to Gilbert\cite{Gilbert2004}, called the Landau--Lifshitz--Gilbert equation, which does not suffer from this problem
+motion increases without any increase in the precession speed. Hence the damping dominates and the switching time increases as damping is increased which is physically incorrect.\cite{Mallinson1987} There is another form of equation~\eqref{eq:LL} due to Gilbert\cite{Gilbert2004}, called the Landau-Lifshitz-Gilbert equation, which does not suffer from this problem
 \begin{equation}
   \label{eq:Gilbert}
   \dMdt = - \gymagc \Mv \times \Hv + \frac{\dampc}{M_s} (\Mv \times \dMdt),
@@ -236,7 +236,7 @@ So the final boundary condition is simply
 \subsection{The Landau-Lifshitz-Gilbert equation}
 \label{sec:land-lifsh-gilb-normalisation}
 
-We start from the Landau--Lifshitz--Gilbert equation with the magnetostatic, applied, exchange and magnetocrystalline (effective) fields. 
+We start from the Landau-Lifshitz-Gilbert equation with the magnetostatic, applied, exchange and magnetocrystalline (effective) fields. 
 \begin{align}
   \pd{\Mv^*}{t^*} &= - \gymagc \Mv^* \times \Hv^* + \frac{\alpha}{M_s} \Mv^* \times \pd{\Mv^*}{t^*}, \label{eqn:llgnd} \\
   \Hv^* &= \Happ^* - \nabla^* \phi^* + \frac{2\Exchc^*}{\mu_0 M_s} \nabla^{*2} \mv + \frac{2\Kone^*}{\mu_0 M_s} (\mv \cdot \ev) \ev,
@@ -267,7 +267,7 @@ Combining equation~\eqref{eqn:llgnd} with the definitions~\eqref{eqn:nddefs} giv
   - \gymagc M_s^2 \mv \times \hv + \frac{\alpha}{M_s} \gymagc M_s^3 \mv \times \dmdt,
 \end{equation}
 
-cancelling the various constants results in the non-dimensionalised Landau--Lifshitz--Gilbert equation
+cancelling the various constants results in the non-dimensionalised Landau-Lifshitz-Gilbert equation
 \begin{equation}
   \label{eq:53}
   \dmdt = - (\mv \times \hv) + \alpha (\mv \times \dmdt).
