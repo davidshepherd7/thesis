@@ -31,8 +31,11 @@ where $\testv = \threevec{\test}{\test}{\test}$ and $\test \in \ts$ is a scalar 
 \newsubcommand{\mvm}{\midpoint{\mv}}{n}
 \newcommand{\tm}{\midpoint{t}_n}
 
+\newcommand{\pdsub}[3]{\mathrlap{\pd{#1\mathrlap{_{#2}}}{#3}}\phantom{\pd{#1_{#2}}{#3}}}
 \newcommand{\dtop}{\delta}
-\newcommand{\dmdtm}{\dtop \mv_n}
+\newcommand{\dmdtm}{\pdsub{\mv}{n}{t}}
+\newcommand{\dmdtml}{\pdsub{\mv}{n,l}{t}}
+\newcommand{\dmdtmj}{\pdsub{\mv}{n,j}{t}}
 
 % To simplify the notation we use inner product notation for the integral of a dot product:
 % \begin{equation}
@@ -94,7 +97,7 @@ The proof of energy conservation does not fail directly.
 However, non-constant magnetisation length means that the derivation of the boundary condition is no longer applicable (??ds check this, non-constant |m| should destroy Neumann condition therefore symmetry is gone).
 Hence the effective field is no longer symmetrical and the proof of energy conservation no longer applies.
 
-\subsection{Nodal integration}
+\subsection{A nodal integration scheme}
 
 In order to regain conservation properties in a weak-form-based method we introduce a nodal integration scheme based on that used by Bartels et. al.\cite{Bartels2006}:
 \begin{equation}
@@ -114,14 +117,13 @@ For example with reduced integration (and using that $\tbf_k(\xv_l) = \delta_{kl
   \end{aligned}
 \end{equation}
 
-
-\subsubsection{Derivation of weights}
+% \subsubsection{Derivation of weights for local integration}
 
 We now need to derive a suitable $\beta_l$.
-To do so we represent the quadrature scheme as an integral of an interpolating polynomial which matches the desired integration, then we rearrange the equation to find the weights \cite[pg. 480]{Kincaid2002}.
-In \texttt{oomph-lib} all integration is done in local co-ordinates (as discussed in \autoref{sec:fem-integration-??ds}), so we calculate weights applicable in this case.
+To do so we represent the quadrature scheme as an integral of an interpolating polynomial which matches the desired integration scheme, then we rearrange the equation to find the weights (see, \eg \cite[pg. 480]{Kincaid2002}).
+In \texttt{oomph-lib} all integration is done in local co-ordinates (as discussed in \autoref{sec:fem-integration-??ds}), so we now calculate weights applicable in this case.
 
-A suitable polynomial for our case is the shape/test function for the node.
+A suitable quadrature-interpolation-polynomial for our case is the shape/test function for the node.
 So we have:
 \begin{equation}
 \label{eq:nodal-quad-weights}
@@ -132,13 +134,24 @@ So we have:
   \end{aligned} 
 \end{equation}
 where $J_l =  \evalat{\pd{\sv}{\xv}}_{\sv=\sv_l}$ is the Jacobian of the transformation from local to global coordinates evaluated at the $l$-th integration point.
-So 
 Comparing \eqref{eq:nodal-integration} with \eqref{eq:nodal-quad-weights} we see that
 \begin{equation}
   \beta_l =  \int_{\magd_e} \tbf_l(\sv)  \d \sv.
 \end{equation}
-
 The equivalent weight for global integration is $\beta_l = \int_{\magd} \tbf_l(\xv) \d \xv$, as used by Bartels \etal\cite{Bartels2006}.
+
+If $f(\sv)$ is a linear polynomial then our nodal quadrature scheme is exact.
+However most terms in the LLG residual are higher order, due to them containing one or more interpolated terms (each a linear polynomial) mulitiplied by a test function (also a linear polynomial).
+An exception is the exchange residual, \eg the $x$-component:
+\begin{equation}
+  \begin{aligned}
+    \rex_{,x} = - \intd{ m_y \bigb{\grad \tbf \cdot \grad m_z}} + \intd{ m_z \bigb{\grad \tbf_n \cdot \grad m_y}},
+  \end{aligned}
+\end{equation}
+which is linear because the gradient terms are constants ($m_i$ and $\tbf_n$ are linear polynomials so their derivatives are constant).
+Hence the exchange term is integrated exactly.
+
+
 
 \subsection{Conservation of $\abs{\mv}$ at nodes}
 \label{sec:weak-cons-absmv}
@@ -148,11 +161,9 @@ Starting from the IMR discretised weak form of the LLG \eqref{eq:weak-llg-imr}:
   \intd{\dmdtm \cdot \testv + (\mvm \times \hv[\tm, \mvm]) \cdot \testv - \dampc (\mvm \times \dmdtm) \cdot \testv }= 0, \quad \forall \testv .
 \end{equation}
 
-\newcommand{\dmdtml}{\dtop \mv_{n,l}}
-\newcommand{\dmdtmj}{\dtop \mv_{n,j}}
-
 We examine the choice of the test function as the midpoint nodal value of $\mv$ at node j multiplied by the $j$th test basis function, $\testv = \mvm_{,j} \tbf_j$.
 This choice is clearly in the vector space of test functions because it is simply a constant multiple of a basis function.
+The resulting 
 \begin{equation}
   \sum_l \beta_l \bigs{\dmdtml \cdot \mvm_{,j}\tbf_j(\xv_l) + (\mvm_{,l} \times \hv[\tm, \mvm_{,l}]) \cdot \mvm_{,j}\tbf_j(\xv_l) - \dampc (\mvm_{,l} \times \dmdtml) \cdot \mvm_{,j}\tbf_j(\xv_l)} = 0.
 \end{equation}
