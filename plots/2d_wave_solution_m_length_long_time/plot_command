@@ -1,0 +1,1 @@
+/home/david/oomph-lib/user_drivers/micromagnetics/control_scripts/parse.py -d /mnt/moredata/optoomph/user_drivers/micromagnetics/experiments/parameter_sweeps/long_time_imr_2d_wave -p ml-only --save-to-dir /home/david/writeup/ongoing-writeup/plots/2d_wave_solution_m_length_long_time --thesis -p trace -p err

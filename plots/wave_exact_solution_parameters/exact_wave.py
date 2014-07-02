@@ -63,7 +63,7 @@ def generate_animations():
 
     fig2 = plt.figure()
 
-    s = make_solution(1, 2*pi, 0.1, pi/4)
+    s = make_solution(1, 2*pi, 0.01, pi/3)
 
     xs = sp.linspace(0, 1, 50)
     ts = sp.linspace(0, 10, 1000)
@@ -95,7 +95,7 @@ def main():
 
 
 
-    # fig2 = generate_animations()
+    fig2 = generate_animations()
         
     plt.show()
     
