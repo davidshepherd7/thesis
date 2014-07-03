@@ -110,8 +110,30 @@
   firstinits=true, % Only print initials of first names
   isbn=false,
   doi=false,
-  %% dashed=false % never replace repeated author names by _____
+  url=true, % for websites, see below for removing it from papers etc.
 ]{biblatex}
+
+% clear urls for papers, proceedings, books
+\AtEveryBibitem{%
+  \ifentrytype{article}{%
+    \clearfield{url}%
+    \clearfield{urldate}%
+  }
+  {}% no "else" operation
+  %
+  \ifentrytype{inproceedings}{%
+    \clearfield{url}%
+    \clearfield{urldate}%
+  }
+  {}% no "else" operation
+  % 
+  \ifentrytype{book}{%
+    \clearfield{url}%
+    \clearfield{urldate}%
+  }
+  {}% no "else" operation
+}
+
 
 % Add bibtex files
 \addbibresource{websites.bib}
