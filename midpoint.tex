@@ -1,114 +1,143 @@
 
+% ??ds make sure TR and BDF2 are mentioned before this chapter or add refs here!
+% ??ds similarly for "semi-discretised"
 
 \chapter{An adaptive implicit-midpoint-rule time-integrator}
 \label{sec:adaptive-imr}
 
 
-The implicit midpoint rule (IMR)is a well known time integration method\cite[pg. 204]{HairerNorsettWanner} with a number of favourable properties as discussed in \autoref{sec:fixed-step-implicit}.
-
-% It is an implicit Runge-Kutta method, but unlike most such methods it only requires a single fuction evaluation per time step (a ``one-leg-method''\cite[??ds]{Hairer..}), making it applicable in cases where multistep methods would typically be applied.
-
-% It is A-stable, meaning that it has unconditional stability for the standard test ODE.
-
-% It has no spurious modes, meaning that it does not incorrectly cause the damping out of oscillations in the solution (like TR but unlike BDF methods).
-
-% If does not suffer from ``ringing'' errors--non-physical oscillations in the solution which can cause difficulties with large time steps \cite{silvester etc. stab-TR}.
-
-% Additionally, for linear problems, it is equivalent to the trapezoid rule which has the lowest possible local trunction error in an A-stable method\cite{??ds}.
-% For non-linear problems the local truncation error is more complex, but still small...
-
-It also has beneficial ``geometric integration'' properties when applied the Landau-Lifshitz-Gilbert equation, this is discussed in \autoref{sec:aimr-llg}. 
-Additionally it has energy conservation properties when applied to the Navier-Stokes equations \cite{Sanderse2013}.
+The implicit midpoint rule (IMR) is a well known time integration method with a number of favourable properties when applied to standard ordinary differential equations\cite[pg. 204]{HairerNorsettWanner}.
+It also has beneficial ``geometric integration'' properties when applied the Landau-Lifshitz-Gilbert equation (discussed in \autoref{sec:aimr-llg}) and energy conservation properties when applied to the semi-discretised Navier-Stokes equations \cite{Sanderse2013}.
+However IMR belongs to the implicit Runge-Kutta family of methods, and as such it is a non-trivial task to create an efficient adaptive time step selection algorithm.
+In this \secpaper{} we describe a novel adaptive IMR algorithm based on estimates of the local truncation error by a predictor step.
 
 
-In this \secpaper{} we describe an efficient adaptive time step selection algorithm for the implicit midpoint rule. To our knowledge this is the first such algorithm.
-
-\section{Fixed step implicit midpoint rule}
+\section{Implicit midpoint rule with fixed step size}
 \label{sec:fixed-step-implicit}
 
-Let $\yv(t)$ be a vector function, let $\yv_n$ denote an estimate to $\yv(t)$ at $t = t_n$.
+Let $\yv(t)$ be a vector function and denote an approxmimation to $\yv(t)$ at $t = t_n$ by $y_n$.
 Let $\dtn = t_{n+1} - t_n$ be the $n$th time step (or just ``step'').
-Then given a system of equations of the form
+Then given a system of ordinary differential equations (ODEs) of the form
 \begin{equation}
-  \yv'(t) = \fv(t, \yv(t)),
+  \yv'(t) = \ffv{t, \yv(t)},
   \label{eq:43}
 \end{equation}
 the implicit midpoint rule (IMR) is
 \begin{equation}
-    \yv_{n+1} = \yv_n + \dtn \fv(\frac{t_{n+1} + t_n}{2}, \frac{\yv_n + \yv_{n+1}}{2}).
-    \notag
+    \yv_{n+1} = \yv_n + \dtn \ffv{\frac{t_{n+1} + t_n}{2}, \frac{\yv_n + \yv_{n+1}}{2}}.
 \end{equation}
-We write
+
+We introduce notation for the midpoint values of $t$ and $\yv$:
 \begin{equation}
   \begin{aligned}
-    \frac{t_{n+1} + t_n}{2} &= \thf, \\
-    \frac{\yv_{n+1} + \yv_n}{2} &= \yvm,
+    \thf & = \frac{t_{n+1} + t_n}{2}, \\
+    \yvm &= \frac{\yv_{n+1} + \yv_n}{2}.
   \end{aligned}
 \end{equation}
-for readability, giving
+In this notation the IMR is
 \begin{equation}
-  \yv_{n+1} = \yv_n + \dtn \fv(\thf, \yvm).
+  \yv_{n+1} = \yv_n + \dtn \ffv{\thf, \yvm}.
   \label{eq:basic-midpoint}
 \end{equation}
 
-Note that unlike multistep methods, such as the second order backwards difference (BDF2), this is valid for both constant and variable step sizes because there is no dependence on previous steps.
+The IMR can also be written in the standard form for Runge-Kutta methods as
+\begin{equation}
+  \begin{aligned}
+    k_1 &= \ffv{t_n + \frac{1}{2} \dtn, \yv_n + \frac{1}{2} k_1}, \\
+    \yv_{n+1} &= \yv_n + 1 \cdot \dtn k_1,
+  \end{aligned}
+\end{equation}
+or using a Butcher tableu \cite[pg. 135]{HairerNorsettWanner} as shown in \autoref{tab:butcher-imr}.
 
-Next we discuss some properties of IMR as applied to ODEs and compare them to some other widely used time integration methods.
-The other methods we compare with are BDF2 and the trapezoid rule (TR), because they have very similar stability, accuracy and computational cost to IMR.
-All three are sufficiently stable and accurate for general use in PDE applications.
+\begin{table}
+  \begin{equation*}
+    \begin{array}{c|c}
+      \frac{1}{2}  &     \frac{1}{2}  \\
+      \hline
+                   & 1 \\
+    \end{array}
+  \end{equation*}
+  \caption{The Butcher tableu for the implicit midpoint rule.}
+  \label{tab:butcher-imr}
+\end{table}
+
+Note that unlike multistep methods, such as the second order backwards difference (BDF2), \eqref{eq:basic-midpoint} is valid for both constant and variable step sizes because there is no dependence on previous steps.
+
+Next we discuss some properties of IMR applied to ODEs and compare them to some other widely used time integration methods.
+We compare with BDF2 and the trapezoid rule (TR), because they have very similar stability, accuracy and computational cost to IMR.
+All three are sufficiently stable and accurate for general use in PDE applications. ??ds citation, explination?
+
 
 \subsection{Local truncation error and order}
 \label{sec:deriv-local-trunc}
 
-The local truncation error (LTE) of a time integration scheme is the error due a single integration step.
-It can be calculated by substituting $\yv_n = \yv(t_n)$ into the approximation for the next time-step then subtracting the result from the exact solution at the next time-step, $\yv(t_{n+1})$.
+The local truncation error (LTE) of a time integration scheme is the error due to a single integration step.
+It can be calculated by substituting $\yv_n = \yv(t_n)$ into the approximation for the next time-step then subtracting the result from the exact solution at the next time-step, $\yv(t_{n+1})$. 
+\ie
+\begin{equation}
+  \lte = \yv(t_{n+1}) - \hat{\yv}_n,
+\end{equation}
+where the history values ($\yv_{n-1}, \yv_{n-2}, \ldots$) used to calculate $\hat{\yv}_n$ are exact.
+??ds can we write this more rigorously? Write $y_n$ as a function of history values?
 
 Using this definition the local truncation error of IMR is
-\begin{align}
-  \lte^\imr &=  \yv(t_{n+1}) - \yv(t_n) - \dtn \fv\left( \thf, \frac{\yv(t_n) + \yv_{n+1}^\imr}{2} \right).
-              \label{eq:trunc-start}
-\end{align}
+\begin{equation}
+  \lte^\imr =  \yv(t_{n+1}) - \yv(t_n) - \dtn \ffv{\thf, \frac{\yv(t_n) + \yv_{n+1}^\imr}{2}}.
+  \label{eq:trunc-start}
+\end{equation}
 
 It is important to distinguish the local truncation error from the global (temporal) error
 \begin{equation}
   \label{eq:global-temporal-error}
   \begin{aligned}
     E_n^\imr &= \yv(t_{n+1}) - \yv_{n+1}^\imr, \\
-    &=  \yv(t_{n+1}) - \yv_n^\imr - \dtn \fv\bigb{ \thf, \frac{\yv_n^\imr + \yv_{n+1}^\imr}{2} }
+    &=  \yv(t_{n+1}) - \yv_n^\imr - \dtn \ffv{ \thf, \frac{\yv_n^\imr + \yv_{n+1}^\imr}{2} }.
   \end{aligned}
 \end{equation}
+The difference is that the global error includes any error accumulated over previous time steps (the exact values $\yv(t_n)$ in \eqref{eq:trunc-start} are replaced by their approximations).
 
-
-The difference is that the global error includes any error accumulated over previous time steps.
-
-We now partially calculate the IMR local truncation error.
-We choose to Taylor expand everything about the midpoint, $\thf$, because it reduces the complexity of the result (and allows easier calculations).\footnote{If instead chose to expand about $t_n$ there would be an additional term in $\yv_n''$ in equation~\eqref{eq:trunc-mid}.}
-Assuming that $\yv(t)$ is ``sufficiently smooth'' to have a Taylor series expansion, its Taylor series expansion at $t_{n+1}$ about $\thf$ is given by
+We now expand the IMR local truncation error into a more useful form.
+We first Taylor expand $\yv(t_{n+1})$ and $\yv(t_{n})$ about $\thf$.
+We use the midpoint rather than one of the end points (as typically used in these calculations) because it results in simpler calculations.
+Assuming that $\yv(t)$ is ``sufficiently smooth'' for the required derivatives to exist its Taylor series expansion at $t_{n+1}$ about $\thf$ is given by
 \begin{equation}
-  \yv(t_{n+1}) = \yv(\thf + \frac{\dtn}{2}) = \yvhf + \frac{\dtn}{2} \yvhf['] + \frac{\dtn^2}{8} \yvhf[''] + \frac{\dtn^3}{48} \yvhf['''] \porder{\dtn^4}.
+  \yv(t_{n+1}) = \yv(\thf + \frac{\dtn}{2}) = \yvhf + \frac{\dtn}{2} \yvhf['] 
+  + \frac{\dtn^2}{8} \yvhf['']
+  + \frac{\dtn^3}{48} \yvhf[''']
+  \porder{\dtn^4}.
   \label{eq:taylornp1}
 \end{equation}
-%% It is well known that the local truncation error of the midpoint rule is $\order{\dtn^3}$ (\ie it is second order)\cite{??ds}, so we can safely ignore $\order{\dtn^4}$ terms.
-Similarly the expansion at $t_n$ is
+Similarly the expansion at $t_n$ about $\thf$ is
 \begin{equation}
-  \yv(t_n) = \yv(\thf - \frac{\dtn}{2}) = \yvhf - \frac{\dtn}{2} \yvhf['] + \frac{\dtn^2}{8} \yvhf[''] - \frac{\dtn^3}{48} \yvhf['''] \porder{\dtn^4}.
+  \yv(t_n) = \yv(\thf - \frac{\dtn}{2}) = \yvhf - \frac{\dtn}{2} \yvhf['] 
+  + \frac{\dtn^2}{8} \yvhf[''] 
+  - \frac{\dtn^3}{48} \yvhf['''] 
+  \porder{\dtn^4}.
   \label{eq:taylorn}
 \end{equation}
 
-Substituting equations~\eqref{eq:taylornp1} and \eqref{eq:taylorn} into equation~\eqref{eq:trunc-start} gives
+Substituting equations~\eqref{eq:taylornp1} and \eqref{eq:taylorn} into equation~\eqref{eq:trunc-start} gives\footnote{If we had chosen to Taylor expand about $t_n$ there would be an additional term in $\yv_n''$ here.}
 \begin{equation}
-  \lte^\imr = \yv(t_{n+1}) - \yv_{n+1}^\imr
-  = \frac{\dtn^3}{24} \yvhf[''']  + \dtn  \left[ \yvhf[']
-    - \fv\left( \thf, \frac{\yv(t_n) + \yv_{n+1}}{2} \right) \right]  \porder{\dtn^4}.
+  \lte^\imr = \underbrace{\frac{\dtn^3}{24} \yvhf[''']}_{\text{I}}
+  + \underbrace{\dtn\bigs{ \yvhf['] - \ffv{\thf, \frac{\yv(t_n) + \yv_{n+1}}{2}} }}_{\text{II}}
+  \porder{\dtn^4}.
   \label{eq:trunc-mid}
 \end{equation}
 
-There are two parts to this error: the first term (with $\yv'''_n$) is fairly standard in second order multistep time integrators.
-However the second term is more complex, applying a Taylor expansion approach here would result in a Jacobian-like matrix of derivatives of $\fv$ with respect to $\yv$.
-Hence we avoid expanding it further.
-See \autoref{sec:full-imr-lte-calculation} for details of the rest of the Taylor expansion, which also proves that IMR is indeed a second order method.
+There are two parts to this error: the first term (I) is fairly standard in second order time integrators.
+The second term (II) originates from the use of an approximation to $\yv(\thf)$ in the evaluation of $\fv$ (\ie the Runge-Kutta nature of IMR).
+The rest of the derivation requires applying Taylor expansions to II and is carried out in \autoref{sec:full-imr-lte-calculation}.
+The final result shows that IMR is second order:
+\begin{equation}
+  \lte^\imr = \frac{\dtn^3}{24} \left[\yvhf['''] - 3 \dfdyhf \cdot \yvhf[''] \right]
+  \porder{\dtn^4},
+  \label{eq:trunc-final}
+\end{equation}
+where $\dfdyhf = \pd{\fv}{\yv}\evalat{t=\thf}$ is the Jacobian of $\fv$ with respect to $\yv$ evaluated at $t=\thf$.
+An additional condition required in the derivation is that ??ds the eigenvalues of $\dtn\dfdyhf$ are less than one, the implications of this are discussed in \autoref{sec:order-reduction}.
 
-The TR\cite[pg. 261]{GreshoSani} and BDF2\cite[pg. 715]{GreshoSani} methods are also second order, their local truncation errors are simpler:
+The TR\cite[pg. 261]{GreshoSani} and BDF2\cite[pg. 715]{GreshoSani} methods are also second order.
+Their local truncation errors are similar to I:
 \begin{equation}
   \label{eq:tr-lte}
   \lte^\tr = \yv_{n+1} - \yv(t_{n+1}) = -\frac{\dtn^3 \yv_n'''}{12}
@@ -125,31 +154,46 @@ The TR\cite[pg. 261]{GreshoSani} and BDF2\cite[pg. 715]{GreshoSani} methods are 
 
 \subsection{A-stability}
 
-A-stablility (the A does not stand for anything, it is just ``A'') is the property that a method is stable when used to integrate equation ??ds for all $\lambda$ with $\real{\lambda} \leq 0$. 
-When $\real{\lambda} \geq 0$ the ODE itself is unstable and so stability is not expected in general.
-A-stability is a reasonably good way to classify the suitability of a time integrator for solving stiff ODEs (such as those that often emerge from a semi-discretisation of a PDE).
+To discuss the stability of time integrators for stiff problems the following test equation is widely used
+\begin{equation}
+  \ffv{\yv} = \lambda \yv,
+  \label{eq:ode-test-f}
+\end{equation}
+\ie
+\begin{equation}
+  \yv(t) = \exp(\lambda t).
+\end{equation}
 
-All three of the methods discussed are A-stable.
-Explicit methods are not A-stable ??ds check? \cite{??ds}, which is the main reason this thesis focuses on implicit methods.
+A-stablility\footnote{The A does not stand for anything, it is just ``A''\cite[pg. 40]{HairerWanner}, in particular it does \emph{not} mean ``absolute stabilily''.} is the property that a method is has no stability restrictions on the time step size when used to integrate \eqref{eq:ode-test-f} for all $\lambda$ with $\realp(\lambda) \leq 0$.
+When $\realp(\lambda) > 0$ the ODE itself is unstable and so stability is not expected in general.
+A-stability is a good way to classify the suitability of a time integrator for solving stiff ODEs (such as those that often emerge from a semi-discretisation of a PDE).
+??ds citation that this is a good characterisation?
 
-The maximum order of an A-stable multistep method is 2 \cite[??ds]{HairerNorsettWanner}.
-
-
+The IMR, TR, BDF1 and BDF2 methods are all A-stable \cite[pgs. 43, 251]{HairerWanner}.
+Explicit methods are never A-stable ??ds check? \cite{??ds}, which is the main reason this thesis focuses on implicit methods.
 
 \subsection{L-stability}
 \label{sec:imr-l-stability}
 
+??ds relevant?
+
+Property that method damps oscillations a bit.
+
+IMR and TR are not L-stable, BDF1 is \cite[pg. 45]{HairerWanner}. BDF2 probably is citation elsewhere?
+
 
 \subsection{Order reduction}
+\label{sec:order-reduction}
 
-It is known that certain implicit Runge-Kutta methods\cite[pg. 156]{Atkinson1994} are susceptible to reduced accuracy when used to solve extremely stiff problems.
-In the case of the implicit midpoint rule this is represented in the second term of the full LTE expression~\eqref{eq:trunc-final}: if the eigenvalues of $\dfdyhf$ are large then the error will be much larger than expected.
+It is known that certain implicit Runge-Kutta methods are susceptible to reduced accuracy when used to solve extremely stiff problems \cite[pg. 156]{Atkinson1994}.
+In the case of the implicit midpoint rule this can be seen in the second term of the full LTE expression~\eqref{eq:trunc-final}: if the eigenvalues of $\dfdyhf$ are large then the error will be much larger than expected.
 
-This effect should be automatically detected and adjusted for by an error estimator.
+This effect should be automatically detected and adjusted for by a good adaptive time step selection algorithm.
 
-For comparison: TR and the BDF methods do not suffer from order reduction\cite[pg. 159]{Atkinson1994} (\ie they have no error term related to an error in $\yv$ used in $f$ because all evaluations are at integer time points).
+In contrast, the TR and BDF methods do not suffer from order reduction \cite[pg. 159]{Atkinson1994}.
+This is because all evaluations of $\fv$ are at integer time points (\ie $t_{n+1}, t_{n}, t_{n-1}, \ldots$ rather than $\thf$).
 
-% The IMR and the BDF1 methods are B-convergent, TR is not B-convergent, the BDF2 method does not fit into the framework used to analyse such methods\cite[pg. 231]{HairerNorsettWanner}\footnote{In this book IMR is refered to as the second order Gauss method, BDF1 is Radau IIA, TR is Lobatto IIIA \cite[pg. 72-76]{HairerNorsettWanner}.}.
+% The IMR and the BDF1 methods are B-convergent, TR is not B-convergent, the BDF2 method does not fit into the framework used to analyse such methods\cite[pg. 231]{HairerWanner}\footnote{In this book IMR is refered to as the second order Gauss method, BDF1 is Radau IIA, TR is Lobatto IIIA \cite[pg. 72-76]{HairerWanner}.}.
 
 
 
@@ -382,7 +426,7 @@ as expected for BDF2 \cite[pg. 715]{GreshoSani}.
 
 We use a standard method \cite[pg.268]{GreshoSani} for computing the next step size from the local truncation error and a target local truncation error $\toltt$
 \begin{equation}
-\dtx{n+1} = \dtn \left( \frac{\toltt}{\lte}  \right) ^{\frac{1}{\texttt{order}+1}}.
+\dtx{n+1} = \dtn \bigb{ \frac{\toltt}{\lte} }^{\frac{1}{\texttt{order}+1}}.
 \end{equation}
 For implicit midpoint rule this is
 \begin{equation}
@@ -594,16 +638,16 @@ As expected the implicit midpoint rule selects time step sizes similarly to the 
 
 We sometimes wish to solve a system of equations where $\yv'(t)$ only given implicitly\footnote{This use of ``implicit'' is unrelated to the notion of implicitness in the time integration scheme.} (for example the Gilbert form of the Landau-Lifshitz-Gilbert equation), in this case equation~\eqref{eq:43} becomes
 \begin{equation}
-  \fv(t, \yv(t), \yv'(t)) = 0.
+  \ffv{t, \yv(t), \yv'(t)} = 0.
 \end{equation}
 
 We note that equation~\eqref{eq:basic-midpoint} can also be written in the from
 \begin{equation}
-  \yv'(\thf) = \frac{\yv_{n+1} - \yv_n}{\dtn} =  \fv(\thf, \frac{\yv_n + \yv_{n+1}}{2}).
+  \yv'(\thf) = \frac{\yv_{n+1} - \yv_n}{\dtn} =  \ffv{\thf, \frac{\yv_n + \yv_{n+1}}{2}}.
 \end{equation}
 So the obvious equivalent for IMR is
 \begin{equation}
-  \fv(\thf, \frac{\yv_{n+1} + \yv_n}{2}, \frac{\yv_{n+1} - \yv_n}{\dtn}) = 0.
+  \ffv{\thf, \frac{\yv_{n+1} + \yv_n}{2}, \frac{\yv_{n+1} - \yv_n}{\dtn}} = 0.
 \end{equation}
 
 However the adaptive scheme requires an additional function evaluation.
