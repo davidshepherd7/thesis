@@ -1,0 +1,50 @@
+
+\chapter{Derivation of implicit backwards difference formulae}
+\label{cha:deriv-impl-backw}
+
+Starting from \eqref{eq:59} and setting $\pv_k(t_{n+1}) = \ffv{t_{n+1}, \yv_{n+1}}$ we obtain
+\begin{equation}
+  \begin{aligned}
+    \fv(t_{n+1}, \yv_{n+1}) &= \sum_{j=1}^k \yv[t_{n+1}, \ldots, t_{n+1-j}] \sum_{l=0}^{j-1} \prod_{i=0, i \neq l}^{j-1} (t_{n+1} - t_{n+1-i}).
+  \end{aligned}
+\end{equation} 
+This can be greatly simplified by noticing that the product $ \prod_{i=0, i \neq l}^{j-1} (t_{n+1} - t_{n+1-i})$ is zero whenever it contains $i=0$, \ie all terms in the sum with $l \neq 0$.
+This leaves us with
+\begin{equation}
+  \begin{aligned}
+    \fv(t_{n+1}, \yv_{n+1}) &= \sum_{j=1}^k \yv[t_{n+1}, \ldots, t_{n+1-j}] \prod_{i=0, i \neq 0}^{j-1} (t_{n+1} - t_{n+1-i}), \\
+    &=  \yv[t_{n+1}, t_n] + \sum_{j=2}^k \yv[t_{n+1}, \ldots, t_{n+1-j}] \prod_{i=1}^{j-1} (t_{n+1} - t_{n+1-i}). \\
+  \end{aligned}
+\end{equation}
+
+For $k=1$ we get
+\begin{equation}
+  \begin{aligned}
+    \fv(t_{n+1}, \yv_{n+1}) &= \frac{\yv_{n+1} - \yv_n}{\dtn}, \\
+    \yv_{n+1} &= \yv_n + \dtn \fv(t_{n+1}, \yv_{n+1}),
+  \end{aligned}
+\end{equation}
+which is backward Euler as expected.
+
+For $k=2$
+\begin{equation}
+  \label{eqn:bdf2-derivation}
+  \begin{aligned}
+    \fv(t_{n+1}, \yv_{n+1}) &= \frac{\yv_{n+1} - \yv_n}{\dtn} +  \yv[t_{n+1}, t_{n}, t_{n-1}](t_{n+1} - t_n), \\
+    &= \frac{\yv_{n+1} - \yv_n}{\dtn} +  \frac{\dtn}{\dtx{n+1} + \dtn} \bigb{\frac{\yv_{n+1} - \yv_n}{\dtn} - \frac{\yv_n - \yv_{n-1}}{\dtx{n-1}}}. \\
+  \end{aligned}
+\end{equation}
+After some algebra this becomes
+\begin{equation}
+  \label{eqn:bdf2-derivation-rearranged}
+  \begin{aligned}
+    \frac{\yv_{n+1} - \yv_n}{\dtn} = \frac{\dtn}{2\dtn + \dtx{n-1}} \frac{\yv_n - \yv_{n-1}}{\dtx{n-1}} 
+    + \frac{\dtn + \dtx{n-1}}{2\dtn + \dtx{n-1}} \fv(t_{n+1}, \yv_{n+1}),
+  \end{aligned}
+\end{equation}
+which is variable step BDF2 \cite[pg. 715]{GreshoSani}.
+
+%%% Local Variables:
+%%% mode: latex
+%%% TeX-master: "main"
+%%% End:
