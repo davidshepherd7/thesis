@@ -120,7 +120,7 @@ For example with reduced integration (and using that $\tbf_k(\xv_l) = \delta_{kl
 % \subsubsection{Derivation of weights for local integration}
 
 We now need to derive a suitable $\beta_l$.
-To do so we represent the quadrature scheme as an integral of an interpolating polynomial which matches the desired integration scheme, then we rearrange the equation to find the weights (see, \eg \cite[pg. 480]{Kincaid2002}).
+To do so we represent the quadrature scheme as an integral of an interpolating polynomial which matches the desired integration scheme, then we rearrange the equation to find the weights (see, \eg \cite[480]{Kincaid2002}).
 In \texttt{oomph-lib} all integration is done in local co-ordinates (as discussed in \autoref{sec:fem-integration-??ds}), so we now calculate weights applicable in this case.
 
 A suitable quadrature-interpolation-polynomial for our case is the shape/test function for the node.

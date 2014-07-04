@@ -24,7 +24,7 @@
 \label{sec:adaptive-imr}
 
 
-The implicit midpoint rule (IMR) is a well known time integration method with a number of favourable properties when applied to standard ordinary differential equations\cite[pg. 204]{HairerNorsettWanner}.
+The implicit midpoint rule (IMR) is a well known time integration method with a number of favourable properties when applied to standard ordinary differential equations\cite[204]{HairerNorsettWanner}.
 It also has beneficial ``geometric integration'' properties when applied the Landau-Lifshitz-Gilbert equation (discussed in \autoref{sec:aimr-llg}) and energy conservation properties when applied to the semi-discretised Navier-Stokes equations \cite{Sanderse2013}.
 However IMR belongs to the implicit Runge-Kutta family of methods, and as such it is a non-trivial task to create an efficient adaptive time step selection algorithm.
 In this \secpaper{} we describe a novel adaptive IMR algorithm based on estimates of the local truncation error by a predictor step.
@@ -65,7 +65,7 @@ The IMR can also be written in the standard form for Runge-Kutta methods as
     \yv_{n+1} &= \yv_n + 1 \cdot \dtn k_1,
   \end{aligned}
 \end{equation}
-or using a Butcher tableu \cite[pg. 135]{HairerNorsettWanner} as shown in \autoref{tab:butcher-imr}.
+or using a Butcher tableu \cite[135]{HairerNorsettWanner} as shown in \autoref{tab:butcher-imr}.
 
 \begin{table}
   \begin{equation*}
@@ -153,7 +153,7 @@ The final result shows that IMR is second order:
 where $\dfdyhf = \pd{\fv}{\yv}\evalat{t=\thf}$ is the Jacobian of $\fv$ with respect to $\yv$ evaluated at $t=\thf$.
 An additional condition required in the derivation is that ??ds the eigenvalues of $\dtn\dfdyhf$ are less than one, the implications of this are discussed in \autoref{sec:order-reduction}.
 
-The TR\cite[pg. 261]{GreshoSani} and BDF2\cite[pg. 715]{GreshoSani} methods are also second order.
+The TR\cite[261]{GreshoSani} and BDF2\cite[715]{GreshoSani} methods are also second order.
 Their local truncation errors are similar to I:
 \begin{equation}
   \label{eq:tr-lte}
@@ -181,7 +181,7 @@ To discuss the stability of time integrators for stiff problems the following te
   \yv(t) = \exp(\lambda t).
 \end{equation}
 
-A-stablility\footnote{The A does not stand for anything, it is just ``A''\cite[pg. 40]{HairerWanner}, in particular it does \emph{not} mean ``absolute stabilily''.} is the property that a method is has no stability restrictions on the time step size when used to integrate \eqref{eq:ode-test-f} for all $\lambda$ with $\realp(\lambda) \leq 0$.
+A-stablility\footnote{The A does not stand for anything, it is just ``A''\cite[40]{HairerWanner}, in particular it does \emph{not} mean ``absolute stabilily''.} is the property that a method is has no stability restrictions on the time step size when used to integrate \eqref{eq:ode-test-f} for all $\lambda$ with $\realp(\lambda) \leq 0$.
 When $\realp(\lambda) > 0$ the ODE itself is unstable and so stability is not expected in general.
 A-stability is a good way to classify the suitability of a time integrator for solving stiff ODEs (such as those that often emerge from a semi-discretisation of a PDE).
 ??ds citation that this is a good characterisation?
@@ -203,24 +203,24 @@ L-stability is another stability property beyond A-stability.
 
 Property that method damps oscillations a bit.
 
-IMR and TR are not L-stable, BDF1 is \cite[pg. 45]{HairerWanner}. BDF2 probably is citation elsewhere?
+IMR and TR are not L-stable, BDF1 is \cite[45]{HairerWanner}. BDF2 probably is citation elsewhere?
 
-L-stability is both a positive and negative property: if the oscillations being damped are spurious then L-stability can increase accuracy of the solution \cite[pg. 45]{HairerWanner}.
-However the same property results in the damping of non-spurious oscillations, this can cause problems (see e.g. \autoref{fig:bdf2-failing on switching nanoparticle}, \cite[pg. 242]{GreshoSani}, \cite{Elman2011}.
+L-stability is both a positive and negative property: if the oscillations being damped are spurious then L-stability can increase accuracy of the solution \cite[45]{HairerWanner}.
+However the same property results in the damping of non-spurious oscillations, this can cause problems (see e.g. \autoref{fig:bdf2-failing on switching nanoparticle}, \cite[242]{GreshoSani}, \cite{Elman2011}.
 
 
 \subsection{Order reduction}
 \label{sec:order-reduction}
 
-It is known that certain implicit Runge-Kutta methods are susceptible to reduced accuracy when used to solve extremely stiff problems \cite[pg. 156]{Atkinson1994}.
+It is known that certain implicit Runge-Kutta methods are susceptible to reduced accuracy when used to solve extremely stiff problems \cite[156]{Atkinson1994}.
 In the case of the implicit midpoint rule this can be seen in the second term of the full LTE expression~\eqref{eq:trunc-final}: if the eigenvalues of $\dfdyhf$ are large then the error will be much larger than expected.
 
 This effect should be automatically detected and adjusted for by a good adaptive time step selection algorithm.
 
-In contrast, the TR and BDF methods do not suffer from order reduction \cite[pg. 159]{Atkinson1994}.
+In contrast, the TR and BDF methods do not suffer from order reduction \cite[159]{Atkinson1994}.
 This is because all evaluations of $\fv$ are at integer time points (\ie $t_{n+1}, t_{n}, t_{n-1}, \ldots$ rather than $\thf$).
 
-% The IMR and the BDF1 methods are B-convergent, TR is not B-convergent, the BDF2 method does not fit into the framework used to analyse such methods\cite[pg. 231]{HairerWanner}\footnote{In this book IMR is refered to as the second order Gauss method, BDF1 is Radau IIA, TR is Lobatto IIIA \cite[pg. 72-76]{HairerWanner}.}.
+% The IMR and the BDF1 methods are B-convergent, TR is not B-convergent, the BDF2 method does not fit into the framework used to analyse such methods\cite[231]{HairerWanner}\footnote{In this book IMR is refered to as the second order Gauss method, BDF1 is Radau IIA, TR is Lobatto IIIA \cite[72-76]{HairerWanner}.}.
 
 
 
@@ -239,7 +239,7 @@ In order to perform the algebraic rearrangements to obtain the LTE we need the t
 However it can only appear in the LTE expression for a time integrator using midpoint approximation, and the only such second order time integrator is IMR itself.
 So this term of the error cannot be easily approximated using a Milne-device-like method.
 
-An alternative approach, commonly used in Runge-Kutta time integrators, is to repeat the calculation using a higher order method and compare the two answers to directly obtain an LTE estimate \cite[pg. 165]{HairerWanner}.
+An alternative approach, commonly used in Runge-Kutta time integrators, is to repeat the calculation using a higher order method and compare the two answers to directly obtain an LTE estimate \cite[165]{HairerWanner}.
 However evaluations of the derivative function ($\fv$ in equation~\eqref{eq:43}) are expensive, and the calculation of a step of a high order Runge-Kutta method requires a number of function evaluations.
 Hence such approaches usually rely on pairs of Runge-Kutta methods which share most of their derivative evaluation points but have different orders of accuracy.
 These are known as embedded Runge-Kutta methods, a widely used example is the Dormand–Prince pair (order 4/5) used in MATLAB's \texttt{ode45} function \cite{matlab-ode45}.
@@ -257,7 +257,7 @@ The eBDF3 method is not commonly known because it is not stable, meaning that wh
 However in a predictor the IMR history values are used and we only ever need a single step at a time of the predictor, hence the stability is irrelevant.
 
 Alternatively a 3rd order Adams-Bashforth scheme (AB3) could be used as a predictor, but this requires three previous derivative values instead of $y$ values which makes the initialisation of the scheme a little more complex and expensive.
-Additionally, the calculation of coefficients for the variable step Adams-Bashforth schemes is more complex \cite[pg. 400]{HairerNorsettWanner}.
+Additionally, the calculation of coefficients for the variable step Adams-Bashforth schemes is more complex \cite[400]{HairerNorsettWanner}.
 However, in contrast to eBDF3, AB3 is stable which could simplify the process of testing implementations.
 
 
@@ -265,9 +265,9 @@ However, in contrast to eBDF3, AB3 is stable which could simplify the process of
 
 The explicit BDF methods are explicit time integration methods derived using the same techniques as the usual implicit BDF methods.
 The idea is to write down a divided difference representation of an interpolating polynomial, $\pv(t)$, through $\yv_i$, $i=n-k+1, \ldots, n+1$ at the appropriate times (simple backward differences can be used for constant time steps, hence the name).
-The derivative of the polynomial is then set equal to the derivative function $\ffv{t, \yv}$ at one of the time steps \cite[pg. 400]{HairerNorsettWanner}.
+The derivative of the polynomial is then set equal to the derivative function $\ffv{t, \yv}$ at one of the time steps \cite[400]{HairerNorsettWanner}.
 Setting $\pv'(t_{n+1}) = \ffv{t_{n+1}, \yv_{n+1}}$ gives the familiar implicit BDF methods.
-If we instead $\pv'(t_{n}) = \ffv{t_{n}, \yv_{n}}$ we obtain the explicit BDF methods \cite[pg. 364]{HairerNorsettWanner}.
+If we instead $\pv'(t_{n}) = \ffv{t_{n}, \yv_{n}}$ we obtain the explicit BDF methods \cite[364]{HairerNorsettWanner}.
 
 We now derive the first three eBDF methods.
 The derivation of the implicit BDF methods is shown in \autoref{cha:deriv-impl-backw} and may be useful for comparison.
@@ -282,7 +282,7 @@ The Newton divided differences are defined recursively by
     \vdots
   \end{aligned}
 \end{equation} 
-The $k$-th Lagrange interpolation polynomial \cite[pg. 124]{BurdenFaires}, \cite[pg. 400]{HairerNorsettWanner} can be expressed in terms of divided differences as
+The $k$-th Lagrange interpolation polynomial \cite[124]{BurdenFaires}, \cite[400]{HairerNorsettWanner} can be expressed in terms of divided differences as
 \begin{equation}
   \label{eqn:divided-diff-intp}
   \begin{aligned}
@@ -345,7 +345,7 @@ After some algebra this gives
   \yv_{n+1} = \yv_n + \bigb{1 + \frac{\dtn}{\dtx{n-1}}}\dtn f(t_n, \yv_n)
     - \frac{\dtn^2}{\dtx{n-1}^2}(\yv_n - \yv_{n-1}),
 \end{equation}
-which is the variable step equivalent of the leapfrog method (explicit midpoint rule) \cite[pg. 715]{GreshoSani}.
+which is the variable step equivalent of the leapfrog method (explicit midpoint rule) \cite[715]{GreshoSani}.
 
 For larger values of $k$ the complexity of the algebra grows explosively.
 Unfortunately we are interested in the case $k=3$ which is:
@@ -380,7 +380,7 @@ The resulting method is
 \end{equation}
 
 For constant time steps the result is much simpler: $ b = 3\dtn$, $c_n = -3/2$, $c_{n-1} = 3$ and  $c_{n-2} = -1/2$.
-This matches with the result in \cite[pg. 364]{HairerNorsettWanner}.
+This matches with the result in \cite[364]{HairerNorsettWanner}.
 
 It should be noted that the calculation of the coefficients in equation~\eqref{eqn:ebdf-coeffs} could be comparatively expensive if the number of $y$-values was small ($\sim \order{100}$ operations assuming no compiler optimisation of the multiplications).
 However when used in finite-element or finite-difference calculations the number of $y$-values is at least tens of thousands, so the cost of equation~\eqref{eqn:ebdf-coeffs} is trivial by comparision with, for example, the calculation of $\ffv{t_n, \yv_n}$.
@@ -420,7 +420,7 @@ The motivation for this is the use of a modified Newton-Raphson method where the
 In the case of ODE solvers this is extremely beneficial because the Jacobian is usually dense and direct solvers are used to solve it--by keeping the Jacobian constant the number of solves and Jacobian assemblys are greatly reduced.
 The downside is a reduction in the convergence speed of the Newton method.
 Keeping the step size constant for as long as possible is required here because modifications to the time step cause modifications to the Jacobian.
-However for PDE solvers, and in particular for PDE solvers using iterative methods to solve the linear systems there is little-to-no benefit in using this technique (the reduction in convergence speed is worse than the gain of not assembling/solving the sparse Jacobian)\cite[pg. 128]{Iserles2009}.
+However for PDE solvers, and in particular for PDE solvers using iterative methods to solve the linear systems there is little-to-no benefit in using this technique (the reduction in convergence speed is worse than the gain of not assembling/solving the sparse Jacobian)\cite[128]{Iserles2009}.
 
 
 \subsection{The final algorithm}
@@ -457,8 +457,8 @@ Numerical experiments with the LLG equation are detailed in \autoref{sec:aimr-ll
 We compare the adaptive IMR developed above with two commonly used adaptive implicit time integrators:
 \begin{itemize}
 \item Standard adaptive trapezoid rule. 
-  The error estimate is construted using Milne's device with the second order Adams-Bashforth method (AB2) \cite[pg. 707]{GreshoSani}.
-\item Adaptive BDF2, with the error estimate again constructed using Milne's device and the variable step leapfrog method (\ie explicit BDF2) \cite[pg. 715]{GreshoSani}.
+  The error estimate is construted using Milne's device with the second order Adams-Bashforth method (AB2) \cite[707]{GreshoSani}.
+\item Adaptive BDF2, with the error estimate again constructed using Milne's device and the variable step leapfrog method (\ie explicit BDF2) \cite[715]{GreshoSani}.
 \end{itemize}
 
 All three methods are implemented within the \texttt{oomph-lib} framework.
@@ -582,7 +582,7 @@ The behaviour of the three time integrators is essentially the same, indicating 
 \subsection{Order reduction example}
 \label{sec:order-reduct-example}
 
-As a final example we study a test ODE displaying order reduction/extreme stiffness\cite[pg. 156]{Atkinson2009}
+As a final example we study a test ODE displaying order reduction/extreme stiffness\cite[156]{Atkinson2009}
 \begin{equation}
   \label{eqn:imr-test-order-reduction}
   \begin{aligned}
