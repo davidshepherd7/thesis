@@ -1,0 +1,9 @@
+{
+'-driver' : ['ode'],
+'-exact' : ["order_reduction", "strong_order_reduction"], 
+'-tmax' : [20],
+'-ts' : ["bdf2", "imr", "tr", "bdf1"],
+'-tol' : [1e-2, 5e-3, 1e-3, 5e-4, 1e-4, 5e-5, 1e-5, 1e-6, 0],
+"-disable-mm-opt" : [True],
+'-dt' : 0.01,
+}

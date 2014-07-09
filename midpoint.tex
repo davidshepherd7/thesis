@@ -4,19 +4,7 @@
 % " for order of a time integrator
 
 % In the plots:
-% ??ds fix labels
 % add points
-
-% for Milan:
-% We can't use (7.26) (divided difference expression of ebdf3) to calculate ynp1 without rearrangement! it's implicit
-% citation for A-stability -> ok for stiff examples
-% citaition for no explicit A-stable methods?
-
-% On modified NR: even the application of a factorisation is slow right?
-
-% In these examples there is no locking of TR so mentioning it would overcomplicate things (and I haven't implecmented it in oomph-lib).
-
-% Why use tables for error norms?
 
 % What can I say about error in poly2 case?
 
@@ -441,11 +429,9 @@ Steps 1 and 2 are interchangable, but in some cases the value $\yv_{n+1}^\ebdf$ 
 \label{sec:aimr-testing}
 
 
-% % Regenerate data by running (in control_scripts folder)
-% ./parameter-sweep.py -p aimr_odes_order_reduction -p aimr_odes --clean && \
-%  # Generate and update plots
-%  parse.py -d ../experiments/parameter_sweeps/aimr_odes/ -s=-exact --scatter-split=-ts -d ../experiments/parameter_sweeps/aimr_odes_order_reduction/ -p err --save-to-dir /home/david/Dropbox/phd/reports/ongoing-writeup/aimr --save-data-to-dir --ssh-mode -f '("-tol", 1e-4)' && \
-% parse.py -d ../experiments/parameter_sweeps/aimr_odes/ -p scatter-err-tols -s=-exact --scatter-split=-ts -d ../experiments/parameter_sweeps/aimr_odes_order_reduction/ -p scatter-err-dts --save-to-dir /home/david/Dropbox/phd/reports/ongoing-writeup/aimr --save-data-to-dir --ssh-mode
+% Regenerate data by running (in control_scripts folder):
+% ./parameter-sweep.py -p aimr_odes_order_reduction -p aimr_odes --clean
+%  Generate and update plots with commands in the plots dir
 
 In this Section we show the results of some initial testing of the proposed adaptive IMR algorithm for some simple ODE examples.
 Numerical experiments with the LLG equation are detailed in \autoref{sec:aimr-llg}.
@@ -496,7 +482,7 @@ The computed solution does not look much like a polynomial because the distance 
 
 \begin{figure}[h!]
   \centering
-  \includegraphics[width=1\textwidth]{aimr/poly2-errornormsvs-dtsvs-tracevaluesvstimes}
+  \includegraphics[width=1\textwidth]{plots/aimr_odes/poly2-errornormsvs-dtsvs-tracevaluesvstimes}
   \caption{Absolute error, time step size and computed solutions for the example ODE with exact solution $y(t) = t^2 + 0.5$.}
   \label{fig:imr-poly2-example}
 \end{figure}
@@ -517,7 +503,7 @@ The adaptive algorithm should oscillate the step size in time with the oscillati
 ??ds write out full lte calculations?
 
 \begin{figure}[h!]
-  \centering \includegraphics[width=1\textwidth]{aimr/damped_oscillation-errornormsvs-dtsvs-tracevaluesvstimes}
+  \centering \includegraphics[width=1\textwidth]{plots/aimr_odes/damped_oscillation-errornormsvs-dtsvs-tracevaluesvstimes}
   \caption{Absolute error, time step size and computed solutions for the oscillatory, damped example ODE with exact solution $y(t) = e^{-0.5t} \sin(2\pi t)$.}
   \label{fig:imr-osc-example}
 \end{figure}
@@ -538,7 +524,7 @@ The consistent decrease in the error norms indicates that the all of the adaptiv
 Plots for the example problems the following Sections are very similar and so are not shown.
 
 \begin{figure}[h!]
-  \centering \includegraphics[width=1\textwidth]{aimr/damped_oscillation-maxoferrornormsvs-tol}
+  \centering \includegraphics[width=1\textwidth]{plots/aimr_odes/damped_oscillation-maxoferrornormsvs-tol}
   \caption{Behaviour of the global error norm with varying tolerance for the oscillatory, damped example ODE with exact solution $y(t) = e^{-\beta t} \sin(\omega t)$.}
   \label{fig:imr-osc-example-scatter}
 \end{figure}
@@ -571,7 +557,7 @@ The behaviour of the three time integrators is essentially the same, indicating 
 
 \begin{figure}[h!]
   \centering
-  \includegraphics[width=1\textwidth]{aimr/stiff_test-errornormsvs-dtsvs-tracevaluesvstimes}
+  \includegraphics[width=1\textwidth]{plots/aimr_odes/stiff_test-errornormsvs-dtsvs-tracevaluesvstimes}
   \caption{Error $2$-norm, time step size and computed solutions for the stiff example ODE.}
   \label{fig:imr-stiff-example}
 \end{figure}
@@ -606,7 +592,7 @@ As in the previous example we choose $\lambda = 100$.
 
 
 \begin{figure}[h!]
-  \centering  \includegraphics[width=1\textwidth]{aimr/strong_order_reduction-errornormsvs-dtsvs-tracevaluesvstimes}
+  \centering  \includegraphics[width=1\textwidth]{plots/aimr_odes/strong_order_reduction-errornormsvs-dtsvs-tracevaluesvstimes}
   \caption{Absolute error, time step size and computed solutions for the stiff order reduction example ODE given in equation~\eqref{eqn:imr-test-order-reduction}
 .}
   \label{fig:imr-order-reduction-example}
