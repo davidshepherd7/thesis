@@ -484,9 +484,7 @@ To increase relevance to the general non-linear PDE case (\ie the LLG equation) 
 So we use the Newton-Raphson method with a finite-differenced Jacobian inverted by a linear solver.
 One effect of this is that the baseline ``numerical noise'' as seen by the ODE solver is the Newton tolerance rather than the machine accuracy.
 
-??ds rerun with Newton tol = 1e-14?
-
-Unless otherwise specified all examples in this section use an absolute Newton tolerance of $\newtontol = 10^{-8}$, an initial time step of $\dtx{0} = 10^{-6}$ and an adaptive integrator tolerance of $\toltt = 10^{-4}$.
+Unless otherwise specified all examples in this section use an absolute Newton tolerance of $\newtontol = 10^{-8}$, an initial time step of $\dtx{0} = 10^{-5}$ and an adaptive integrator tolerance of $\toltt = 10^{-4}$.
 Any initial conditions required are calculated from the exact solutions.
 
 In all cases the exact solution is visually indistinguishable from the approxmated solutions on the scale of the plots.
