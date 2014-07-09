@@ -528,7 +528,9 @@ The next test features a damped oscillatory solution
     y(t) &= e^{-\beta t} \sin(\omega t), \\
     f(t,y) &= - \beta e^{-\beta t} \sin(\omega t) + \omega e^{-\beta t} \cos(\omega t).  \end{aligned}
 \end{equation} 
-The truncation error is proportional to $\pd{^3y}{t^3} = e^{-\beta t} (a(t) \sin(t) + b(t) \cos(t))$, so the adaptive algorithm should oscillate the step size in time while gradually increasing the step size as $e^{-\beta t}$ goes to zero.
+The adaptive algorithm should oscillate the step size in time with the oscillating truncation error ($\pd{}{t^3} \sin(t) = -\cos(t)$), while at the same time gradually increasing the step size as the term $e^{-\beta t}$ goes to zero.
+
+??ds write out full lte calculations?
 
 \begin{figure}[h!]
   \centering \includegraphics[width=1\textwidth]{plots/aimr_odes/damped_oscillation-errornormsvs-dtsvs-tracevaluesvstimes}
@@ -553,7 +555,7 @@ Plots for the example problems the following Sections are very similar and so ar
 
 \begin{figure}[h!]
   \centering \includegraphics[width=1\textwidth]{plots/aimr_odes/damped_oscillation-maxoferrornormsvs-tol}
-  \caption{Behaviour of the maximum (over all time steps) of the absolute error with varying tolerance for the oscillatory, damped example ODE with exact solution $y(t) = e^{-0.5 t} \sin(2\pi t)$.}
+  \caption{Behaviour of the global error norm with varying tolerance for the oscillatory, damped example ODE with exact solution $y(t) = e^{-\beta t} \sin(\omega t)$.}
   \label{fig:imr-osc-example-scatter}
 \end{figure}
 
