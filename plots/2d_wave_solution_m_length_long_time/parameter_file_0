@@ -7,7 +7,7 @@
 '-initial-is-exact' : 1,
 '-h-app' : 'zero',
 '-damping' : [0.001],
-'-tmax' : 500,
+'-tmax' : 100,
 
 # Integration/calculation details
 '-ts' : ["imr"],
