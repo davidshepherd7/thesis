@@ -562,37 +562,30 @@ Plots for the example problems the following Sections are very similar and so ar
 \subsection{Stiff problem}
 \label{sec:imr-stiff-example}
 
-We consider the simple and commonly discussed stiff example function \cite{??ds where did I get this from?}
+We consider stiff example ODE used in the definition of A-stability:
 \begin{equation}
   \label{eqn:imr-test-stiff}
   \begin{aligned}
-    f(t, \yv) &= \begin{pmatrix}
-     -\lambda & 1 \\
-      -0.1 & 0 \\
-    \end{pmatrix}   \yv, \\
-    \yv(0) &= \begin{pmatrix} 1  \\ \lambda - 0.1  \\ \end{pmatrix}.
+    f(t, \yv) = -\lambda t, \\
   \end{aligned}
 \end{equation}
 with the exact solution
 \begin{equation}
   \label{eqn:imr-test-stiff-exact}
-  \yv(t) = 
-   \begin{pmatrix} e^{-0.1t} \\ (\lambda - 0.1)e^{-\lambda t} \end{pmatrix}.
+  \yv(t) = e^{-\lambda t} \yv_0. \\
 \end{equation} 
 This example will test that the single step of the eBDF method provides reliable LTE estimates even in cases of extreme stiffness.
 The time steps should start small but rapidly increase as the initial transient decays.
 
 The results of the applying the three methods to problem~\eqref{eqn:imr-test-stiff} with $\lambda = 100$ (fairly stiff) are shown in \autoref{fig:imr-stiff-example}.
-The behaviour of the three time integrators is essentially the same, indicating that adaptivity algorithm is effective for stiff problems.
+The behaviour of the three time integrators is essentially the same, indicating that our adaptivity algorithm is effective for stiff problems.
 
 \begin{figure}[h!]
   \centering
-  \includegraphics[width=1\textwidth]{plots/aimr_odes/stiff_test-errornormsvs-dtsvs-tracevaluesvstimes}
-  \caption{Error $2$-norm, time step size and computed solutions for the stiff example ODE.}
+  \includegraphics[width=1\textwidth]{plots/aimr_odes/simple_stiff-errornormsvs-dtsvs-tracevaluesvstimes}
+  \caption{Absolute error, time step size and computed solutions for the stiff example ODE.}
   \label{fig:imr-stiff-example}
 \end{figure}
-
-??ds multiple stiffness parameter values?
 
 
 \subsection{Order reduction example}
