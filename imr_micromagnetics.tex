@@ -1,7 +1,18 @@
 
+% ??ds learn about, experiment with and disccuss symplecity?
+
+% The fixed step midpoint method is ``almost symplectic'' for the LLG equation with zero damping, , \ie the property equivalent to Hamiltonian flow for  dissipative systems is conserved up to \order{??ds} \cite{daquino2005} \cite{Austin1993}.
+
+% It is well known that most adaptive schemes are not symplectic\cite[91]{Iserles2009} because they constantly change the ``nearby Hamiltonian'' that is followed by the symplectic integrator.
+% Therefore the adaptive IMR is not expected to have the almost-symplectic property discussed in \autoref{??ds}.
+
+
+
 \chapter{Application of the adaptive implicit midpoint rule to micromagnetics}
 \label{sec:aimr-llg}
 
+In this section we discuss the application of the adaptive implicit midpoint rule to strong form micromagnetics problems (\ie ODEs and finite difference discretisations of PDEs).
+The extension to weak form problems (finite element methods) is discussed in \autoref{sec:nodal-integration}.
 
 \section{Why use the implicit midpoint rule}
 
@@ -24,28 +35,28 @@ In a varying applied field the Zeeman energy may vary independently of damping, 
 However similar energy balance equations can still be derived.
 
 In contrast to most time integrators the implicit midpoint rule conserves the magnetisation length, conserves energy at zero damping in constant applied field and gives highly accurate energy dissipation in linear applied fields\cite{DAquino2005} (see \autoref{sec:prop-imr-llg} for details).
+Time integration schemes with conservation properties similar to these are known as geometric integration schemes. 
+
+Since IMR is a single step method there is no dependence on $\dtx{n-1}$ (unlike, for example, BDF2) and so no change in these properties would be expected when going from fixed to varying time step sizes.
 
 We have a number of reasons to believe that such improvements in the accuracy of these properties will translate into an improvement in the accuracy and robustness of the overall solver:
 \begin{itemize}
-\item Errors in the energy dissipation\cite{Albuquerque2001} and magnetisation length\cite{Chantrell2001} have been successfully used as error estimators for total error.
+\item Errors in the energy dissipation \cite{Albuquerque2001} and magnetisation length \cite{Chantrell2001} have been successfully used as error estimators for total error.
 
-\item It is well known that geometric integration schemes (\ie schemes that preserve properties of the system) typically result in much smaller long-timescale error-build-up than schemes that do not preserve such quantities.\cite[77]{Iserles2009}
+\item It is well known that geometric integration schemes typically result in much smaller long-timescale error-build-up than schemes that do not preserve such quantities \cite[77]{Iserles2009}.
 
-\item The non-linear modification to the Landau-Lifshitz-Gilbert equation caused by renormalisation of the magnetisation length (as commonly used to maintain correct magnetisation length in non-conservative time integrators) may cause significant changes in the magnetostatic field.\cite{Lewis2003}
+\item The non-linear modification to the Landau-Lifshitz-Gilbert equation caused by renormalisation of the magnetisation length (as commonly used to maintain correct magnetisation length in non-conservative time integrators) may cause significant changes in the magnetostatic field \cite{Lewis2003}.
 
 \item Renormalisation of the magnetisation modifies the balance between the various energy terms.
-  This is similar to the methods that lead to the ``flying ice cube'' problem in molecular dynamics\footnote{In such simulations rescaling of particle velocities (to maintain constant temperature despite numerical error accumulation) can result in large amounts of kinetic energy being transferred from the motion of internal degrees of freedom to motion of the centre of mass.}.\cite{Harvey1998}
+  This is similar to the methods that lead to the ``flying ice cube'' problem \cite{Harvey1998} in molecular dynamics.\footnote{In such molecular dynamics the rescaling of particle velocities (to maintain constant temperature despite numerical error accumulation) can result in large amounts of kinetic energy being transferred from the motion of internal degrees of freedom to motion of the centre of mass.}
 \end{itemize}
-
-Additionally it is ``almost-symplectic'', \ie the property equivalent to Hamiltonian flow for  dissipative systems is conserved up to \order{??ds}\cite{daquino2005}\cite{??ds-older-paper for this?} ??ds here
 
 In addition to these conservation properties the following properties make IMR suitable for micromagnetics problems
 \begin{itemize}
 \item It is second order, which is typically considered a good compromise between speed and accuracy for pdes (higher orders would require expensive high order spatial discretisation to be effective, generally better to just do h-refinement instead).\cite{Matthias}
-\item It is A-stable? \cite{??ds} and so appropriate for stiff problems (the LLG is stiff in some cases, as demonstrated by vastly superior performance of stiff solvers (\eg BDF2) on certain problems\cite{Tsiantos2001})
+\item It is A-stable, and so remains efficient for stiff problems such as those arising from the spatial discretisation of PDEs (see \autoref{cha:stiffn-llg-equat}).
 \end{itemize}
 
-%% Since IMR is a single step method there is no dependence on $\dtx{n-1}$ (unlike, for example, BDF2) and so no change in these properties would be expected when going from fixed to varying time step sizes.
 
 \section{Properties of the continuous Landau-Lifshitz-Gilbert equation}
 \label{sec:prop-cont-llg}
@@ -94,11 +105,6 @@ In fact the first term of equation~\eqref{eq:energy-decay} can be easily derived
 
 Note that length conservation is a \emph{pointwise} property, \ie $\abs{\mv} = 1$ at every point in space, whereas the energy decay property is a \emph{global} property.
 This is related to the use of the dot product and the $\ltwo$ inner product respectively in their proofs.
-
-
-\subsection{Symplecity}
-
-??ds I basically have no idea about this stuff.
 
 
 \section{Properties of the IMR-discretised LLG}
@@ -219,18 +225,10 @@ Note that nothing in the above derivations depends in previous step sizes, hence
 
 ??ds draw commutation diagram
 ??ds physical interpretation in terms of energy?
+??ds comparison for TR? BDF2?
 
 
-\subsection{symplecticity}
-\label{sec:symplecticity-imr-llg}
-
-
-The fixed step midpoint method is ``almost symplectic'' for the LLG equation with zero damping (Hamiltonian structure is preserved up to a small error).\cite{Austin1993}
-
-??ds MORE
-
-
-\section{Limitations of conservation properties}
+\section{Limitations and alternatives}
 
 \subsection{Non-linear applied fields}
 \label{sec:non-linear-applied}
@@ -248,10 +246,6 @@ In the case when the field is genuinely non-linear there is an additional error 
 \end{equation}
 
 
-
-
-
-
 \subsection{Solvers}
 
 It should be noted that the above properties are only true up to the accuracy with which we solve the LLG. Since the LLG is non-linear this is typically the Newton tolerance.
@@ -263,19 +257,60 @@ However the magnetisation length property will be retained because this only rel
 
 Efficient, fully-implicit solvers, as required to realise the full potential of the implicit midpoint rule, are certainly possible: one example was implemented by d'Aquino \etal.\cite{DAquino2005}
 
-\subsection{Non-constant step size and symplecity}
-\label{sec:non-constant-step}
 
-It is well known that most adaptive schemes are not symplectic\cite[91]{Iserles2009} because they constantly change the nearby Hamiltonian that is followed by the symplectic integrator.
-Therefore the adaptive IMR is not expected to have the almost-symplectic property discussed in \autoref{??ds}
+\subsection{Alternative conserving time integration methods in micromagnetics}
+
+??ds move to later, after FEM section
+
+??ds spherical polars:
+- singular coordinate system!!
+
+The conservation of magnetisation length by IMR does not require a fully implicit calculation as demonstrated by Spargo \etal\cite{Spargo2003a}.
+Hence the our adaptive IMR scheme could be also be useful in a semi-implicit magnetisation-length-conserving solver.
+
+??ds Cayley transforms
+
+??ds Linearised + projection version by analyst guys
+
+- Decent speed increase (one lin solve vs two)
+- But only first order! (can be extended to second order but then non-linear again, no improvement over IMR)
+- fem only
+
+
+\subsection{Alternative time adaptivity methods in micromagnetics}
+\label{sec:altern-time-adapt}
+
+In cases where the damping is not exact the effective damping can be used as an error estimator, as proposed by Albuquerque \etal\cite{Albuquerque2001}
+??ds The disadvantage of this method (aside from the obvious requirement that the damping be inexact) is that, depending on the discretisation used, the error estimator may be unable to distinguish between insufficient space refinement and insufficient time refinement.
+In particular this is the case when the solution is not completely divided into separate effective field calculations and pointwise time integration, such as in a typical Galerkin finite element model.
+
+Rigorous time error estimates for the LLG with limited effective field terms with a certain discretisation method were proven and used to perform adaptive refinement of midpoint method time steps by Banas.\cite{Banas-thesis}
+??ds do these work, why does no one use them?
+By comparison our adaptive method is much more general in that it can be applied to any differential equation and any discretisation scheme which uses the method of lines for time.
+It is also simpler to implement (requiring only an additional explicit time step, which can easily be handled by existing ODE solver packages) and easy to understand.
+
 
 
 
 \section{Numerical Experiments}
+\label{sec:imr-ode-llg-numer-exper}
 
-In this section we present numerical experiments showing that the adaptive midpoint method retains the conservation properties of the fixed step midpoint method.
-For this purpose we choose a simple model: a small\footnote{Small enough that exchange coupling dominates and the magnetisation is spatially constant throughout the particle.} spherical nano-particle with no magnetocrystalline anisotropy under linearly increasing applied field.
-In this case
+In this section we present numerical experiments showing that the adaptive midpoint method retains the conservation properties of the fixed step midpoint method and that the adaptivity is effective when applied to the LLG.
+
+To avoid complicating the matter with a spatial discretisation we choose example problems that can be modelled using only an ODE: the reversal of a ``small'' ellipsoid of rotation under spatially-uniform applied field.
+With this geometry and with uniform initial magnetisation the magnetostatic field can be analytically shown to be $\hms = -\mv/3$ throughout the domain \cite[112]{Aharoni1996}.
+This means that the magnetisation remains uniform for sufficiently small ellipsoids such that the increase in exchange energy is larger than the decrease in magnetostatic energy that could be gained by a non-uniform state.
+
+
+\subsection{Relaxation of a spherical nano-particle}
+
+
+
+
+\subsection{Linearly varying applied field}
+
+The next example is a spherical nano-particle with no magnetocrystalline anisotropy under linearly increasing applied field.
+We choose
 \begin{equation}
   \hv(t) = - t/2 +  \frac{\mv}{3}.
 \end{equation}
@@ -319,33 +354,6 @@ It can be seen that reduction of the Newton tolerance strongly reduces the mean 
   \label{fig:newton-tol-errors-mp}
 \end{figure}
 
-
-\section{Discussion}
-
-\subsection{Extension to pdes}
-
-We have done some initial work using adaptive midpoint for the non-spatially constant LLG (\ie a pde) which works well for fully implicit problems.
-
-Unfortunately the energy/damping conservation properties require the entire calculation to be performed implicitly.
-This is incompatible with the semi-implicit FEM/BEM method for magnetostatic field calculations,\cite{Koehler1997} which is used in the current implementation of our model.
-However d'Aquino \etal demonstrated an efficient, fully implicit finite difference LLG solver using the fixed step midpoint method\cite{DAquino2005}.
-Such a solver should be easily modifiable to use our adaptive midpoint method.
-
-The conservation of magnetisation length by IMR does not require a fully implicit calculation as demonstrated by Spargo \etal\cite{Spargo2003a}.
-Hence the our adaptive IMR scheme could be also be useful in a semi-implicit magnetisation-length-conserving solver.
-
-
-\subsection{Alternative time adaptivity methods in micromagnetics}
-\label{sec:altern-time-adapt}
-
-In cases where the damping is not exact the effective damping can be used as an error estimator, as proposed by Albuquerque \etal\cite{Albuquerque2001}
-??ds The disadvantage of this method (aside from the obvious requirement that the damping be inexact) is that, depending on the discretisation used, the error estimator may be unable to distinguish between insufficient space refinement and insufficient time refinement.
-In particular this is the case when the solution is not completely divided into separate effective field calculations and pointwise time integration, such as in a typical Galerkin finite element model.
-
-Rigorous time error estimates for the LLG with limited effective field terms with a certain discretisation method were proven and used to perform adaptive refinement of midpoint method time steps by Banas.\cite{Banas-thesis}
-??ds do these work, why does no one use them?
-By comparison our adaptive method is much more general in that it can be applied to any differential equation and any discretisation scheme which uses the method of lines for time.
-It is also simpler to implement (requiring only an additional explicit time step, which can easily be handled by existing ODE solver packages) and easy to understand.
 
 
 %%% Local Variables:
