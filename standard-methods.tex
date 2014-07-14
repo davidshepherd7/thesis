@@ -51,7 +51,7 @@ As such they allow modelling of some systems that are inaccessible using microma
 However the required spatial resolution comes with a large increase in computational cost.
 Due to the differences in the underlying model the numerical methods used are often quite different so we won't discuss them much.
 
-\begin{figure}[h]
+\begin{figure}[\figpos]
   \centering
   \begin{tikzpicture}[level 1/.style={sibling distance=5.2cm},level 2/.style={sibling distance=5cm}]
     \node[block] {\textbf{Spatial Discretisation}}
@@ -136,7 +136,7 @@ This can cause incorrect (numerical) damping of oscillations in the solutions.
 \item \textbf{Self-starting} -- A scheme is self starting if it only requires a single initial value. This is desirable because methods of estimating additional initial values may introduce errors. However more advanced schemes often require values at multiple times and so need multiple initial values.
 \end{itemize}
 
-\begin{figure}[h]
+\begin{figure}[\figpos]
   \centering
   \resizebox{\textwidth}{!}{
     \begin{tikzpicture}[level 1/.style={sibling distance=5cm},level 2/.style={sibling distance=4.9cm},level 3/.style={sibling distance=4cm}]
@@ -367,7 +367,7 @@ This is usually unreasonably slow so more advanced methods are needed. Such meth
 \subsection{Integral Methods}
 \label{sec:magstat-field-calc-inte}
 
-\begin{figure}[h]
+\begin{figure}[\figpos]
   \centering
   \begin{tikzpicture}[level 1/.style={sibling distance=5.4cm},
     level 2/.style={sibling distance=3.6cm}]

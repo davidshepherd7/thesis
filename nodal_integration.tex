@@ -272,14 +272,14 @@ The maximum time was $t_{max} = 5$ ($\approx 20$ wave periods), the damping is s
 \autoref{fig:mean-ml-error-2d-gauss} shows the behaviour of the maximum (over all nodes) error in magnetisation length, \autoref{fig:mean-ml-error-2d-nodal} shows the equivalent plot when using nodal quadrature.
 When using nodal quadrature the error never grows much larger than the Newton tolerance, whereas when using Gaussian quadrature the error grows to $\order{10^{-5}}$ within the short simultation.
 
-\begin{figure}[ht!]
+\begin{figure}[\figpos]
   \centering
   \includegraphics[width=0.8\textwidth]{plots/2d_wave_solution_m_length/gauss-maxmathbfm-1vst.pdf}
   \caption{Evolution of the maximum error of nodal magnetisation lengths in the 2D wave example with a standard Gaussian quadrature scheme.}
   \label{fig:mean-ml-error-2d-gauss}
 \end{figure}
 
-\begin{figure}[ht!]
+\begin{figure}[\figpos]
   \centering
   \includegraphics[width=0.8\textwidth]{plots/2d_wave_solution_m_length/lnodal-maxmathbfm-1vst.pdf}
   \caption{Evolution of the maximum error of nodal magnetisation lengths in the 2D wave example with the nodal quadrature scheme introduced above.}
@@ -294,7 +294,7 @@ This clearly demonstrates the necessity and effectiveness of the nodal quadratur
 
 ??ds describe very long time behaviour in \autoref{fig:mean-ml-error-2d-nodal-long-time}.
 
-\begin{figure}[ht!]
+\begin{figure}[\figpos]
   \centering
 \includegraphics[width=0.8\textwidth]{plots/2d_wave_solution_m_length_long_time/-maxmathbfm-1vst.pdf}
 \caption{Evolution of the maximum error of nodal magnetisation lengths in the 2D wave example with the nodal quadrature scheme over a very long time period.}
@@ -315,7 +315,7 @@ Instead we plot the error against the actual maximum residual obtained (specific
 The results are shown in \autoref{fig:mean-ml-error-2d-nodal-newton-tests}, there is a clear corrolation between small residuals and small length errors.
 
 
-\begin{figure}[ht!]
+\begin{figure}[\figpos]
   \centering
   \includegraphics[width=0.8\textwidth]
   {plots/2d_wave_solution_m_length_newton_res/-maxmaxmathbfm-1vsmeanmathbfr_mathrmfinal_infty.pdf}

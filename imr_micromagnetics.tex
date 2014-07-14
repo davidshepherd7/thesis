@@ -322,7 +322,7 @@ The Newton tolerance is $1\E{-8}$ and the adaptive integrator tolerance is $\tol
 Then the switching speeds up and the step size gradually decreases.
 Finally the switching is finished and the step size increases again.
 
-\begin{figure}[ht!]
+\begin{figure}[\figpos]
   \centering
   \includegraphics{images/placeholder}
   \caption{Magnetisation dynamics and step size selections for a small spherical magnetic nano-particle switching in a linearly increasing applied field. Calculated using the adaptive midpoint method with two interpolation points.}
@@ -336,7 +336,7 @@ This also indicates that the errors are strongly related to the Newton solver er
 
 ??ds also do fixed step midpoint?
 
-\begin{figure}[ht!]
+\begin{figure}[\figpos]
   \centering
   \includegraphics{images/placeholder}
   \caption{Comparison of errors in $\abs{\mv}$ and $\dampc$ for adaptive midpoint method and adaptive BDF2 for a small spherical magnetic nano-particle switching in a linearly increasing applied field.}
@@ -347,7 +347,7 @@ This also indicates that the errors are strongly related to the Newton solver er
 To investigate this effect further we compare the average errors for various Newton tolerances in \autoref{fig:newton-tol-errors-mp}.
 It can be seen that reduction of the Newton tolerance strongly reduces the mean errors.
 
-\begin{figure}[ht!]
+\begin{figure}[\figpos]
   \centering
   \includegraphics{images/placeholder}
   \caption{Effect of varying the Newton method tolerance on errors in $\abs{\mv}$ and $\dampc$  for the switching nano-particle problem discussed above.}
