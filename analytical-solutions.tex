@@ -21,15 +21,15 @@ Let $\theta_1$, $\theta_2$ be the initial and final angles between the field axi
 
 \begin{equation}
   \tau = \frac{\dampc^2 +1}{\gymagc \dampc} \frac{1}{H^2 - H_k^2}
-  \left[ H \ln \left( \frac{\tan(\theta_2/2)}{\tan(\theta_1/2)} \right)
-       + H_k \ln \left( \frac{H - H_k \cos\theta_1}{H - H_k \cos\theta_2} \right)
-       + H_k \ln \left( \frac{\sin\theta_2}{\sin\theta_1} \right)
-    \right].
+  \bigb{ H \ln \bigs{ \frac{\tan(\theta_2/2)}{\tan(\theta_1/2)} }
+       + H_k \ln \bigs{ \frac{H - H_k \cos\theta_1}{H - H_k \cos\theta_2} }
+       + H_k \ln \bigs{ \frac{\sin\theta_2}{\sin\theta_1} }
+     }.
 \end{equation}
 
 The azimuthal angle precessed through during this switching is
 \begin{equation}
-  \phi = \frac{-1}{\dampc} \ln \left( \frac{\tan(\theta_2/2)}{\tan(\theta_1/2)} \right).
+  \phi = \frac{-1}{\dampc} \ln \bigs{ \frac{\tan(\theta_2/2)}{\tan(\theta_1/2)} }.
 \end{equation}
 
 Note that this is not really a true ``solution'' to the Landau-Lifshitz-Gilbert equation.
@@ -50,7 +50,7 @@ Write
     \that(t) &= \frac{t}{1 + \dampc^2}, \\
     b(t) &= \abs{\kvec}^2 \dampc \that(t), \\
     d(t) &= \sqrt{\sin^2(c) + \cos^2(c)e^{2 b(t)}}, \\
-    g(t) &= \frac{1}{\dampc} \log \left( \frac{d(t) + \cos(c) e^{b(t)}}{1 + \cos(c)} \right).
+    g(t) &= \frac{1}{\dampc} \log \bigs{ \frac{d(t) + \cos(c) e^{b(t)}}{1 + \cos(c)} }.
   \end{aligned}
 \end{equation}
 Then
@@ -122,11 +122,11 @@ Another analytical solution based on the non-Gilbert form of the Landau-Lifshitz
 \begin{align*}
   \phi(t) &= \gamma' H t, \\
   \cos \theta(t) &= \tanh (\gamma' \dampc H (t - t_0)), \\
-  \sin \theta(t) &= \left[ \cosh (\gamma' \dampc H (t - t_0)) \right]^{-1}, \\
+  \sin \theta(t) &= \bigb{ \cosh (\gamma' \dampc H (t - t_0)) }^{-1}, \\
 \end{align*}
 where $\gamma' = \frac{\gymagc}{1 + \alpha^2}$ and
 \begin{equation}
-  t_0 = \frac{1}{\gamma' \dampc H} \log \left( \frac{\sin \theta_0}{1 + \cos \theta_0} \right)
+  t_0 = \frac{1}{\gamma' \dampc H} \log \bigs{ \frac{\sin \theta_0}{1 + \cos \theta_0} }
 \end{equation}
 
 
