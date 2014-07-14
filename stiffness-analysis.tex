@@ -1,103 +1,7 @@
 
-
-% Define a new boolean which tells us if we are compiling this as a trans
-% mag paper or as part of my thesis.
-\newif\iftransmagpaper
-
-% if "\ifthesis" is defined then it's part of my thesis, otherwise it's the
-% standalone paper.
-\ifx\ifthesis\undefined
-\transmagpapertrue
-\else
-\transmagpaperfalse
-\fi
-
-% \ifx\ifthesis\undefined
-% \newif\ifthesis 
-% \fi
-
-
-% if it's the paper we need the preamble:
-\iftransmagpaper
-
-\documentclass[10pt, final, conference, transmag]{IEEEtran}
-
-\pdfminorversion 3
-
-
-%% General packages
-%% ============================================================
-\usepackage[cmex10]{amsmath}
-\usepackage{url}                %Support for urls
-\usepackage[pdftex]{graphicx}   %Needed to include pictures
-
-\usepackage{cite} % nicer citations
-
-\usepackage{flushend} % balance columns on last page
-
-
-
-% Define new commands
-\input{commands.tex}
-
-% custom commands for transmag standards
-\renewcommand{\figpos}{t!}
-\newcommand{\figsize}{3.5in}
-
-\def\figureautorefname{Fig.}
-
-
-
-\title{Discretisation induced stiffness in micromagnetic simulations}
-
-\newcommand{\uom}{The University of Manchester, Oxford Road, Manchester, M13 9PL, UK}
-
-\author{\IEEEauthorblockN{David Shepherd\IEEEauthorrefmark{1},
-    Jim Miles\IEEEauthorrefmark{1},
-    Matthias Heil\IEEEauthorrefmark{2},
-    Milan Mihajlovi\'{c}\IEEEauthorrefmark{1}}
-  \IEEEauthorblockA{\IEEEauthorrefmark{1} School of Computer Science, \uom{}} 
-  \IEEEauthorblockA{\IEEEauthorrefmark{2} School of Mathematics, \uom{}}%
-}
-
-
-\begin{document}
-
-\IEEEtitleabstractindextext{%
-  \begin{abstract}
-    In the numerical integration of the Landau-Lifshitz-Gilbert (LLG) equation, stiffness (stability restrictions on the time step size for explicit methods) is known to be a problem in some cases.  
-    We examine the relationship between stiffness and spatial discretisation size for the LLG with exchange and magnetostatic effective fields.
-    A maximum stable time step is found for the reversal of a single domain spherical nanoparticle with a variety of magnetic parameters and numerical methods.
-    From the lack of stiffness when solving a physically equivalent ODE problem we conclude that any stability restrictions in the PDE case arise from the spatial discretisation rather than the underlying physics.
-
-    We find that the discretisation induced stiffness increases as the mesh is refined and as the damping parameter is decreased.
-    In addition we find that use of the FEM/BEM method for magnetostatic calculations increases the stiffness.
-    Finally, we observe that the use of explicit magnetostatic calculations within an otherwise implicit time integration scheme (\ie a semi-implicit scheme) does not cause stability issues.
-  \end{abstract}
-  \begin{IEEEkeywords}
-    Numerical stability, Micromagnetics
-  \end{IEEEkeywords}}
-
-
-\maketitle
-
-\IEEEdisplaynontitleabstractindextext
-
-
-% otherwise we need the chapter title (and some commands are modified)
-\else
 \chapter{Stiffness of the LLG equation}
 \label{cha:stiffn-llg-equat}
 
-
-\newcommand{\fig}{Figure~}
-\newcommand{\figs}{Figures.~}
-\newcommand{\figsize}{0.6\textwidth}
-
-
-\fi
-
-% Now start the writing for real!
 
 \section{Introduction}
 
@@ -115,89 +19,29 @@ Shorter wavelength implies higher frequency, \ie shorter characteristic time sca
 These modes interact with the solution, and the large variation in time scales causes stiffness in a similar way to physical effects.
 For a rigorous discussion of this effect in terms of the eigenvalues of the time integration operator see e.g. \cite[Sec 8.2]{Atkinson2009}.
 
-\iftransmagpaper Time  \else As discussed in \autoref{sec:time-discretisation} time \fi integration methods can be roughly divided into two classes: those which are not good at solving stiff problems and those which are.
+As discussed in \autoref{sec:time-discretisation} time integration methods can be roughly divided into two classes: those which are not good at solving stiff problems and those which are.
 These two classes correspond to \emph{explicit} methods that calculate the value at the next time exclusively in terms of previous values and \emph{implicit} methods in which a system of equations must be solved. 
 Typically one step of an implicit method requires more computational effort than a step of an explicit method because of this solve.
 However good implicit methods are unconditionally stable, allowing them to take much larger time steps when applied to stiff problems \cite[Chap. 4]{Iserles2009}.
 Hence there is a trade-off between time step size and the computational effort per step.
 Since the optimal choice depends on the stiffness it is important to understand its origins in micromagnetic simulations.
 
-In this \iftransmagpaper paper \else chapter \fi we examine numerically the relationship between stiffness and spatial discretisation size for a simple micromagnetic problem where stiffness due to physical effects can be ruled out.
+In this chapter we examine numerically the relationship between stiffness and spatial discretisation size for a simple micromagnetic problem where stiffness due to physical effects can be ruled out.
 We also explore how stiffness is affected by the use of the FEM/BEM method for magnetostatic calculations.
 Finally, we study the effects of stiffness on methods which combine explicit magnetostatic calculations with implicit exchange field and LLG calculations (\ie semi-implicit methods).
 
 \section{The model}
 
-\iftransmagpaper
-We compute the time dependent behaviour of magnetisation, $\mv = \mv(\xv, t)$, using the non-dimensionalised
-Landau-Lifshitz-Gilbert equation \cite{Aharoni1996} with dimensionless Gilbert damping constant $\dampc$
-\begin{equation}
-  \begin{aligned}
-    \dmdt &= - \mv \times \hv + \dampc \mv \times \dmdt, \\
-    \hv &= \lap \mv + \hms + \happ. \label{llg}
-  \end{aligned}
-\end{equation}
-Here $\hms$ is the magnetostatic field and $\happ$ is the applied field, both in units of the saturation magnetisation, $M_s$.
-Unit distance is the magnetostatic exchange length,
-$\sqrt{\frac{2A}{\mu_0 M_s^2}} \approx 1\text{-}10\text{nm}$.
-Unit time is $(|\gamma| M_s)^{-1} \approx 5\text{ps}$.
-Standard boundary conditions for zero surface anisotropy are used, \ie $\pd{\mv}{\nv} = \mathbf{0}$ where $\nv$ is the outer unit normal.
-
-The magnetostatic field is calculated via a scalar potential
-using the FEM/BEM method \cite{Fredkin1990}\cite{Knittel2011}
-\begin{equation}
-  \begin{aligned}
-    \label{eq:fem-bem}
-    \lap \phione = \nabla \cdot \mv, \\
-    \lap \phim = \nabla \cdot \mv, \\
-    \hms = -\grad \phim,
-  \end{aligned}
-\end{equation}
-where $\phim$ is the standard magnetostatic potential and $\phione$ is an auxiliary potential used to apply the boundary condition $\lim_{|\xv| \rightarrow \infty} \phim = 0$.
-The corresponding boundary conditions are $\pd{\phione^\inte}{\nv} = \mv \cdot \nv$ and $\phim = \bm \big[ \phione \big]$, where $\bm$ is the BEM operator. After discretisation by collocation the BEM operator is a dense matrix with elements given by
-\begin{equation}
-  \begin{aligned}
-    \bm_{ij} = \frac{\gamma(\xv_i)\delta_{ij}}{4\pi} 
-- \frac{1}{4 \pi} \int_\boundd \varphi_{j}(\yv) \frac{\nv(\yv) \cdot (\yv - \xv_{i} )}{\abs{\yv - \xv_i} ^2} \d \yv,
-    \label{eq:bem-matrix}
-  \end{aligned}
-\end{equation}
-where $\boundd$ is the boundary of the magnetic region, $\xv_i$ is the location of node $i$, $\varphi_{i}$ is the corresponding shape function and $\gamma(\xv_i)$ is the solid angle filled by the magnetic region as $ \xv \rightarrow \xv_i$.
-The singular integrals in \eqref{eq:bem-matrix} can be evaluated analytically for linear triangular elements using the Lindholm formula\cite{Lindholm1984}.
-The boundary value of $\phim$ at node $j$ is given in terms of \emph{all} the boundary values of $\phione$ by $\phim_j = \sum_i \bm_{ij} \phione_i$ (\ie by a dense matrix multiplication on the vector of nodal values).
-Details and a derivation of the FEM/BEM method may be found in \cite[Sec 2.2]{Knittel2011}.
-
-% It should be noted that FEM/BEM models more commonly solve for $\phione$ and $\phi_2$ then use $\phim = \phione + \phi_2$. We prefer to calculate $\phim$ directly because it simplifies some implementation issues. The two approaches are mathematically equivalent.
-
-For all equations other than the BEM operator a standard linear Galerkin finite
-element discretisation is used \cite[25]{HowardElmanDavidSilvester2006}.
-\else
 In these experiments we use the FEM discretisation of the non-dimensionalised LLG as discussed in \autoref{sec:galerk-meth-llg}.
 When in use magnetostatics are handled using the FEM/BEM discretisation as discussed in \autoref{sec:hybr-finit-elem}.
-\fi
 
 \subsection{Implicit time integration}
-For implicit integration we use the implicit midpoint rule (IMR)
-\iftransmagpaper
-\cite{dAquino2005}
-\begin{equation}
-  \label{eq:imr}
-  \begin{aligned}
-    \mv_{n+1} = \mv_n + \dtn 
-    f\left(
-      \frac{t_{n+1} + t_n}{2}, \frac{\mv_{n+1} + \mv_n}{2}
-    \right),
-  \end{aligned}
-\end{equation}
-where $f(t, \mv) = \pd{\mv}{t}(t, \mv)$ and $\dtn = t_{n+1} - t_n$.
-\else
-with constant time steps as discussed in \autoref{sec:adaptive-imr}.
-\fi
+For implicit integration we use the implicit midpoint rule (IMR) with constant time steps as discussed in \autoref{sec:adaptive-imr}.
 The complete problem (including the magnetostatic potential equations) is then linearised using Newton's method.
-The resulting linear system is solved using GMRES with an incomplete LU decomposition\footnote{Hypre's Euclid preconditioner\cite{hypre} with no drop tolerance and factorisation level 1.} of the sparse parts of the system as a preconditioner, ignoring the dense block in the Jacobian arising from \iftransmagpaper\eqref{eq:bem-matrix}\else the BEM\fi.
+The resulting linear system is solved using GMRES with an incomplete LU decomposition\footnote{Hypre's Euclid preconditioner\cite{hypre} with no drop tolerance and factorisation level 1.} of the sparse parts of the system as a preconditioner, ignoring the dense block in the Jacobian arising from the BEM.
 
 \subsection{Explicit time integration}
-For the explicit integration we need to use an explicit rearrangement \cite[181]{Aharoni1996} of \iftransmagpaper\eqref{llg}\else the LLG equation\fi
+For the explicit integration we need to use an explicit rearrangement \cite[181]{Aharoni1996} of the LLG equation
 \begin{equation}
   \label{eq:ll}
   \begin{aligned}
@@ -215,27 +59,11 @@ As the time integrator we use a two stage Runge-Kutta method (RK2), also known a
 \end{equation}
 Time derivatives are calculated within the Galerkin method by inverting the finite-element mass matrix using a diagonally preconditioned conjugate gradient solver.
 The magnetostatic potential $\phim$ is recalculated using the FEM/BEM method at appropriate time and magnetisation values during each stage of \eqref{eq:heunn}.
-The Poisson solves\iftransmagpaper, \eqref{eq:fem-bem},\fi{} required for the evaluation of the potentials $\phione$ and $\phim$ use a conjugate gradient solver preconditioned with algebraic multigrid\footnote{One V(1,1) cycle of Hypre's BoomerAMG preconditioner\cite{hypre} with Gauss-Seidel smoothing, CLJP coarsening and a connection strength threshold of 0.7.}.
+The Poisson solves required for the evaluation of the potentials $\phione$ and $\phim$ use a conjugate gradient solver preconditioned with algebraic multigrid\footnote{One V(1,1) cycle of Hypre's BoomerAMG preconditioner\cite{hypre} with Gauss-Seidel smoothing, CLJP coarsening and a connection strength threshold of 0.7.}.
 
 
 \subsection{Semi-implicit time integration}
-\iftransmagpaper
-Our semi-implicit time integration scheme treats magnetostatics explicitly and other terms implicitly.
-This is a typical approach used in FEM/BEM methods to reduce the size of the Jacobian and avoid the inclusion of the dense BEM block \eqref{eq:bem-matrix}.
-Non-magnetostatic terms are dealt with using IMR, as in implicit integration without magnetostatics.
-The magnetostatic potential is calculated at the start of the step and projected (in order to retain second order accuracy) to the midpoint using a simple linear extrapolation formula
-\begin{equation}
-  \label{eq:hms-midpoint}
-  \phim_{n+1/2} = \frac{\dtn/2 + \dtx{n-1}}{\dtx{n-1}}\phim_n - \frac{\dtn}{2\dtx{n-1}}\phim_{n-1}.
-\end{equation}
-This results in a semi-implicit midpoint rule (SIMR).
-
-\vspace{3pt}
-
-Our model is implemented using \texttt{oomph-lib}, an open source multi-physics finite-element library \cite{oomph-lib-website-dummy} \cite{github-micromagnetics}.
-\else
 The semi-implicit time integration method (SIMR) used is the implicit midpoint rule combined with the semi-implicitisation discussed in \autoref{sec:semi-implicit-bem}.
-\fi
 
 
 \section{The Test Case}
@@ -244,9 +72,7 @@ As our example problem we chose a sphere with a radius of one exchange length.
 The initial magnetisation is $\mv = [0.2, 0, 1.0]/|\mv|$, the applied field is $\happ =[0, 0, -1.1]$. 
 We considered three values for the Gilbert damping constant: $\alpha = 1, 0.1$ and $0.01$.
 With this geometry and uniform magnetisation the magnetostatic field can be analytically shown to be $\hms = -\mv/3$ throughout the domain \cite[112]{Aharoni1996}, and so, due to energy considerations, the magnetisation remains uniform for spheres of radius $R < 2.082 \sqrt{3} \sim 3.606$ exchange lengths \cite[211]{HubertSchafer}.
-\ifthesis
 ??ds repeated from \autoref{sec:imr-ode-llg-numer-exper}
-\fi
 
 % Note that analytically the magnetostatic field has no effect on the dynamics because it is always anti-parallel to $\mv$ (the cross product of anti-parallel vectors is zero).
 The dynamics are therefore very simple: the magnetisation processes around the $z$-axis while gradually damping towards the applied field (along the negative $z$-axis).
@@ -291,7 +117,7 @@ Additionally, since no stability issues were seen for any value of $\alpha$, we 
 
 \begin{figure}[\figpos]
   \centering
-  \includegraphics[width=\figsize]{images/stability_disabled}
+  \includegraphics[width=0.8\textwidth]{images/stability_disabled}
   \caption{Maximum stable time step against discretisation size for LLG without magnetostatics. Data points are the stable dt values found, error bars represent the range in which the largest stable time step is contained. The horizontal dashed line shows the time step where RK2 and IMR are equally efficient (IMR is more efficient when the maximum stable step of the RK2 method moves below this line). The maximum time step is limited to 0.1 for accuracy reasons.}
   \label{fig:no-hms-stability}
 \end{figure}
@@ -304,7 +130,7 @@ In all cases we find that as the damping constant is reduced by an order of magn
 
 \begin{figure}[\figpos]
   \centering
-  \includegraphics[width=\figsize]{images/stability_decoupled}
+  \includegraphics[width=0.8\textwidth]{images/stability_decoupled}
   \caption{Stable time step against discretisation size for LLG with FEM/BEM magnetostatics.}
   \label{fig:hms-stability}
 \end{figure}
@@ -312,7 +138,7 @@ In all cases we find that as the damping constant is reduced by an order of magn
 
 \begin{figure}[\figpos]
   \centering
-  \includegraphics[width=\figsize]{images/stability_sphere}
+  \includegraphics[width=0.8\textwidth]{images/stability_sphere}
   \caption{Stable time step against discretisation size for LLG with $\hv_{\text{ms}} = - \mv / 3$.
   }
   \label{fig:analytic-hms-stability}
@@ -321,7 +147,7 @@ In all cases we find that as the damping constant is reduced by an order of magn
 Comparing \autoref{fig:no-hms-stability} and \ref{fig:hms-stability} we see that using FEM/BEM magnetostatics significantly increases the stiffness, requiring roughly an order of magnitude smaller explicit time steps.
 However, from \autoref{fig:analytic-hms-stability} we see that adding the exact field does not induce stiffness, so we can conclude that this effect is due to the FEM/BEM discretisation and not the magnetostatic field itself.
 From our data we cannot predict whether other methods of calculating the magnetostatic field, such as multipole methods, will result in similar increases in the number of explicit time steps required.
-However we expect that the effect is due to the coupling with the additional Poisson problems \iftransmagpaper\eqref{eq:fem-bem}\fi, thus any potential based method is likely to exhibit similar behaviour.
+However we expect that the effect is due to the coupling with the additional Poisson problems, thus any potential based method is likely to exhibit similar behaviour.
 
 \autoref{fig:hms-stability} shows that using a semi-implicit method with explicit magnetostatic calculations (SIMR) imposes no stability restrictions on the time step due to spatial discretisation for the spatial resolutions required for micromagnetic problems.
 
@@ -357,17 +183,6 @@ The results for the ODE version of the problem indicate that the observed stiffn
 Since more complex physics is unlikely to reduce the stiffness, we expect that these results will extend to other, more complex, problems.
 
 We also found that our semi-implicit FEM/BEM method does not suffer from discretisation induced stiffness.
-
-\iftransmagpaper
-
-\section*{Acknowledgement}
-This project is funded by the Engineering and Physical Sciences Research Council (EPSRC) on grant number EP/G01705/1.
-
-\bibliographystyle{IEEEtran}
-\bibliography{IEEEabrv,small_bib}
-
-\end{document}
-\fi
 
 
 %%% Local Variables:
