@@ -340,7 +340,7 @@ Some properties are:
       -a_2 & a_1 & 0
     \end{pmatrix}
     \cdot \threevec{b_1}{b_2}{b_3}
-    = \threevec{-a_3b_2 + a_2b_3}{a_3b_1 - a_1b_3}{-a_2b_1 + a_1b_3}
+    = \threevec{-a_3b_2 + a_2b_3}{a_3b_1 - a_1b_3}{-a_2b_1 + a_1b_2}
     = \av \times \bv
   \end{equation}
 
@@ -354,38 +354,59 @@ Some properties are:
     \skewm{\av + \alpha \bv} = \skewm{\av} + \alpha \skewm{\bv}
   \end{equation}
 
-\item Simple behaviour when applied to interpolated values and differentiated
+\item Easy to represent the Jacobian of a cross-product:
+
   \begin{equation}
-    \pd{}{\mv_l} \skewm{\intp{\mv}} = \sbf_l \threevec{\skewm{\iv}}{\skewm{\jv}}{\skewm{\kv}}
-    = \sbf_l \skewop_3.
+    \pd{}{a_1} \skewm{\av} \cdot \bv = \begin{pmatrix}
+      0 & 0 & 0 \\
+      0 & 0 & -1 \\
+      0 & 1 & 0
+    \end{pmatrix}\bv = \threevec{0}{-b_3}{b_2}.
   \end{equation}
-  Note that $\skewop_3$ is a tensor: it generates a matrix when multiplying a vector. In fact it turns out that
+  Note that this is the first column of $-\skewm{\bv}$.
+  It turns out that
   \begin{equation}
-    \skewop_3 \cdot \av = \skewm{\av}.
+    \pd{}{\av} \skewm{\av} \cdot \bv = \begin{pmatrix}
+      0 & b_3 & -b_2 \\
+      -b_3 & 0 & b_1 \\
+      b_2 & -b_1 & 0
+    \end{pmatrix} = -\skewm{\bv}.
+    \label{eq:61}
   \end{equation}
 
-  ??ds is this the correct way to write it? Check tensor mul.
+\item Simple behaviour when applied to interpolated values and differentiated:
 
-\item From combining the points above
+  Due to linearity and the fact that all entries of $\pd{\mv_{l}}{\mv_{k}}$ are zero unless $l=k$ we have
   \begin{equation}
-    \begin{aligned}
-      \pd{}{\mv_l} \bigb{\skewm{\mv}\cdot \gv(\mv)} &= \skewm{\mv}\cdot \pd{\gv(\mv)}{\mv_l}
-           + \sbf_l \skewop_3 \cdot \gv(\mv), \\
-           &= \skewm{\mv}\cdot \pd{\gv(\mv)}{\mv_l} + \sbf_l \skewm{\gv(\mv)}.
-    \end{aligned}
-  \end{equation} 
-  Since $\pd{\gv(\mv)}{\mv_l}$ is typically some scalar multiplied by an identity matrix this results in a simple skew-symmetric structure for most of the derivative terms in the Jacobian.
+    \pd{}{\mv_l} \skewm{\intp{\mv}} \cdot \bv = \sum_k \sbf_k \pd{}{\mv_l} \bigb{\skewm{\mv_k} \bv} = \sbf_l \pd{}{\mv_l} \bigb{\skewm{\mv_l} \cdot \bv}.
+  \end{equation}
+
+  Then using \eqref{eq:61} we have
+  \begin{equation}
+    \pd{}{\mv_l} \skewm{\intp{\mv}} \cdot \bv = - \sbf_l\skewm{\bv}.
+    \label{eq:diff-skew-interp}
+  \end{equation}
 
 \end{itemize}
+
+Now note that combining the points above with the chain rule we get:
+  \begin{equation}
+    \begin{aligned}
+      \pd{}{\mv_l} \bigb{\skewm{\mv}\cdot \gv(\mv)} 
+      &= \skewm{\mv}\cdot \pd{\gv(\mv)}{\mv_l} - \sbf_l \skewm{\gv(\mv)}.
+    \end{aligned}
+  \end{equation}
+In the context of the LLG Jacobian $\pd{\gv(\mv)}{\mv_l}$ is typically some scalar multiplied by an identity matrix.
+Hence we can obtain a simple representation of most of the terms in the Jacobian in terms of the skew operator.
 
 As a simple example of how this can be used we first examine the differentiation of the $\mv \times (\happ + \hms)$ term of the Landau-Lifshitz equation residual (note that these two fields are not (directly) dependant on $\mv$).
 \begin{align}
   \circled{c} &= \intpb{\mv} \times (\happ + \hms), \notag\\
               &= \skewm{\intp{\mv}} \cdot (\happ + \hms).
 \end{align}
-Differentiating each component of \circled{c} by each component of $\mv_l$ simply results in the Jacobian
+Now it is easy to see that applying \eqref{eq:diff-skew-interp} gives us the Jacobian contribution
 \begin{align}
-  \pd{\circled{c}}{\mv_l} = \sbf_l \skewm{\happ + \hms}.
+  \pd{\circled{c}}{\mv_l} = - \sbf_l \skewm{\happ + \hms}.
 \end{align}
 
 Written using this skew operator the LLG residual is
@@ -409,9 +430,9 @@ Some more points before the main Jacobian calculation:
   \begin{equation}
     \begin{aligned}
       \pd{}{\mv_l} \left(\nabla \mv \compdot \nabla \tbf\right) 
-      &= \pd{}{\mv_l} \left[ \left( \sum_k \mv_k \grad \sbf_k \right) \cdot \grad \tbf \right], \\
-      &=  \sum_k \pd{}{\mv_l} \left( \mv_k \grad \sbf_k \cdot \grad \tbf \right), \\
-      &= \left(\nabla \sbf_l \cdot \nabla \tbf \right) \Idm_3.
+      &= \pd{}{\mv_l} \threevecdup{\left( \sum_k \mv_k \grad \sbf_k \right) \cdot \grad \tbf}, \\
+      &=  \sum_k \pd{\mv_k}{\mv_l} \threevecdup{\grad \sbf_k \cdot \grad \tbf}, \\
+      &=  \Idm_3 \left(\nabla \sbf_l \cdot \nabla \tbf \right).
     \end{aligned}
   \end{equation}
 
@@ -420,7 +441,7 @@ Some more points before the main Jacobian calculation:
   \begin{equation}
     \Jmts \sbf_l = \pd{}{\mv_l} \left(\pd{\mv}{t} \right),
   \end{equation}
-  where $\Jmts$ is some constant that depends on the time integration scheme.
+  where $\Jmts$ is some constant matrix that depends on the time integration scheme.
   For BDF2 $\Jmts = \frac{3}{2\dtn} \Idm_3$, for the implicit midpoint rule $\Jmts = \frac{1}{\dtn} \Idm_3$.
 \end{itemize}
 
@@ -451,10 +472,10 @@ Next we calculate the contribution from damping and the various simple fields
     C_{n,l} &= \pd{}{\mv_l} \intd{  \skewm{\mv} \cdot
       \left( \happ + \hca - \nabla \phi - \dampc \dmdt
       \right) \tbf_n}, \\
-    &= \intd{ \tbf_n \sbf_l \left( \skewm{\happ + \hca - \nabla \phi - \dampc \dmdt}
-       - \dampc \jts \skewm{\mv}\right)}, \\
-    &= \skewm{\intd{ \tbf_n  \sbf_l \left( \happ + \hca - \nabla \phi - \dampc \dmdt
-       - \dampc \jts \mv \right) }}.
+    &= \intd{ \tbf_n \sbf_l \left( -\skewm{\happ + \hca - \nabla \phi - \dampc \dmdt}
+       + \dampc \jts \skewm{\mv}\right)}, \\
+    &= \skewm{\intd{ \tbf_n  \sbf_l \left( \nabla \phi + \dampc \dmdt
+          + \dampc \jts \mv - \happ - \hca \right) }}.
   \end{aligned}
 \end{equation}
 This is a 3x3 block skew-symmetric matrix where each block is something like a mass matrix multiplied by a collection of field/magnetisation components.
@@ -463,20 +484,19 @@ Finally we calculate the most complex term: the exchange contribution
 \begin{equation}
   \begin{aligned}
     B_{n,l} &=  \pd{}{\mv_l} \intd{- \skewm{\mv} \cdot (\grad \mv \compdot \grad \tbf_n)} ,\\
-    &= - \intd{ \sbf_l \skewm{\grad \mv \compdot \grad \tbf_n}
-       + \skewm{\mv} \left( \nabla \sbf_l \cdot \nabla \tbf \right)}, \\
-     &= - \skewm{ \intd{ \sbf_l \left( \grad \mv \compdot \grad \tbf_n \right)
-         + \mv \left( \nabla \sbf_l \cdot \nabla \tbf \right)}}.
+    &= \intd{ \sbf_l \skewm{\grad \mv \compdot \grad \tbf_n}
+       - \skewm{\mv} \left( \nabla \sbf_l \cdot \nabla \tbf \right)}, \\
+     &= \skewm{ \intd{ \sbf_l \left( \grad \mv \compdot \grad \tbf_n \right)
+         - \mv \left( \nabla \sbf_l \cdot \nabla \tbf \right)}}.
    \end{aligned}
  \end{equation}
 We can simplify this slightly more by expanding the shape function representation and using chain rule
 \begin{equation}
   \begin{aligned}
-    B_{n,l} &= - \skewm{ \sum_j \intd{ \sbf_l \left( \mv_j \grad \sbf_j \cdot \grad \tbf_n \right)
-        + \mv_j \sbf_j \left( \nabla \sbf_l \cdot \nabla \tbf \right)}}, \\
-    &= - \skewm{ \sum_j \intd{ (\sbf_l \grad \sbf_j + \sbf_j \grad \sbf_l)
-        \cdot \grad \tbf_n  \mv_j }}, \\
-    &= - \skewm{ \sum_j \intd{ \grad(\sbf_l \sbf_j) \cdot \grad \tbf_n  \mv_j }}.
+    B_{n,l} &= \skewm{ \sum_k \intd{ \sbf_l \left( \mv_k \grad \sbf_k \compdot \grad \tbf_n \right)
+        - \mv_k \sbf_k \left( \nabla \sbf_l \cdot \nabla \tbf \right)}}, \\
+    &= \skewm{ \sum_k \intd{ \bigb{(\sbf_l \grad \sbf_k - \sbf_k \grad \sbf_l)
+        \cdot \grad \tbf_n}  \mv_k }}. \\
   \end{aligned}
 \end{equation} 
 So again we have a 3x3 block skew-symmetric matrix.
