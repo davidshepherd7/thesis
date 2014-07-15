@@ -310,25 +310,7 @@ In this case the Landau-Lifshitz form of the Landau-Lifshitz-Gilbert equation \e
   \end{aligned}
 \end{equation}
 
-
-In the experiments below the LL form \eqref{eq:ll-nd-llglike} of the LLG is used for ease of implementation.
-Linearisation is carried out using the Newton-Raphson method, the Jacobian is calculated analytically and inverted using a direct solve.
-Unless otherwise specified the Newton tolerance is $\newtontol = 10^{-12}$, the adaptive integrator tolerance is $\toltt = 10^{-4}$ and the initial time step is $\dtinitial = 10^{-3}$ (roughly $100\times$ smaller than needed).
-
-The Newton residual is
-\begin{equation}
-  \rv = (1 + \dampc^2) \dmdt + \skewm{\mv} \cdot \hv + \dampc \skewm{\mv}\skewm{\mv} \cdot \hv, \\
-\end{equation}
-the corresponding Jacobian can be easily derived using the methods discussed in \autoref{sec:llg-jacobian}: ??ds when no hca
-\begin{equation}
-  J = (1 + \dampc^2) J_{ts} \Idm_3 - \skewm{\hv} - \dampc \skewm{ \mv \times \hv }
-  - \dampc \skewm{\mv} \skewm{\hv}.
-\end{equation}
-
-
-\subsection{Relaxation of a spherical nano-particle}
-
-We first study the even simpler case when $\kone = 0$ and $\happ(t) = [0, 0, -H]$.
+To simplify the problem even further we choose $\kone = 0$ and $\happ(t) = [0, 0, -H]$.
 In this case an exact solution is available for the time taken for $\mv$ to reach a given angle to the $z$-axis, and the amount of precession that will take place in that time.\footnote{Actually the solution can be easily extended to $\kone \neq 0$ with $\ev = \unitz$ and any $z$-aligned ellipsoid of rotation \cite{Mallinson2000}.}
 
 The time for a reversal from $\theta_1$ to $\theta_2$ is given by
@@ -341,9 +323,26 @@ The azimuthal angle precessed through during this switching is
   \phi_2 = \phi_1 +  \frac{-1}{\dampc} \ln \bigb{ \frac{\tan(\theta_2/2)}{\tan(\theta_1/2)} }.
 \end{equation}
 
-This experiment allows us to check the conservation properties of IMR, to compare the convergence of the solution over different time integrators, and to check that the time step selected is properly increased as the solution is damped out.
-
 We choose the parameters $H = 1.1$ ??ds why? and $\dampc = 0.01$ (roughly the physically relevant value). The initial magnetisation is chosen to be just off the $z$-axis to avoid a singularity in the reversal time when $\theta_1 = 0$. More precisely $\mv_0 = (0.01, 0.0, 1.0)/\sqrt{1.04}$. The maximum time is set to 1000 units for all simulations (enough for the magnetisation to fully switch with this damping constant).
+
+
+In the experiments below the LL form \eqref{eq:ll-nd-llglike} of the LLG is used for ease of implementation.
+Linearisation is carried out using the Newton-Raphson method, the $3 \times 3$ Jacobian is calculated analytically and inverted using a direct solve.
+Unless otherwise specified the Newton tolerance is $\newtontol = 10^{-12}$, the adaptive integrator tolerance is $\toltt = 10^{-4}$ and the initial time step is $\dtinitial = 10^{-3}$ (roughly $100\times$ smaller than needed).
+
+The Newton residual is
+\begin{equation}
+  \rv = (1 + \dampc^2) \dmdt + \skewm{\mv} \cdot \hv + \dampc \skewm{\mv}\skewm{\mv} \cdot \hv. \\
+\end{equation}
+The corresponding Jacobian can be easily derived using the methods discussed in \autoref{sec:llg-jacobian}, it is:
+\begin{equation}
+  J = (1 + \dampc^2) J_{ts} \Idm_3 - \skewm{\hv} - \dampc \skewm{ \mv \times \hv }
+  - \dampc \skewm{\mv} \skewm{\hv}.
+\end{equation}
+
+
+This experiment allows us to check the conservation properties of IMR, to compare the accuracy of the solution over different time integrators, and to check that the time step selected is properly increased as the solution is damped out.
+
 
 The behaviour of the magnetisation and time step selection is shown in \autoref{fig:imr-llg-ode}.
 Magnetisation is as expected.
@@ -352,10 +351,12 @@ The many small peaks in time step are due to the periodicity of the precession ?
 
 \begin{figure}[tbp]
   \centering
- \includegraphics[width=0.8\textwidth]{plots/aimr-sphere-relax/meanmxsvs-meanmysvs-meanmzsvs-dtsvs-happliedfirstelementvstimes.pdf}
- \caption{Plot of $\mv$ and $\dtn$ over time for the relaxing nano-sphere problem solved by adaptive IMR.}
+  \includegraphics[width=0.8\textwidth]{plots/aimr-sphere-relax/meanmxsvs-meanmysvs-meanmzsvs-dtsvs-happliedfirstelementvstimes.pdf}
+  \caption{Plot of $\mv$ and $\dtn$ over time for the relaxing nano-sphere problem solved by adaptive IMR.}
   \label{fig:imr-llg-ode}
 \end{figure}
+
+\subsection{Conservation properties}
 
 The conservation of the magnetisation length is shown in \autoref{fig:ml-aimr-ode}.
 For comparison the same calculation using BDF2 and TR results in magnetisation length errors of order $10^{-3}$ and $10^{-4}$ respectively.
@@ -380,6 +381,9 @@ The effective damping ??ds shown in \autoref{fig:aimr-llg-ode-energy}.
 \end{figure}
 
 
+\subsection{Comparison with other methods}
+
+
 \begin{figure}[tbp]
   \centering
   \includegraphics[width=0.8\textwidth]{images/placeholder}
@@ -387,57 +391,6 @@ The effective damping ??ds shown in \autoref{fig:aimr-llg-ode-energy}.
   \label{fig:imr-llg-ode-accury}
 \end{figure}
 
-
-
-
-
-\subsection{Linearly varying applied field}
-
-??ds no need for another example?
-
-The next example is a spherical nano-particle with no magnetocrystalline anisotropy under linearly increasing applied field.
-We choose
-\begin{equation}
-  \hv(t) = - t/2 +  \frac{\mv}{3}.
-\end{equation}
-The initial magnetisation used is $\mv_0 = \bigb{ 0.05, 0, \sqrt{1 - 0.05^2} }$.
-The damping constant is $\dampc = 0.3$.
-
-\autoref{fig:linear-field-switch-mp} shows again that the adaptivity works: initially the field is so weak that not much is happening and large steps are taken.
-Then the switching speeds up and the step size gradually decreases.
-Finally the switching is finished and the step size increases again.
-
-\begin{figure}[\figpos]
-  \centering
-  \includegraphics{images/placeholder}
-  \caption{Magnetisation dynamics and step size selections for a small spherical magnetic nano-particle switching in a linearly increasing applied field. Calculated using the adaptive midpoint method with two interpolation points.}
-  \label{fig:linear-field-switch-mp}
-\end{figure}
-
-\autoref{fig:linear-field-switch-errors-mp} shows that the adaptive midpoint method gives orders of magnitude better accuracy than adaptive BDF2 in magnetisation length and effective damping, as expected.
-Of interest is the noise in the midpoint effective damping error between $t \approx 2.5$ and $t \approx 9$.
-This is caused by strong variation in the final Newton error: since Newton's method gives quadratic convergence one additional step results in orders of magnitude more accuracy.
-This also indicates that the errors are strongly related to the Newton solver error, which is as expected since this is the only source of error (in these quantities) which is not removed by the use of IMR.
-
-??ds also do fixed step midpoint?
-
-\begin{figure}[\figpos]
-  \centering
-  \includegraphics{images/placeholder}
-  \caption{Comparison of errors in $\abs{\mv}$ and $\dampc$ for adaptive midpoint method and adaptive BDF2 for a small spherical magnetic nano-particle switching in a linearly increasing applied field.}
-  \label{fig:linear-field-switch-errors-mp}
-\end{figure}
-
-
-To investigate this effect further we compare the average errors for various Newton tolerances in \autoref{fig:newton-tol-errors-mp}.
-It can be seen that reduction of the Newton tolerance strongly reduces the mean errors.
-
-\begin{figure}[\figpos]
-  \centering
-  \includegraphics{images/placeholder}
-  \caption{Effect of varying the Newton method tolerance on errors in $\abs{\mv}$ and $\dampc$  for the switching nano-particle problem discussed above.}
-  \label{fig:newton-tol-errors-mp}
-\end{figure}
 
 
 \section{Conclusions}
