@@ -101,7 +101,7 @@ The proof of energy conservation does not fail directly.
 However, non-constant magnetisation length means that the derivation of the boundary condition is no longer applicable (??ds check this, non-constant |m| should destroy Neumann condition therefore symmetry is gone).
 Hence the effective field is no longer symmetrical and the proof of energy conservation no longer applies.
 
-\section{A nodal integration scheme}
+\section{A local nodal integration scheme}
 
 In order to regain conservation properties in a weak-form-based method we introduce a nodal integration scheme based on that used by Bartels et. al.\cite{Bartels2006}:
 \begin{equation}
@@ -137,10 +137,10 @@ So we have:
     &\approx  \sum_l f(\sv_l) J_l \int_{\magd_e} \tbf_l(\sv)  \d \sv,
   \end{aligned} 
 \end{equation}
-where $J_l =  \evalat{\pd{\sv}{\xv}}_{\sv=\sv_l}$ is the Jacobian of the transformation from local to global coordinates evaluated at the $l$-th integration point.
+where $J_l =  \evalatb{\pd{\sv}{\xv}}{\sv=\sv_l}$ is the Jacobian of the transformation from local to global coordinates evaluated at the $l$-th integration point.
 Comparing \eqref{eq:nodal-integration} with \eqref{eq:nodal-quad-weights} we see that
 \begin{equation}
-  \beta_l =  \int_{\magd_e} \tbf_l(\sv)  \d \sv.
+  \beta_l =  J_l \int_{\magd_e} \tbf_l(\sv)  \d \sv.
 \end{equation}
 The equivalent weight for global integration is $\beta_l = \int_{\magd} \tbf_l(\xv) \d \xv$, as used by Bartels \etal\cite{Bartels2006}.
 
