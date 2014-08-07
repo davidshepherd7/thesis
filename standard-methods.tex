@@ -1,34 +1,33 @@
 \chapter{Numerical Methods for Dynamic Micromagnetic Modelling}
 \label{sec:numer-meth-micr}
 
-In this Chapter we give an overview of numerical methods that have previously been used in dynamic micromagnetic calculations.
+In this Chapter we give an overview of numerical methods that have or could be used in dynamic micromagnetic calculations.
 These calculations involve solving some form of the LLG (or sometimes a related equation to incorporate additional physics) with fields determined by energy derivatives as discussed in \autoref{sec:cont-micromag}.
-These systems of partial differential equations (PDEs) can only be solved analytically in a few extremely simple cases,\footnote{For example the Stoner-Wolfarth theory for the rotation of a single grain.\cite{Stoner1948a}}\cite{Aharoni1996} so numerical solutions are commonly required.
+These systems of partial differential equations (PDEs) can only be solved analytically in a few extremely simple cases,\footnote{For example the Stoner-Wolfarth theory for the rotation of a single grain.\cite{Stoner1948a}}\cite{Aharoni1996} so numerical solution methods are almost always required.
 
-Many numerical methods for solving non-linear PDEs, such as \eqref{eq:LLG}, can be thought of as a combination of various component methods which each handle different parts of the conversion from a differential equation to a sequence of add/multiply/divide operations which can be performed by a computer\footnote{Technically proofs of convergence etc. should be carried out for every combination of time and space discretisation\cite[382]{Iserles2009}; in practice suprises seem to be rare, at least within micromagnetics.}.
+Many numerical methods for solving non-linear PDEs, such as \eqref{eq:LLG}, can be thought of as a combination of various component methods,\footnote{Technically proofs of convergence etc. should be carried out for every combination of time and space discretisation\cite[382]{Iserles2009}; in practice suprises seem to be rare, at least within micromagnetics.} each of which handles a different part of the conversion from a purely mathematical description into a complete algorithm which can be performed by a computer.
+
 The essential components of such a numerical method are:
-
 \begin{itemize}
-\item Spatial discretisation \eg Finite elements, finite differences, macrospins. Convert space derivatives into algebraic relationships between points in space. \autoref{sec:spat-discr}.
-
-\item Time discretisation (a.k.a. time integration, time stepping) \eg Runge-Kutta methods, backwards difference formulae (BDF), implicit midpoint rule (IMR). Convert time derivatives into algebraic relationships between points in time. \autoref{sec:time-discretisation}.
+\item Spatial discretisation: convert space derivatives into algebraic relationships between points in space, \eg Finite elements, finite differences, macrospins. 
+\item Time discretisation (a.k.a. time integration):  convert time derivatives into algebraic relationships between points in time, \eg Runge-Kutta methods, backwards difference formulae (BDF), implicit midpoint rule (IMR).
 \end{itemize}
-
-For some choices of time and space discretisations additional methods are needed:
+For some choices of time and space discretisations additional components are needed:
 \begin{itemize}
-\item Linearisation \eg Newton method/Newton-Raphson, Picard/fixed-point iteration. Convert a system of non-linear equations into a sequence of linear systems.
-\item Linear system solver \eg LU decomposition, Krylov solvers, multigrid. Solve a system of linear equations.
+\item Linearisation: Convert a system of non-linear algebraic equations into a sequence of systems of linear algebraic equations, \eg Newton-Raphson method, Picard/fixed-point iteration. 
+\item Linear solver: solve a system of linear algebraic equations, \eg LU decomposition, Krylov solvers, multigrid methods. 
 \end{itemize}
 
 Additionally in micromagnetic modelling the calculation of the magnetostatic field is required.
 If the integral form given in \eqref{eq:Hmsint} is used then an additional integral evaluation method is needed to handle it.
 However if the equivalent potential formulation \eqref{eq:Hms}-\eqref{eq:phi-inf} is used then we simply have another PDE to add to the system of PDEs describing the magnetisation dynamics.
 
-It should be noted that not all methods fit into this framework of independant methods for each part of the problem.
+It should be noted that not all methods fit into this framework of independent methods for each part of the problem.
 In particular one example which uses a combined space/time discretisation to obtain some interesting properties is discussed (briefly) in \autoref{sec:advanced-lin}.
-In general however, the increased modularity of ideas and code is useful.
+In general however, the modularity of both understanding and code given by thinking of a PDE solver as a combination of components is extremely powerful.
 
 Diagrams showing how the various methods are related are given for space discretisation in \autoref{fig:types-spat-discl}, time discretisation in \autoref{fig:types-time-disc}, and magnetostatic field calculations in \autoref{fig:types-mag-stat}.
+
 
 \section{Spatial Discretisation}
 \label{sec:spat-discr}

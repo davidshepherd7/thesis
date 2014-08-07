@@ -455,6 +455,28 @@ Assuming that we have values for $\yv_n$, $\yv_{n-1}$, $\yv_{n-2}$ (these can be
 Steps 1 and 2 are interchangable, but in some cases the value $\yv_{n+1}^\ebdf$ may be useful as an initial guess for the calculation of $\yv_{n+1}$.
 
 
+\subsection{Application to Implicit ODEs}
+\label{sec:extens-impl-odes}
+
+We sometimes wish to solve a system of equations where $\yv'(t)$ is given implicitly\footnote{This use of ``implicit'' is unrelated to the notion of implicitness in the time integration scheme.} (for example in the Gilbert form of the Landau-Lifshitz-Gilbert equation), in this case equation~\eqref{eq:43} becomes
+\begin{equation}
+  \ffv{t, \yv(t), \yv'(t)} = 0.
+\end{equation}
+
+We note that equation~\eqref{eq:basic-midpoint} can also be written in the from
+\begin{equation}
+  \yv'(\thf) = \frac{\yv_{n+1} - \yv_n}{\dtn} =  \ffv{\thf, \frac{\yv_n + \yv_{n+1}}{2}}.
+\end{equation}
+The obvious equivalent for IMR is
+\begin{equation}
+  \ffv{\thf, \frac{\yv_{n+1} + \yv_n}{2}, \frac{\yv_{n+1} - \yv_n}{\dtn}} = 0.
+\end{equation}
+
+However the eBDF3 predictor used in the adaptive scheme requires a function evaluation, which for functions which can \emph{only} be defined implicitpy case means a non-linear solve.
+This is expensive so for these cases the adaptive method is not efficient.
+Note that the LLG can be defined explicitly as well as implicitly so this limitation does not apply to micromagnetics problems.
+
+
 \section{Numerical experiments}
 \label{sec:aimr-testing}
 
@@ -621,31 +643,6 @@ This allows it to retain similar accuracies to the TR and BDF2 methods at the co
 The convergence of the solution as $\toltt$ is reduced with fixed $\lambda = 100$ is shown in \autoref{fig:imr-order-reduction-convergence}.
 Note that IMR still displays second order convergence (albeit with a much larger constant error). 
 This is because we are not increasing $\lambda$ as we decrease $\toltt$, so we measuring the normal convergence not B-convergence.
-
-
-\section{Additional Notes}
-
-\subsection{Application to Implicit ODEs}
-\label{sec:extens-impl-odes}
-
-We sometimes wish to solve a system of equations where $\yv'(t)$ only given implicitly\footnote{This use of ``implicit'' is unrelated to the notion of implicitness in the time integration scheme.} (for example the Gilbert form of the Landau-Lifshitz-Gilbert equation), in this case equation~\eqref{eq:43} becomes
-\begin{equation}
-  \ffv{t, \yv(t), \yv'(t)} = 0.
-\end{equation}
-
-We note that equation~\eqref{eq:basic-midpoint} can also be written in the from
-\begin{equation}
-  \yv'(\thf) = \frac{\yv_{n+1} - \yv_n}{\dtn} =  \ffv{\thf, \frac{\yv_n + \yv_{n+1}}{2}}.
-\end{equation}
-The obvious equivalent for IMR is
-\begin{equation}
-  \ffv{\thf, \frac{\yv_{n+1} + \yv_n}{2}, \frac{\yv_{n+1} - \yv_n}{\dtn}} = 0.
-\end{equation}
-
-However the adaptive scheme requires an additional function evaluation.
-For implicitly defined functions this is expensive, so this adaptive method is not efficient for equations which can only be defined in such a way.
-The LLG can be defined explicitly as well as implicitly so this limitation does not apply in micromagnetics.
-
 
 
 \section{Conclusions}
