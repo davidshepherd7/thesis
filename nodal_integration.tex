@@ -1,4 +1,6 @@
-% ??ds make sure I talk about quadrature in fem intro
+z% ??ds make sure I talk about quadrature in fem intro
+
+??ds add less than ntol to end of other residuals elsewhere?
 
 \chapter{Geometric integration with the finite element method}
 \label{sec:nodal-integration}
@@ -160,27 +162,29 @@ Hence the exchange term is integrated exactly.
 \subsection{Conservation of $\abs{\mv}$ at nodes}
 \label{sec:weak-cons-absmv}
 
-Starting from the IMR discretised weak form of the LLG \eqref{eq:weak-llg-imr}:
+??ds add weak exchange residual!
+
+Starting from the IMR discretised weak form of the LLG \eqref{eq:weak-llg-imr}, after minimising the residual we have that
 \begin{equation}
-  \intd{\dmdtm \cdot \testv + (\mvm \times \hv[\tm, \mvm]) \cdot \testv - \dampc (\mvm \times \dmdtm) \cdot \testv }= 0, \quad \forall \testv .
+  \intd{\dmdtm \cdot \testv + (\mvm \times \hv[\tm, \mvm]) \cdot \testv - \dampc (\mvm \times \dmdtm) \cdot \testv } < \ntol, \quad \forall \testv .
 \end{equation}
 
-We examine the choice of the test function as the midpoint nodal value of $\mv$ at node j multiplied by the $j$th test basis function, $\testv = \mvm_{,j} \tbf_j$.
+Next we examine the choice of the test function as the midpoint nodal value of $\mv$ at node j multiplied by the $j$th test basis function, $\testv = \mvm_{,j} \tbf_j$.
 This choice is clearly in the vector space of test functions because it is simply a constant multiple of a basis function.
-The resulting 
+The result is
 \begin{equation}
-  \sum_l \beta_l \bigs{\dmdtml \cdot \mvm_{,j}\tbf_j(\xv_l) + (\mvm_{,l} \times \hv[\tm, \mvm_{,l}]) \cdot \mvm_{,j}\tbf_j(\xv_l) - \dampc (\mvm_{,l} \times \dmdtml) \cdot \mvm_{,j}\tbf_j(\xv_l)} = 0.
+  \sum_l \beta_l \jstox_l \bigs{\dmdtml \cdot \mvm_{,j}\tbf_j(\xv_l) + (\mvm_{,l} \times \hv[\tm, \mvm_{,l}]) \cdot \mvm_{,j}\tbf_j(\xv_l) - \dampc (\mvm_{,l} \times \dmdtml) \cdot \mvm_{,j}\tbf_j(\xv_l)} < \ntol.
 \end{equation}
 
 Using $\tbf_k(\xv_l) = \delta_{kl}$ we can eliminate the summation
 \begin{equation}
-  \beta_j \bigs{\dmdtmj \cdot \mvm_{,j} + (\mvm_{,j} \times \hv[\tm, \mvm_{,j}]) \cdot \mvm_{,j} - \dampc (\mvm_{,j} \times \dmdtmj) \cdot \mvm_{,j}} = 0.
+  \beta_j \jstox_j \bigs{\dmdtmj \cdot \mvm_{,j} + (\mvm_{,j} \times \hv[\tm, \mvm_{,j}]) \cdot \mvm_{,j} - \dampc (\mvm_{,j} \times \dmdtmj) \cdot \mvm_{,j}} < \ntol.
 \end{equation}
 By the properties of the triple product the procession and damping terms vanish. Then expanding the midpoint values gives us our conservation result:
 \begin{equation}
   \begin{aligned}
-    \frac{\beta_l}{2\dtn}(\mv_{n+1,j} - \mv_{n,j}) \cdot (\mv_{n+1, j} + \mv_{n, j}) &= 0, \\
-    \abs{\mv_{n+1, j}}^2 - \abs{\mv_{n, j}}^2 &= 0.
+    \frac{\beta_j \jstox_j}{2\dtn}(\mv_{n+1,j} - \mv_{n,j}) \cdot (\mv_{n+1, j} + \mv_{n, j}) &< \ntol, \\
+    \abs{\mv_{n+1, j}}^2 - \abs{\mv_{n, j}}^2 &< \frac{2\dtn}{\beta_j \jstox_j}\ntol.
   \end{aligned}
 \end{equation}
 
@@ -189,12 +193,15 @@ This can obviously be repeated for all nodes $j$, hence each nodal magnetisation
 
 \subsection{Energy loss}
 
+??ds add weak exchange residual!
+
+
 Again we start from the IMR discretised weak form of the LLG \eqref{eq:weak-llg-imr} and proceed by choosing specific test functions.
 In this case we first choose $\testv = \dmdtm$, which gives:
 \begin{equation}
   \label{eq:test-dmdt}
   \begin{aligned}
-    0 &= \intd{\dmdtm \cdot \dmdtm} - \intd{\dmdtm  \cdot (\mvm \times \hv[\tm, \mvm])}.
+    \intd{\dmdtm \cdot \dmdtm} - \intd{\dmdtm  \cdot (\mvm \times \hv[\tm, \mvm])} < \ntol.
   \end{aligned}
 \end{equation}
 
@@ -202,9 +209,9 @@ Secondly we choose $\testv = \hv[\tm, \mvm]$ to obtain:
 \begin{equation}
   \label{eq:test-h}
   \begin{aligned}
-    0 &= \intd{\dmdtm \cdot \hv[\tm, \mvm]} - \dampc \intd{\hv[\tm, \mvm] \cdot (\mvm \times \dmdtm)}, \\
-    & = \intd{\dmdtm \cdot \hv[\tm, \mvm]} - \dampc \intd{\dmdtm \cdot (\hv[\tm, \mvm] \times \mvm)}, \\
-    & = \intd{\dmdtm \cdot \hv[\tm, \mvm]} + \dampc \intd{\dmdtm \cdot (\mvm \times \hv[\tm, \mvm])}.
+    &\intd{\dmdtm \cdot \hv[\tm, \mvm]} - \dampc \intd{\hv[\tm, \mvm] \cdot (\mvm \times \dmdtm)} < \ntol \\
+    &= \intd{\dmdtm \cdot \hv[\tm, \mvm]} - \dampc \intd{\dmdtm \cdot (\hv[\tm, \mvm] \times \mvm)}, \\
+    &= \intd{\dmdtm \cdot \hv[\tm, \mvm]} + \dampc \intd{\dmdtm \cdot (\mvm \times \hv[\tm, \mvm])}.
   \end{aligned}
 \end{equation}
 
@@ -232,11 +239,6 @@ The final result is
 \begin{equation}
   ??ds
 \end{equation}
-
-\section{Nodal integration and colocation BEM}
-
-??ds
-
 
 
 \section{Numerical experiments}
@@ -325,6 +327,7 @@ The results are shown in \autoref{fig:mean-ml-error-2d-nodal-newton-tests}, ther
 
 
 \subsection{Adaptivity}
+??ds - no need for this? leave it to the final section?
 
 It remains to demonstrate that the adaptivity scheme introduced in \autoref{sec:adaptive-imr} is effective for the finite element problem with nodal integration.
 Since there is still no relationship with previous time step sizes in the conservation proofs with nodal integration we don't expect there to be any issues with variable step size and conservation.
@@ -333,6 +336,8 @@ Additionally our discretisation can be written as semi-discretisation in space (
 Hence we have no reason to expect the adaptive IMR to behave any differently to in the pure ODE case.
 
 \subsection{BEM}
+??ds - no need for this? leave it to the final section?
+
 
 ??ds
 
