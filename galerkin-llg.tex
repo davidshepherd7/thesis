@@ -96,52 +96,6 @@ Note that the boundary integral is always zero on the Dirichlet region of the bo
   \forall \test \in \sob^1(\magd) \cap \Dfs_0. \notag
 \end{gather}
 
-% We can also remove the gradient operator from $\mv$ in the second term of \eqref{eqn:phires1} using a similar identity\footnote{Derived by applying the product rule to $\nabla \cdot (\mv v)$ then integrating, multiplying by $4 \pi$ and applying the Divergence theorem.} to \eqref{eqn:identitygauss}
-% \begin{equation}
-%   - \int_\magd 4 \pi (\nabla \cdot \mv) \test \d \magd =
-%   4 \pi \int_\magd \mv \cdot (\nabla v) \d \magd
-%   - 4 \pi \int_{\boundd} \test \mv \cdot \nv \d \boundd.
-% \end{equation}
-
-% Substituting this into \eqref{eqn:phires2} leaves us with
-% \begin{gather}
-%      \text{given $\mv \in \sob^1(\magd)$, find $\phim \in \sob^1(\magd) \cap \Dfs$ such that:} \notag \\
-%   \rphi(\phim) = - \int_\magd \nabla \test \cdot \nabla \phim \d \magd
-%   + 4 \pi \int_\magd \mv \cdot (\nabla v) \d \magd
-%   - 4 \pi \int_{\boundd} \test \mv \cdot \nv \d \boundd
-%   , \\
-%   \forall \test \in \sob^1(\magd) \cap \Dfs_0. \notag
-% \end{gather}
-
-% \subsection{Exchange Field Residuals}
-% \label{sec:exch-field-resid}
-
-% The exchange effective field equation~\eqref{eq:hex} becomes:
-% \begin{gather}
-%    \text{given $\mv \in \sob^2(\magd)$, find $\hex \in \sob^0(\magd)$ such that:} \notag \\
-%   \mathbf{r}_{\text{ex}} = \int_\magd \Big( \hex - \exchc \lap \mv \Big) \test \d\magd
-%   = 0,
-%   \quad \forall \test \in \sob^0(\magd).
-% \end{gather}
-
-% A similar substitution to \eqref{eqn:identitygauss} can be applied to the residuals for $\hex$. Considering only the $i$th component of $\mathbf{r}_{\text{ex}}$ we have
-% \begin{equation}
-%   r_{\text{ex},i} = \int_\magd \Big( h_{\text{ex},i} - \exchc \lap m_i \Big) \test \d \magd,
-%   \quad \forall \test \in \sob^0(\magd).
-%   \label{eqn:exresi}
-% \end{equation}
-% By replacing $\phim$ with $M_i$ in identity \eqref{eqn:identitygauss} and substituting the result into \eqref{eqn:exresi} we obtain
-% \begin{gather}
-%    \text{given $\mv \in \sob^1(\magd)$, find $\hex \in \sob^0(\magd)$ such that:} \notag
-%    \\
-%   \mathbf{r}_{\text{ex}} = \int_\magd \hex \test \d \magd
-%   + \exchc \int_\magd \nabla \mv \cdot \nabla \test \d \magd
-%   - \exchc \int_{\boundd} \test (\nabla \mv \cdot \nv) \d \boundd
-%   = 0,
-%   \label{res:conthex}
-%   \\
-%   \forall \test \in \sob^1(\magd). \notag
-% \end{gather}
 
 \subsection{Landau-Lifshitz-Gilbert Equation Residuals}
 
@@ -164,25 +118,53 @@ We again wish to reduce the order of the derivatives, this time on $\mv$ in
   I = \int_\magd (\mv \times \lap \mv) \cdot \testv \d\magd.
   \label{eq:46}
 \end{equation}
-It can be shown that this is equivalent to
+First we reorder the terms to give
 \begin{equation}
-  \label{eq:49}
-  I = - \int_\magd  \mv \times \threevec{\nabla \test_0 \cdot \nabla m_1}{\nabla \test_1 \cdot \nabla m_2}{\nabla \test_2 \cdot \nabla m_2} \d\magd 
-  + \int_\boundd (\mv \times \dmdn) \cdot \testv \d\boundd,
+  \begin{aligned}
+    I &= \intd{\lap \mv \cdot (\testv \times \mv)}, \\
+      &= \intd{\lap \mv \cdot \bv}, \\
+      &= \sum_{i=0}^2 \intd{\lap m_i \cdot b_i},
+  \end{aligned}
 \end{equation}
-using similar techniques to those in \autoref{sec:magn-field-resid}. %??ds derivation in appendix? I've written it down in notebook begining 22/9/11 near the end.
-
-We write 
-\begin{equation} 
-  \grad \av \compdot \grad  \bv
-  =\threevec{\grad a_0 \cdot \grad  b_0}{\grad a_1 \cdot \grad b_1}{\grad a_2 \cdot \grad b_2}
-\end{equation}
-
-From equation~\eqref{eq:m-bc} for zero surface anisotropy the boundary integral term is zero and so
+which is very similar to \eqref{??ds poisson}. So applying the same operations as used to obtain reduced derivatives in \autoref{Derivation-of-weighted-residuals} and \autoref{sec:magn-field-resid} we obtain
 \begin{equation}
-  I = - \int_\magd  \mv \times \bigb{\grad \testv \compdot \grad  \mv} \d\magd.
+  I = \sum_{i=0}^2 \intb{b_i (\grad m_i \cdot \nv)} - \intd{\grad b_i \cdot \grad m_i}.
 \end{equation}
-Non-zero surface anisotropy can be included easily by adding a boundary integral contribution to the residual, but we ignore this case in the remainder of this thesis for simplicity.
+
+It turns out that the first term is exactly the weak form of the boundary condition from \eqref{eq:m-bc}.
+\begin{equation}
+  \begin{aligned}
+    \sum_{i=0}^2 \intb{b_i (\grad m_i \cdot \nv)} 
+    &= \intb{\bv \cdot \pd{\mv}{\nv}}, \\
+    &=  \intb{(\testv \times \mv) \cdot \pd{\mv}{\nv}}, \\
+    &=  \intb{(\mv \times \pd{\mv}{\nv}) \cdot \testv}.
+  \end{aligned}
+\end{equation}
+Hence for the case of no surface anisotropy this term is zero.
+
+Next we need an expression for $\grad b_i$.
+To avoid switching to tensor notation it is helpful to define $\grad \av = (\grad a_0, \grad a_1, \grad a_2)$.
+Then using the product rule we have
+\begin{equation}
+  \begin{aligned}
+    \grad \bv &= \grad \bigb{\testv \times \mv}, \\
+    & = \grad \testv \times \mv + \testv \times \grad \mv.
+  \end{aligned}
+\end{equation}
+Hence
+\begin{equation}
+  I = - \intd{\grad \mv : \bigb{\grad \testv \times \mv}} 
+      - \intd{\grad \mv : \bigb{\testv \times \grad \mv}},
+\end{equation}
+where ``$:$'' is the componentwise scalar product $\grad \av : \grad \cv = \grad a_0 \cdot \grad b_0 + \grad a_1 \cdot \grad b_1 + \grad a_2 \cdot \grad b_2$.
+The second term of this expression is zero by the properties of the triple product, so after reordering some terms we are left with
+\begin{equation}
+  \label{eq:final-lap-residual}
+  I = - \intd{\bigb{\mv \times \grad \mv} : \grad \testv}.
+\end{equation}
+
+
+??ds write about switching to scalar test functions
 
 
 \section{Spatial Discretisation}
@@ -207,40 +189,10 @@ Similarly the test functions can be approximated by a sum over the test basis fu
 Note that in our method $\sbf_k \equiv \tbf_k$, but we continue to write the two functions differently for generality. Also the basis functions for the space of test functions are often simply refered to as the test functions since they are used equivalently.
 
 So substituting the basis representations, \eqref{eq:unknowns-basis} and \eqref{eq:47} into the residuals we obtain a spatially discretised version of the problem.
-\begin{gather}
-  \label{res:tintro}
-  \text{Given $\happ(\xv,t)$ and $\hca(\xv,t)$, $\forall k$, $\forall \ndi$ find} \notag \\
-  \phim_{,k} \in \ts \cap \Dfs, \quad
-  \mv_{k} \in \ts \text{ and }
-  \pd{\mv_k(t)}{t} \in \ts \notag
-\end{gather}
-such that
-\begin{align}
-  \rphi_\ndi =
-  & - \int_{\magd} \sum_k (\nabla \tn \cdot \nabla \sk) \phim_{,k} \d \magd \notag
-  - \int_{\magd} (\nabla \cdot (\sum_k \mv_k \sk) ) \tn \d \magd \\
-  & + \int_{\boundd_{\Neu}} \tn g_\Neu \d \boundd = 0,
-  \label{res:tphi}
-\end{align}
-and
-\begin{align*}
-  %% \tag{res:tllg}
-  \rllg_\ndi =
-  \int_{\magd} &\tn \left(\sum_k \sk \pd{\mv_k}{t} \right)
-  \\
-  &- \crossop{\sum_k \mv_k \sk}{\sum_k \nabla \tn \mv_k (\nabla \sk)^T}
-  \\
-  &- \crossop{\sum_k \mv_k \sk}{\sum_k \phim_{,k} \nabla \sk} \tn
-  \\
-  &+ \crossop{\sum_k \mv_k \sk}{\hca(\sum_k \mv_k \sk) + \happ} \tn
-  \\
-  &- \dampc \crossop{\sum_k \mv_k \sk} {\sum_k \sk \pd{\mv_k}{t}} \tn \d \magd = 0,
-\end{align*}
 
+% Note that we could move the discretised values of the unknowns outside of the integrals because they are constant in space. However we prefer to evaluate values at points within the elements where possible (by integrating using Gaussian quadrature) since some quantities are discontinous at the nodes.\footnote{For example if the basis functions are linear then derivatives are discontinous at the nodes.}
 
-Note that we could move the discretised values of the unknowns outside of the integrals because they are constant in space. However we prefer to evaluate values at points within the elements where possible (by integrating using Gaussian quadrature) since some quantities are discontinous at the nodes.\footnote{For example if the basis functions are linear then derivatives are discontinous at the nodes.}
-
-Also note that we have $7N$ equations in $7N$ unknowns and each of the integrals in the equations can be evaluated only in terms of the shape/test functions, their derivatives, the outward unit normal vector and the Neumann boundary condition. Hence we have a system of algebraic equations which we can solve.
+% Also note that we have $7N$ equations in $7N$ unknowns and each of the integrals in the equations can be evaluated only in terms of the shape/test functions, their derivatives, the outward unit normal vector and the Neumann boundary condition. Hence we have a system of algebraic equations which we can solve.
 
 As described in \autoref{sub:Actual-Finite-Elements} we can convert this ``global'' representation into a number of ``local'' representations -- one on each element. We first split the domain into $N_e$ elements. We then define the basis functions such that they are only non-zero on elements in which they are contained (\ie we are using a finite element method). Then the global residuals can be split into the local contributions each element which are easy to calculate since they only depend on nodes within the element.\footnote{Unfortunately this property will be lost to some extent when we introduce the hybrid FEM/BEM in \autoref{sec:hybr-finit-elem}.}
 
@@ -403,7 +355,7 @@ Written using this skew operator the LLG residual is
       & \dmdt \tbf_n \\
       &+ \skewm{\mv} \cdot \left( \happ + \hca - \nabla \phi - \dampc \dmdt
         \right) \tbf_n \\
-      &- \skewm{\mv} \cdot (\grad \mv \compdot \grad \tbf_n)
+      &- (\skewm{\mv} \grad \mv) : \grad \tbf_n)
       \d\magd
   \end{aligned}
 \end{equation} 
