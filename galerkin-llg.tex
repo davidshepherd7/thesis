@@ -4,19 +4,6 @@
 \section{Initial Equations}
 \label{sec:llg-initial-equations}
 
-Our labelling of the domains is shown in \autoref{fig:domain_labels}. We label the region of magnetisable material as $\magd$, it's boundary as $\boundd$ and the external domain as $\extd$.
-
-\begin{figure}[\figpos]
-  \center
-  \begin{tikzpicture}
-    \draw[line width=0.5mm,fill=paleblue,draw=solidblue] (0,0) ellipse (3cm and 1.5cm);
-    \draw (0,0) node {\Large{$\magd$}};
-    \draw (2.8,0.8) node[anchor=west] {\Large{$\boundd$}};
-    \draw (-6,1) node[anchor=north] {\Large{$\extd$}};
-  \end{tikzpicture}
-  \caption{The domain labels used: $\magd$ is the magnetic material, $\boundd$ is the boundary and $\extd$ is the (infinite) external region.} \label{fig:domain_labels}
-\end{figure}
-
 We start with the Gilbert form of the Landau--Lifshitz--Gilbert equation~\eqref{eq:Gilbert}, the sum of effective fields \eqref{eq:Heff}, the exchange field \eqref{eq:Hex} and the potential method for calculating the magnetostatic field \eqref{eq:Hms} \& \eqref{eq:nnphim}. Note that for simplicity from now on we do not explicitly specify when things are functions of $\xv$ and $t$.
 
 We choose the Gilbert form of the Landau--Lifshitz--Gilbert equation even though it is less immediately intuitive because it greatly reduces the complexity of all derivatations - the Landau--Lifshitz form contains a double cross product and has two terms containing the potentially complicated total field. A side effect of this choice is that explict timestepping schemes cannot be used (since the time dependence is defined implicitly), but as discussed in \autoref{sec:model-conclusions} we will always use implicit timestepping schemes anyway.
