@@ -5,8 +5,8 @@ In this section we give an introduction to the theory of micromagnetics includin
 
 \section{Definitions}
 We define $\Mv(\xv,t)$ to be a vector field representing the expectation value of the magnetisation per unit volume averaged over a number of unit cells.\cite{Aharoni1996}
-The units of $\Mv$ are $\Mu$, the length of $\Mv(\xv,t)$ is fixed and given by the saturation magnetisation $M_s$, a material parameter.
-We define $\Hv(\xv,t)$ to be the magnetic field at position $\xv$ and time $t$ in units of $\Hu$.
+The length of $\Mv(\xv,t)$ is fixed and given by the saturation magnetisation $M_s$, a material parameter.
+We define $\Hv(\xv,t)$ to be the magnetic field at position $\xv$ and time $t$.
 These quantities are related to the magnetic flux density $\Bv(\xv,t)$ (in units of Tesla) by
 \begin{equation}
   \label{eq:37}
@@ -27,7 +27,7 @@ where $\mu_0$ is the magnetic constant (or permeability of free space).
 \end{figure}
 
 Our labelling of the domains is shown in \autoref{fig:domain_labels}.
-We call the region of magnetic material $\magd$, it's boundary as $\boundd$ and the external domain as $\extd$.
+We call the region of magnetic material $\magd$, it's boundary $\boundd$ and the external domain $\extd$.
 
 When working with equations in dimensional form we always use S.I. units.
 In general we will not make dependencies on $\xv$ and $t$ explicit.
@@ -38,7 +38,6 @@ In general we will not make dependencies on $\xv$ and $t$ explicit.
 \section{The energy of a magnetic body}
 \label{sec:energy-magnetic-body}
 
-The first thing that must be considered when modelling any physical system is the energy.
 A number of energy terms are included in standard micromagnetic models: the magnetostatic self field, the exchange energy and the magnetocrystalline anisotropy energy.
 Also important is the external applied field due to magnetic bodies or electrical currents outside the modelled region.
 Other effects which are sometimes important include temperature (thermal effects) and the magnetostriction energy (the change in magnetic energy due to stretching or compressing the magnet).
@@ -46,23 +45,23 @@ Other effects which are sometimes important include temperature (thermal effects
 Each energy has a corresponding effective field, which is ??ds need some intuitive description...
 
 We begin by providing a description of each of these energies.
-We can also derive the effective fields caused by these energies using
+Each energy has a corresponding effective field given by
 \begin{equation}
   \Hv = \dfrac{-1}{\mu_0 V_{\magd}} \dfrac{\delta E}{\delta \Mv},
 \end{equation}
-where $\delta$ indicates a variational derivative and $V_{\magd}$ is the volume of the magnetic domain. ??ds citation? Is this correct?
+where $\delta$ indicates a variational derivative and $V_{\magd}$ is the volume of the magnetic domain.
 
 %% Energy and field expressions below are taken from Matteo Franchin's thesis.\cite{Franchin2009}\footnote{Note that due to the variety in unit systems, definitions of magnetisation and other choices it can be difficult to compare energy/effective field equations from different authors, in particular the location of factors of $\mu_0$.}
 
 \subsection{Exchange energy}
 
 In a ferromagnetic material neighbouring magnetic moments prefer to align parallel to each other due to quantum mechanical effects. 
-This can be well approximated by a classical expression for exchange energy \cite{Aharoni1996} as
+This can be approximated by a classical expression for exchange energy \cite{Aharoni1996} as
 \begin{equation}
   \label{eq:39}
   \Eex =  \frac{\Exchc}{M_s^2} \int_{\magd} (\nabla M_x)^2  + (\nabla M_y)^2  + (\nabla M_z)^2 \d \magd,
 \end{equation}
-where $\Exchc$ is the material dependant exchange constant representing the strength of the exchange coupling.
+where $\Exchc$ is the material dependent exchange constant representing the strength of the exchange coupling.
 
 We write the vector Laplacian as $\lap \Mv = (\lap M_x,\lap M_y, \lap M_z )$. Then the exchange effective field is given by
 \begin{equation}
@@ -74,12 +73,12 @@ We write the vector Laplacian as $\lap \Mv = (\lap M_x,\lap M_y, \lap M_z )$. Th
 \subsection{Magnetostatic energy}
 \label{sec:magnetostatic-field}
 
-Magnetic materials generate magnetic fields, which in turn affects the magnetic material emitting the field. 
+Magnetic materials generate a magnetic field, which in turn affects the magnetic material emitting the field. 
 This type of field is also known as the demagnetising field as it tends to oppose the magnetisation of the body. 
 The magnetostatic field, $\Hms$, can be written in two ways: an integral form or a differential (potential) form. 
 % These methods are discussed in \autoref{sec:magstat-field-calc-inte} and \ref{sec:magstat-field-calc-pote} respectively.
 
-The integral form of the magnetostatic field at a point $\xv \in \real^d$ due to the magnetic body $\magd$ with boundary $\boundd$ can be given in terms of magnetisation $\Mv$ by an integral over all volume and surface ``magnetic charges'' ($\nabla \cdot \Mv$ and $\Mv \cdot \nv$ respectively) as
+The integral form of the magnetostatic field at a point $\xv \in \real^3$ due to the magnetic body $\magd$ with boundary $\boundd$ can be given in terms of magnetisation $\Mv$ by an integral over all volume and surface ``magnetic charges'' ($\nabla \cdot \Mv$ and $\Mv \cdot \nv$ respectively) as
 \begin{align}
   \Hms(\xv) &= \frac{1}{4 \pi} \bigs{ 
               - \int_\magd \nabla' \cdot \Mv(\xv') \frac{(\xv - \xv')}{\abs{\xv -\xv'}^3} \d^3 \xv'
@@ -120,9 +119,9 @@ where $\phim^\inte$ and $\phim^\exte$ are respectively the values of $\phim$ jus
 Once the field has been calculated the energy contribution is given by
 \begin{equation}
   \label{eq:41}
-  \Ems =  \frac{-\mu_0}{2} \int_{\magd} \Mv \cdot \Hms \d \magd,
+  \Ems =  \frac{-\mu_0}{2} \int_{\magd} \Mv \cdot \Hms \d \magd.
 \end{equation}
-where the factor of $\frac{1}{2}$ is to avoid double counting.
+The factor of $\frac{1}{2}$ is to avoid double counting: the integral includes the contribution of the field generated by an infinitesimal region A on a region B, but also the effect of a field generated by B on A.
 
 
 Similarly any external applied field gives an energy contribution of
@@ -145,8 +144,8 @@ The first order approximation for the energy contribution of a perpendicular uni
   \Eca = -K_u \int_\magd \left( \mv \cdot \ev \right)^2 \d \magd,
   \label{eq:36}
 \end{equation}
-where $\ev$ is the easy axis and $K_u$ is the material dependant first order anisotropy energy density coefficient.\footnote{It is possible to define many different forms for this energy. Be warned that the choice of definition changes the meaning of $K_u$!}
-The first order approximation is valid when the anisotropy energy density coefficients are such that $K_u = K_1 >> K_2$, which is the case in most materials \cite{Kronmuller2003}.
+where $\ev$ is the easy axis and $K_u$ is the material dependent first order anisotropy energy density coefficient.\footnote{It is possible to define many different forms for this energy. Be warned that the choice of definition changes the meaning of $K_u$!}
+The first order approximation is valid when the anisotropy energy density coefficients are such that $K_u = K_1 \gg K_2$, which is the case in most materials \cite{Kronmuller2003}.
 
 The effective field corresponding to this example is
 \begin{equation}
@@ -162,7 +161,7 @@ A detailed description of the various forms of the magnetocrystalline anisotropy
 The general aim of a micromagnetic model is to predict the behaviour of a magnetic body under a variety of conditions.
 This can either be done by finding the minimum energy of the body or by modelling the dynamics of the magnetisation.
 
-In this thesis we are concerned only with dynamic model, such models calculate the time evolution of the magnetisation.
+In this thesis we are concerned only with dynamic models. Such models calculate the time evolution of the magnetisation.
 Given some effective field, $\Heff$, this can be written as a differential equation. 
 Starting with the quantum mechanical angular momentum of an electron, and converting from a single spin to a continuous magnetisation gives the differential equation\cite{Kronmuller2003}
 \begin{equation}
@@ -205,7 +204,7 @@ where $\dampc \neq \dampc_L$. Equation~\eqref{eq:Gilbert} can be rearranged into
 \end{equation}
 which we refer to as the Landau-Lifshitz form of the Landau-Lifshitz-Gilbert equation.
 
-Equations~\eqref{eq:LL}, \eqref{eq:Gilbert} and \eqref{eq:LLG} link the unknown magnetisation vector as a function of time, $\Mv(t)$, with the effective field, $\Hv$. To determine $\Mv$ at an arbitrary time $t \neq 0$ we need to integrate one of the above equations with respect to time starting from a known initial magnetisation $\Mv(0)$.
+Equations~\eqref{eq:LL}, \eqref{eq:Gilbert} and \eqref{eq:LLG} link the unknown magnetisation vector as a function of time, $\Mv(t)$, with the effective field, $\Hv$. To determine $\Mv$ at an arbitrary time we need to integrate one of the above equations with respect to time starting from a known initial magnetisation $\Mv(0)$.
 This is usually done numerically by employing a time integration method, as will be discussed in \autoref{sec:time-discretisation}.
 
 Note that there is no spatial dependence directly contained in equations~\eqref{eq:LL}, \eqref{eq:Gilbert} and \eqref{eq:LLG}.
@@ -217,13 +216,7 @@ However the exchange effective field and magnetostatic field do contain spatial 
 \subsection{Boundary conditions}
 \label{sec:magn-bound-cond}
 
-The boundary condition on the magnetisation $\mv$ (in dimensional form) is \cite[178, 181]{Aharoni1996}
-\begin{equation}
-  \Mv \times \bigb{ C \dMdn + \pd{w_s}{\Mv}} = \zerov,
-\end{equation}
-where $C$ is an exchange coefficient and $w_s$ is the surface anisotropy.
-
-For simplicity we consider the case of zero surface anisotropy ($w_s \equiv 0$), in this case the boundary condition becomes
+The boundary condition on the magnetisation $\mv$ (in dimensional form) with zero surface anisotropy is \cite[178, 181]{Aharoni1996}
 \begin{equation}
   \label{eq:llg-bc}
   \Mv \times \dMdn = \zerov.
@@ -231,7 +224,7 @@ For simplicity we consider the case of zero surface anisotropy ($w_s \equiv 0$),
 
 This condition can be arranged into a simpler form: we first note that for equation~\eqref{eq:llg-bc} to hold either $\Mv = \zerov$, $\dMdn = \zerov$ or $\Mv$ is parallel to $\dMdn$.
 Clearly $\Mv$ is not the zero vector inside the ferromagnet.
-Also we know that the magnetisation length does not change, so $\pd{\Mv}{\av} \cdot \Mv = 0$ for any direction $\av$ (since the change in magnetisation projected onto the magnetisation direction is the change in magnetisation length) hence $\Mv$ and $\dMdn$ cannot be parallel.
+Also we know that the magnetisation length does not change,\footnote{Physically this is part of the definition of the problem. The proof that this fact is embodied in the LLG equation is given in \autoref{sec:prop-cont-llg}.} so $\pd{\Mv}{\av} \cdot \Mv = 0$ for any direction $\av$ (since the change in magnetisation projected onto the magnetisation direction is the change in magnetisation length) hence $\Mv$ and $\dMdn$ cannot be parallel.
 So the final boundary condition is simply
 \begin{equation}
   \dMdn = \zerov.
@@ -243,7 +236,7 @@ So the final boundary condition is simply
 
 All equations so far in this Chapter are for the zero temperature case.
 
-Moderate temperature effects (significantly below the Curie temperature) can modelled by adding a stochasitic term to the effective field, as done by \eg \cite{DAquino2006}.
+Moderate temperature effects (significantly below the Curie temperature) can modelled by adding a stochastic term to the effective field, as done by \eg \cite{DAquino2006}.
 
 High temperature effects require variation of the material parameters with temperature, as well as additional terms to model the dynamic changes of the magnetisation length when near the Curie temperature.
 This is typically done by using the Landau-Lifshitz-Bloch equation instead of the Landau-Lifshitz-Gilbert equation, see for example \cite{Evans2012}.
@@ -253,10 +246,9 @@ Such models are beyond the scope of this thesis.
 \section{Non-dimensionalisation}
 \label{sec:normalisations-appendix}
 
-In general it is useful to remove all unecessary parameters from a differential equation before attempting so solve it.
-The main advantage of this is that we remove redundant parameters from consideration, simplifying the problem (and greatly reducing the number of numerical experiments needed to cover all possible situations).
+In general it is useful to remove all unnecessary parameters from a differential equation before attempting so solve it.
+The main advantage of this is that we remove redundant parameters from consideration, simplifying the problem and greatly reducing the number of numerical experiments needed to cover all possible situations.
 Also for all problems the appropriate discretisation parameters (time step size and mesh size) will be roughly the same. 
-Finally, having all quantities a similar size helps to ensure the good behaviour of numerical methods.
 
 \subsection{Non-dimensionalisation of the Landau-Lifshitz-Gilbert equation}
 \label{sec:land-lifsh-gilb-normalisation}
@@ -426,7 +418,7 @@ Note that we have used
 The term ``geometric'' properties of a differential equation are the properties which do not vary in time \cite[73]{Iserles2009}, \ie conservation laws.
 In this section we demonstrate some geometric properties of the Landau-Lifshitz-Gilbert equation.
 
-For this purpose it is convinient to write the non-dimensional LLG equation in the form
+For this purpose it is convenient to write the non-dimensional LLG equation in the form
 \begin{equation}
   \label{eq:llg-prop-form}
   \dmdt = - \mv \times( \hv - \dampc \dmdt),
@@ -474,12 +466,12 @@ Finally, substituting this into equation~\eqref{eq:58} leaves
   \label{eq:energy-decay}
   \pd{\e}{t} = -\dampc \ltip{\dmdt}{\dmdt} - \ltip{\pd{\happ}{t}}{\mv}.
 \end{equation}
-Equation~\eqref{eq:energy-decay} shows that under constant applied field the energy of the system is always decreasing by an amount proportional to $\dampc$.
+Equation~\eqref{eq:energy-decay} shows that under constant applied field the energy of the system is always decreasing at a rate proportional to $\dampc$.
 For non-constant applied fields the change in the Zeeman energy can increase or decrease the energy depending on how the field is changed. % field moves towards m -> decrease, away -> increase. For non-spatially constant this is averaged over space in some sense by the inner product.
 In fact the first term of equation~\eqref{eq:energy-decay} can be easily derived from the Rayleigh dissipation functional used as the basis for the derivation of the Gilbert form of the LLG.\cite{Gilbert2004}
 
-Note that length conservation is a \emph{pointwise} property, \ie $\abs{\mv} = 1$ at every point in space. 
-In constrast the energy decay/conservation is a \emph{global} property, \ie an integral over all space is conserved.
+Note that length conservation is a \emph{point-wise} property, \ie $\abs{\mv} = 1$ at every point in space. 
+In contrast the energy decay/conservation is a \emph{global} property, \ie an integral over all space is conserved.
 This is related to the use of the dot product and the $\ltwo$ inner product respectively in their proofs.
 It is also important when weak form discretisations of the LLG are considered in \autoref{sec:nodal-integration}.
 
