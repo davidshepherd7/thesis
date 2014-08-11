@@ -40,16 +40,15 @@ In general we will not make dependencies on $\xv$ and $t$ explicit.
 
 A number of energy terms are included in standard micromagnetic models: the magnetostatic self field, the exchange energy and the magnetocrystalline anisotropy energy.
 Also important is the external applied field due to magnetic bodies or electrical currents outside the modelled region.
+We begin by providing a description of each of these energies.
 Other effects which are sometimes important include temperature (thermal effects) and the magnetostriction energy (the change in magnetic energy due to stretching or compressing the magnet).
 
-Each energy has a corresponding effective field, which is ??ds need some intuitive description...
-
-We begin by providing a description of each of these energies.
 Each energy has a corresponding effective field given by
 \begin{equation}
   \Hv = \dfrac{-1}{\mu_0 V_{\magd}} \dfrac{\delta E}{\delta \Mv},
 \end{equation}
 where $\delta$ indicates a variational derivative and $V_{\magd}$ is the volume of the magnetic domain.
+This effective field acts exactly like a real field in calculations of the magnetisation dynamics and represents the effects of the corresponding energy term.
 
 %% Energy and field expressions below are taken from Matteo Franchin's thesis.\cite{Franchin2009}\footnote{Note that due to the variety in unit systems, definitions of magnetisation and other choices it can be difficult to compare energy/effective field equations from different authors, in particular the location of factors of $\mu_0$.}
 
@@ -230,14 +229,10 @@ So the final boundary condition is simply
   \dMdn = \zerov.
 \end{equation}
 
-\subsection{High temperature effects}
+\subsection{Temperature effects}
 \label{sec:magn-bound-cond}
-??ds not sure if I need this
-
 All equations so far in this Chapter are for the zero temperature case.
-
 Moderate temperature effects (significantly below the Curie temperature) can modelled by adding a stochastic term to the effective field, as done by \eg \cite{DAquino2006}.
-
 High temperature effects require variation of the material parameters with temperature, as well as additional terms to model the dynamic changes of the magnetisation length when near the Curie temperature.
 This is typically done by using the Landau-Lifshitz-Bloch equation instead of the Landau-Lifshitz-Gilbert equation, see for example \cite{Evans2012}.
 Such models are beyond the scope of this thesis.
