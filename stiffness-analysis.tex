@@ -115,7 +115,7 @@ Additionally, since no stability issues were seen for any value of $\alpha$, we 
 \section{Results}
 
 
-\begin{figure}[\figpos]
+\begin{figure}
   \centering
   \includegraphics[width=0.8\textwidth]{images/stability_disabled}
   \caption{Maximum stable time step against discretisation size for LLG without magnetostatics. Data points are the stable dt values found, error bars represent the range in which the largest stable time step is contained. The horizontal dashed line shows the time step where RK2 and IMR are equally efficient (IMR is more efficient when the maximum stable step of the RK2 method moves below this line). The maximum time step is limited to 0.1 for accuracy reasons.}
@@ -128,7 +128,7 @@ Results with full FEM/BEM magnetostatics and results with the analytical formula
 
 In all cases we find that as the damping constant is reduced by an order of magnitude, stable explicit time step sizes are reduced by approximately a factor of two (due to an increase in the stiffness).
 
-\begin{figure}[\figpos]
+\begin{figure}
   \centering
   \includegraphics[width=0.8\textwidth]{images/stability_decoupled}
   \caption{Stable time step against discretisation size for LLG with FEM/BEM magnetostatics.}
@@ -136,7 +136,7 @@ In all cases we find that as the damping constant is reduced by an order of magn
 \end{figure}
 
 
-\begin{figure}[\figpos]
+\begin{figure}
   \centering
   \includegraphics[width=0.8\textwidth]{images/stability_sphere}
   \caption{Stable time step against discretisation size for LLG with $\hv_{\text{ms}} = - \mv / 3$.

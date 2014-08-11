@@ -530,7 +530,7 @@ As expected, all three methods keep the error extremely small (at a level commen
 The step size increases rapidly for all methods, again as would be expected.
 The computed solution does not look much like a polynomial because the distance between output points is so large (due to large time steps).
 
-\begin{figure}[\figpos]
+\begin{figure}
   \centering
   \includegraphics[width=1\textwidth]{plots/aimr_odes/poly2-errornormsvs-dtsvs-tracevaluesvstimes}
   \caption{Absolute error, time step size and computed solutions for the example ODE with exact solution $y(t) = t^2 + 0.5$.}
@@ -552,7 +552,7 @@ The adaptive algorithm should oscillate the step size in time with the oscillati
 
 ??ds write out full lte calculations?
 
-\begin{figure}[\figpos]
+\begin{figure}
   \centering \includegraphics[width=1\textwidth]{plots/aimr_odes/damped_oscillation-errornormsvs-dtsvs-tracevaluesvstimes}
   \caption{Absolute error, time step size and computed solutions for the oscillatory, damped example ODE with exact solution $y(t) = e^{-0.5t} \sin(2\pi t)$.}
   \label{fig:imr-osc-example}
@@ -573,7 +573,7 @@ In \autoref{fig:imr-osc-example-scatter} we show plots of the decrease in global
 The consistent decrease in the error norms indicates that the all of the adaptive methods are able to control the error in the expected manner.
 Plots for the example problems the following Sections are very similar and so are not shown.
 
-\begin{figure}[\figpos]
+\begin{figure}
   \centering \includegraphics[width=1\textwidth]{plots/aimr_odes/damped_oscillation-maxoferrornormsvs-tol}
   \caption{Behaviour of the global error norm with varying tolerance for the oscillatory, damped example ODE with exact solution $y(t) = e^{-\beta t} \sin(\omega t)$.}
   \label{fig:imr-osc-example-scatter}
@@ -600,7 +600,7 @@ The time steps should start small but rapidly increase as the initial transient 
 The results of the applying the three methods to problem~\eqref{eqn:imr-test-stiff} with $\lambda = 100$ (fairly stiff) are shown in \autoref{fig:imr-stiff-example}.
 The behaviour of the three time integrators is essentially the same, indicating that our adaptivity algorithm is effective for stiff problems.
 
-\begin{figure}[\figpos]
+\begin{figure}
   \centering
   \includegraphics[width=1\textwidth]{plots/aimr_odes/simple_stiff-errornormsvs-dtsvs-tracevaluesvstimes}
   \caption{Absolute error, time step size and computed solutions for the stiff example ODE.}
