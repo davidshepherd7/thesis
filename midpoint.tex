@@ -172,7 +172,7 @@ When $\realp(\lambda) > 0$ the ODE itself is unstable and so stability is not ex
 A-stability is a good way to classify the suitability of a time integrator for solving stiff ODEs (such as those that often emerge from a semi-discretisation of a PDE).
 
 The IMR, TR, BDF1 and BDF2 methods are all A-stable \cite[pgs. 43, 251]{HairerWanner}.
-Linear explicit methods are never A-stable \cite{Nevanlinna1974} (``linear'' methods include all common time integration methods: Runge-Kutta, linear multistep, predictor-corrector...)\footnote{These limitations could potentially be circumvented by using non-linear methods, such methods are beyond the scope of this thesis.}, which is the main reason for our focus on implicit methods.
+Linear explicit methods are never A-stable \cite{Nevanlinna1974} (``linear'' methods include all common time integration methods: Runge-Kutta, linear multistep, predictor-corrector...)\footnote{These limitations could potentially be circumvented by using significantly more complex methods which are beyond the scope of this thesis.}, which is the main reason for our focus on implicit methods.
 
 
 \subsection{Spurious numerical damping}
@@ -232,12 +232,12 @@ The analysis for the second order BDF2 case is more complex due to the fact that
 \label{sec:order-reduction}
 
 It is known that certain implicit Runge-Kutta methods are susceptible to reduced accuracy when used to solve certain extremely stiff problems \cite[156]{Atkinson1994}\cite[225]{HairerWanner}.
-In the case of the implicit midpoint rule this corresponds to the case when the error due to term II of \eqref{eq:trunc-mid} is large. This occurs when $\pd{\fv}{\yv}\evalat{\thf{}}$ is large, \ie when the change in $\ffv{t, \yv}$ due to a small error in $\yv$ is large.
+In the case of the implicit midpoint rule this corresponds to the case when the error due to term II of \eqref{eq:trunc-mid} is large. This occurs when $\pd{\fv}{\yv}\evalat{\thf{}}$ is large, \ie when the error in $\ffv{t, \yv}$ due to a small error in $\yv$ is large.
 
 The concept of ``B-convergence'' is used to analyse this effect.
 Roughly speaking a Runge-Kutta method is B-convergent of order $r$ if the global error is  $\order{\dtx{\text{max}}^r}$ for all sufficiently smooth ODEs without any assumption about the size of $\pd{\fv}{\yv}$.
-The implicit midpoint rule is B-convergent of order 1 \cite[231]{HairerWanner}, one order less than for typical ODEs.
-In contrast, the TR and BDF methods do not suffer from order reduction \cite[159]{Atkinson1994}\footnote{In this book IMR is refered to as the second order Gauss method, BDF1 is Radau IIA, TR is Lobatto IIIA \cite[72-76]{HairerWanner}.}.
+The implicit midpoint rule is B-convergent of order 1 \cite[231]{HairerWanner}\footnote{In this reference IMR is refered to as the second order Gauss method, BDF1 is Radau IIA, TR is Lobatto IIIA \cite[72-76]{HairerWanner}.}, one order less than for typical ODEs.
+In contrast, the TR and BDF methods do not suffer from order reduction \cite[159]{Atkinson1994}.
 This is because all evaluations of $\fv$ are at integer time points (\ie $t_{n+1}, t_{n}, t_{n-1}, \ldots$ rather than $\thf$).
 
 A simple test ODE gives a useful example of this phenomenon \cite[157]{Atkinson2009}
@@ -452,7 +452,7 @@ For implicit midpoint rule this is
 
 We also impose some additional restraints to handle extreme cases.
 If the $\frac{\dtx{n+1}}{\dtn}$ is too low, \ie if the step just taken was much too large to attain the desired accuracy then we reduce the step size by a factor of 2 and repeat the step.
-We limit $\frac{\dtx{n+1}}{\dtn}$ to 4 to help improve stability ??ds does this actually do anything?
+We limit $\frac{\dtx{n+1}}{\dtn}$ to 4 to help improve stability.
 
 % Actually we (should) include a slight safety factor, $a \sim 1/2$ to reduce the number of step rejections:
 % ??ds but actually oomph-lib doesn't...
