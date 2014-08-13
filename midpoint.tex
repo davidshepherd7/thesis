@@ -175,23 +175,57 @@ The IMR, TR, BDF1 and BDF2 methods are all A-stable \cite[pgs. 43, 251]{HairerWa
 Linear explicit methods are never A-stable \cite{Nevanlinna1974} (``linear'' methods include all common time integration methods: Runge-Kutta, linear multistep, predictor-corrector...)\footnote{These limitations could potentially be circumvented by using non-linear methods, such methods are beyond the scope of this thesis.}, which is the main reason for our focus on implicit methods.
 
 
-\subsection{L-stability and numerical damping}
-\label{sec:imr-l-stability}
+\subsection{Spurious numerical damping}
+\label{sec:numerical-damping}
 
-L-stability is another stability property beyond A-stability.
+Some time integration methods create additional, non-physical damping in approximate solutions, even when none exists in the exact solution.
+This is problematic for the modelling of highly oscillatory ODEs, such as the LLG with low damping.
 
+We say that a time integration method causes spurious damping if when solving the test ODE \eqref{eq:ode-test-f} with $\lambda = i\omega$ the magnitude of $y$ decreases over time.
 
+For example, for the implicit midpoint rule:
 \begin{equation}
-  \lim_{z=h\lambda \goesto \infty} y_1/y_0 = 0,
+  \begin{aligned}
+    y_{n+1} &= y_n + \dtn i \omega (y_n + y_{n+1})/2, \\
+    &= \frac{1 + i\dtn \omega/2}{1 - i\dtn \omega/2} y_n,
+    \end{aligned}
 \end{equation}
-??ds fill this in
+and so
+\begin{equation}
+  \begin{aligned}
+    \abs{y_{n+1}}^2 &=  \frac{\abs{1 + i\dtn \omega/2}^2}{\abs{1 - i\dtn \omega/2}^2} \abs{y_n}^2, \\
+    \abs{y_{n+1}}^2 &=  \frac{(1 + i\dtn \omega/2)(1 - i\dtn \omega/2)}
+                            {(1 - i\dtn \omega/2)(1 + i\dtn \omega/2)} \abs{y_n}^2, \\
+    &=  \abs{y_n}^2.
+  \end{aligned}
+\end{equation}
+So IMR does not cause spurious damping.
 
-Property that method damps oscillations a bit.
+Since $f$ is linear in $y$ for this example ODE TR and IMR are identical
+\begin{equation}
+  \begin{aligned}
+    y_{n+1} &= y_n + \dtn(i\omega y_n + i\omega y_{n+1})/2, \\
+    &= y_n + \dtn i \omega (y_n + y_{n+1})/2.
+  \end{aligned} 
+\end{equation}
+Hence the same property applies for TR.
 
-IMR and TR are not L-stable, BDF1 is \cite[45]{HairerWanner}. BDF2 probably is citation elsewhere?
-
-L-stability is both a positive and negative property: if the oscillations being damped are spurious then L-stability can increase accuracy of the solution \cite[45]{HairerWanner}.
-However the same property results in the damping of non-spurious oscillations, this can cause problems (see e.g. \autoref{fig:bdf2-failing on switching nanoparticle}, \cite[242]{GreshoSani}, \cite{Elman2011}.
+For BDF1
+\begin{equation}
+  \begin{aligned}
+    y_{n+1} &= y_n + \dtn i \omega y_{n+1}, \\
+    &= \frac{1}{1 - i \dtn \omega} y_n.
+  \end{aligned}
+\end{equation}
+Hence
+\begin{equation}
+  \begin{aligned}
+    \abs{y_{n+1}} &= \sqrt{ \frac{1}{(1 - i \dtn \omega)(1 + i \dtn \omega)}} \abs{y_n}, \\
+    &= \frac{1}{\sqrt{1 + \dtn^2 \omega^2}} \abs{y_n}, \\
+  \end{aligned}
+\end{equation}
+and so the magnitude of $y$ decreases over time--the solution is damped.
+The analysis for the second order BDF2 case is more complex due to the fact that it is a multistep method, but the result is the same: the solution suffers from non-physical damping \cite[265]{GreshoSani}.
 
 
 \subsection{B-convergence and order reduction}
