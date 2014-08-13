@@ -1,8 +1,4 @@
 
-% ??ds make sure TR and BDF2 are mentioned before this chapter or add refs here!
-% ??ds similarly for "semi-discretised"
-% " for order of a time integrator
-
 % In the plots:
 % add points
 
@@ -10,7 +6,7 @@
 \label{sec:adaptive-imr}
 
 
-The implicit midpoint rule (IMR) is a well known time integration method with a number of favourable properties when applied to standard ordinary differential equations\cite[204]{HairerNorsettWanner}.
+The implicit midpoint rule (IMR) is a well known time integration method with a number of favourable properties when applied to standard ordinary differential equations (see \autoref{sec:time-discretisation} or \cite[204]{HairerNorsettWanner}).
 It also has beneficial ``geometric integration'' properties when applied the Landau-Lifshitz-Gilbert equation (discussed in \autoref{sec:aimr-llg}) and energy conservation properties when applied to the semi-discretised Navier-Stokes equations \cite{Sanderse2013}.
 However IMR belongs to the implicit Runge-Kutta family of methods, and as such it is a non-trivial task to create an efficient adaptive time step selection algorithm.
 In this \secpaper{} we describe a novel adaptive IMR algorithm based on estimates of the local truncation error by a predictor step.
@@ -67,16 +63,10 @@ or using a Butcher tableu \cite[135]{HairerNorsettWanner} as shown in \autoref{t
 
 Note that unlike multistep methods, such as the second order backwards difference (BDF2), \eqref{eq:basic-midpoint} is valid for both constant and variable step sizes because there is no dependence on previous steps.
 
-Next we discuss some properties of IMR applied to ODEs and compare them to some other widely used time integration methods.
-We compare with BDF2 and the trapezoid rule (TR), because they have very similar stability, accuracy and computational cost to IMR.
 
 \section{Construction of an LTE estimate}
 
-Most local truncation error estimators for implicit integrators (e.g. trapezoid rule, BDF2) use a Milne-device based method \cite[707-716]{GreshoSani}.
-This means that they compute an explicit estimate $\yv^E_{n+1} \sim \yv(t_{n+1})$  (sometimes known as a predictor step) to the same order of accuracy as the implicit method and using the same input values and derivatives.
-They then use algebraic rearrangements of the LTE expressions of the predictor step and the real step to give approximation of the LTE.
-
-However due to the complexity of the local truncation error of the implicit midpoint rule there are difficulties with this approach.
+Due to the complexity of the local truncation error of the implicit midpoint rule there are difficulties with the Milne-device approach described in \autoref{sec:adaptivity}.
 In particular, the LTE of IMR has a term involving the error due to the approximation $\yv(\thf) \sim \yvm$.
 In order to perform the algebraic rearrangements to obtain the LTE we need the this term to appear in the LTE of the predictor.
 However it can only appear in the LTE expression for a time integrator using midpoint approximation, and the only such second order time integrator is IMR itself.
@@ -449,7 +439,7 @@ The behaviour of the three time integrators is essentially the same, indicating 
   \label{fig:imr-order-reduction-convergence}
 \end{figure}
 
-As a final example we study \eqref{eqn:imr-test-order-reduction}, the test ODE for order reduction discussed in \autoref{sec:order-reduction}.
+The order reduction effect should be automatically detected and adjusted for by a good adaptive time step selection algorithm so as a final example we study \eqref{eqn:imr-test-order-reduction}, the test ODE for order reduction discussed in \autoref{sec:order-reduction}.
 For these experiments we chose an oscillatory function, $g(t) = \sin(t)$ and $\lambda = 100$.
 
 So, using \eqref{eq:reduced-order-imr-truncation-error}, the dominant term LTE of IMR for the case when $\dtn \gtrsim 0.01$ is

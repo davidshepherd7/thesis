@@ -91,64 +91,55 @@ The major downside of finite element models is that the underlying mathematics i
 Also the set up time and memory usage can be greater because of the additional ``bookkeeping'' required to keep track of the more complex meshes.
 
 
-\section{Time Discretisation}
+\section{Time Integration}
 \label{sec:time-discretisation}
 
-??ds lots of stuff from imr section probably belongs here
+Time integration is for....
 
-To explain the different time discretisation schemes we use a simple ordinary differential equation (an initial value problem)
+When discussing time integration schemes it is helpful to use a (vector) initial value ordinary differential equation:
 \begin{equation}
   \begin{aligned}
-    \frac{dy}{dt} &= f(t,y(t)) \quad t \in [0,T], \\
-    y(0) &= y_0.
+    \frac{d \yv}{dt} &= \ffv{t, \yv}, \\
+    \yv(0) &= \yv_0,
     \label{eq:45}
   \end{aligned}
 \end{equation}
+where $\fv(t,\yv)$ is a known function and $\yv_0$ is the (known) initial condition.
+After the application of one of the spatial discretisations described above the PDE describing the Landau-Lifshitz-Gilbert equation is reduced to this problem, sometimes called a \emph{semi-discretised} PDE.
 
-where $f(t,y)$ is a known function and $T$ is the end time. The idea is to use the known values of $y(t)$ at the current/previous times along with the derivative to approximate the value $y(t+h)$  after stepping forwards in time by $h$.
-
-The time discretisation methods discussed here all bear a strong similarity to the finite difference method discussed in \autoref{sec:finite-diff-appr}, except that the independent variable is time instead of space.
+The time discretisation methods discussed here all bear a strong similarity to the finite difference method discussed in \autoref{sec:sd-finite-diff-meth}, except that the variable discretised is time instead of space.
 This is appropriate since there is no analogue of geometric features in time, hence typically no need for the more advanced finite element method.
 
 Some key attributes of a time discretisation scheme are: \cite{Atkinson2009}
 \begin{itemize}
 
-\item \textbf{Accuracy (order)} -- An estimate of how rapidly the error decreases as the time-step, $\dtx{}$, is reduced.
+\item \textbf{Accuracy (order)} -- An estimate of how rapidly the approximate solution converges as the time step size is reduced.
 
 \item \textbf{Stability} -- A scheme is stable if the approximated solution stays ``close'' to the exact solution even after a large number of time-steps. 
 A scheme is called conditionally stable if it is stable only for time steps smaller than some maximum time step or unconditionally stable if it is stable even for very large time steps (although the accuracy may be compromised). 
-??ds more rigour?
+??ds simplify
 
-% \item \textbf{Ability to deal with stiffness} -- Some ODEs have terms which vary on very different time scales, this is referred to as stiffness. Stiff ODEs causes some solvers to require extremely small time-steps in order to remain stable. The Landau--Lifshitz--Gilbert equation is sometimes stiff because the precession and damping terms usually operate on very different timescales but are both important for determination of the dynamics.\cite{Fidler2000}
-
-\item \textbf{No spurious modes} -- Many schemes have ??ds additional roots.
-This can cause incorrect (numerical) damping of oscillations in the solutions. 
-??ds much more here
-
-\item \textbf{Preservation of geometrical properties} -- Some differential equations have properties which should ideally be conserved in the discretised system. 
+\item \textbf{Preservation of geometrical properties} -- Some differential equations have properties which should ideally be conserved in the discretised system.
 For example the properties of the Landau-Lifshitz-Gilbert equation discussed in \autoref{sec:prop-cont-llg}.
 
 \item \textbf{Self-starting} -- A scheme is self starting if it only requires a single initial value.
-This is desirable because methods of estimating additional initial values may introduce additional errors and make the final scheme more complex.
+This is desirable because the methods of estimating additional initial values make the final scheme more complex and may introduce additional errors.
 \end{itemize}
 
-\subsection{Explicit Schemes}
-\label{sec:explicit-schemes}
+These attributes are discussed more rigorously in the rest of this Section.
 
-Explicit time discretisation schemes give the value at some future time in terms of the value at the present time and/or previous times. The simplest such scheme is the (forward) Euler method
+\subsection{Explicit and implicit time integration schemes}
+\label{sec:explicit-vs-implicit-schemes}
+
+Explicit time discretisation schemes give the value at some future time in terms of the value at the present time and/or previous times.
+The simplest such scheme is the (forward) Euler method
 \begin{equation}
   \label{eq:44}
-  y(t_{n+1}) = y(t_n) + h f(t_n,y(t_n)),
+  \yv_{n+1} = \yv_n + \dtn f(t_n, \yv_n),
 \end{equation}
-where $h$ is the time-step. 
+where $\dtn$ is the $n$-th time-step. 
 Clearly, given $f(t,y)$ and an initial value for $y(t_0)$ we can solve for $y(t_n)$ for any $n$. However the stability and convergence behaviour of this simple scheme is less than impressive. Typically more advanced explicit schemes are used which give increased stability \cite{Atkinson2009}.
 Also the so called ``CFL condition'' (Courant-Freidrich-Lewy condition) can force the use of lower time-steps in explicit solvers if a finite element/difference spatial discretisation with small elements/cells is used.
-
-Micromagnetics solvers for non-stiff systems commonly use the RK4 (fourth order Runge-Katta) method \cite{Suess2002}.
-
-
-\subsection{Implicit Schemes}
-\label{sec:implicit-schemes}
 
 Implicit time discretisation schemes allow much longer time-steps to be used without loss of stability.
 However an implicit scheme gives the value at the next time-step in terms of current/previous times and in terms of the \emph{value at the next time-step}.
@@ -157,15 +148,42 @@ Hence at each step a (linear or non-linear) system of equations must be solved, 
 The backwards differences schemes are a simple and commonly used example. The first order formula is
 \begin{equation}
   \label{eq:48}
-  y(t_{n+1}) = y(t_n) + hf(t_{n+1}, y(t_{n+1})).
+  \yv_{n+1} = \yv_n + \dtn \ffv{t_{n+1}, \yv_{n+1}}.
 \end{equation}
 
+Micromagnetics solvers for non-stiff systems commonly use the RK4 (fourth order Runge-Katta) method \cite{Suess2002}.
 Micromagnetics models commonly use BDF schemes of various order \cite{Suess2002} or the implicit midpoint rule \cite{DAquino2005} for the modelling of stiff systems.
 
+
+??ds move?
 Other micromagnetic models use a combination of implicit and explicit schemes: everything except for the magnetostatic field is discretised as normal using an implicit scheme, the magnetostatic field is updated (using an explicit calculation) after each time step. 
 This method gains a larger time-step from the implicit method but the system of equations to be solved remains sparse.
 However when using this method the determination (see \autoref{sec:adaptivity}) of the time-step must be done specially (\ie not using normal adaptivity) since the system of equations contains no information on the magnetostatic field \cite{Schrefl1997}.
 
+
+\subsection{Some implicit time integration schemes}
+
+For the rest of this section we will use as examples three time integration schemes with good stability and accuracy properties that are widely employed in practice.
+All three are implicit schemes, for reasons of stability as explained in \autoref{sec:explicit-vs-implicit-schemes}.
+
+Trapezoid rule (TR) is the average of the forward and backward Euler methods from \autoref{sec:explicit-vs-implicit-schemes}:
+\begin{equation}
+  \yv_{n+1} = \dtn (\ffv{t_{n+1}, \yv_{n+1}} + \ffv{t_n, \yv_n})/2.
+\end{equation}
+
+The second order backwards difference formula (BDF2) is:
+\begin{equation}
+  \frac{\yv_{n+1} - \yv_n}{\dtn} = \frac{\dtn}{2\dtn + \dtx{n-1}} \frac{\yv_n - \yv_{n-1}}{\dtx{n-1}} 
+  + \frac{\dtn + \dtx{n-1}}{2\dtn + \dtx{n-1}} \fv(t_{n+1}, \yv_{n+1}).
+\end{equation}
+
+The method that this thesis focuses on (for reasons that will become clear later) is the implicit midpoint rule (IMR).
+It is given by
+\begin{equation}
+  \label{eq:imr-definition}
+  \yv_{n+1} = \yv_n + \dtn \ffv{\frac{t_{n+1} + t_n}{2}, \frac{\yv_n + \yv_{n+1}}{2}}.
+\end{equation}
+Note that for ODEs such that $\fv$ is linear in both $t$ and $\yv$ this is equvalent to TR, and in general the properties of the two methods are similar.
 
 
 
@@ -176,12 +194,12 @@ The local truncation error (LTE) of a time integration scheme is the error due t
 It can be calculated by substituting $\yv_n = \yv(t_n)$ into the approximation for the next time-step then subtracting the result from the exact solution at the next time-step, $\yv(t_{n+1})$. 
 \ie
 \begin{equation}
+  \label{eq:60}
   \lte = \yv(t_{n+1}) - \hat{\yv}_n,
 \end{equation}
 where the history values ($\yv_{n-1}, \yv_{n-2}, \ldots$) used to calculate $\hat{\yv}_n$ are exact.
 ??ds can we write this more rigorously? Write $y_n$ as a function of history values?
-
-Using this definition the local truncation error of IMR is
+For example the local truncation error of IMR is
 \begin{equation}
   \lte^\imr =  \yv(t_{n+1}) - \yv(t_n) - \dtn \ffv{\thf, \frac{\yv(t_n) + \yv_{n+1}^\imr}{2}}.
   \label{eq:trunc-start}
@@ -191,13 +209,17 @@ It is important to distinguish the local truncation error from the global (tempo
 \begin{equation}
   \label{eq:global-temporal-error}
   \begin{aligned}
-    E_n^\imr &= \yv(t_{n+1}) - \yv_{n+1}^\imr, \\
-    &=  \yv(t_{n+1}) - \yv_n^\imr - \dtn \ffv{ \thf, \frac{\yv_n^\imr + \yv_{n+1}^\imr}{2} }.
+    E_n &= \yv(t_{n+1}) - \yv_{n+1}, \\
+    E_n^\imr &=  \yv(t_{n+1}) - \yv_n^\imr - \dtn \ffv{ \thf, \frac{\yv_n^\imr + \yv_{n+1}^\imr}{2} }.
   \end{aligned}
 \end{equation}
-The difference is that the global error includes any error accumulated over previous time steps (the exact values $\yv(t_n)$ in \eqref{eq:trunc-start} are replaced by their approximations).
+The difference is that the global error includes any error accumulated over previous time steps (the exact values $\yv(t_n)$ in \eqref{eq:60} are replaced by their approximations).
 
-We now expand the IMR local truncation error into a more useful form.
+The \emph{order} of a time integration scheme is ??ds
+
+
+We now give a derivation of the local truncation error of IMR. 
+The derivations for TR and BDF2 are much simpler and can be found in most text books on the subject.
 We first Taylor expand $\yv(t_{n+1})$ and $\yv(t_{n})$ about $\thf$.
 We use the midpoint rather than one of the end points (as typically used in these calculations) because it results in simpler calculations.
 Assuming that $\yv(t)$ is ``sufficiently smooth'' for the required derivatives to exist its Taylor series expansion at $t_{n+1}$ about $\thf$ is given by
@@ -238,7 +260,7 @@ where $\dfdyhf = \pd{\fv}{\yv}\evalat{t=\thf}$ is the Jacobian of $\fv$ with res
 An additional condition required in the derivation is that ??ds the eigenvalues of $\dtn\dfdyhf$ are less than one, the implications of this are discussed in \autoref{sec:order-reduction}.
 
 The TR\cite[261]{GreshoSani} and BDF2\cite[715]{GreshoSani} methods are also second order.
-Their local truncation errors are similar to I:
+Their local truncation errors are similar to term I of \eqref{eq:trunc-mid}:
 \begin{equation}
   \label{eq:tr-lte}
   \lte^\tr = \yv_{n+1} - \yv(t_{n+1}) = -\frac{\dtn^3 \yv_n'''}{12}
@@ -255,7 +277,7 @@ Their local truncation errors are similar to I:
 
 \subsection{A-stability}
 
-To discuss the stability of time integrators for stiff problems the following test equation is widely used
+To discuss the stability of time integrators the following test equation is widely used
 \begin{equation}
   \ffv{\yv} = \lambda \yv,
   \label{eq:ode-test-f}
@@ -265,13 +287,17 @@ To discuss the stability of time integrators for stiff problems the following te
   \yv(t) = \exp(\lambda t).
 \end{equation}
 
-A-stablility\footnote{The A does not stand for anything, it is just ``A''\cite[40]{HairerWanner}, in particular it does \emph{not} mean ``absolute stabilily''.} is the property that a method is has no stability restrictions on the time step size when used to integrate \eqref{eq:ode-test-f} for all $\lambda$ with $\realp(\lambda) \leq 0$.
+A-stablility\footnote{The A does not stand for anything, it is just ``A''\cite[40]{HairerWanner}, in particular it does \emph{not} mean ``absolute stability''.} is the property that a method is has no stability restrictions on the time step size when used to integrate \eqref{eq:ode-test-f} for all $\lambda$ with $\realp(\lambda) \leq 0$.
 When $\realp(\lambda) > 0$ the ODE itself is unstable and so stability is not expected in general.
-A-stability is a good way to classify the suitability of a time integrator for solving stiff ODEs (such as those that often emerge from a semi-discretisation of a PDE).
+A-stability is a good way to classify the suitability of a time integrator for solving ``stiff'' ODEs.
+Such ODEs often emerge from the semi-discretisation of a PDE.
 
 The IMR, TR, BDF1 and BDF2 methods are all A-stable \cite[pgs. 43, 251]{HairerWanner}.
-Linear explicit methods are never A-stable \cite{Nevanlinna1974} (``linear'' methods include all common time integration methods: Runge-Kutta, linear multistep, predictor-corrector...)\footnote{These limitations could potentially be circumvented by using significantly more complex methods which are beyond the scope of this thesis.}, which is the main reason for our focus on implicit methods.
-
+Linear explicit methods are never A-stable \cite{Nevanlinna1974} (``linear'' methods in this reference include all common time integration methods: Runge-Kutta, multistep, predictor-corrector, ...)\footnote{These limitations could theoretically be circumvented by using significantly more complex methods, but such questions are far beyond the scope of this thesis.}, which is the main reason for our focus on implicit methods.
+Additionally there are no A-stable linear multistep methods\footnote{A-stable implicit Runge-Kutta methods of higher order do exist, see \eg \cite[73]{HairerWanner}.
+However moving to higher order methods significantly increases the size of the system to be solved at each step. Hence they are prohibatively expensive for the time integration of semi-discretised PDEs.
+Also second order is in some sense ``good enough'' for LLG integration since the spatial accuracy is only second order and contains higher order derivatives than in time.
+??ds talk to Milan/Matthias about this: it seems that with good preconditioning we can have \eg a 4th order method (Gauss order 4, higher order version of IMR) for only ~4x the cost per step, a gain of 25x in (computation time)/accuracy with steps of ~0.1} of order greater than 2 \cite[261]{GreshoSani}, which is why we have chosen the three widely used second order methods for discussion.
 
 \subsection{Spurious numerical damping}
 \label{sec:numerical-damping}
@@ -372,38 +398,241 @@ If addtionally $\abs{\lambda\dtn} >> \abs{g'''(t)}$, which will typically be tru
   \label{eq:reduced-order-imr-truncation-error}
 \end{equation}
 
-This order reduction effect should be automatically detected and adjusted for by a good adaptive time step selection algorithm.
-
-
-% The IMR and the BDF1 methods are B-convergent, TR is not B-convergent, the BDF2 method does not fit into the framework used to analyse such methods\cite[231]{HairerWanner}.
-
-
 
 \subsection{Adaptivity}
 \label{sec:adaptivity}
 
-Adaptive time discretisation methods vary the time-step in response to an estimate of the local truncation error.
+Adaptive time integration methods automatically select time step sizes in response to an estimate of the local truncation error.
+This can improve efficiency depending on the equation being solved, for example on problems where a high frequency part of the solution is gradually damped out the time step can increase by orders of magnitude at later times without loss of accuracy.
+Adaptive integration also greatly simplifies the use of the simulation program--the user only has to choose the allowed error and the program will handle the rest.
 
-??ds expand
+Most local truncation error estimators for implicit integrators (e.g. TR, BDF2) use a Milne-device based method \cite[707-716]{GreshoSani}.
+This means that they compute an explicit estimate $\yv^E_{n+1} \sim \yv(t_{n+1})$  (sometimes known as a predictor step) to the same order of accuracy as the implicit method and using the same input values and derivatives.
+They then use algebraic rearrangements of the local truncation error expressions of the predictor step and the implicit step to give an approximation of the true local truncation error.
 
-\subsection{The Non-Convex Constraint}
+No such estimation is possible for IMR because of the specific form of the local truncation error.
+The details of this issue and the first (to the author's knowledge) algorithm for adaptive time integration with IMR are described in \autoref{sec:adaptive-imr}.
+
+It is also possible to create less general adaptivity methods based on error estimates specific to the equation being solved.
+For example in cases where the damping is not exactly correct the effective damping can be used as an error estimator, as proposed by Albuquerque \etal \cite{Albuquerque2001}.
+The disadvantage of this method (aside from the obvious requirement that the damping be inexact) is that, depending on the discretisation used, the error estimator may be unable to distinguish between insufficient space refinement and insufficient time refinement.
+In particular this is the case when the solution is not completely divided into separate effective field calculations and pointwise time integration, such as in a typical Galerkin finite element model.
+
+Additionally time error estimates for the LLG with limited effective field terms and a specific finite element discretisation were proven and used to perform adaptive time integration with both IMR and BDF2 by Banas \cite{Banas-thesis}.
+??ds do these work, why does no one use them?
+These estimates have the obvious limitation that they are only (directly) applicable to the case for which they were derived.
+It is also a fairly complex derivation (at least for non-numerical analysts), and difficult to test because of its limited applicability.
+
+
+\subsection{Magnetisation length conservation}
 \label{sec:ensuring-constant-mv}
 
-Note that in equations~\eqref{eq:LL}, \eqref{eq:Gilbert} and \eqref{eq:LLG} the direction of $\dMdt$ is always perpendicular to the current value of $\Mv$ (since all terms contain cross products with $\Mv$). Hence we have an implicit condition: $\abs{\Mv} = M_s$. However in the discretised approximation this is often lost and must be enforced separately. This condition is often called a  \emph{non-convex constraint}\footnote{Intuitively a convex set is one such that given two members of the set all points on a straight line between them are also members of the set. With the condition $\abs{\Mv}=M_s$ the set of possible values of $\Mv$ is the surface of a sphere with radius $M_s$ which is not a convex set, hence the name.}. This can pose difficulties in the numerical solution of the Landau--Lifshitz--Gilbert equations because the approximations used do not necessarily respect the constraint. Hence the solution can end up with $|\Mv| \neq M_s$ which is un-physical (for constant temperature models).
+As discussed in \autoref{sec:prop-cont-llg} the length of the magnetisation at a point does not change over time.
+However in the approximations given by numerical methods this is often lost, and must be enforced separately.
 
-A simple method of dealing with the constraint is to re-normalise $\Mv$ after some number of time-steps or when the error in $|\Mv|$ exceeds some tolerance.\cite{Fidler2000} However this approach fundamentally changes the system of equations being solved.\cite{Lewis2003}
+A simple method of dealing with the constraint is to re-normalise $\Mv$ after some number of time steps or when the error in $|\Mv|$ exceeds some tolerance \cite{Fidler2000}.
+However this approach fundamentally changes the system of equations being solved in a non-linear and unpredictable manner \cite{Lewis2003}.
 
-If we have a system with only a single (macro)spin (\ie a single value of $\Mv$ represents the magnetisation of the entire system) it is easy to avoid this problem by using a spherical polar coordinate system $(r,\theta,\phi)$. Equation~\eqref{eq:LLG} can be expressed in terms of only the angles $(\theta,\phi)$ representing the direction of $\Mv$ and the non-convex constraint is automatically enforced since
+??Ds rewrite:
+If we have a system with only a single (macro)spin (\ie a single value of $\Mv$ represents the magnetisation of the entire system) it is easy to avoid this problem by using a spherical polar coordinate system $(r,\theta,\phi)$.
+Equation~\eqref{eq:LLG} can be expressed in terms of only the angles $(\theta,\phi)$ representing the direction of $\Mv$ and the non-convex constraint is automatically enforced since
 \begin{equation}
   \label{eq:40}
   \pd{\abs{\Mv}}{t} = \pd{r}{t} \equiv 0.
 \end{equation}
-However to extend this to systems where $\Mv$ varies with space we have to use a separate spherical polar coordinate system at each point where $\dMdt$ is calculated. Also a Cartesian global coordinate system is still needed to calculate the interactions between the discretised points (\ie magnetostatics, exchange coupling). Hence we have to convert back and forth between coordinate systems during the simulation.\cite{Scholz2003} Finally problems can occur with this approach as the polar angle, $\theta$, approaches zero because $\pd{\Mv}{t} \propto \frac{1}{\sin(\theta)}$.\cite{Fukushima2005}
+However to extend this to systems where $\Mv$ varies with space we have to use a separate spherical polar coordinate system at each point where $\dMdt$ is calculated.
+Also a Cartesian global coordinate system is still needed to calculate the interactions between the discretised points (\ie magnetostatics, exchange coupling).
+Hence we have to convert back and forth between coordinate systems during the simulation.\cite{Scholz2003} 
+Finally problems can occur with this approach as the polar angle, $\theta$, approaches zero because $\pd{\Mv}{t} \propto \frac{1}{\sin(\theta)}$ \cite{Fukushima2005}.
 
-% Some people have used special test functions to keep $\abs{\Mv}$ fixed, don't understand that method yet though
+Geometric integration schemes aim to solve this problem by constructing a time integration scheme that naturally preserves the value of $|M_s|$.
+Some examples of such schemes are based on IMR \cite{DAquino2005}, or a semi-explicit extension of IMR using explicit extrapolations of the effective field \cite{Spargo2003} \cite{Serpico2001}.
+Alternatively geometric integration methods based on Cayley transforms can be used \cite{Lewis2003} \cite{Bottauscio2011}.
 
-``Geometrical'' integration schemes aim to solve this problem by constructing a time discretisation scheme that naturally preserves the value of $|M_s|$. An example of such a scheme is the midpoint method as used by d'Aquino. The midpoint method also has other desirable properties -- it conserves energy when the damping term is zero and it ensures that the energy is a decreasing function of time when the damping is non-zero.\cite{DAquino2005} Alternatively geometrical integration methods based on Cayley transforms can be used.\cite{Lewis2003}\cite{Bottauscio2011}
+??ds Linearised + projection version by analyst guys
 
+
+\subsubsection{Proof of magnetisation length conservation for IMR on the ODE LLG}
+
+In this section we show that the discrete form of the Landau-Lifshitz-Gilbert equation that results from the use of the implicit midpoint rule maintains the magnetisation length conservation property of the continuous form shown in \autoref{sec:prop-cont-llg}.
+These results are applicable to cases where, after any spatial discretisation, each spatial point is time evolved by simply integrating the LLG with the values for that point, \ie finite difference and macrospin discretisations (but not finite elements).
+For the purposes of this section we assume that the linearisation method is exact, \ie the discretised but non-linear Landau-Lifshitz-Gilbert equation is satisfied exactly.
+
+As can be seen from \eqref{eq:imr-definition} the IMR is defined by the following substitutions:
+\begin{align}
+  \label{eq:55}
+  \pd{\mv}{t} &\rightarrow \frac{\mv_{n+1} - \mv_n}{\dtn}, \\
+  \mv &\rightarrow \frac{\mv_{n+1} + \mv_n}{2}, \\
+  t &\rightarrow \frac{t_{n+1} + t_n}{2}.
+\end{align}
+So the IMR-discretised LLG is
+\begin{equation}
+  \frac{\mv_{n+1} - \mv_n}{\dtn} = - \frac{\mv_{n+1} + \mv_n}{2} \times
+  \left(
+    \hv \left[\frac{\mv_{n+1} + \mv_n}{2} \right]
+    + \happ\left(\frac{t_{n+1} + t_n}{2}\right)
+    - \dampc \frac{\mv_{n+1} - \mv_n}{\dtn}
+  \right).
+  \label{eqn:disc-llg}
+\end{equation}
+
+Intuitively the conservation properties of the IMR discretisation can be seen to come from the cancellation of cross terms in $\ip{\lop[\mv]}{\dmdt}$ for any symmetrical linear operator $\lop$.
+More precisely:
+\begin{equation}
+  \begin{aligned}
+    \label{eqn:imr-linop}
+    \ip{\lop \left[ \frac{\mv_{n+1} + \mv_n}{2} \right]}{ \frac{\mv_{n+1} - \mv_n}{\dtn} }
+    &= \frac{1}{2\dtn} \Big[
+    \ip{\mv_{n+1}}{\lop \mv_{n+1}} + \ip{\mv_{n+1}}{\lop \mv_{n}} \\
+    & \qquad\qquad - \ip{\mv_{n}}{\lop \mv_{n+1}} - \ip{\mv_{n}}{\lop \mv_{n}}
+    \Big] \\
+    &= \frac{1}{2\dtn} \Big[
+    \ip{\mv_{n+1}}{\lop \mv_{n+1}}
+    - \ip{\mv_{n}}{\lop \mv_{n}}
+    \Big].
+  \end{aligned}
+\end{equation}
+This means that any orthogonality relationships between $\lop \mv$ and $\dmdt$ in the continuous case carry over to the discrete case. ??ds more detail on what this means
+
+We can now examine the change in magnetisation length using the same technique as in \autoref{sec:prop-cont-llg}: take the dot product with $\frac{\mv_{n+1} + \mv_n}{2}$ on both sides of~\eqref{eqn:disc-llg} and use the triple product identity \eqref{eq:dot-cross-id} to get
+\begin{equation}
+  \label{eq:63}
+  \frac{\mv_{n+1} + \mv_n}{2} \cdot \frac{\mv_{n+1} - \mv_n}{\dtn} = 0.
+\end{equation}
+Now using~\eqref{eqn:imr-linop} with $\lop$ as the identity operator gives us
+\begin{equation}
+  \frac{\ip{\mv_{n+1}}{\mv_{n+1}} - \ip{\mv_n}{\mv_n} }{2 \dtn} = 0.
+\end{equation}
+Therefore
+\begin{equation}
+  \abs{\mv_{n+1}} = \abs{\mv_n},
+\end{equation}
+\ie the magnetisation length does not change between time steps.
+
+
+Note that for other time integration schemes the property \eqref{eqn:imr-linop} typically does not hold.
+For example in the case of BDF1 we have
+\begin{equation}
+  \begin{aligned}
+    \ip{\lop \bigs{\mv_{n+1}}}{ \frac{\mv_{n+1} - \mv_n}{\dtn} }
+    &= \frac{1}{\dtn} \bigs{ \ip{\mv_{n+1}}{\lop \mv_{n+1}} 
+      - \ip{\mv_{n+1}}{\lop \mv_n} }, \\
+    &\neq \frac{1}{\dtn} \bigs{ \ip{\mv_{n+1}}{\lop \mv_{n+1}}
+      - \ip{\mv_n}{\lop \mv_n} },
+  \end{aligned}
+\end{equation}
+so orthogonality properties from the continuous form do not carry over in general.
+
+Also note that the derivation of \eqref{eq:63} only requires that the midpoint representation of magnetisation be used for terms directly in the llg, it does not require anything about the effective field calcuation.
+This explains why the semi-explicit modification to IMR also conserves the magnetisation length. 
+
+
+\subsection{Energy conservation/decay}
+
+Another geometrical property of the Landau-Lifshitz-Gilbert equation, also discussed in \autoref{sec:prop-cont-llg}, is the conservation or controlled decay of energy depending on the value of the damping constant $\dampc$.
+
+IMR also conserves energy when the damping term is zero and it ensures that the energy is a decreasing function of time when the damping is non-zero \cite{DAquino2005}.
+The other geometric integration schemes mentioned in \autoref{sec:ensuring-constant-mv}, in particular the semi-explicit modifications of IMR, do not have this property.
+
+
+\subsubsection{Proof of energy property for IMR on the ODE LLG}
+
+Before we can derive energy decay properties of the discretised LLG we need to look at the properties of the effective field when considered as an operator on $\mv$:
+\begin{equation}
+  \label{eq:hop}
+  \hv(\xv, t)[\mv(\xv)] = \hop [\mv(\xv)] + \happ(\xv, t).
+\end{equation}
+It can be shown (see \autoref{sec:linear-symm-field-operators}) that $\hop[\mv]$ is a linear symmetric operator on $\mv$ provided that there is no surface anisotropy and that the magnetocrystalline anisotropy is uniaxial (extensions may be possible.. not really checked).
+The applied field is not an operator at all so we treat it separately. The energy can be written using this notation as
+\begin{equation}
+  \label{eq:energy-hop}
+  \e_n = \ehop_{,n} + \eapp_{,n} = - \ip{\mv_n}{\frac{\hop[\mv_n]}{2}} - \ip{\mv_n}{\happ(t_n)},
+\end{equation}
+see \autoref{sec:energy-field-relation} for details.
+Also note that we can expand $\mphapp$ into a midpoint-like form
+\begin{equation}
+  \mphapp = \frac{\happ(t_{n+1}) + \happ(t_n)}{2} 
+  + \frac{\dtn^2}{4} \evalatb{\spd{\happ}{t}}{\frac{t_{n+1} + t_n}{2}}  + \order{\dtn^4}.
+  \label{eq:happ-midpoint}
+\end{equation}
+We write the error term as
+\newcommand{\happerror}{\mathcal{E}_\text{ap}}
+\begin{equation}
+  \happerror = \frac{\dtn^2}{4} \evalatb{\spd{\happ}{t}}{\frac{t_{n+1} + t_n}{2}}  + \order{\dtn^4}.
+\end{equation}
+
+In the same manner as the previous section we derive the change in energy of the discrete LLG by taking the $\ltwo$ inner product of equation~\eqref{eqn:disc-llg} with
+\begin{equation}
+  \mphop + \frac{\happ(t_{n+1}) + \happ(t_n)}{2} + \happerror - \dampc \mpdmdt,
+\end{equation}
+resulting in
+\begin{equation}
+  \begin{aligned}
+    &\ltip{\mphop + \frac{\happ(t_{n+1}) + \happ(t_n)}{2} + \happerror}{\mpdmdt} \\
+    & \quad - \dampc \ltip{\mpdmdt}{\mpdmdt} = 0.
+    \label{eq:54}
+  \end{aligned}
+\end{equation}
+The $\hop$ term in \eqref{eq:54} can be simplified by using the orthogonality identity~\eqref{eqn:imr-linop} and then written as an energy using \eqref{eq:energy-hop}
+\begin{equation}
+  \begin{aligned}
+    \ltip{\mphop}{\mpdmdt} 
+    &= \frac{1}{2\dtn} \Big[\ip{\mv_{n+1}}{\hop \left[\mv_{n+1} \right]}
+    - \ip{\mv_{n}}{ \hop\left[ \mv_{n} \right]} \Big], \\
+    &= -\frac{\ehop_{,n+1} - \ehop_{,n}}{\dtn}.
+  \end{aligned}
+  \label{eq:50}
+\end{equation}
+Next we examine the applied field term.
+Dropping the $L^2$ from the inner products and temporarily writing $\happ(t_i)$ as $\hv_i$ for brevity we have
+\begin{equation}
+  \begin{aligned}
+    \ip{\frac{\hv_{n+1} + \hv_n}{2}}{\mpdmdt}
+    &= \ip{\hv_{n+1} + \hv_n}{\mpdmdt} \\
+    & \qquad - \ip{\frac{\hv_{n+1} + \hv_n}{2}}{\mpdmdt}, \\
+    &= -\frac{\eapp_{, n+1} - \eapp_{, n}}{\dtn}  + A,
+  \end{aligned}
+\end{equation}
+where
+\begin{equation}
+  \begin{aligned}
+    A &= \frac{1}{2\dtn}\Big[ 2\ip{\hv_n}{\mv_{n+1}} - 2\ip{\hv_{n+1}}{\mv_n} \\
+    & \qquad - \ip{\hv_{n+1}}{\mv_{n+1}} +\ip{\hv_{n+1}}{\mv_n} 
+    - \ip{\hv_n}{\mv_{n+1}} + \ip{\hv_n}{\mv_n} \Big], \\
+    &= \frac{1}{2\dtn}\Big[ - \ip{\hv_{n+1}}{\mv_{n+1}} - \ip{\hv_{n+1}}{\mv_n} 
+    + \ip{\hv_n}{\mv_{n+1}} + \ip{\hv_n}{\mv_n} \Big], \\
+    &= - \ip{ \frac{\hv_{n+1} - \hv_n}{\dtn} }{ \frac{\mv_{n+1} + \mv_n}{2} }, \\
+    &= - \ltip{ \frac{\happ(t_{n+1}) - \happ(t_n)}{\dtn} }{ \frac{\mv_{n+1} + \mv_n}{2} }.
+    \label{eq:52}
+  \end{aligned}
+\end{equation}
+Finally we insert the results of equations~\eqref{eq:50} and \eqref{eq:52} into \eqref{eq:54} to find
+\begin{equation}
+  \frac{\e_{n+1} - \e_n}{\dtn}
+  = -\dampc \ltnorm{\mpdmdt}^2
+  - \ltip{\frac{\happ(t_{n+1}) -\happ(t_n)}{\dtn}}{\frac{\mv_{n+1} + \mv_{n}}{2}}
+  + \happerror.
+  \label{eqn:imr-llg-energy}
+\end{equation}
+If the applied field is linear (and so $\happerror = 0$) this is exactly the midpoint discretisation of the continuous energy balance equation~\eqref{eq:energy-decay}.
+In particular the energy is conserved when $\dampc = 0$ and the applied field is constant.
+
+Note that when $\happ$ is piecewise linear, for example going from zero field to a constant field at a certain point in time, time steps can be trivially selected such that each non-linear change happens exactly at the start/end of a step.
+As long as the time between such changes in field is comparable to the time scale of the dynamics this will have no effect on the efficiency.
+
+Also note that none of the above is applicable to the semi-explicit modification of IMR since in that case $\mphop$ is replaced by something of the form $a\hop \bigs{\mv_n} + b\hop \bigs{\mv_{n-1}}$.
+
+??ds draw commutation diagram
+??ds physical interpretation in terms of energy?
+
+\subsection{Symplecity}
+
+??ds learn about, experiment with and disccuss symplecity?
+
+The fixed step midpoint method is ``almost symplectic'' for the LLG equation with zero damping, , \ie the property equivalent to Hamiltonian flow for  dissipative systems is conserved up to \order{??ds} \cite{daquino2005} \cite{Austin1993}.
+
+It is well known that most adaptive schemes are not symplectic\cite[91]{Iserles2009} because they constantly change the ``nearby Hamiltonian'' that is followed by the symplectic integrator.
+Therefore the adaptive IMR is not expected to have the almost-symplectic property discussed in \autoref{??ds}.
 
 \section{Linearisation}
 \label{sec:linearisation}
@@ -494,6 +723,20 @@ Since the advantage of the scheme over standard methods was this unique combinat
 
 Still a promising line of research though!
 
+\subsection{Non-linear solvers and geometric integration}
+
+It should be noted that the geometric properties of IMR derived in ??ds are only true up to the accuracy with which we solve the LLG (and similar statements are true for the other geometric integration schemes mentioned).
+This is the tolerance of the linearisation method used. 
+
+Additionally the derivation assume that all fields are calculated at the midpoint without any additional approximations, \ie that we are using a fully implicit method.
+In contrast to this, many existing FEM/BEM models use an explicit approximation to the magnetostatic field.
+Unfortunately in this case the energy properties will be lost (or at least reduced in effectiveness) due to the replacement of $\hop \left[ \mpm \right]$ by different approximation.
+However the magnetisation length property will be retained because it only relies on $\mv$ itself being calculated implicitly.
+
+d'Aquino used a quasi-Newton method to handle this (although he used FFT magnetostatics).
+
+The fully implicit FEM/BEM method given in \autoref{sec:fully-implicit-bem} is an efficent method retaining the full conservation properties.
+
 
 \section{Solution of linear systems}
 \label{sec:solution-lin-sys}
@@ -520,7 +763,7 @@ As such direct solvers are usually the first approach tried when solving a new s
 However as matrix sizes become large direct solvers become increasingly demanding in both time and memory.
 The problem is that the inverse of a sparse matrix is in general dense, or at least significantly more dense than the starting matrix.
 This means that the time and memory requirements for the solution scale as $\order{n^2}$, where $n$ is the number of rows/columns in the matrix.
-e
+
 
 
 \subsection{Krylov Solvers}
