@@ -1,0 +1,219 @@
+
+\chapter{Solution of linear systems}
+\label{sec:solution-strategies}
+
+The BEM matrix is dense and so requires some tricks/discussion.
+
+Two ways to proceed with solving the coupled system of equations~\eqref{eqn:ndllg-starting}, \eqref{eq:phi-bem-continuous-bc} and \eqref{eq:phi-bem-continuous-bc}.
+First is to solve the entire system as a single non-linear pde.
+Second is to make the assumption that magnetostatic field part is non-stiff and solve semi-implicitly as two sets of coupled pdes.
+Each method has its own advantages.
+
+
+\section{The Matrix $\bm$}
+
+Since $\bm$ is a dense matrix the processing and memeory requirements to compute, store and use $\bm$ scales as $\order{N_b^2}$ where $N_b$ is the number of boundary nodes. For some geometries (\eg nearly spherical objects) the overall computational complexity remains $\order{N}$ but for others (especially very thin films) the complexity can approach $\order{N^2}$.
+
+It should be noted that $\bm$ depends only on the geometry of the problem and so typically only needs to be computed once, at the beginning of the simulation. Hence the integral computation time is not too important. Although if spatial adaptivity is used the geometry will change with every adaptation and $\bm$ will need to be recalculated.
+
+One way to reduce the problems associated with the dense nature of $\bm$ is to use hierarchical matrix techniques. In this type of matrix the less important entries (\ie smaller) are lumped into a single entry similarly to multipole approximation methods. The cost of multiplication and storage of $\bm$ is thus reduced to only $\order{N \log(N)}$.\cite{Knittel2009}
+
+
+\section{Fully implicit}
+\label{sec:fully-implicit-bem}
+
+??ds mention TR blows up with semi-implicit + numerical experiments
+
+Solve the entire system as one coupled non-linear pde.
+This means that we are using a well understood time integration scheme rather than some relatively unknown approximation.
+The downside is that the Jacobian will contain the dense matrix $\bm$, which makes solving the system in a naive manner extremely expensive.
+In this section we will discuss solvers which can make this process comparatively efficient.
+
+Another advantage of this method over the semi-implicit method arises when using IMR.
+The energy conservation property of IMR is the most unique of its geometrical integration properties\footnote{A number of explicit integration schemes can obtain length conservation: Cayley transform methods\cite{Lewis2003}, semi-analytical methods\cite{Wiele2010} and various types of semi-implicit midpoint rule methods\cite{Spargo2003a}\cite{Mentink2010} (including the one described in this section).}, but it is lost when a semi-implicit method is used.
+
+To enforce the Dirichlet boundary condition within the Newton solver we use the slightly odd residual
+\newcommand{\rphimb}{\rphi_b}
+\begin{equation}
+  \rphimb(\phim_b, \phione_b) = \bm[\phione_b] - \phim_b.
+\end{equation}
+Everything else proceeds as normal.
+
+
+\subsection{Jacobian structure}
+\label{sec:bem-jacobian-structure}
+
+As mentioned in \autoref{sec:discretisation} the pair of Poisson equations for the FEM/BEM method are essentially the same as those in \autoref{sec:galerk-meth-llg}.
+The first difference is that there is no coupling from the auxilary potential $\phione$ to the LLG equations, and hence no corresponding $\Pm$ block.
+The second difference is that there is an additional coupling between the boundary values of the auxilary potential and the boundary values of the real potential $\phim$.
+
+With the order of blocks as: $\mv$, $\phim$, $\phione$, $\phione$ boundary.
+Then the Jacobian is
+\begin{equation}
+  \Jm = 
+  \begin{pmatrix}
+    \Fm       & \Pm     &  \\
+    \Qm'      & \Am' &  \bm'  \\
+    \Qm       &         &   \Am
+  \end{pmatrix},
+\end{equation}
+
+%% all in one:
+% \begin{equation}
+%   \Jm = 
+%   \begin{pmatrix}
+%     \Fm       & \Pm     & \Pm_b  &         &           \\
+%     \Qm       & \Am     & \pd{\phim}{\phim_b}  &         &           \\
+%     &         & -\Idm  &         &  \bm      \\
+%     \Qm       &         &        & \Am     & \pd{\phione}{\phione_b}   \\
+%     \Qm_b     &         &        & \pd{\phione_b}{\phione} & \Am_b      
+%   \end{pmatrix}
+% \end{equation}
+
+where the primed blocks are ones where the boundary and bulk values must be split up because of the BEM boundary condition.
+So
+\begin{equation}
+  \Am' =
+  \begin{pmatrix}
+    \Am     & \pd{\phim}{\phim_b} \\
+    0      & -\Idm  
+  \end{pmatrix},
+\end{equation}
+\begin{equation}
+  \Qm' =
+  \begin{pmatrix}
+    \Qm \\
+    0    
+  \end{pmatrix},
+\end{equation}
+and
+\begin{equation}
+  \bm' =
+  \begin{pmatrix}
+    0  & 0 \\
+    0  & \bm 
+  \end{pmatrix}.
+\end{equation}
+
+
+It is worth noting that a slightly different Jacobian struture could be obtained by modifying the derivation in \autoref{sec:appl-magn-calc}.
+Instead of using $\phim = \phione + \phitwo$ to eliminate $\phitwo$, we could have written $\hms = - \grad \phione - \grad \phitwo$.
+This would result in both of the potentials having a $\Pm$ block, but only one of them having a $\Qm$ block.
+It would also reduce the diagonal dominance of $\bm$, which is probably a bad thing ??ds check? are we sure?
+
+
+\subsection{Solver strategies}
+\label{sec:bem-solver-strategies}
+
+The first technique for an efficient strategy is to use a hierarchical matrix representation for $\bm$.
+This greatly increases the asymptotic efficiency of operations, for example multiplication only takes $\order{N_b \log N_b}$ instead of $\order{N_b^2}$ time where $N_b$ is the number of boundary nodes.
+However this rules out the use of a straightforward direct solver.
+Hence we need to use some form of block-wise solver where it is possible to treat seperate blocks differently.
+A simple way to do this is to use a Krylov subspace method.
+In such a solver all that is needed is a way to calculate matrix-vector products for $J$, which can easily be done in a block-wise manner.
+
+\newcommand{\prcd}{\mathcal{P}}
+
+First preconditioner: exact solve w/out $\bm$.
+\begin{equation}
+  \prcd_{1} = 
+  \begin{pmatrix}
+    \Fm       & \Pm     &  \\
+    \Qm'       & \Am'    &   \\
+    \Qm       &         &   \Am
+  \end{pmatrix}.
+\end{equation}
+
+Second preconditioner: block triangular with AMG, exact LLG blocks, drop $\Pm$ and $\bm$.
+\begin{equation}
+  \prcd_{2} = 
+  \begin{pmatrix}
+    \Fm       &           &  \\
+    \Qm'       & \hat{\Am'}&   \\
+    \Qm       &           &   \hat{\Am}
+  \end{pmatrix}.
+\end{equation}
+
+Third preconditioner: nested block triangular with AMG, exact LLG blocks, drop $\Qm$ and $\bm$,
+\begin{equation}
+  \prcd_{2} = 
+  \begin{pmatrix}
+    \Fm       & \Pm       &  \\
+    & \hat{\Am'}&   \\
+    \Qm       &           &   \hat{\Am}
+  \end{pmatrix}.
+\end{equation}
+Use a nested block triangular preconditioner rather than reordering to avoid having varying Jacobian orders.
+
+Q is a much simpler block (linear, only one term) so probably best to drop that?
+
+??ds try exact A for each of these?
+
+Might be able to use multigrid solver from \cite[B71]{Banas2013} for A?
+
+
+\section{Semi-implicit}
+\label{sec:semi-implicit-bem}
+
+The alternative to a fully implicit solve is to come up with a semi implicit method.
+The idea is to approximate $\phim$ using an explicit time integration method while still using an implicit method for $\mv$.
+This means that the system no longer has the properties of the purely implicit method.
+We hope that despite this it will retain sufficient stability to allow long time steps.
+
+The strategy is as follows:
+\begin{enumerate}
+\item Calculate $\phim_0$ from initial condition $\mv_0$.
+\item Extrapolate $\phim_n$ to $t_{n+1}$ using a second order formula to get $\hat{\phim}_{n+1}$.
+\item Use $\hat{\phim}_{n+1}$ to calculate $\mv_{n+1}$ (implicitly in $\mv_{n+1}$).
+\item Calculate $\phione_{n+1}$ using $\mv_{n+1}$.
+\item Use boundary values of $\phione_{n+1}$ to get $\phim_{n+1}$.
+\item If not finished then goto 2.
+\end{enumerate}
+
+A simple second order extrapolation formula (based on Lagrange interpolation\cite[312]{Kincaid2002}) is 
+\begin{equation}
+  \label{eq:65}
+  f(t) = \frac{t - t_1}{t_0 - t_1}f(t_0) + \frac{t - t_0}{t_1 - t_0}f(t_1).
+\end{equation}
+After substituting in $t=t_{n+1}$, $t_1=t_n$ and $t_0=t_{n-1}$ this gives an expression for the predicted $\phim$ value
+\begin{equation}
+  \label{eq:66}
+  \hat{\phim}_{n+1} = \frac{-\dtx{n+1}}{\dtn} \phim_{n-1} + \frac{\dtx{n+1} + \dtn}{\dtn} \phim_n.
+\end{equation}
+
+Note that if we are using the implicit midpoint rule then we actually want to extrapolate $\phim$ to the midpoint, hence we actually use $\dtx{n+1} = \dtx{n+1} /2$ in the above equation.
+If we are using the implicit midpoint rule with constant time steps then the extrapolation formula becomes
+\begin{equation}
+  \label{eq:67}
+  \hat{\phim}_{n+1} = \frac{1}{2} \phim_{n-1} + \frac{3}{2} \phim_n,
+\end{equation}
+which matches with the extrapolation formula given for a different semi-implicit version of the midpoint rule\cite{Serpico2001}.
+
+Notes:
+\begin{itemize}
+\item stability uncertain: polynomial extrapolation can be dodgy..
+\item Need to find error expression for extrapolation
+\item talk about relation to FEM (Lagrange polynomials)?
+\end{itemize}
+
+\subsection{Jacobian structure}
+\label{sec:bem-jacobian-structure}
+
+Decoupling the system as discussed above means that we only need to solve the LLG system (as discussed in \autoref{sec:llg-jacobian}) along with two Poisson systems of size $\sim N$ (as given in \autoref{sec:poisson-jacobian}).
+Additionally we need to perform a single matrix multiply (of size $N_b$) to calculate the boundary conditions on the $\phim$ Poisson solve.
+
+
+\subsection{Solver strategies}
+\label{sec:semi-implicit-bem-solver-strategies}
+
+As discussed above we use a hierarchical matrix representation for the BEM operator $\bm$, to avoid large memory requirements and to speed up the dense matrix multiply.
+
+Efficient solver strategies for Poisson systems are extremely well studied.
+An efficent and robust method for solving Poisson systems on unstructured grids is to use the method of conjugate gradients with a single V-cycle of algebraic multigrid as a preconditioner \cite[Chap. 2]{HowardElmanDavidSilvester2006}.
+
+Solver strategies for the LLG system are discussed in \autoref{??ds llg preconditioning}.
+
+%%% Local Variables:
+%%% mode: latex
+%%% TeX-master: "main"
+%%% End:

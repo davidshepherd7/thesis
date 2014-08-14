@@ -12,7 +12,7 @@ However IMR belongs to the implicit Runge-Kutta family of methods, and as such i
 In this \secpaper{} we describe a novel adaptive IMR algorithm based on estimates of the local truncation error by a predictor step.
 
 
-\section{Implicit midpoint rule with fixed step size}
+\section{Fixed step size implicit midpoint rule}
 \label{sec:fixed-step-implicit}
 
 Let $\yv(t)$ be a vector function and denote an approxmimation to $\yv(t)$ at $t = t_n$ by $y_n$.
@@ -64,7 +64,9 @@ or using a Butcher tableu \cite[135]{HairerNorsettWanner} as shown in \autoref{t
 Note that unlike multistep methods, such as the second order backwards difference (BDF2), \eqref{eq:basic-midpoint} is valid for both constant and variable step sizes because there is no dependence on previous steps.
 
 
-\section{Construction of an LTE estimate}
+\section{Adaptive implicit midpoint rule}
+
+\subsection{Construction of an LTE estimate}
 
 Due to the complexity of the local truncation error of the implicit midpoint rule there are difficulties with the Milne-device approach described in \autoref{sec:adaptivity}.
 In particular, the LTE of IMR has a term involving the error due to the approximation $\yv(\thf) \sim \yvm$.
@@ -292,7 +294,7 @@ This is expensive so for these cases the adaptive method is not efficient.
 Note that the LLG can be defined explicitly as well as implicitly so this limitation does not apply to micromagnetics problems.
 
 
-\section{Numerical experiments}
+\section{Numerical experiments with simple ODEs}
 \label{sec:aimr-testing}
 
 
@@ -460,7 +462,7 @@ Note that IMR still displays second order convergence (albeit with a much larger
 This is because we are not increasing $\lambda$ as we decrease $\toltt$, so we measuring the normal convergence not B-convergence.
 
 
-\section{Numerical Experiments with the ODE form of the LLG}
+\section{Numerical experiments with the ODE form of the LLG}
 \label{sec:imr-ode-llg-numer-exper}
 
 In this section we present numerical experiments with adaptive IMR on a simple LLG problem.
