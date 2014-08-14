@@ -73,9 +73,10 @@
 \newcommand{\ltip}[2]{\ip{#1}{#2}_{\ltwo}} % l2 inner product
 
 
-% Norm and abs: better spacing than if done manually with |
+% Norm and abs
 \newcommand{\abs}[1]{\left|{#1} \right|}
-\newcommand{\norm}[1]{\lVert #1 \rVert}
+% \newcommand{\norm}[1]{\lVert #1 \rVert}
+\newcommand{\norm}[1]{\left| \left| #1 \right| \right|}
 \newcommand{\ltnorm}[1]{\norm{#1}_{\ltwo}}
 
 % rescaled time
@@ -155,13 +156,13 @@
 
 
 % Big O notation
-\newcommand{\order}[1]{\text{O}(#1)}
+\newcommand{\order}[1]{\text{O}\bigb{#1}}
 \newcommand{\porder}[1]{\quad + \order{#1}} % with larger spacing
 
 % Differential operators
 \renewcommand{\div}{\nabla \cdot} % \div is normally division
 \newcommand{\grad}{\nabla}
-\newcommand{\curl}{\nabla \cross}
+\newcommand{\curl}{\nabla \times}
 \newcommand{\lap}{\nabla^2}
 
 \newcommand{\compdot}{\mathbin{:}}
@@ -338,6 +339,11 @@
 \newcommand{\newtontol}{\epsilon_{\text{N}}}
 \newcommand{\ntol}{\newtontol}
 
+\newcommand{\resi}{\rv}
+\newcommand{\jac}{\mathrm{J}}
+\newcommand{\nowm}{\mv^0}
+\newcommand{\nextm}{\hat{\mv}}
+\newcommand{\corr}{\myvector{\delta}}
 
 % Operators
 % ============================================================

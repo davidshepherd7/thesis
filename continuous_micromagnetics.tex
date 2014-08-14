@@ -78,12 +78,12 @@ The magnetostatic field, $\Hms$, can be written in two ways: an integral form or
 % These methods are discussed in \autoref{sec:magstat-field-calc-inte} and \ref{sec:magstat-field-calc-pote} respectively.
 
 The integral form of the magnetostatic field at a point $\xv \in \real^3$ due to the magnetic body $\magd$ with boundary $\boundd$ can be given in terms of magnetisation $\Mv$ by an integral over all volume and surface ``magnetic charges'' ($\nabla \cdot \Mv$ and $\Mv \cdot \nv$ respectively) as
-\begin{align}
-  \Hms(\xv) &= \frac{1}{4 \pi} \bigs{ 
-              - \int_\magd \nabla' \cdot \Mv(\xv') \frac{(\xv - \xv')}{\abs{\xv -\xv'}^3} \d^3 \xv'
-              + \int_\boundd \Mv(\xv') \cdot \nv(\xv') \frac{(\xv - \xv')}{\abs{\xv - \xv'}^3} \d^2 \xv' },
-              \label{eq:Hmsint}
-\end{align}
+\begin{equation}
+  \Hms(\xv) = \frac{1}{4 \pi} \bigs{ 
+    - \int_\magd \nabla' \cdot \Mv(\xv') \frac{(\xv - \xv')}{\abs{\xv -\xv'}^3} \d^3 \xv'
+    + \int_\boundd \Mv(\xv') \cdot \nv(\xv') \frac{(\xv - \xv')}{\abs{\xv - \xv'}^3} \d^2 \xv' },
+  \label{eq:Hmsint}
+\end{equation}
 where $\nabla'$ denotes the grad operator with respect to the $\xv'$ coordinate and $\nv$ is the outer unit normal.
 For completeness we note that single magnetic charges (magnetic monopoles) are a useful mathematical tool but have not been observed in nature.
 
@@ -94,6 +94,8 @@ For completeness we note that single magnetic charges (magnetic monopoles) are a
 % \end{equation}
 % where $\ruv_i$ is the unit vector pointing from $\xv_i$ to $\xv$.
 
+
+% ??ds show how to get this from Maxwell's equations?
 
 When the magnetic field is produced only by magnets and not by electric currents (\ie the magnetic field is irrotational) it is possible to express the field as a function of a scalar potential, $\phim$: % \cite{Coey2010}
 \begin{equation}
