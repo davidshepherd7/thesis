@@ -66,6 +66,8 @@
 \newcommand{\myvector}[1]{\mathbf{#1}}
 \newcommand{\goesto}{\rightarrow}
 
+\newcommand{\set}[1]{\left\{ {#1} \right\}}
+
 \newcommand{\E}[1]{\times 10^{#1}} % powers of 10
 \newcommand{\st}{\,|\,} % ``such that'' operator in sets (vertical line with spacing)
 
@@ -87,6 +89,8 @@
 % standard integrals
 \newcommand{\intd}[2][\magd]{{\int_{#1} #2 \d {#1}}}
 \newcommand{\intb}[1]{\intd[\boundd]{#1}}
+\newcommand{\intui}[2][x]{{\int_0^1 #2 \d{#1}}} % unit interval
+
 
 % Jacobian of transformation
 \newcommand{\jstox}{J}
