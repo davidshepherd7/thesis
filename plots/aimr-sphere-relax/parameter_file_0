@@ -10,7 +10,7 @@
 '-ts' : ["bdf2", "imr", "tr"],
 '-tol' : [1e-4],
 '-dt-initial' : 1e-3,
-'-renormalise' : -1,
+'-renormalise' : 0,
 
 # other numerical settings
 # '-fd-jacobian' : [0, 1],
