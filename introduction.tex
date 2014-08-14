@@ -20,6 +20,33 @@ Micromagnetic models are extremely useful for investigations into the behaviour 
 
 %% In this report we first give a summary of the ``trilemma'' problem currently facing magnetic recording, and how it was last overcome by transitioning from longitudinal to perpendicular recording in \autoref{sec:trilemma} and \ref{sec:long-perp-record}. We next give an overview of micromagnetic models, methods previously used and the rationale behind the specific methods chosen for this project (\autoref{sec:cont-micromag} and~\ref{sec:numer-meth-micr}). We then give an introduction to two commonly used methods of spatial discretisation -- the finite difference and finite element methods in \autoref{sec:intr-finite-ele-diff}). Sections~\ref{sec:galerk-meth-llg} and \ref{sec:hybr-finit-elem} give a detailed description of the application of the discretisation methods to the continuous mathematical model. \autoref{sec:impl-test} gives a short discussion of the implementation details and some basic tests demonstrating that the model works as expected. Finally \autoref{sec:current-progress} and \ref{sec:objectives} discuss the progress made so far and the future objectives of my project.
 
+
+\section{Aims}
+
+blah blah fem + imr popular, convergence proofs, not widely used -- impractical?
+
+
+So make some practical improvements! Adaptivity + solvers
+
+
+\section{Novel results}
+
+Main results:
+\begin{itemize}
+\item Problem independent adaptive implicit midpoint rule
+\item Efficient monolithic solution of FEM/BEM problems
+\item Analysis of mesh induced stiffness in LLG and FEM/BEM problems
+\end{itemize}
+
+Smaller:
+\begin{itemize}
+\item Numerical integration of FEM/BEM integrals
+\item Numerical experiments on effectiveness of geometric with IMR and weak form
+\end{itemize}
+
+
+\section{Contents of thesis}
+
 %%% Local Variables:
 %%% mode: latex
 %%% TeX-master: "main"
