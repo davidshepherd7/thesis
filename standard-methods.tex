@@ -185,6 +185,44 @@ It is given by
 \end{equation}
 Note that for ODEs such that $\fv$ is linear in both $t$ and $\yv$ this is equvalent to TR, and in general the properties of the two methods are similar.
 
+\subsection{??ds Why use the implicit midpoint rule}
+
+??ds clean all this up and merge
+
+The Landau-Lifshitz-Gilbert equation with constant applied field has certain geometric properties (see \autoref{sec:prop-cont-llg} for a derivation of these properties):
+\begin{itemize}
+\item Magnetisation length is constant.
+\item Energy is dissipated at a rate determined by the damping constant.
+\item Energy is conserved when $\dampc = 0$.
+\end{itemize}
+In a varying applied field the Zeeman energy may vary independently of damping, which can drive other effects.
+However similar energy balance equations can still be derived.
+
+In contrast to most time integrators the implicit midpoint rule conserves the magnetisation length, conserves energy at zero damping in constant applied field and gives highly accurate energy dissipation in linear applied fields\cite{DAquino2005} (see \autoref{sec:prop-imr-llg} for details).
+Time integration schemes with conservation properties similar to these are known as geometric integration schemes. 
+
+Since IMR is a single step method there is no dependence on $\dtx{n-1}$ (unlike, for example, BDF2) and so no change in these properties would be expected when going from fixed to varying time step sizes.
+
+We have a number of reasons to believe that such improvements in the accuracy of these properties will translate into an improvement in the accuracy and robustness of the overall solver:
+\begin{itemize}
+\item Errors in the energy dissipation \cite{Albuquerque2001} and magnetisation length \cite{Chantrell2001} have been successfully used as error estimators for total error.
+
+\item It is well known that geometric integration schemes typically result in much smaller long-timescale error-build-up than schemes that do not preserve such quantities \cite[77]{Iserles2009}.
+
+\item The non-linear modification to the Landau-Lifshitz-Gilbert equation caused by renormalisation of the magnetisation length (as commonly used to maintain correct magnetisation length in non-conservative time integrators) may cause significant changes in the magnetostatic field \cite{Lewis2003}.
+
+\item Renormalisation of the magnetisation modifies the balance between the various energy terms.
+  This is similar to the methods that lead to the ``flying ice cube'' problem \cite{Harvey1998} in molecular dynamics.\footnote{In such molecular dynamics the rescaling of particle velocities (to maintain constant temperature despite numerical error accumulation) can result in large amounts of kinetic energy being transferred from the motion of internal degrees of freedom to motion of the centre of mass.}
+\end{itemize}
+
+In addition to these conservation properties the following properties make IMR suitable for micromagnetics problems
+\begin{itemize}
+\item It is second order, which is typically considered a good compromise between speed and accuracy for pdes (higher orders would require expensive high order spatial discretisation to be effective, generally better to just do h-refinement instead).\cite{Matthias}
+\item It is A-stable, and so remains efficient for stiff problems such as those arising from the spatial discretisation of PDEs (see \autoref{cha:stiffn-llg-equat}).
+\item It is self starting: no additional information besides the initial condition is needed to begin time integration.
+\item Proven to converge when applied to FEM with nodal quadrature scheme.
+\end{itemize}
+
 
 
 \subsection{Local truncation error and order}
