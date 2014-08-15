@@ -1,4 +1,6 @@
-\documentclass[11pt,a4paper,pdftex]{book}
+\documentclass[12pt,PhD,a4paper,pdftex,singlespace]{muthesis}
+% \documentclass[11pt,a4paper,pdftex]{book}
+
 
 % Define a boolean which says we are compiling my thesis
 \newif\ifthesis
@@ -14,6 +16,7 @@
 \usepackage{amsfonts}
 \usepackage{amsthm}
 \usepackage{mathtools}
+
 
 \usepackage{url}                %Support for urls
 
@@ -47,29 +50,13 @@
 \def\subsectionautorefname{Subsection} % capitalise
 
 
+\setcounter{tocdepth}{1} % Set contents to only go down to section level
+
+
 
 
 %% Page Layout
 %% ============================================================
-\usepackage{fancyhdr}
-\pagestyle{fancy}
-\fancyhf{}
-
-\rhead{}        %Set right header contents
-\cfoot{\thepage}        %Page number in centre footer
-
-% These 3 commands set the left header to display the current section
-\renewcommand{\chaptermark}[1]{\markboth{#1}{}}
-\lhead{\leftmark}
-\setlength{\headheight}{15.2pt}
-
-% Set up border widths
-\usepackage[top=1in, bottom=1in, left=1.4in, right=1.2in]{geometry}
-
-% % Title within the first page
-%\usepackage{titling}   %Reduce spacing before title
-%\setlength{\droptitle}{-6em}   %-6em reduces to ~normal margins
-
 % Paragraphs use a vertical space rather than tabbing
 \setlength{\parskip}{\medskipamount}
 \setlength{\parindent}{0pt}
@@ -184,20 +171,43 @@
 % Include only some sections while working on them, remove before final
 %\includeonly{first_year_progress}
 
+\title{Numerical methods for micromagnetics}
+\author{David Shepherd}
+\principaladviser{Jim Miles\\
+  Milan Mihajlovi\'{c}\\
+  Matthias Heil}
+\submitdate{29th September 2014}
 
-% \author{David Shepherd}
 % \date{30 March 2012}
 
 \begin{document}
 
-\input{title.tex}
+% muthesis stuff:
+%%%%%%%%%%
 
-\setcounter{page}{2} % Title is page 1, so that pdf page numbers match with
+% disable some useless pages
+\figurespagefalse
+\tablespagefalse
+% \copyrightfalse
+
+\beforeabstract
+
+\prefacesection{Abstract}
+\input{abstract}
+
+\afterabstract
+
+\prefacesection{Acknowledgements}
+I would like to thank...
+
+\afterpreface
+
+%%%%%%%%%% % end of muthesis stuff
+
 % our pages numbers
 \include{listofsymbols}
 
-\setcounter{tocdepth}{1} % Set contents to only go down to section level
-\tableofcontents
+% \tableofcontents
 
 \include{introduction}
 \include{continuous_micromagnetics}
