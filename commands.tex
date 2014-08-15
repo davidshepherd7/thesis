@@ -88,6 +88,9 @@
 \renewcommand{\d}{{\; \text{d}}}
 % standard integrals
 \newcommand{\intd}[2][\magd]{{\int_{#1} #2 \d {#1}}}
+\newcommand{\intdx}[2][\magd]{{\int_{#1} #2 \d \xv}}
+\newcommand{\intds}[2][\magd]{{\int_{#1} #2 \d \sv}}
+
 \newcommand{\intb}[1]{\intd[\boundd]{#1}}
 \newcommand{\intui}[2][x]{{\int_0^1 #2 \d{#1}}} % unit interval
 
@@ -404,7 +407,8 @@
 \newsubcommand{\rex}{\myvector{r}}{\text{ex}}
 \newsubcommand{\rexh}{\myvector{r}}{\text{ex,h}}
 \newsubcommand{\rll}{\myvector{r}}{\text{ll}}
-\newcommand{\rllg}{\rv}
+\newcommand{\rllg}{r}
+\newcommand{\rllgv}{\myvector{\rllg}}
 \newcommand{\rphi}{s}
 
 
