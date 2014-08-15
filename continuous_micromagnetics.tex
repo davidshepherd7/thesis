@@ -97,7 +97,7 @@ The integral form of the magnetostatic field at a point $\xv \in \real^3$ due to
     + \int_\boundd \Mv(\xv') \cdot \nv(\xv') \frac{(\xv - \xv')}{\abs{\xv - \xv'}^3} \d^2 \xv' },
   \label{eq:Hmsint}
 \end{equation}
-where $\nabla'$ denotes the grad operator with respect to the $\xv'$ coordinate and $\nv$ is the outer unit normal.
+where $\nabla'$ denotes the grad operator with respect to the $\xv'$ coordinate and $\nv(\xv)$ is the outer unit normal of $\magd$ at $\xv$.
 For completeness we note that single magnetic charges (magnetic monopoles) are a useful mathematical tool but have not been observed in nature.
 
 % Alternatively it can be given in terms of a sum over the dipole fields of magnetic moments (\ie discretised magnetisation) as
@@ -118,7 +118,7 @@ When the magnetic field is produced only by magnets and not by electric currents
     \lap \phim &= \nabla \cdot \Mv.
   \end{aligned}
 \end{equation}
-The boundary conditions are
+The boundary conditions are for \eqref{eq:Hms}
 \begin{equation}
   \begin{aligned}
     \label{eq:cont-phi-bound}
@@ -127,10 +127,10 @@ The boundary conditions are
     \phim \rightarrow 0 \text{ as } &\abs{\xv} \rightarrow \infty,
   \end{aligned}
 \end{equation}
-where $\phim^\inte$ and $\phim^\exte$ are respectively the values of $\phim$ just inside and outside the magnetic domain.
+where $\phim^\inte$ and $\phim^\exte$ are respectively the values of $\phim$ just inside and outside the domain $\magd$.
 
 
-Once the field has been calculated the energy contribution is given by
+Once the field, $\Hms$, has been calculated its energy contribution is given by
 \begin{equation}
   \label{eq:41}
   \Ems =  \frac{-\mu_0}{2} \int_{\magd} \Mv \cdot \Hms \d \magd.
@@ -141,25 +141,28 @@ The factor of $\frac{1}{2}$ is to avoid double counting: the integral includes t
 \label{sec:magn-anis}
 
 Many magnetic materials have a preferred direction (or directions) of magnetisation due to their crystal structure, this is known as magnetocrystalline anisotropy.
-The energy contribution due to magnetocrystalline anisotropy energy depends on the crystal structure of the material, but is typically one of a few simple algebraic functions of $\Mv$.
+The energy contribution due to this anisotropy depends on the crystal structure of the material, but is typically one of a few simple algebraic functions of $\Mv$.
 Because of this the exact type used is not especially important for the discussion of numerical methods.
-Hence we discuss only the most technologically relevant case: in magnetic data recording interest is focused on materials with a single out of plane \emph{easy axis} (perpendicular uniaxial anisotropy) as this gives the best stability for the stored data.
+Hence we focus on only the most technologically relevant case: in magnetic data recording interest is focused on materials with a single out of plane \emph{easy axis} (perpendicular uniaxial anisotropy) as this gives the best stability for the stored data.
 
 The first order approximation for the energy contribution of a perpendicular uniaxial anisotropy is given by
 \begin{equation}
-  \Eca = -K_u \int_\magd \left( \mv \cdot \ev \right)^2 \d \magd,
+  \Eca = -K_u \int_\magd \left( \frac{\Mv}{M_s} \cdot \ev \right)^2 \d \magd,
   \label{eq:36}
 \end{equation}
 where $\ev$ is the easy axis and $K_u$ is the material dependent first order anisotropy energy density coefficient.\footnote{It is possible to define many different forms for this energy. Note that the choice of definition changes the meaning of $K_u$.}
 The first order approximation is valid for most magnetic materials of interest \cite{Kronmuller2003}.
 
-The effective field corresponding to this example is
+The effective field corresponding to this case is
 \begin{equation}
-  \Hca = \frac{2 K_u}{\mu_0 M_s} \left( \mv \cdot \ev \right) \; \ev.
+  \Hca = \frac{2 K_u}{\mu_0 M_s} \left( \frac{\Mv}{M_s} \cdot \ev \right) \; \ev.
   \label{eq:Hca}
 \end{equation}
 
 A detailed description of the various forms of the magnetocrystalline anisotropy can be found in textbooks on magnetic materials \cite{Coey2010}\cite{Aharoni1996}.
+
+
+% ??Ds Milan wants a total energy here... not sure why
 
 \section{Dynamic Micromagnetics and the Landau-Lifshitz-Gilbert equation}
 \label{sec:land-lifsch-gilb}
@@ -172,7 +175,7 @@ In this thesis we are concerned only with dynamic models.
 Such dynamic models calculate the time evolution of the magnetisation using a differential equation.
 
 Given some effective field, $\Heff$, this can be written as a differential equation. 
-Starting with the quantum mechanical angular momentum of an electron, and converting from a single spin to a continuous magnetisation gives the differential equation\cite{Kronmuller2003}
+Starting with the quantum mechanical angular momentum of an electron, and converting from a single spin to a continuous magnetisation gives the differential equation \cite{Kronmuller2003}
 \begin{equation}
   \label{eq:38}
   \dMdt = - \gymagc \Mv \times \Hv,
@@ -189,19 +192,18 @@ Equation~\eqref{eq:38} describes an undamped precessional motion, \ie no energy 
   \label{eq:LL}
   \dMdt = - \gymagc \Mv \times \Hv - \frac{\dampc_L \gymagc}{M_s} \Big( \Mv \times (\Mv \times \Hv) \Big),
 \end{equation}
-where $\dampc$ is an experimentally determined material parameter related to the strength of the damping. Equation~\eqref{eq:LL} is referred to as the Landau-Lifshitz equation. The effects of the precession and damping terms are shown in \autoref{fig:LLG-terms}.
+where $\dampc$ is an experimentally determined material parameter related to the strength of the damping. Equation~\eqref{eq:LL} is referred to as the Landau-Lifshitz equation.
 
 \begin{figure}
   \centering
   \includegraphics[width=0.6\textwidth]{./images/LLG-terms}
-  \caption{The effects of the precession and damping terms in the Landau-Lifshitz and Landau-Lifshitz-Gilbert equations on the magnetisation direction, $\Mv$, of a single magnetic moment with a constant effective field
-    .}
+  \caption{The effects of the precession and damping terms in the Landau-Lifshitz and Landau-Lifshitz-Gilbert equations on the magnetisation direction, $\Mv$, of a single magnetic moment with a constant effective field.}
   \label{fig:LLG-terms}
 \end{figure}
 
 However, there are still problems with this equation.
 For large damping as the damping constant is increased the total speed of the motion increases (since the magnitude of the damping term increases and the precession term remains unchanged) which is physically incorrect \cite{Mallinson1987}.
-There is a similar equation introduced by Gilbert \cite{Gilbert2004}, called the Landau-Lifshitz-Gilbert equation, which does not suffer from this problem\footnote{A number of papers give different signs for the LLG equation, this may be due to confusion over the use of $\gamma_L$ to mean $\abs{\gamma_L} = -\gamma_L$. Alternatively it may be due to the lack of specification of the sign of the damping parameter in Gilbert's derivation of the LLG \cite{Gilbert2004} (originally from his thesis), which uses the alternative notation $\alpha = -\eta \abs{\gamma_L} M_s$ where $\eta$ is the usual damping parameter. The correct signs are the ones given here \cite{Mallinson2000}.}
+There is a similar equation introduced by Gilbert \cite{Gilbert2004}, called the Landau-Lifshitz-Gilbert equation, which does not suffer from this problem\footnote{A number of papers give different signs for the LLG equation, this may be due to confusion over the use of $\gamma_L$ to mean $\abs{\gamma_L} = -\gamma_L$. Alternatively it may be due to the lack of specification of the sign of the damping parameter in Gilbert's derivation of the LLG \cite{Gilbert2004} (originally from his thesis), which uses the alternative notation $\alpha = -\eta \abs{\gamma_L} M_s$ where $\eta$ is the usual damping parameter. The correct signs are the ones given here and in reference \cite{Mallinson2000}.}
 \begin{equation}
   \label{eq:Gilbert}
   \dMdt = - \gymagc \Mv \times \Hv + \frac{\dampc}{M_s} (\Mv \times \dMdt),
@@ -213,11 +215,12 @@ where $\dampc \neq \dampc_L$. Equation~\eqref{eq:Gilbert} can be rearranged into
 \end{equation}
 which we refer to as the Landau-Lifshitz form of the Landau-Lifshitz-Gilbert equation.
 
-Equations~\eqref{eq:LL}, \eqref{eq:Gilbert} and \eqref{eq:LLG} link the unknown magnetisation vector as a function of time, $\Mv(t)$, with the effective field, $\Hv$. To determine $\Mv$ at an arbitrary time we need to integrate one of the above equations with respect to time starting from a known initial magnetisation $\Mv(0)$.
+Equations~\eqref{eq:LL}, \eqref{eq:Gilbert} and \eqref{eq:LLG} link the unknown magnetisation vector as a function of time, $\Mv(t)$, with the effective field, $\Hv$.
+To determine $\Mv$ at an arbitrary time we need to integrate either of the above equations with respect to time starting from a known initial magnetisation $\Mv(0)$.
 This is usually done numerically by employing a time integration method, as will be discussed in \autoref{sec:time-discretisation}.
 
 Note that there is no spatial dependence directly contained in equations~\eqref{eq:LL}, \eqref{eq:Gilbert} and \eqref{eq:LLG}.
-However the exchange effective field and magnetostatic field do contain spatial dependence, so usually the final equation to be solved after all substitutions is a partial differential equation.
+However the exchange effective field and magnetostatic field may contain spatial dependence, so usually the final equation to be solved after all substitutions is a partial differential equation (PDE).
 
 % Examples of currently available micromagnetic models include the \texttt{OOMMF}\cite{oommf-website} and \texttt{nmag}\cite{Fischbacher2007} packages, which both use the dynamic method exclusively, along with \texttt{magpar}\cite{Scholz2003} and \texttt{FEMME}\cite{suessco-website} which can use either dynamic or energy based methods.
 
@@ -225,15 +228,16 @@ However the exchange effective field and magnetostatic field do contain spatial 
 \subsection{Boundary conditions}
 \label{sec:magn-bound-cond}
 
-By far the most commonly used boundary conditions on the magnetisation $\mv$ (in dimensional form) are \cite[178, 181]{Aharoni1996}
+By far the most commonly used boundary conditions on the magnetisation $\Mv$ (in dimensional form) are \cite[178, 181]{Aharoni1996}
 \begin{equation}
   \label{eq:llg-bc}
   \Mv \times \dMdn = \zerov.
 \end{equation}
 
-This condition can be arranged into a simpler form: we first note that for equation~\eqref{eq:llg-bc} to hold either $\Mv = \zerov$, $\dMdn = \zerov$ or $\Mv$ is parallel to $\dMdn$.
+This condition can be arranged into a simpler form: we first note that for equation~\eqref{eq:llg-bc} to hold either $\Mv = \zerov$, $\dMdn = \zerov$, or $\Mv$ is parallel to $\dMdn$.
 Clearly $\Mv$ is not the zero vector inside the ferromagnet.
-Also we know that the magnetisation length does not change,\footnote{Physically this is part of the definition of the problem. The proof that this fact is embodied in the LLG equation is given in \autoref{sec:prop-cont-llg}.} so $\pd{\Mv}{\av} \cdot \Mv = 0$ for any direction $\av$ (since the change in magnetisation projected onto the magnetisation direction is the change in magnetisation length) hence $\Mv$ and $\dMdn$ cannot be parallel.
+Also we know that the magnetisation length does not change,\footnote{Physically this is part of the definition of the problem. The proof that this fact is embodied in the LLG equation is given in \autoref{sec:prop-cont-llg}.} therefore $\pd{\Mv}{\av} \cdot \Mv = 0$ for any direction $\av$ (since the change in magnetisation projected onto the magnetisation direction is the change in magnetisation length). 
+Hence $\Mv$ and $\dMdn$ cannot be parallel.
 So the final boundary condition is simply
 \begin{equation}
   \dMdn = \zerov.
@@ -295,7 +299,7 @@ cancelling the various constants results in the non-dimensionalised Landau-Lifsh
   \dmdt = - (\mv \times \hv) + \alpha (\mv \times \dmdt).
 \end{equation}
 
-Similarly for equation~\eqref{eqn:phind}
+Similarly for equation~\eqref{eqn:phind} we have
 \begin{align*}
   \frac{1}{l^2} \Phi \nabla^{2} \phi &= \frac{1}{l} M_s \nabla \cdot \mv, \\
   \frac{\Phi}{M_s l} \nabla^{2} \phi &= \nabla \cdot \mv.
@@ -330,7 +334,8 @@ So the final system of equations is
 \begin{equation}
   \begin{aligned}
     \dmdt &= - \mv \times \hv + \alpha \mv \times \dmdt, \\
-    \hv &= \happ - \nabla \phi + \lap \mv + \kone (\mv \cdot \ev) \ev.
+    \hv &= \happ - \nabla \phi + \lap \mv + \kone (\mv \cdot \ev) \ev, \\
+    \lap \phi &= \nabla \cdot \mv.
     \label{eqn:nd-llg-full}
   \end{aligned}
 \end{equation}
@@ -347,7 +352,7 @@ Using the substitutions from above this becomes
   \end{aligned}
 \end{equation}
 
-\subsection{Non-dimensionalisation of the  Landau-Lifshitz form of the LLG}
+\subsection{Non-dimensionalisation of the Landau-Lifshitz form of the LLG}
 \label{sec:land-lifsh-normalisation}
 
 The dimensional Landau-Lifshitz form of the LLG is given in equation~\eqref{eq:LLG}:
@@ -373,7 +378,7 @@ This results in
   \dmdt = -\mxh -\dampc \mxmxh.
   \label{eq:ll-nd-simpler}
 \end{equation}
-However this means that time scale changes when switching between the two forms (\ie the $t^*$s are different), making comparisons more difficult.
+However this means that time scale changes (\ie the $t^*$s are different) when switching between the two forms \eqref{eq:ll-nd-simpler} and \eqref{eq:53}, making comparisons more difficult.
 
 
 \subsection{Non-dimensionalisation of the energy}
@@ -394,7 +399,7 @@ We repeat the process used in \autoref{sec:land-lifsh-gilb-normalisation} to get
   \Eca^* =  -\Kone^* \int_\magd (\mv \cdot \ev)^2 \d \magd^*.
 \end{equation*}
 
-We substitute definitions~\eqref{eqn:nddefs}, \eqref{eqn:l-normalisation}, \eqref{k-normalisation} and $E^* = \nE e = \mu_0 M_s^2 l^d \, e$ where $d$ denotes the number of spatial dimensions:
+We substitute definitions~\eqref{eqn:nddefs}, \eqref{eqn:l-normalisation}, \eqref{k-normalisation} and $E^* = \nE e = \mu_0 M_s^2 l^d \, e$ where $d$ denotes the number of spatial dimensions to obtain
 \begin{equation*}
   \eapp = -\mu_0 M_s^2 l^d \frac{1}{\nE} \int_{\magd} \mv \cdot \happ \d \magd
   = - \int_{\magd} \mv \cdot \happ \d \magd,
@@ -420,7 +425,7 @@ Note that we have used
 \section{Geometric properties of the continuous Landau-Lifshitz-Gilbert equation}
 \label{sec:prop-cont-llg}
 
-The term ``geometric'' properties of a differential equation are the properties which do not vary in time \cite[73]{Iserles2009}, \ie conservation laws.
+The term ``geometric'' properties of a differential equation refers to the properties which do not vary in time \cite[73]{Iserles2009}, \ie conservation laws.
 In this section we demonstrate some geometric properties of the Landau-Lifshitz-Gilbert equation.
 
 For this purpose it is convenient to write the non-dimensional LLG equation in the form
@@ -428,36 +433,32 @@ For this purpose it is convenient to write the non-dimensional LLG equation in t
   \label{eq:llg-prop-form}
   \dmdt = - \mv \times( \hv - \dampc \dmdt),
 \end{equation}
-where $\hv$ is the effective field due to various effects depending on the system being modelled.
+where $\hv$ is the effective field including various effects depending on the system being modelled.
 
-We also need the identity
+We will also need the identity
 \begin{equation}
   \label{eq:dot-cross-id}
   \ip{\av}{\av \times \bv} = 0,
 \end{equation}
 which is true for all inner products $\ip{\cdot}{\cdot}$ because $\av \times \bv$ is perpendicular to $\av$ by the definition of the cross product.
-In particular it is true for the dot product (also known as scalar multiplication) and the $\ltwo$ inner product.
+In particular, it is true for the dot product of two vectors (also known as scalar multiplication) and the $\ltwo$ inner product.
 
 We first show that length of the magnetisation at any point is constant over time.
-To see this we take the dot product with $\mv$ on both sides of~\eqref{eq:llg-prop-form} and use~\eqref{eq:dot-cross-id} to obtain
+To see this we take the dot product of~\eqref{eq:llg-prop-form} with $\mv$ and use~\eqref{eq:dot-cross-id} to obtain
 \begin{equation}
   \label{eq:56}
   \mv \cdot \dmdt = 0.
 \end{equation}
-Hence the change of $\mv$ over time is always perpendicular to $\mv$, so length is conserved.\footnote{Actually this is obvious from the fact that $\dmdt$ is can be written as a cross product involving $\mv$, but the technique used here is useful in the discussion of the properties of various discrete forms of the Landau-Lifshitz-Gilbert equation.}
+This equation implies that the change of $\mv$ over time is always perpendicular to $\mv$, so length is conserved.\footnote{Actually this is obvious from the fact that $\dmdt$ is can be written as a cross product involving $\mv$, but the technique used here is useful in the discussion of the properties of various discrete forms of the Landau-Lifshitz-Gilbert equation.}
 
 Next we look at the energy properties of the system described by the Landau-Lifshitz-Gilbert equation.
-The change in energy over time can be derived similarly to the change in magnetisation by taking the $\ltwo$ inner product:
-\begin{equation}
-  \ltip{\av}{\bv} = \int_\magd \av \cdot \bv \d\magd
-\end{equation}
-with $\hv - \dampc \dmdt$ on both sides of~\eqref{eq:llg-prop-form}.
+The change in energy over time can be derived similarly to the change in magnetisation by taking the $\ltwo$ inner product\footnote{The $\ltwo$ inner product is given by $\ltip{\av}{\bv} = \int_\magd \av \cdot \bv \d\magd$.} of each side of~\eqref{eq:llg-prop-form} with $\hv - \dampc \dmdt$.
 We then use the identity~\eqref{eq:dot-cross-id} to find that
 \begin{equation}
   \label{eq:58}
   \ltip{\hv}{\dmdt} - \dampc \ltip{\dmdt}{\dmdt} = 0.
 \end{equation}
-Using the fact that $\hv = -\vd{\e}{\mv}$ and the chain rule for variational derivatives we find that the time derivative of the energy is given by
+Using the fact that $\hv = -\vd{\e}{\mv}$ and the chain rule for variational derivatives, we find that the time derivative of the energy is given by
 \begin{align*}
   \pd{\e[\mv(\xv, t), t]}{t} &= \ltip{\vd{e}{\mv}}{\dmdt} - \ltip{\pd{\happ}{t}}{\mv} \\
                              &= -\ltip{\hv}{\dmdt} - \ltip{\pd{\happ}{t}}{\mv},
@@ -465,20 +466,20 @@ Using the fact that $\hv = -\vd{\e}{\mv}$ and the chain rule for variational der
 and so
 \begin{equation}
   \ltip{\hv}{\dmdt} = -\pd{\e}{t} - \ltip{\pd{\happ}{t}}{\mv}.
+  \label{eq:64}
 \end{equation}
-Finally, substituting this into equation~\eqref{eq:58} leaves
+Finally, substituting \eqref{eq:64} into \eqref{eq:58} leaves
 \begin{equation}
   \label{eq:energy-decay}
   \pd{\e}{t} = -\dampc \ltip{\dmdt}{\dmdt} - \ltip{\pd{\happ}{t}}{\mv}.
 \end{equation}
 Equation~\eqref{eq:energy-decay} shows that under constant applied field the energy of the system is always decreasing at a rate proportional to $\dampc$.
 For non-constant applied fields the change in the Zeeman energy can increase or decrease the energy depending on how the field is changed. % field moves towards m - decrease, away -> increase. For non-spatially constant this is averaged over space in some sense by the inner product.
-In fact the first term of equation~\eqref{eq:energy-decay} can be easily derived from the Rayleigh dissipation functional used as the basis for the derivation of the Gilbert form of the LLG.\cite{Gilbert2004}
+In fact, the first term of equation~\eqref{eq:energy-decay} can be easily derived from the Rayleigh dissipation functional used as the basis for the derivation of the Gilbert form of the LLG.\cite{Gilbert2004}
 
 Note that length conservation is a \emph{point-wise} property, \ie $\abs{\mv} = 1$ at every point in space. 
 In contrast the energy decay/conservation is a \emph{global} property, \ie an integral over all space is conserved.
-This is related to the use of the dot product and the $\ltwo$ inner product respectively in their proofs.
-It is also important when weak form discretisations of the LLG are considered in \autoref{sec:nodal-integration}.
+This is related to the use of the dot product and the $\ltwo$ inner product respectively in the derivations above.
 
 
 %%% Local Variables:
