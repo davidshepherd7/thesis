@@ -20,7 +20,7 @@ For some choices of time and space discretisations additional component methods 
 
 Additionally in micromagnetic modelling the calculation of the magnetostatic field is required.
 If the integral form given in \eqref{eq:Hmsint} is used then an additional integral evaluation method is needed to handle it.
-Alternatively if the equivalent potential formulation \eqref{eq:Hms}-\eqref{eq:phi-inf} is used then more PDEs are added to the system of PDEs describing the magnetisation dynamics.
+Alternatively if the equivalent potential formulation \eqref{eq:Hms}, \eqref{eq:cont-phi-bound} is used then more PDEs are added to the system of PDEs describing the magnetisation dynamics.
 
 It should be noted that not all methods fit into this framework of independent methods for each part of the problem.
 In particular one example which uses a combined space/time discretisation to obtain some interesting properties is discussed (briefly) in \autoref{sec:advanced-lin}.
@@ -75,9 +75,7 @@ A more complex method of spatial discretisation is the finite element method \ci
 Here the magnetic body is divided up into a finite number of polygonal \emph{elements}, which can vary in both size and shape.
 Within each of these elements each magnetisation component is approximated by a simple polynomial function of space, typically a linear polynomial.
 Spatial derivatives are calculated by simply differentiating these polynomial functions.
-
 More details of the finite element method are given in \autoref{sec:intr-finite-ele-diff}.
-When applied to a uniform cubeoid mesh of zero-th order polynomials the finite element method results in the same system of equations as the finite difference method \cite{??ds}.
 
 The main advantage of the finite element method is that it can accurately approximate any geometrical feature by an appropriate arrangement of the polygonal elements.
 An additional advantage is that the size of elements (and thus the accuracy of the approximation) can be varied arbitrarily as needed to give better accuracy in more complex or important regions. 
@@ -113,9 +111,7 @@ Some key attributes of a time discretisation scheme are: \cite{Atkinson2009}
 
 \item \textbf{Accuracy (order)} -- An estimate of how rapidly the approximate solution converges as the time step size is reduced.
 
-\item \textbf{Stability} -- A scheme is stable if the approximated solution stays ``close'' to the exact solution even after a large number of time-steps. 
-A scheme is called conditionally stable if it is stable only for time steps smaller than some maximum time step or unconditionally stable if it is stable even for very large time steps (although the accuracy may be compromised). 
-??ds simplify
+\item \textbf{Stability} -- Roughly speaking a scheme is stable if the approximate solution does not ``blow up'' (\ie become catastophically inaccurate, infinite, oscillate in non-physical ways, \ldots) when time steps are larger than maximum stable step (see \autoref{sec:A-stability} for a more rigorous description).
 
 \item \textbf{Preservation of geometrical properties} -- Some differential equations have properties which should ideally be conserved in the discretised system.
 For example the properties of the Landau-Lifshitz-Gilbert equation discussed in \autoref{sec:prop-cont-llg}.
@@ -175,7 +171,7 @@ The second order backwards difference formula (BDF2) is:
   + \frac{\dtn + \dtx{n-1}}{2\dtn + \dtx{n-1}} \fv(t_{n+1}, \yv_{n+1}).
 \end{equation}
 
-The method that this thesis focuses on (for reasons that will become clear later) is the implicit midpoint rule (IMR).
+The method that this thesis focuses on (for reasons that will become clear through the rest of this section) is the implicit midpoint rule (IMR).
 It is given by
 \begin{equation}
   \label{eq:imr-definition}
@@ -183,43 +179,18 @@ It is given by
 \end{equation}
 Note that for ODEs such that $\fv$ is linear in both $t$ and $\yv$ this is equvalent to TR, and in general the properties of the two methods are similar.
 
-\subsection{??ds Why use the implicit midpoint rule}
+IMR is trivial to implement in any existing implicit solver: take a BDF1 step as usual then update via
+\begin{equation}
+  \begin{aligned}
+    t_{n+1} &\rightarrow t_{n+1} + \dtn, \\
+    \mv_{n+1} &\rightarrow 2\mv_{n+1} - \mv_n
+  \end{aligned}
+\end{equation}
+This is exactly equivalent to IMR with a step size of $2\dtn$ \cite{Malidi2005}.
 
-??ds clean all this up and merge
-
-The Landau-Lifshitz-Gilbert equation with constant applied field has certain geometric properties (see \autoref{sec:prop-cont-llg} for a derivation of these properties):
-\begin{itemize}
-\item Magnetisation length is constant.
-\item Energy is dissipated at a rate determined by the damping constant.
-\item Energy is conserved when $\dampc = 0$.
-\end{itemize}
-In a varying applied field the Zeeman energy may vary independently of damping, which can drive other effects.
-However similar energy balance equations can still be derived.
-
-In contrast to most time integrators the implicit midpoint rule conserves the magnetisation length, conserves energy at zero damping in constant applied field and gives highly accurate energy dissipation in linear applied fields\cite{DAquino2005} (see \autoref{sec:prop-imr-llg} for details).
-Time integration schemes with conservation properties similar to these are known as geometric integration schemes. 
-
-Since IMR is a single step method there is no dependence on $\dtx{n-1}$ (unlike, for example, BDF2) and so no change in these properties would be expected when going from fixed to varying time step sizes.
-
-We have a number of reasons to believe that such improvements in the accuracy of these properties will translate into an improvement in the accuracy and robustness of the overall solver:
-\begin{itemize}
-\item Errors in the energy dissipation \cite{Albuquerque2001} and magnetisation length \cite{Chantrell2001} have been successfully used as error estimators for total error.
-
-\item It is well known that geometric integration schemes typically result in much smaller long-timescale error-build-up than schemes that do not preserve such quantities \cite[77]{Iserles2009}.
-
-\item The non-linear modification to the Landau-Lifshitz-Gilbert equation caused by renormalisation of the magnetisation length (as commonly used to maintain correct magnetisation length in non-conservative time integrators) may cause significant changes in the magnetostatic field \cite{Lewis2003}.
-
-\item Renormalisation of the magnetisation modifies the balance between the various energy terms.
-  This is similar to the methods that lead to the ``flying ice cube'' problem \cite{Harvey1998} in molecular dynamics.\footnote{In such molecular dynamics the rescaling of particle velocities (to maintain constant temperature despite numerical error accumulation) can result in large amounts of kinetic energy being transferred from the motion of internal degrees of freedom to motion of the centre of mass.}
-\end{itemize}
-
-In addition to these conservation properties the following properties make IMR suitable for micromagnetics problems
-\begin{itemize}
-\item It is second order, which is typically considered a good compromise between speed and accuracy for pdes (higher orders would require expensive high order spatial discretisation to be effective, generally better to just do h-refinement instead).\cite{Matthias}
-\item It is A-stable, and so remains efficient for stiff problems such as those arising from the spatial discretisation of PDEs (see \autoref{cha:stiffn-llg-equat}).
-\item It is self starting: no additional information besides the initial condition is needed to begin time integration.
-\item Proven to converge when applied to FEM with nodal quadrature scheme.
-\end{itemize}
+TR and IMR are both self starting.
+BDF2 requires an additional startup value.
+This can be generated, for example, by taking a step of IMR, TR or BDF1 before beginning the use of BDF2. 
 
 
 
@@ -227,19 +198,25 @@ In addition to these conservation properties the following properties make IMR s
 \label{sec:deriv-local-trunc}
 
 The local truncation error (LTE) of a time integration scheme is the error due to a single integration step.
-It can be calculated by substituting $\yv_n = \yv(t_n)$ into the approximation for the next time-step then subtracting the result from the exact solution at the next time-step, $\yv(t_{n+1})$. 
+It can be calculated by substituting $\yv_n = \yv(t_n)$, $\yv_{n-1} = \yv(t_{n-1})$, etc. into the approximation for the next time-step then subtracting the result from the exact solution at the next time-step, $\yv(t_{n+1})$. 
 \ie
 \begin{equation}
   \label{eq:60}
-  \lte = \yv(t_{n+1}) - \hat{\yv}_n,
+  \lte = \yv(t_{n+1}) - \hat{\yv}_{n+1},
 \end{equation}
-where the history values ($\yv_{n-1}, \yv_{n-2}, \ldots$) used to calculate $\hat{\yv}_n$ are exact.
-??ds can we write this more rigorously? Write $y_n$ as a function of history values?
+where the history values ($\yv_{n}, \yv_{n-1}, \ldots$) used to calculate $\hat{\yv}_{n+1}$ are exact.
 For example the local truncation error of IMR is
 \begin{equation}
   \lte^\imr =  \yv(t_{n+1}) - \yv(t_n) - \dtn \ffv{\thf, \frac{\yv(t_n) + \yv_{n+1}^\imr}{2}}.
   \label{eq:trunc-start}
 \end{equation}
+
+If the local truncation error of a time integration scheme is such that 
+\begin{equation}
+  \lte \leq c \dtn^p
+\end{equation}
+then we say that it is of order $p$.
+
 
 It is important to distinguish the local truncation error from the global (temporal) error
 \begin{equation}
@@ -250,9 +227,6 @@ It is important to distinguish the local truncation error from the global (tempo
   \end{aligned}
 \end{equation}
 The difference is that the global error includes any error accumulated over previous time steps (the exact values $\yv(t_n)$ in \eqref{eq:60} are replaced by their approximations).
-
-The \emph{order} of a time integration scheme is ??ds
-
 
 We now give a derivation of the local truncation error of IMR. 
 The derivations for TR and BDF2 are much simpler and can be found in most text books on the subject.
@@ -312,6 +286,7 @@ Their local truncation errors are similar to term I of \eqref{eq:trunc-mid}:
 
 
 \subsection{A-stability}
+\label{sec:A-stability}
 
 To discuss the stability of time integrators the following test equation is widely used
 \begin{equation}
@@ -329,7 +304,7 @@ A-stability is a good way to classify the suitability of a time integrator for s
 Such ODEs often emerge from the semi-discretisation of a PDE.
 
 The IMR, TR, BDF1 and BDF2 methods are all A-stable \cite[pgs. 43, 251]{HairerWanner}.
-Linear explicit methods are never A-stable \cite{Nevanlinna1974} (``linear'' methods in this reference include all common time integration methods: Runge-Kutta, multistep, predictor-corrector, ...)\footnote{These limitations could theoretically be circumvented by using significantly more complex methods, but such questions are far beyond the scope of this thesis.}, which is the main reason for our focus on implicit methods.
+Linear explicit methods are never A-stable \cite{Nevanlinna1974} (``linear'' methods in this reference include all common time integration methods: Runge-Kutta, multistep, predictor-corrector, \ldots)\footnote{These limitations could theoretically be circumvented by using significantly more complex methods, but such questions are far beyond the scope of this thesis.}, which is the main reason for our focus on implicit methods.
 Additionally there are no A-stable linear multistep methods\footnote{A-stable implicit Runge-Kutta methods of higher order do exist, see \eg \cite[73]{HairerWanner}.
 However moving to higher order methods significantly increases the size of the system to be solved at each step. Hence they are prohibatively expensive for the time integration of semi-discretised PDEs.
 Also second order is in some sense ``good enough'' for LLG integration since the spatial accuracy is only second order and contains higher order derivatives than in time.
@@ -484,8 +459,6 @@ Finally problems can occur with this approach as the polar angle, $\theta$, appr
 Geometric integration schemes aim to solve this problem by constructing a time integration scheme that naturally preserves the value of $|M_s|$.
 Some examples of such schemes are based on IMR \cite{DAquino2005}, or a semi-explicit extension of IMR using explicit extrapolations of the effective field \cite{Spargo2003} \cite{Serpico2001}.
 Alternatively geometric integration methods based on Cayley transforms can be used \cite{Lewis2003} \cite{Bottauscio2011}.
-
-??ds Linearised + projection version by analyst guys
 
 
 \subsubsection{Proof of magnetisation length conservation for IMR on the ODE LLG}
@@ -662,7 +635,6 @@ As long as the time between such changes in field is comparable to the time scal
 Also note that none of the above is applicable to the semi-explicit modification of IMR since in that case $\mphop$ is replaced by something of the form $a\hop \bigs{\mv_n} + b\hop \bigs{\mv_{n-1}}$.
 
 ??ds draw commutation diagram
-??ds physical interpretation in terms of energy?
 
 \subsection{Symplecity}
 
@@ -672,6 +644,21 @@ The fixed step midpoint method is ``almost symplectic'' for the LLG equation wit
 
 It is well known that most adaptive schemes are not symplectic\cite[91]{Iserles2009} because they constantly change the ``nearby Hamiltonian'' that is followed by the symplectic integrator.
 Therefore the adaptive IMR is not expected to have the almost-symplectic property discussed in \autoref{??ds}.
+
+
+\subsection{Conclusions}
+
+In the previous sections we have highlighted a number of interesting properties of the implicit midpoint rule.
+We have a number of reasons to believe that the geometric properties will translate into an improvement in the accuracy and robustness of the overall solver:
+\begin{itemize}
+\item Errors in the energy dissipation \cite{Albuquerque2001} and magnetisation length \cite{Chantrell2001} have been successfully used as error estimators for total error.
+\item It is well known that geometric integration schemes typically result in much smaller long-timescale error-build-up than schemes that do not preserve such quantities \cite[77]{Iserles2009}.
+\item The non-linear modification to the Landau-Lifshitz-Gilbert equation caused by renormalisation of the magnetisation length (as commonly used to maintain correct magnetisation length in non-conservative time integrators) may cause significant changes in the magnetostatic field \cite{Lewis2003}.
+\item Renormalisation of the magnetisation modifies the balance between the various energy terms.
+  This is similar to the methods that lead to the ``flying ice cube'' problem \cite{Harvey1998} in molecular dynamics.\footnote{In such molecular dynamics the rescaling of particle velocities (to maintain constant temperature despite numerical error accumulation) can result in large amounts of kinetic energy being transferred from the motion of internal degrees of freedom to motion of the centre of mass.}
+\end{itemize}
+
+Additionally the same geometric properties enable convergence proofs of IMR when applied to FEM with a slight modification that will be discussed in \autoref{sec:nodal-integration} \cite{Bartels2006}.
 
 
 
@@ -802,25 +789,17 @@ The problem is that the inverse of a sparse matrix is significantly more dense t
 This means that the time and memory requirements for the solution scale as $\order{n^2}$, where $n$ is the number of rows/columns in the matrix.
 
 
-\subsection{Simple iterative solvers}
-
-??ds expand? merge into multigrid?
-
-There are a number of classic iteration methods which are fairly ineffective when used directly to solve reasonably sized linear systems but which are the building blocks of other methods.
-
-Examples are Jacobi, Gauss-Seidel and SOR methods \cite[103]{Saad2000}.
-
-All can be in a form where each iteration is a matrix vector product.
-
-
 \subsection{Multigrid methods}
 
-Multigrid methods are an efficient class of linear solvers \cite{multigrid-tut}.
-They are based on two observations: firstly that most ``simple'' iterative solvers are very effective at reducing the high-frequency (in space) error of a solution, but fail on the low frequency parts.
-The second observation is that the low frequency errors can be converted to high frequency errors by solving the problem on a coarser mesh.
-So by solving the problem on a sequence of meshes all frequencies of error (except the very lowest, which can be removed by a direct solve on a very coarse mesh) are reduced.
+There are a number of ``simple'' iteration methods which are fairly ineffective when used directly to solve reasonably sized linear systems, but are very cheap to apply since they can be written in a form where each iteration is a matrix vector product.
+Examples are Jacobi, Gauss-Seidel and SOR methods \cite[103]{Saad2000}.
 
-Typical multigrid solvers work using something like the following algorithm
+Multigrid methods are a class of linear solvers which combine these simple iteration methods with a hierarchical algoritm, resulting in highly efficent and scalable solvers \cite{multigrid-tut}.
+They are based on two observations: firstly that the simple iterative solvers are very effective at reducing the high-frequency (in space) error of a solution, but fail on the low frequency parts.
+The second observation is that many of the low frequency errors can be converted to high frequency errors by solving the problem on a coarser mesh.
+So by solving the problem on a sequence of meshes all frequencies of error can be treated effectively (except the very lowest, which can be removed by a direct solve on a very coarse mesh).
+
+Typical multigrid solvers work use something similar to the following algorithm
 \begin{itemize}
 \item Start with initial guess on finest mesh
 \item Apply a few iterations of a simple solver
@@ -839,10 +818,10 @@ The details of the ``simple'' iterative solver, the projection between meshes, t
 It turns out that multigrid solvers can achieve performance which does not degrade as the number of nodes in the mesh is increased, \ie they can solve the system in $\order{N}$ operations.
 
 Their main downside is that they can be extremely fickle with regards to application to different problems, and can be difficult to optimise due to the large number of input parameters.
-They are truely effective only for M-matrices (??ds large negative diagonal, small off diagonal?). 
-This type of matrix is the result of discretising a Poisson problem, which is in some way the most important part of many elliptic PDEs.
+They are truely effective only for certain types of matrix.
+In particular they are effective on the matrix resulting from discretising a Poisson problem which, is in some way the most important part of many elliptic PDEs (due to the Laplace operator containing the highest derivatives).
 
-In fact it turns out that multigrid methods are most effective when combined with another type of solver, as will be discussed below.
+In fact it often turns out that multigrid methods are most effective when combined with another type of solver, as will be discussed below.
 
 
 \subsection{Krylov solvers}
@@ -1035,7 +1014,7 @@ Additionally: for simple geometry there is often no need for well refined meshes
 This combination of methods is very simple to implement and so is widely used, especially with GPU based code.
 
 For problems with more complex geometry the finite element method must be used for spatial discretisation to obtain good accuracy. 
-Magnetostatic calculations on the resulting non-uniform mesh are typically then carried out using either FMM (fastmag) or FEM/BEM (nmag, magpar, femme, ...).
+Magnetostatic calculations on the resulting non-uniform mesh are typically then carried out using either FMM (fastmag) or FEM/BEM (nmag, magpar, femme, \ldots).
 The use of refined meshes to fully resolve the geometry can often result in stiff problems, requiring the use of implicit time integration schemes for good efficiency.
 In all ``real world'' models using implicit time integration known to the author the Newton-Raphson method is used for linearisation.
 Typically some form of preconditioned Krylov solver is then used to solve the resulting linear systems.
