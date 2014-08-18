@@ -5,3 +5,9 @@ other_models.tex
 results*
 
 main.pdf
+
+# latexmk output
+main.fdb_latexmk
+main.fls
+main.lof
+main.lot
