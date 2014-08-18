@@ -336,13 +336,15 @@ Similar ``full integration'' quadratures for triangular and tetrahedral elements
 
 
 
-\section{Initial Equations}
+\section{Application to spatial discretisation of the LLG}
 \label{sec:llg-initial-equations}
 
 We now apply the methodology discussed in \autoref{sec:intr-finite-ele-diff} to the Landau-Lifshitz-Gilbert equation.
 We start with the Gilbert form of the LLG \eqref{eq:Gilbert} with the various effective fields and the potential method for calculating the magnetostatic field \eqref{eq:Hms}.
 We use the Gilbert form of the Landau-Lifshitz-Gilbert equation even though it is less immediately intuitive because it greatly reduces the complexity of all derivatations--the Landau-Lifshitz form contains a double cross product term.
 A side effect of this choice is that explict timestepping schemes cannot be used since the time dependence of the fundamental equation is defined implicitly.
+
+\subsection{Initial equations}
 
 After non-dimensionalisation (see \autoref{sec:land-lifsh-gilb-normalisation}) the Landau-Lifshitz-Gilbert equation with effective fields is given by
 \begin{equation}
@@ -374,24 +376,19 @@ It turns out that this Neumann-like condition is exactly what is needed in the d
 No special function space is needed for the solutions and test functions of $\mv$ since only Neumann conditions are used.
 
 
-\section{Conversion to Weak Form Residuals}
+\subsection{Conversion to Weak Form Residuals}
 
-We first convert the above equations into their residual weak forms as described in \autoref{Derivation-of-weighted-residuals}.
-
+We now convert the above equations into their residual weak forms as described in \autoref{Derivation-of-weighted-residuals}.
 In the following we will need the identity\footnote{This can be easily derived by applying the product rule to $\nabla \cdot (v \nabla \phim)$.}
 \begin{equation}
   (\lap \phim) \test = \nabla \cdot (v \nabla \phim) - \nabla \phim \cdot \nabla v.
   \label{eq:20}
 \end{equation}
-
 We will also make use of the divergence theorem
 \begin{equation}
   \intd{\div \fv} = \intb{\fv \cdot \nv}.
   \label{eq:div-thm}
 \end{equation}
-
-\subsection{Magnetostatic Field Residuals}
-\label{sec:magn-field-resid}
 
 The residual equation for the magnetostatic potential becomes
 \begin{gather}
@@ -401,8 +398,8 @@ The residual equation for the magnetostatic potential becomes
 where $\phim \in \sob^2(\magd) \cap \Dfs$, $\mv$ is some sufficiently smooth given function.
 Recall that the  residual must be zero $\forall \test \in \sob^0(\magd) \cap \Dfs_0$.
 
-This equation for calculating $\rphi$ contains second order derivatives,
-we would like to reduce the order of these derivatives as discussed in \autoref{Derivation-of-weighted-residuals} to relieve the smoothness requirements on our solution.
+The use of \eqref{eqn:phires1} for calculating $\rphi$ would require the existence of second order derivatives.
+We prefer to reduce the order of these derivatives as discussed in \autoref{Derivation-of-weighted-residuals} to relieve the smoothness requirements on our solution.
 As before we do this by ``transfering'' the derivatives onto the test functions \cite{HowardElmanDavidSilvester2006}.
 
 Using identity \eqref{eq:20} and the divergence theorem \eqref{eq:div-thm} gives
@@ -435,8 +432,6 @@ So the final residual is
   \label{res:contphi}
 \end{equation}
 
-
-\subsection{Landau-Lifshitz-Gilbert Equation Residuals}
 
 For the Landau-Lifshitz-Gilbert equation~\eqref{eqn:ndllg-starting} we have a set of three residuals per test function. 
 For now we sidestep the details of time discretisation by assuming $\dmdt$ to be just another function of $\xv$.
@@ -511,46 +506,61 @@ The second term of this expression is zero by the properties of the triple produ
   I = - \intd{\bigb{\mv \times \grad \mv} : \grad \testv}.
 \end{equation}
 
+So the final residual for the LLG equation, using a vector test function, is
+\begin{equation}
+  \begin{aligned}
+    \label{eq:llg-res-final}
+    \rllg(\mv, \testv) &= \int_\magd \dmdt\cdot \testv
+    + (\mv \times \hca)\cdot \testv 
+    + (\mv \times \happ)\cdot \testv 
+    - (\mv \times \nabla \phi)\cdot \testv \\
+    & - \bigb{\mv \times \grad \mv} : \grad \testv
+    - \dampc \left( \mv \times \dmdt \right)\cdot \testv
+    \d\magd.
+  \end{aligned}
+\end{equation}
+
+The final problem statement is: 
+\begin{equation}
+  \eqpar{Find $\mv \in (\tsinf)^3$, $\phim \in \tsinf \cap \Dfs$ such that $\rllg(\mv, \testv) = 0$ for all $\testv \in (\tsinf)^3$ and $\rphi(\phim, \test) = 0$ for all $\test \in \tsinf \cap \Dfs_0$.}
+\label{eq:inf-dim-problem}
+\end{equation}
 
 
-\section{Spatial Discretisation}
+
+
+\subsection{Spatial Discretisation}
 \label{sec:spat-discr-resi}
 
-??ds clean up, refer to intro more, exact functions in use?, do we need to mention local/global?
+The next step is to choose a finite dimensional approximation, $\ts$, for the infinite dimensional test and solution function spaces, $\tsinf$, such that the residuals \eqref{res:contphi} and \eqref{eq:llg-res-final} become discrete in space.
+Just as in \autoref{sub:Actual-Finite-Elements} we represent the finite dimensional spaces using a set of piecewise linear polynomials, $\tsbasis$, as basis functions.
 
-The next step is to discretise the residuals in space.
-As in \autoref{sub:Actual-Finite-Elements} we replace continuous variables and functions by a basis representation using a finite space of shape functions. 
-We also replace the infinite spaces of test functions used so far by finite dimensional approximations.
-
-We choose the solution space to be the same as the test function space (except for boundary conditions), this choice makes our method a Galerkin method.
-We also choose the shape/test functions to be the same for all residuals/unknowns.
-So the infinite dimensional space used for all shape and test functions is $\sob^1(\magd)$ with appropriate boundary conditions.
-
-We then replace the space $\sob^1(\magd)$ by the $N$-dimensional approximation $\ts \subset \sob^1(\magd)$.
-In this approximation the unknowns $\mv$, $\hex$ and $\phim$ can be represented anywhere in the domain as a sum over the nodal values multiplied by the shape function, $\sk \in \ts$, for that node:
-\begin{equation} 
-  \mv = \sum_{k = 0}^{N} \sk \, \mv_k, \quad
-  \hex = \sum_{k = 0}^{N} \sk \, \hex_{,k}, \quad
-  \phim = \sum_{k = 0}^{N} \sk \, \phim_{,k}.
-  \label{eq:unknowns-basis}
+The approxmiations to the unknown functions $\mv$ and $\phim$ are represented as a sum over the shape functions $\sk \in \tsbasis$ (or $\tsbasis \cap \Dfs$ for $\phim$ with Dirichlet conditions) as
+\begin{equation}
+  \begin{aligned}
+    \mv &\approx \sum_{k = 0}^{N} \sk \, \mv_k, \\
+    \phim &\approx \sum_{k = 0}^{N} \sk \, \phim_{k}.
+    \label{eq:unknowns-basis}
+  \end{aligned}
 \end{equation}
-Similarly the test functions can be approximated by a sum over the test basis functions, $\tn \in \ts$, as
+Similarly the approximations to the test functions are represented as a sum over the test basis functions, $\tn \in \tsbasis$ (or $\tsbasis \cap \Dfs_0$ as applicable), as
 \begin{equation}
   \label{eq:47}
-  \testv = \sum_{\ndi = 0}^{N} \tn \, a_\ndi.
+  \test \approx \sum_{\ndi = 0}^{N} \tn \, a_\ndi.
 \end{equation}
-Note that in our method $\sbf_k \equiv \tbf_k$, but we continue to write the two functions differently for generality.
-Also the basis functions for the space of test functions are often simply refered to as the test functions since they are used equivalently.
-So substituting the basis representations, \eqref{eq:unknowns-basis} and \eqref{eq:47} into the residuals we obtain a spatially discrete version of the problem.
+Note that in our method $\sbf_k \equiv \tbf_k$ except for Dirichlet boundary $\phim$ shape functions, but we continue to write them differently for generality.
+In one dimension the $\sk$ and $\tn$ are as given in \eqref{eq:simple_lagrange}.
+The extension to higher dimensions is straightforward: see \eg \cite[25]{HowardElmanDavidSilvester2006}.
 
-As described in \autoref{sub:Actual-Finite-Elements} we can convert this ``global'' representation into a number of ``local'' representations -- one on each element.
-We first split the domain into $N_e$ elements.
-We then define the basis functions such that they are only non-zero on elements in which they are contained (\ie we are using a finite element method).
-Then the global residuals can be split into the local contributions from each element which are easy to calculate since they only depend on nodes within the element.
+So substituting the basis representations, \eqref{eq:unknowns-basis} and \eqref{eq:47} into the continuous residuals we obtain approximations for the residuals in terms of a finite number of nodal values\footnote{We do not write this form out here as it is long, messy and does not illuminate anything}.
+Next we replace the requirement that the residuals be zero for all test functions in the infinite dimensional set $\tsinf$ with the equivalent requirement for all functions in the finite set $\tsbasis$. 
+This results in a finite number of conditions (the residuals) on a finite number of variables (the nodal values) and so the spatial discretisation is complete.
 
-Let $\magd_\eli$ represent the volume of element $e$, let $\boundd_\eli$ represent any part of the boundary of the element which is on $\boundd$ (nothing for most elements).
-Then the contribution of element $\eli$ to the residuals at node $\ndi$ is exactly as given in equations~\eqref{res:tintro}-\eqref{res:tllg} except that the integrations are performed over $\magd_\eli$ and $\boundd_\eli$ rather than $\magd$ and $\boundd$.
-Also note that the sums only need to consider values of $k$ such that node $k$ is in element $\eli$ and that residual contributions only need to be calculated for nodes $\ndi$ such that node $\ndi$ is in element $\eli$.
+As described in \autoref{sub:Actual-Finite-Elements} we also convert this ``global'' representation into a number of ``local'' representations--one on each element.
+
+% Let $\magd_\eli$ represent the volume of element $e$, let $\boundd_\eli$ represent any part of the boundary of the element which is on $\boundd$ (nothing for most elements).
+% Then the contribution of element $\eli$ to the residuals at node $\ndi$ is exactly as given in equations~\eqref{res:tintro}-\eqref{res:tllg} except that the integrations are performed over $\magd_\eli$ and $\boundd_\eli$ rather than $\magd$ and $\boundd$.
+% Also note that the sums only need to consider values of $k$ such that node $k$ is in element $\eli$ and that residual contributions only need to be calculated for nodes $\ndi$ such that node $\ndi$ is in element $\eli$.
 
 
 \section{Time Discretisation}

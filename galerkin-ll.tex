@@ -1,6 +1,6 @@
 
 \chapter{Galerkin's Method for the Landau-Lifshitz Equation}
-\label{sec:galerk-meth-ll}
+\label{ll-sec:galerk-meth-ll}
 
 Similarly to section \autoref{sec:llg-initial-equations}.
 
@@ -16,7 +16,7 @@ For the Landau-Lifshitz equation~\eqref{eq:ndll} we have a vector of three resid
     + \dampc \tbf \mv \times \left( \mv \times \hat{\hv} \right) \\
     &+  \tbf \mv \times \lap \mv
     + \dampc \tbf \mv \times \left(\mv \times \lap \mv\right) \d\magd,
-    \label{res:contllg}
+    \label{ll-res:contllg}
   \end{aligned}
 \end{equation}
 where
@@ -31,7 +31,7 @@ Similarly to the situation with $\phim$ we require second order space derivative
 \begin{equation}
   \rex = \underbrace{\intd{\tbf \mv \times \lap \mv}}_{\mxex}
   + \dampc \underbrace{\intd{\tbf \mv \times \mv \times \lap \mv}}_{\mxmxex}
-  \label{eqn:exresterms}
+  \label{ll-eqn:exresterms}
 \end{equation}
 First we reduce the derivative order in the simpler exchange term, $\mxex$:
 \begin{equation}
@@ -71,11 +71,11 @@ So we have
 In a slight abuse of notation we write
 \begin{equation}
   \threevec{\nabla m_1 \cdot \nabla \tbf}{\nabla m_2 \cdot \nabla \tbf}{\nabla m_3 \cdot \nabla \tbf} = \nabla \mv \cdot \nabla \tbf,
-  \label{eqn:gradvecm}
+  \label{ll-eqn:gradvecm}
 \end{equation}
 (in a similar way to how we write the vector of Laplacians of $m_i$ as $\lap \mv$.
 
-Next the second term of equation~\eqref{eqn:exresterms}
+Next the second term of equation~\eqref{ll-eqn:exresterms}
 \begin{equation}
   \mxmxex = \intd{\tbf \mv \times \left( \mv \times \lap \mv \right)}, \notag
 \end{equation}
@@ -83,7 +83,7 @@ which, unfortunately, does not have such neat cancellations.
 First note that we can use the identity
 \begin{equation}
   \av \times ( \bv \times \cv ) = \bv ( \av \cdot \cv) - \cv ( \av \cdot \bv),
-  \label{eqn:double-cross-id}
+  \label{ll-eqn:double-cross-id}
 \end{equation}
 and $\mv \cdot \mv = \abs{\mv} = 1$ to slightly reduce the complexity of $\mxmxex$ to
 \begin{equation}
@@ -94,7 +94,7 @@ Term $\mxmxex_2$ can again be dealt with by the same tricks as in \autoref{sec:m
 \begin{equation}
   \left[ \mxmxex_2 \right]_i = -0 + \intd{\nabla \tbf \cdot \nabla m_i},
 \end{equation}
-or using the notation given in equation~\eqref{eqn:gradvecm}
+or using the notation given in equation~\eqref{ll-eqn:gradvecm}
 \begin{equation}
   \mxmxex_2 = \int_\magd \nabla \mv \cdot \nabla \tbf  \d\magd.
 \end{equation}
@@ -121,7 +121,7 @@ So finally we have the exchange contribution to the Landau-Lifshitz-Gilbert equa
 
 
 \section{Spatial Discretisation}
-\label{sec:spat-discr-resi}
+\label{ll-sec:spat-discr-resi}
 
 The next step is to discretise the residuals in space. As in \autoref{Derivation-of-weighted-residuals} and \ref{sub:Actual-Finite-Elements} we replace continuous variables and functions by a basis representation using a finite space of shape functions. We also replace the infinite spaces of test functions used so far by finite dimensional approximations.
 
@@ -131,18 +131,18 @@ We then replace the space $\sob^1(\magd)$ by the $N$-dimensional approximation $
 \begin{gather} % \sk = shapefn_k
   \mv = \sum_{k = 0}^{N} \sk \, \mv_k, \quad
   \phim = \sum_{k = 0}^{N} \sk \, \phim_{,k}.
-  \label{eq:unknowns-basis}
+  \label{ll-eq:unknowns-basis}
 \end{gather}
 Similarly the test functions can be approximated by a sum over the test basis functions, $\tn \in \ts$, as
 \begin{equation}
-  \label{eq:47}
+  \label{ll-eq:47}
   \tbf = \sum_{\ndi = 0}^{N} \tn \, a_\ndi.
 \end{equation}
 Note that in our method $\sbf_k \equiv \tbf_k$, but we continue to write the two functions differently for generality. Also the basis functions for the space of test functions are often simply refered to as the test functions since they are used equivalently.
 
-So substituting the basis representations, \eqref{eq:unknowns-basis} and \eqref{eq:47} into the residuals we obtain a spatially discretised version of the problem.
+So substituting the basis representations, \eqref{ll-eq:unknowns-basis} and \eqref{ll-eq:47} into the residuals we obtain a spatially discretised version of the problem.
 %% \begin{gather}
-%%   \label{res:tintro}
+%%   \label{ll-res:tintro}
 %%   \text{Given $\happ(\xv,t)$ and $\hca(\xv,t)$, $\forall k$, $\forall \ndi$ find} \notag \\
 %%   \phim_{,k} \in \ts \cap \Dfs, \quad
 %%   \mv_{k} \in \ts \text{ and }
@@ -154,7 +154,7 @@ So substituting the basis representations, \eqref{eq:unknowns-basis} and \eqref{
 %%   & - \int_{\magd} \sum_k (\nabla \tn \cdot \nabla \sk) \phim_{,k} \d \magd \notag
 %%   - \int_{\magd} (\nabla \cdot (\sum_k \mv_k \sk) ) \tn \d \magd \\
 %%   & + \int_{\boundd_{\Neu}} \tn g_\Neu \d \boundd = 0,
-%%   \label{res:tphi}
+%%   \label{ll-res:tphi}
 %% \end{align}
 %% and
 %% \begin{align}
@@ -178,7 +178,7 @@ Let $\magd_\eli$ represent the volume of element $e$, let $\boundd_\eli$ represe
 
 
 \section{Jacobian calculation}
-\label{sec:ll-jacobian-calculation}
+\label{ll-sec:ll-jacobian-calculation}
 
 Similarly to calculations in \autoref{sec:llg-jacobian-calculation}.
 

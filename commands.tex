@@ -66,6 +66,10 @@
 \newcommand{\myvector}[1]{\mathbf{#1}}
 \newcommand{\goesto}{\rightarrow}
 
+% Write paragraphs in an equation environment with nice spacing, line wraps
+% etc. eg for fem problem statements.
+\newcommand{\eqpar}[1]{\text{\parbox{0.8\textwidth}{#1}}}
+
 \newcommand{\set}[1]{\left\{ {#1} \right\}}
 
 \newcommand{\E}[1]{\times 10^{#1}} % powers of 10
@@ -293,7 +297,10 @@
 \newcommand{\testv}{\myvector{\test}}
 
 \newcommand{\sbf}{\psi}
-\newcommand{\ts}{{\mathcal{H}^1_h(\magd)}} % my test/shape fn space
+\newcommand{\ts}{{\sob^1_h(\magd)}} % my test/shape fn space
+\newcommand{\tsinf}{{\sob^1(\magd)}} % my infinite test/shape fn space
+\newcommand{\tsbasis}{{S_h^1(\magd)}} % test/shape basis functions
+
 \newcommand{\sk}{{\sbf_k}}
 \newcommand{\tn}{{\tbf_\ndi}}
 
