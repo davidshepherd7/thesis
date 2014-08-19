@@ -7,7 +7,7 @@
 
 
 The implicit midpoint rule (IMR) is a well known time integration method with a number of favourable properties when applied to standard ordinary differential equations (see \cref{sec:time-discretisation} or \cite[204]{HairerNorsettWanner}).
-It also has beneficial ``geometric integration'' properties when applied the Landau-Lifshitz-Gilbert equation (discussed in \cref{sec:ensuring-constant-mv} and \cref{sec:energy-cons}) and energy conservation properties when applied to the semi-discretised Navier-Stokes equations \cite{Sanderse2013}.
+It also has beneficial ``geometric integration'' properties when applied the Landau-Lifshitz-Gilbert equation (discussed in \cref{sec:ensuring-constant-mv,sec:energy-cons}) and energy conservation properties when applied to the semi-discretised Navier-Stokes equations \cite{Sanderse2013}.
 However IMR belongs to the implicit Runge-Kutta family of methods, and as such it is a non-trivial task to create an efficient adaptive time step selection algorithm.
 In this \secpaper{} we describe a novel adaptive IMR algorithm based on estimates of the local truncation error by a predictor step.
 
@@ -467,7 +467,7 @@ This is because we are not increasing $\lambda$ as we decrease $\toltt$, so we m
 
 In this section we present numerical experiments with adaptive IMR on a simple LLG problem.
 We show that the adaptive midpoint method retains the conservation properties of the fixed step midpoint method and that the adaptivity is effective when applied to the LLG.
-Experiments with more complex examples are shown in \cref{sec:numer-exper} and \cref{cha:numer-experiments}.
+Experiments with more complex examples are shown in \cref{sec:numer-exper,cha:numer-experiments}.
 
 To avoid introducing spatial discretisation issues we choose an example problem that can be modelled using only an ODE: the reversal of a ``small'' spherical particle under spatially-uniform applied field.
 With this geometry and with uniform initial magnetisation the magnetostatic field can be analytically shown to be $\hms = -\mv/3$ throughout the domain \cite[112]{Aharoni1996}.

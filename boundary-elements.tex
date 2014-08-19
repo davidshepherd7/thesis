@@ -49,7 +49,7 @@ We have the following \emph{physical} conditions\footnote{Equations~\cref{eq:2}-
   \phim^\inte(\xv) - \phim^\exte(\xv)  = 0 \qquad \xv \in \boundd.
   \label{eqn:phibound}
 \end{equation}
-Note that equations~\cref{eqn:dphibound} and \cref{eqn:phibound} imply continuity but not smoothness of the magnetic potential $\phim$ across $\boundd$.
+Note that equations~\cref{eqn:dphibound,eqn:phibound} imply continuity but not smoothness of the magnetic potential $\phim$ across $\boundd$.
 This is due to surface magnetic charges.
 
 We choose $\phione$ to satisfy:
@@ -69,23 +69,23 @@ We choose $\phione$ to satisfy:
   \phione(\xv) = 0 \qquad \xv \in \extd.
   \label{eqn:phioneoutside}
 \end{equation}
-Note that equations~\cref{eq:1} and \cref{eqn:dphionebound} give a self contained Poisson Neumann problem for $\phione \in \magd \cup \boundd$.
+Note that equations~\cref{eq:1,eqn:dphionebound} give a self contained Poisson Neumann problem for $\phione \in \magd \cup \boundd$.
 
 The equations~\cref{eq:2} to \cref{eqn:phibound} for $\phim$ combined with equations~\cref{eq:21} to \cref{eqn:phioneoutside} for $\phione$ give a number of conditions on $\phitwo$ must satisfy.
-Since the Laplacian operator is linear, \ie $\lap \phim = \lap \phione + \lap \phitwo$, from \cref{eq:2} and \cref{eq:1} it follows that
+Since the Laplacian operator is linear, \ie $\lap \phim = \lap \phione + \lap \phitwo$, from \cref{eq:2,eq:1} it follows that
 \begin{equation}
   \label{eq:8}
   \lap \phitwo(\xv) = 0 \qquad \forall \xv \in \fulld.
 \end{equation}
 
 Equation~\cref{eqn:phioneoutside} implies that $\pd{\phione^\exte(\xv)}{\nv} = 0$.
-Combining this with equations \cref{eqn:dphionebound} and \cref{eqn:dphibound} gives
+Combining this with equations \cref{eqn:dphionebound,eqn:dphibound} gives
 \begin{equation}
   \label{eq:5}
   \pd{\phitwo^\inte(\xv)}{\nv} - \pd{\phitwo^\exte(\xv)}{\nv} = 0.
 \end{equation}
 
-Finally from equations \cref{eqn:phibound}, \cref{eq:21} and \cref{eqn:phioneoutside} we have
+Finally from equations \cref{eqn:phibound,eq:21,eqn:phioneoutside} we have
 \begin{equation*}
   \phione^\inte - \phione^\exte + \phitwo^\inte - \phitwo^\exte = 0,
 \end{equation*}
@@ -182,7 +182,7 @@ Also our $\phim^\inte$ and $\phim^\exte$ definitions correspond respectively to 
 \subsection{Application to Magnetostatic Calculations}
 \label{sec:appl-magn-calc}
 
-From \cref{sec:double-layer-potent} we can see that conditions \cref{eq:8}, \cref{eq:5} and \cref{eq:4} on $\phitwo$ are satisfied by a double layer potential with magnitude
+From \cref{sec:double-layer-potent} we can see that conditions \cref{eq:8,eq:5,eq:4} on $\phitwo$ are satisfied by a double layer potential with magnitude
 \begin{equation}
   \label{eq:24}
   \mu(\xv) = - \phione^\inte(\xv).
@@ -191,7 +191,7 @@ From \cref{sec:double-layer-potent} we can see that conditions \cref{eq:8}, \cre
 By the uniqueness of solution for Poisson's equation this gives us, up to an additive constant, the only solution for $\phitwo(\xv)$ in the external region.
 This is good enough for a potential since it is only used in $\hms(\xv) = - \nabla \phim(\xv)$ so addition of a constant has no effect.
 
-From equations~\cref{eq:3}, \cref{eq:22} and \cref{eq:24} we have:
+From equations~\cref{eq:3,eq:22,eq:24} we have:
 \begin{equation}
   \label{eq:6}
   \phitwo^\inte(\xv) =  \big(\gamma(\xv) - 1 \big) \phione^\inte(\xv)
@@ -451,7 +451,7 @@ Finally we need $\Omega_\tri$, the solid angle subtended by the triangle at $\xv
         (\abs{\rv_1}\abs{\rv_2} + \rv_1\cdot\rv_2)}}},
 \end{equation}
 where we have dropped the $\xv$ argument from $\rv_i(\xv)$ for brevity.
-The use of $\rv_1(\xv)$ in equations~\cref{eq:analytic-bem-integral} and \cref{eq:bem-triangle-solid-angle} is not a typo: the results are independant of which node in the triangle is used.
+The use of $\rv_1(\xv)$ in equations~\cref{eq:analytic-bem-integral,eq:bem-triangle-solid-angle} is not a typo: the results are independant of which node in the triangle is used.
 
 
 A useful open source implementation of this calculation in \texttt{C} is included in \texttt{magpar}\cite{magpar-website} and redistributed in \texttt{nmag}\cite{nmag-website}.

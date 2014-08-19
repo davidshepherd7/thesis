@@ -551,7 +551,7 @@ The final problem statement is:
 \subsection{Spatial Discretisation}
 \label{sec:spat-discr-resi}
 
-The next step is to choose a finite dimensional approximation, $\ts$, for the infinite dimensional test and solution function spaces, $\tsinf$, such that the residuals \cref{res:contphi} and \cref{eq:llg-res-final} become discrete in space.
+The next step is to choose a finite dimensional approximation, $\ts$, for the infinite dimensional test and solution function spaces, $\tsinf$, such that the residuals \cref{res:contphi,eq:llg-res-final} become discrete in space.
 Just as in \cref{sub:Actual-Finite-Elements} we represent the finite dimensional spaces using a set of piecewise linear polynomials, $\tsbasis$, as basis functions.
 
 The approxmiations to the unknown functions $\mv$ and $\phim$ are represented as a sum over the shape functions $\sk \in \tsbasis$ (or $\tsbasis \cap \Dfs$ for $\phim$ with Dirichlet conditions) as
@@ -571,7 +571,7 @@ Note that in our method $\sbf_k \equiv \tbf_k$ except for Dirichlet boundary $\p
 In one dimension the $\sk$ and $\tn$ are as given in \cref{eq:simple_lagrange}.
 The extension to higher dimensions is straightforward: see \eg \cite[25]{HowardElmanDavidSilvester2006}.
 
-So substituting the basis representations, \cref{eq:unknowns-basis} and \cref{eq:47} into the continuous residuals we obtain approximations for the residuals in terms of a finite number of nodal values.\footnote{We do not write this form out here as it is long, messy and does not illuminate anything.}
+So substituting the basis representations, \cref{eq:unknowns-basis,eq:47} into the continuous residuals we obtain approximations for the residuals in terms of a finite number of nodal values.\footnote{We do not write this form out here as it is long, messy and does not illuminate anything.}
 Next we replace the requirement that the residuals be zero for all test functions in the infinite dimensional set $\tsinf$ with the equivalent requirement for all functions in the finite set $\tsbasis$. 
 This results in a finite number of conditions (the residuals) on a finite number of variables (the nodal values) and so the spatial discretisation is complete.
 
@@ -863,7 +863,7 @@ and so
     \label{eq:70}
   \end{aligned}
 \end{equation}
-Then combining \cref{eq:68} and \cref{eq:70} we obtain
+Then combining \cref{eq:68,eq:70} we obtain
 \begin{equation}
   \begin{aligned} 
     C_{n,l} &= \pd{}{\mv_l} \intd{ \skewm{\mv} \cdot \hca  \tbf_n}, \\
@@ -884,7 +884,7 @@ We first need an identity
     \label{eq:71}
   \end{aligned}
 \end{equation}
-Then using \cref{eq:68} and \cref{eq:71} we get
+Then using \cref{eq:68,eq:71} we get
 \begin{equation}
   \begin{aligned}
     B_{n,l} &=  \pd{}{\mv_l} \intd{- \skewm{\mv} \cdot (\grad \mv \compdot \grad \tbf_n)} ,\\
@@ -1197,7 +1197,7 @@ The rest of the derivation proceeds identically.
 %   \end{aligned}
 % \end{equation}
 
-% Combining equations~\cref{eq:test-h} and \cref{eq:test-dmdt} results in
+% Combining equations~\cref{eq:test-h,eq:test-dmdt} results in
 % \begin{equation}
 %    \intd{\dmdtm \cdot \hv[\tm, \mvm]} + \dampc \intd{\dmdtm \cdot \dmdtm} < (1 + \dampc) \ntol,
 % \end{equation}

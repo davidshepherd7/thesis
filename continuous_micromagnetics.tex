@@ -215,11 +215,11 @@ where $\dampc \neq \dampc_L$. Equation~\cref{eq:Gilbert} can be rearranged into 
 \end{equation}
 which we refer to as the Landau-Lifshitz form of the Landau-Lifshitz-Gilbert equation.
 
-Equations~\cref{eq:LL}, \cref{eq:Gilbert} and \cref{eq:LLG} link the unknown magnetisation vector as a function of time, $\Mv(t)$, with the effective field, $\Hv$.
+Equations~\cref{eq:LL,eq:Gilbert,eq:LLG} link the unknown magnetisation vector as a function of time, $\Mv(t)$, with the effective field, $\Hv$.
 To determine $\Mv$ at an arbitrary time we need to integrate either of the above equations with respect to time starting from a known initial magnetisation $\Mv(0)$.
 This is usually done numerically by employing a time integration method, as will be discussed in \cref{sec:time-discretisation}.
 
-Note that there is no spatial dependence directly contained in equations~\cref{eq:LL}, \cref{eq:Gilbert} and \cref{eq:LLG}.
+Note that there is no spatial dependence directly contained in equations~\cref{eq:LL,eq:Gilbert,eq:LLG}.
 However the exchange effective field and magnetostatic field may contain spatial dependence, so usually the final equation to be solved after all substitutions is a partial differential equation (PDE).
 
 % Examples of currently available micromagnetic models include the \texttt{OOMMF}\cite{oommf-website} and \texttt{nmag}\cite{Fischbacher2007} packages, which both use the dynamic method exclusively, along with \texttt{magpar}\cite{Scholz2003} and \texttt{FEMME}\cite{suessco-website} which can use either dynamic or energy based methods.
@@ -379,7 +379,7 @@ This results in
   \dmdt = -\mxh -\dampc \mxmxh.
   \label{eq:ll-nd-simpler}
 \end{equation}
-However this means that time scale changes (\ie the $t^*$s are different) when switching between the two forms \cref{eq:ll-nd-simpler} and \cref{eq:53}, making comparisons more difficult.
+However this means that time scale changes (\ie the $t^*$s are different) when switching between the two forms \cref{eq:ll-nd-simpler,eq:53}, making comparisons more difficult.
 
 
 \subsection{Non-dimensionalisation of the energy}
@@ -400,7 +400,7 @@ We repeat the process used in \cref{sec:land-lifsh-gilb-normalisation} to get a 
   \Eca^* =  -\Kone^* \int_\magd (\mv \cdot \ev)^2 \d \magd^*.
 \end{equation*}
 
-We substitute definitions~\cref{eqn:nddefs}, \cref{eqn:l-normalisation}, \cref{k-normalisation} and $E^* = \nE e = \mu_0 M_s^2 l^d \, e$ where $d$ denotes the number of spatial dimensions to obtain
+We substitute definitions~\cref{eqn:nddefs,eqn:l-normalisation,k-normalisation} and $E^* = \nE e = \mu_0 M_s^2 l^d \, e$ where $d$ denotes the number of spatial dimensions to obtain
 \begin{equation*}
   \eapp = -\mu_0 M_s^2 l^d \frac{1}{\nE} \int_{\magd} \mv \cdot \happ \d \magd
   = - \int_{\magd} \mv \cdot \happ \d \magd,

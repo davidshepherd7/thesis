@@ -23,7 +23,7 @@ For some choices of time and space discretisations additional component methods 
 
 Additionally in micromagnetic modelling the calculation of the magnetostatic field is required.
 If the integral form given in \cref{eq:Hmsint} is used then an additional integral evaluation method is needed to handle it.
-Alternatively, if the equivalent potential formulation \cref{eq:Hms}, \cref{eq:cont-phi-bound} is used then the magnetostatic field calculation simply requires solving additional PDEs.
+Alternatively, if the equivalent potential formulation \cref{eq:Hms,eq:cont-phi-bound} is used then the magnetostatic field calculation simply requires solving additional PDEs.
 
 It should be noted that not all methods fit into this framework of applying separate methods for each part of the problem, see \cref{sec:advanced-lin} for one example.
 
@@ -244,7 +244,7 @@ Similarly, the expansion at $t_n$ about $\thf$ is
   + \order{\dtn^4}.
   \label{eq:taylorn}
 \end{equation}
-Substituting \cref{eq:taylornp1} and \cref{eq:taylorn} into \cref{eq:trunc-start} gives\footnote{If we had chosen to Taylor expand about $t_n$ there would be an additional term in $\yv_n''$ in \cref{eq:trunc-mid}.}
+Substituting \cref{eq:taylornp1,eq:taylorn} into \cref{eq:trunc-start} gives\footnote{If we had chosen to Taylor expand about $t_n$ there would be an additional term in $\yv_n''$ in \cref{eq:trunc-mid}.}
 \begin{equation}
   \lte^\imr = \underbrace{\frac{\dtn^3}{24} \yvhf[''']}_{\text{I}}
   + \underbrace{\dtn\bigs{ \yvhf['] - \ffv{\thf, \frac{\yv(t_n) + \yv_{n+1}}{2}} }}_{\text{II}}
@@ -382,7 +382,7 @@ for some function $g(t)$ and parameter $\lambda \geq 0$.
 Note that $\pd{f}{y} = \lambda$, so we can directly control the second term of the IMR truncation error.
 
 We now derive the LTE for IMR in this example when $\abs{\lambda\dtn} >> 1$.
-From \cref{sec:full-imr-lte-calculation}, \cref{eq:trunc-implicit-form} we have that
+From \cref{sec:full-imr-lte-calculation,eq:trunc-implicit-form} we have that
 \begin{equation}
   \begin{aligned}
     (1 + \frac{\dtn \lambda}{2})\lte^\imr &= \frac{\dtn^3}{24}
@@ -615,7 +615,7 @@ where
     \label{eq:52}
   \end{aligned}
 \end{equation}
-Finally we insert the results of equations~\cref{eq:50} and \cref{eq:52} into \cref{eq:54} to find
+Finally we insert the results of equations~\cref{eq:50,eq:52} into \cref{eq:54} to find
 \begin{equation}
   \frac{\e_{n+1} - \e_n}{\dtn}
   = -\dampc \ltnorm{\mpdmdt}^2
@@ -1025,7 +1025,7 @@ Finally any geometric integration properties may be lost (\eg IMR loses the ener
 
 \subsection{Non-linear solvers and geometric integration}
 
-It should be noted that the geometric properties of IMR derived in \cref{sec:proof-magn-length-ode-imr-llg} and \cref{sec:proof-energy-prop} are only true up to the accuracy with which we solve the LLG.
+It should be noted that the geometric properties of IMR derived in \cref{sec:proof-magn-length-ode-imr-llg,sec:proof-energy-prop} are only true up to the accuracy with which we solve the LLG.
 This is the tolerance of the linearisation method used. 
 
 Additionally the derivations assume that all fields are calculated at the midpoint without any additional approximations, \ie that we are using a fully implicit method.
