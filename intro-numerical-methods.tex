@@ -441,7 +441,7 @@ However this approach fundamentally changes the system of equations being solved
 
 ??Ds rewrite:
 If we have a system with only a single (macro)spin (\ie a single value of $\Mv$ represents the magnetisation of the entire system) it is easy to avoid this problem by using a spherical polar coordinate system $(r,\theta,\phi)$.
-Equation~\cref{eq:LLG} can be expressed in terms of only the angles $(\theta,\phi)$ representing the direction of $\Mv$ and the non-convex constraint is automatically enforced since
+\Cref{eq:LLG} can be expressed in terms of only the angles $(\theta,\phi)$ representing the direction of $\Mv$ and the non-convex constraint is automatically enforced since
 \begin{equation}
   \label{eq:40}
   \pd{\abs{\Mv}}{t} = \pd{r}{t} \equiv 0.
@@ -570,7 +570,7 @@ We write the error term as
   \happerror = \frac{\dtn^2}{4} \evalatb{\spd{\happ}{t}}{\frac{t_{n+1} + t_n}{2}}  + \order{\dtn^4}.
 \end{equation}
 
-In the same manner as the previous section we derive the change in energy of the discrete LLG by taking the $\ltwo$ inner product of equation~\cref{eqn:disc-llg} with
+In the same manner as the previous section we derive the change in energy of the discrete LLG by taking the $\ltwo$ inner product of \cref{eqn:disc-llg} with
 \begin{equation}
   \mphop + \frac{\happ(t_{n+1}) + \happ(t_n)}{2} + \happerror - \dampc \mpdmdt,
 \end{equation}
@@ -615,7 +615,7 @@ where
     \label{eq:52}
   \end{aligned}
 \end{equation}
-Finally we insert the results of equations~\cref{eq:50,eq:52} into \cref{eq:54} to find
+Finally we insert the results of \cref{eq:50,eq:52} into \cref{eq:54} to find
 \begin{equation}
   \frac{\e_{n+1} - \e_n}{\dtn}
   = -\dampc \ltnorm{\mpdmdt}^2
@@ -623,7 +623,7 @@ Finally we insert the results of equations~\cref{eq:50,eq:52} into \cref{eq:54} 
   + \happerror.
   \label{eqn:imr-llg-energy}
 \end{equation}
-If the applied field is linear (and so $\happerror = 0$) this is exactly the midpoint discretisation of the continuous energy balance equation~\cref{eq:energy-decay}.
+If the applied field is linear (and so $\happerror = 0$) this is exactly the midpoint discretisation of the continuous energy balance \cref{eq:energy-decay}.
 In particular the energy is conserved when $\dampc = 0$ and the applied field is constant.
 
 Note that when $\happ$ is piecewise linear, for example going from zero field to a constant field at a certain point in time, time steps can be trivially selected such that each non-linear change happens exactly at the start/end of a step.
@@ -893,7 +893,7 @@ In this section we refer to magnetic charges to mean the macrospins/cells/nodes 
 
 The fast Fourier transform method (FFT) is a simple and efficient method for calculating the magnetostatic field when the magnetic charges are on a regular lattice and the boundary conditions are periodic.
 
-The calculation of $\Hms$ in equation~\cref{eq:Hmsint} can be thought of as applying a convolution operator (\ie $\Hms = D \big[\Mv\big]$).
+The calculation of $\Hms$ in \cref{eq:Hmsint} can be thought of as applying a convolution operator (\ie $\Hms = D \big[\Mv\big]$).
 The matrix corresponding to this operator is only dependent on the geometry, hence it can be precomputed, Fourier transformed and stored.
 Then all that is needed to calculate the magnetostatic field is to apply a Fourier transform to $\Mv$, compute the convolution and transform the result back into the time domain by applying the inverse Fourier transform.
 Because of the regularity, applying the convolution in the frequency domain is very fast and hence the complexity of the calculation is limited by the complexity of a fast Fourier transform.
@@ -913,7 +913,7 @@ The fast multipole method takes advantage of the fact that distant magnetic char
 
 For the field calculation at a specific point the full calculation is only performed for nearby magnetic charges.
 Groups of more distant charges are approximated (lumped) as a single multipole placed at the centre of the group.
-As the charges become more distant they contribute much less to the field due to the $\frac{1}{(\xv - \xv')^2}$ scaling in equation~\cref{eq:Hmsint2}.
+As the charges become more distant they contribute much less to the field due to the $\frac{1}{(\xv - \xv')^2}$ scaling in \cref{eq:Hmsint2}.
 Hence for distant points the a cheaper but less accurate approximation can be used without reducing the accuracy of the final result.
 
 The trick for quickly calculating fields at a large number of points is to pre-calculate multipole approximations for a range of accuracies over all space.

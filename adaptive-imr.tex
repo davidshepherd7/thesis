@@ -75,7 +75,7 @@ However it can only appear in the LTE expression for a time integrator using mid
 So this term of the error cannot be easily approximated using a Milne-device-like method.
 
 An alternative approach, commonly used in Runge-Kutta time integrators, is to repeat the calculation using a higher order method and compare the two answers to directly obtain an LTE estimate \cite[165]{HairerWanner}.
-However evaluations of the derivative function ($\fv$ in equation~\cref{eq:43}) are expensive, and the calculation of a step of a high order Runge-Kutta method requires a number of function evaluations.
+However evaluations of the derivative function ($\fv$ in \cref{eq:43}) are expensive, and the calculation of a step of a high order Runge-Kutta method requires a number of function evaluations.
 Hence such approaches usually rely on pairs of Runge-Kutta methods which share most of their derivative evaluation points but have different orders of accuracy.
 These are known as embedded Runge-Kutta methods, a widely used example is the Dormand–Prince pair (order 4/5) used in MATLAB's \texttt{ode45} function \cite{matlab-ode45}.
 
@@ -217,8 +217,8 @@ The resulting method is
 For constant time steps the result is much simpler: $ b = 3\dtn$, $c_n = -3/2$, $c_{n-1} = 3$ and  $c_{n-2} = -1/2$.
 This matches with the result in \cite[364]{HairerNorsettWanner}.
 
-It should be noted that the calculation of the coefficients in equation~\cref{eqn:ebdf-coeffs} could be comparatively expensive if the number of $y$-values was small ($\sim \order{100}$ operations assuming no compiler optimisation of the multiplications).
-However when used in finite-element or finite-difference calculations the number of $y$-values is at least tens of thousands, so the cost of equation~\cref{eqn:ebdf-coeffs} is trivial by comparision with, for example, the calculation of $\ffv{t_n, \yv_n}$.
+It should be noted that the calculation of the coefficients in \cref{eqn:ebdf-coeffs} could be comparatively expensive if the number of $y$-values was small ($\sim \order{100}$ operations assuming no compiler optimisation of the multiplications).
+However when used in finite-element or finite-difference calculations the number of $y$-values is at least tens of thousands, so the cost of \cref{eqn:ebdf-coeffs} is trivial by comparision with, for example, the calculation of $\ffv{t_n, \yv_n}$.
 
 
 \subsection{Computing the next step size}
@@ -275,12 +275,12 @@ Steps 1 and 2 are interchangable, but in some cases the value $\yv_{n+1}^\ebdf$ 
 \subsection{Application to Implicit ODEs}
 \label{sec:extens-impl-odes}
 
-We sometimes wish to solve a system of equations where $\yv'(t)$ is given implicitly\footnote{This use of ``implicit'' is unrelated to the notion of implicitness in the time integration scheme.} (for example in the Gilbert form of the Landau-Lifshitz-Gilbert equation), in this case equation~\cref{eq:43} becomes
+We sometimes wish to solve a system of equations where $\yv'(t)$ is given implicitly\footnote{This use of ``implicit'' is unrelated to the notion of implicitness in the time integration scheme.} (for example in the Gilbert form of the Landau-Lifshitz-Gilbert equation), in this case \cref{eq:43} becomes
 \begin{equation}
   \ffv{t, \yv(t), \yv'(t)} = 0.
 \end{equation}
 
-We note that equation~\cref{eq:basic-midpoint} can also be written in the from
+We note that \cref{eq:basic-midpoint} can also be written in the from
 \begin{equation}
   \yv'(\thf) = \frac{\yv_{n+1} - \yv_n}{\dtn} =  \ffv{\thf, \frac{\yv_n + \yv_{n+1}}{2}}.
 \end{equation}
@@ -430,7 +430,7 @@ The behaviour of the three time integrators is essentially the same, indicating 
 
 \begin{figure}
   \centering  \includegraphics[width=1\textwidth]{plots/aimr_odes/strong_order_reduction-errornormsvs-dtsvs-tracevaluesvstimes}
-  \caption{Absolute error, time step size and computed solutions for the stiff order reduction example ODE given in equation~\cref{eqn:imr-test-order-reduction}
+  \caption{Absolute error, time step size and computed solutions for the stiff order reduction example ODE given in \cref{eqn:imr-test-order-reduction}
     .}
   \label{fig:imr-order-reduction-example}
 \end{figure}

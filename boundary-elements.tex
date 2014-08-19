@@ -33,13 +33,14 @@ Applying Dirichlet, Neumann or mixed boundary conditions shows that the boundary
 \label{sec:problem-description}
 Let $\phim^\inte$ be the value of $\phim$ (with subscripts as appropriate) close to the boundary $\boundd$ and just inside the magnetic domain  and $\phim^\exte$ the value of $\phim$ just outside the magnetic domain\footnote{More precisely $\phim^\inte(\xv) = \lim_{\xv \rightarrow \boundd} \phim(\xv)$ from inside the magnetic domain, $\phim^\exte(\xv) = \lim_{\xv \rightarrow \boundd} \phim(\xv)$ from outside the magnetic domain.} (see \cref{fig:BEM-geometry}).
 
-We have the following \emph{physical} conditions\footnote{Equations~\cref{eq:2}-\cref{eqn:phibound} come from the definition of $\phim$, requirement for finite total energy, $\Bv^\text{int} \cdot \nv = \Bv^\text{ext} \cdot \nv$ and ??ds respectively.} on the total magnetostatic potential $\phim$:
+We have the following \emph{physical} conditions\footnote{\Cref{eq:2,eq:48,eqn:dphibound,eqn:phibound} come from the definition of $\phim$, requirement for finite total energy, $\Bv^\text{int} \cdot \nv = \Bv^\text{ext} \cdot \nv$ and ??ds respectively.} on the total magnetostatic potential $\phim$:
 \begin{equation}
   \lap \phim(\xv) = \nabla \cdot \mv(\xv) \qquad \forall \xv \in \magd \cup \extd,
   \label{eq:2}
 \end{equation}
 \begin{equation}
   \phim(\xv) \rightarrow 0 \qquad \text{ as } \abs{\xv} \rightarrow \infty,
+\label{eq:48}
 \end{equation}
 \begin{equation}
   \pd{\phim^\inte(\xv)}{\nv} - \pd{\phim^\exte(\xv)}{\nv} = \mv \cdot \nv \qquad \xv \in \boundd,
@@ -49,7 +50,7 @@ We have the following \emph{physical} conditions\footnote{Equations~\cref{eq:2}-
   \phim^\inte(\xv) - \phim^\exte(\xv)  = 0 \qquad \xv \in \boundd.
   \label{eqn:phibound}
 \end{equation}
-Note that equations~\cref{eqn:dphibound,eqn:phibound} imply continuity but not smoothness of the magnetic potential $\phim$ across $\boundd$.
+Note that \cref{eqn:dphibound,eqn:phibound} imply continuity but not smoothness of the magnetic potential $\phim$ across $\boundd$.
 This is due to surface magnetic charges.
 
 We choose $\phione$ to satisfy:
@@ -69,23 +70,23 @@ We choose $\phione$ to satisfy:
   \phione(\xv) = 0 \qquad \xv \in \extd.
   \label{eqn:phioneoutside}
 \end{equation}
-Note that equations~\cref{eq:1,eqn:dphionebound} give a self contained Poisson Neumann problem for $\phione \in \magd \cup \boundd$.
+Note that \cref{eq:1,eqn:dphionebound} give a self contained Poisson Neumann problem for $\phione \in \magd \cup \boundd$.
 
-The equations~\cref{eq:2} to \cref{eqn:phibound} for $\phim$ combined with equations~\cref{eq:21} to \cref{eqn:phioneoutside} for $\phione$ give a number of conditions on $\phitwo$ must satisfy.
+\Cref{eq:2,eq:48,eqn:dphibound,eqn:phibound} for $\phim$ combined with \cref{eq:21,eq:1,eqn:dphionebound,eqn:phioneoutside} for $\phione$ give a number of conditions on $\phitwo$ must satisfy.
 Since the Laplacian operator is linear, \ie $\lap \phim = \lap \phione + \lap \phitwo$, from \cref{eq:2,eq:1} it follows that
 \begin{equation}
   \label{eq:8}
   \lap \phitwo(\xv) = 0 \qquad \forall \xv \in \fulld.
 \end{equation}
 
-Equation~\cref{eqn:phioneoutside} implies that $\pd{\phione^\exte(\xv)}{\nv} = 0$.
-Combining this with equations \cref{eqn:dphionebound,eqn:dphibound} gives
+\Cref{eqn:phioneoutside} implies that $\pd{\phione^\exte(\xv)}{\nv} = 0$.
+Combining this with \cref{eqn:dphionebound,eqn:dphibound} gives
 \begin{equation}
   \label{eq:5}
   \pd{\phitwo^\inte(\xv)}{\nv} - \pd{\phitwo^\exte(\xv)}{\nv} = 0.
 \end{equation}
 
-Finally from equations \cref{eqn:phibound,eq:21,eqn:phioneoutside} we have
+Finally from \cref{eqn:phibound,eq:21,eqn:phioneoutside} we have
 \begin{equation*}
   \phione^\inte - \phione^\exte + \phitwo^\inte - \phitwo^\exte = 0,
 \end{equation*}
@@ -191,7 +192,7 @@ From \cref{sec:double-layer-potent} we can see that conditions \cref{eq:8,eq:5,e
 By the uniqueness of solution for Poisson's equation this gives us, up to an additive constant, the only solution for $\phitwo(\xv)$ in the external region.
 This is good enough for a potential since it is only used in $\hms(\xv) = - \nabla \phim(\xv)$ so addition of a constant has no effect.
 
-From equations~\cref{eq:3,eq:22,eq:24} we have:
+From \cref{eq:3,eq:22,eq:24} we have:
 \begin{equation}
   \label{eq:6}
   \phitwo^\inte(\xv) =  \big(\gamma(\xv) - 1 \big) \phione^\inte(\xv)
@@ -210,8 +211,8 @@ Also note that $\phim = \phione + \phitwo$ everywhere and so
   \end{aligned}
 \end{equation}
 
-Either equation~\cref{eq:6} or \cref{eq:18} can be used to give boundary conditions for $\phitwo \in \magd$ or $\phim \in \magd$ respectively.
-We will proceed using equation~\cref{eq:18} for simplicity since it eliminates $\phitwo$ from later calculations.
+Either \cref{eq:6} or \cref{eq:18} can be used to give boundary conditions for $\phitwo \in \magd$ or $\phim \in \magd$ respectively.
+We will proceed using \cref{eq:18} for simplicity since it eliminates $\phitwo$ from later calculations.
 
 Hence, given the solution for $\mv(\xv) \in \magd$ the complete continuous problem is
 \begin{equation}
@@ -247,7 +248,7 @@ We let
 \end{equation}
 where $\tbf_\ibasis(\xv_\ibasisb) = \delta_{\ibasis \ibasisb}$ on the boundary nodes and is linearly interpolated from $\tbf_\ibasis = 1$ at $\xv_\ibasis$ to $\tbf_\ibasis = 0$ at neighbouring nodes.
 
-Substituting equations~\cref{eq:25} into \cref{eq:18} we have
+Substituting \cref{eq:25} into \cref{eq:18} we have
 \begin{equation*}
   \sum_\ibasis \phim_{\ibasis} \tbf_{\text{m},\ibasis}(\xv) =
   - \int_{\boundd} \sum_\ibasisb \phione_{\ibasisb} \tbf_{1,\ibasisb}(\yv)
@@ -276,7 +277,7 @@ Finally, since the integrands are continuous functions ??ds citation needed, we 
 \end{equation}
 Notice that the expression inside the square brackets is independent of all the potentials: it depends only on the geometry and so can be pre-calculated and stored in many cases.
 
-So equation~\cref{eq:27} gives $\phim$ at a boundary node in terms of a sum of geometric factors multiplied by $\phione$ at each boundary node.
+So \cref{eq:27} gives $\phim$ at a boundary node in terms of a sum of geometric factors multiplied by $\phione$ at each boundary node.
 In other words, this is a dense matrix multiplication by a pre-computed matrix giving $\phim$ at all the boundary nodes in terms of $\phione$ at all boundary nodes:
 \begin{equation}
   \label{eq:10}
@@ -329,7 +330,7 @@ We denote the integral in this equation by $I_\bm$.
 
 \subsection{Discretisation Approaches: Co-location vs Galerkin}
 
-In deriving equation~\cref{eq:colocation} we used a co-location approach rather than the Galerkin approach used in our FEM method.
+In deriving \cref{eq:colocation} we used a co-location approach rather than the Galerkin approach used in our FEM method.
 The reason for this choice is that a Galerkin discretisation would lead to a double integral over the boundary, which would probably be more difficult to calculate.
 
 Not sure what effect this has, if any, on the stability or accuracy of the scheme...
@@ -372,7 +373,7 @@ Inderpretations: only count ``real'' sharp corners (\ie sphere has no corners) v
 
 For linear shape functions and triangular elements an exact analytical solution for the singular integral $I_G$ was given by Lindholm \cite[App. B]{Lindholm1984}.\footnote{Note: Lindholm's definition of the 3d Green's function is a factor of -1 different to ours.}.
 
-Combining equations (2) and (3) from \cite{Lindholm1984} with equation~\cref{eq:13} and using our notation for positions, we see that Lindholm's $L$ operator is
+Combining equations (2) and (3) from \cite{Lindholm1984} with \cref{eq:13} and using our notation for positions, we see that Lindholm's $L$ operator is
 \begin{equation}
   \begin{aligned}
     L[U] &= \frac{-1}{4 \pi}\int_\boundd U(\yv) \frac{\nv(\yv) \cdot (\yv -
@@ -451,7 +452,7 @@ Finally we need $\Omega_\tri$, the solid angle subtended by the triangle at $\xv
         (\abs{\rv_1}\abs{\rv_2} + \rv_1\cdot\rv_2)}}},
 \end{equation}
 where we have dropped the $\xv$ argument from $\rv_i(\xv)$ for brevity.
-The use of $\rv_1(\xv)$ in equations~\cref{eq:analytic-bem-integral,eq:bem-triangle-solid-angle} is not a typo: the results are independant of which node in the triangle is used.
+The use of $\rv_1(\xv)$ in \cref{eq:analytic-bem-integral,eq:bem-triangle-solid-angle} is not a typo: the results are independant of which node in the triangle is used.
 
 
 A useful open source implementation of this calculation in \texttt{C} is included in \texttt{magpar}\cite{magpar-website} and redistributed in \texttt{nmag}\cite{nmag-website}.

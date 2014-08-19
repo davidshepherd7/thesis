@@ -185,14 +185,14 @@ where $\Hv$ is the total effective field
   \Hv = \Happ + \Hca + \Hex + \Hms.
   \label{eq:Heff}
 \end{equation}
-Equation~\cref{eq:38} represents the precession of the magnetisation about the effective field, as shown in \cref{fig:LLG-terms}. Other effective fields can be added to equation~\cref{eq:Heff} to model other physical effects such as finite temperature or magnetostriction.
+\Cref{eq:38} represents the precession of the magnetisation about the effective field, as shown in \cref{fig:LLG-terms}. Other effective fields can be added to \cref{eq:Heff} to model other physical effects such as finite temperature or magnetostriction.
 
-Equation~\cref{eq:38} describes an undamped precessional motion, \ie no energy is lost and the magnetisation continues to precess forever. This is obviously not the case for many problems of interest so an empirical damping term is added \cite{Landau1935}:
+\Cref{eq:38} describes an undamped precessional motion, \ie no energy is lost and the magnetisation continues to precess forever. This is obviously not the case for many problems of interest so an empirical damping term is added \cite{Landau1935}:
 \begin{equation}
   \label{eq:LL}
   \dMdt = - \gymagc \Mv \times \Hv - \frac{\dampc_L \gymagc}{M_s} \Big( \Mv \times (\Mv \times \Hv) \Big),
 \end{equation}
-where $\dampc$ is an experimentally determined material parameter related to the strength of the damping. Equation~\cref{eq:LL} is referred to as the Landau-Lifshitz equation.
+where $\dampc$ is an experimentally determined material parameter related to the strength of the damping. \Cref{eq:LL} is referred to as the Landau-Lifshitz equation.
 
 \begin{figure}
   \centering
@@ -208,18 +208,18 @@ There is a similar equation introduced by Gilbert \cite{Gilbert2004}, called the
   \label{eq:Gilbert}
   \dMdt = - \gymagc \Mv \times \Hv + \frac{\dampc}{M_s} (\Mv \times \dMdt),
 \end{equation}
-where $\dampc \neq \dampc_L$. Equation~\cref{eq:Gilbert} can be rearranged into the same form as equation~\cref{eq:LL}, giving
+where $\dampc \neq \dampc_L$. \Cref{eq:Gilbert} can be rearranged into the same form as \cref{eq:LL}, giving
 \begin{equation}
   \label{eq:LLG}
   \dMdt = \frac{-\gymagc}{1 + \dampc^2} \Big[ (\MxH) + \frac{\dampc}{M_s} \Big(\Mv \times (\MxH) \Big) \Big],
 \end{equation}
 which we refer to as the Landau-Lifshitz form of the Landau-Lifshitz-Gilbert equation.
 
-Equations~\cref{eq:LL,eq:Gilbert,eq:LLG} link the unknown magnetisation vector as a function of time, $\Mv(t)$, with the effective field, $\Hv$.
+\Cref{eq:LL,eq:Gilbert,eq:LLG} link the unknown magnetisation vector as a function of time, $\Mv(t)$, with the effective field, $\Hv$.
 To determine $\Mv$ at an arbitrary time we need to integrate either of the above equations with respect to time starting from a known initial magnetisation $\Mv(0)$.
 This is usually done numerically by employing a time integration method, as will be discussed in \cref{sec:time-discretisation}.
 
-Note that there is no spatial dependence directly contained in equations~\cref{eq:LL,eq:Gilbert,eq:LLG}.
+Note that there is no spatial dependence directly contained in \cref{eq:LL,eq:Gilbert,eq:LLG}.
 However the exchange effective field and magnetostatic field may contain spatial dependence, so usually the final equation to be solved after all substitutions is a partial differential equation (PDE).
 
 % Examples of currently available micromagnetic models include the \texttt{OOMMF}\cite{oommf-website} and \texttt{nmag}\cite{Fischbacher2007} packages, which both use the dynamic method exclusively, along with \texttt{magpar}\cite{Scholz2003} and \texttt{FEMME}\cite{suessco-website} which can use either dynamic or energy based methods.
@@ -234,7 +234,7 @@ By far the most commonly used boundary conditions on the magnetisation $\Mv$ (in
   \Mv \times \dMdn = \zerov.
 \end{equation}
 
-This condition can be arranged into a simpler form: we first note that for equation~\cref{eq:llg-bc} to hold either $\Mv = \zerov$, $\dMdn = \zerov$, or $\Mv$ is parallel to $\dMdn$.
+This condition can be arranged into a simpler form: we first note that for \cref{eq:llg-bc} to hold either $\Mv = \zerov$, $\dMdn = \zerov$, or $\Mv$ is parallel to $\dMdn$.
 Clearly $\Mv$ is not the zero vector inside the ferromagnet.
 Also we know that the magnetisation length does not change,\footnote{Physically this is part of the definition of the problem. The proof that this fact is embodied in the LLG equation is given in \cref{sec:prop-cont-llg}.} therefore $\pd{\Mv}{\av} \cdot \Mv = 0$ for any direction $\av$ (since the change in magnetisation projected onto the magnetisation direction is the change in magnetisation length). 
 Hence $\Mv$ and $\dMdn$ cannot be parallel.
@@ -288,7 +288,7 @@ Let
 \end{equation}
 Note that $\Mv$ and $\Hv$ have the same units so we use the same normalisation factor. For dimensional purposes derivatives are equivalent to division by the variable differentiated with respect to, so $\nabla^* = \frac{1}{l} \nabla$, $\pd{a}{t^*} = \gymagc M_s \pd{a}{t}$ etc.
 
-Combining equation~\cref{eqn:llgnd} with the definitions~\cref{eqn:nddefs} gives
+Combining \cref{eqn:llgnd} with the definitions~\cref{eqn:nddefs} gives
 \begin{equation}
    \dmdt \gymagc M_s^2 =
   - \gymagc M_s^2 \mv \times \hv + \frac{\alpha}{M_s} \gymagc M_s^3 \mv \times \dmdt,
@@ -300,7 +300,7 @@ cancelling the various constants results in the non-dimensionalised Landau-Lifsh
   \dmdt = - (\mv \times \hv) + \alpha (\mv \times \dmdt).
 \end{equation}
 
-Similarly for equation~\cref{eqn:phind} we have
+Similarly for \cref{eqn:phind} we have
 \begin{align*}
   \frac{1}{l^2} \Phi \nabla^{2} \phi &= \frac{1}{l} M_s \nabla \cdot \mv, \\
   \frac{\Phi}{M_s l} \nabla^{2} \phi &= \nabla \cdot \mv.
@@ -312,7 +312,7 @@ Letting $\Phi = M_s l$ we obtain
   \lap \phi = \nabla \cdot \mv.
 \end{equation}
 
-Repeating the substitutions for equation~\cref{eqn:effnd} gives
+Repeating the substitutions for \cref{eqn:effnd} gives
 \begin{align*}
   M_s \hv &= M_s \happ - \frac{\Phi}{l} \nabla \phi + \frac{2 \Exchc }{\mu_0 M_s} \frac{1}{l^2} \lap \mv + \frac{2\kone}{\mu_0 M_s}  \nK (\mv \cdot \ev) \ev, \\
   \hv &= \frac{M_s}{M_s} \happ - \frac{M_s}{M_s} \nabla \phi + \frac{2 \Exchc}{\mu_0 M_s^2} \frac{1}{l^2} \lap \mv + \frac{2\kone}{\mu_0 M_s^2} \nK (\mv \cdot \ev) \ev, \\
@@ -356,18 +356,18 @@ Using the substitutions from above this becomes
 \subsection{Non-dimensionalisation of the Landau-Lifshitz form of the LLG}
 \label{sec:land-lifsh-normalisation}
 
-The dimensional Landau-Lifshitz form of the LLG is given in equation~\cref{eq:LLG}:
+The dimensional Landau-Lifshitz form of the LLG is given in \cref{eq:LLG}:
 \begin{equation}
   \label{eq:ll-nd}
   (1 + \dampc^2) \pd{\Mv^*}{t^*} = - \gymagc \Mv^* \times \Hv^*
   - \frac{\gymagc \dampc}{M_s} \Mv^* \times (\Mv^* \times \Hv^*).
 \end{equation}
-The non-dimensionalisation process is essentially the same as for the Gilbert form, by substituting in the normalisations in equation~\cref{eqn:nddefs} we obtain
+The non-dimensionalisation process is essentially the same as for the Gilbert form, by substituting in the normalisations in \cref{eqn:nddefs} we obtain
 \begin{equation}
   (1 + \dampc^2) \dmdt = - \mv \times \hv - \dampc \mv \times (\mv \times \hv).
   \label{eq:ll-nd-llglike}
 \end{equation}
-The field equations are identical to those in equation~\cref{eqn:nd-llg-full}.
+The field equations are identical to those in \cref{eqn:nd-llg-full}.
 
 
 Alternatively the time variable could be normalised differently to remove the factor of $(1 + \dampc^2)$ by using
@@ -474,9 +474,9 @@ Finally, substituting \cref{eq:64} into \cref{eq:58} leaves
   \label{eq:energy-decay}
   \pd{\e}{t} = -\dampc \ltip{\dmdt}{\dmdt} - \ltip{\pd{\happ}{t}}{\mv}.
 \end{equation}
-Equation~\cref{eq:energy-decay} shows that under constant applied field the energy of the system is always decreasing at a rate proportional to $\dampc$.
+\Cref{eq:energy-decay} shows that under constant applied field the energy of the system is always decreasing at a rate proportional to $\dampc$.
 For non-constant applied fields the change in the Zeeman energy can increase or decrease the energy depending on how the field is changed. % field moves towards m - decrease, away -> increase. For non-spatially constant this is averaged over space in some sense by the inner product.
-In fact, the first term of equation~\cref{eq:energy-decay} can be easily derived from the Rayleigh dissipation functional used as the basis for the derivation of the Gilbert form of the LLG \cite{Gilbert2004}.
+In fact, the first term of \cref{eq:energy-decay} can be easily derived from the Rayleigh dissipation functional used as the basis for the derivation of the Gilbert form of the LLG \cite{Gilbert2004}.
 
 Note that length conservation is a \emph{point-wise} property, \ie $\abs{\mv} = 1$ at every point in space. 
 In contrast the energy decay/conservation is a \emph{global} property, \ie an integral over all space is conserved.
