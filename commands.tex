@@ -145,7 +145,7 @@
 \newcommand{\Jm}{\mymatrix{J}}
 \newcommand{\Km}{\mymatrix{K}}
 \newcommand{\Jmca}{\mymatrix{J}_\text{ca}}
-\newcommand{\Jmts}{\mymatrix{J}_\text{ts}}
+\newcommand{\Jmts}{J_\text{ts}}
 \newcommand{\jts}{j_\text{ts}}
 
 % Brackets
@@ -164,6 +164,7 @@
 % 3-component vector as a list of components
 \newcommand{\threevec}[3]{\begin{pmatrix} #1 \\ #2 \\ #3 \end{pmatrix} }
 \newcommand{\threevecdup}[1]{\threevec{#1}{#1}{#1}}
+\newcommand{\threevecnum}[1]{\threevec{#1_0}{#1_1}{#1_2}}
 
 
 % Big O notation
@@ -177,6 +178,7 @@
 \newcommand{\lap}{\nabla^2}
 
 \newcommand{\compdot}{\mathbin{:}}
+\newcommand{\tensorprod}{\otimes}
 
 
 
@@ -337,6 +339,7 @@
 \newcommand{\imr}{\text{IMR}} % Implicit midpoint
 \newcommand{\tr}{\text{TR}}
 \newcommand{\bdf}{\text{BDF2}}
+\newcommand{\bdfo}{\text{BDF1}}
 \newcommand{\FE}{\text{FE}} % Forward Euler (like)
 \newcommand{\ebdf}{\text{eBDF3}}
 

@@ -141,7 +141,7 @@ Hence at each step a (linear or non-linear) system of equations must be solved, 
 
 The backwards differences schemes are a simple and commonly used example. The first order formula is
 \begin{equation}
-  \label{eq:48}
+  \label{eq:bdf1}
   \yv_{n+1} = \yv_n + \dtn \ffv{t_{n+1}, \yv_{n+1}}.
 \end{equation}
 
@@ -156,6 +156,7 @@ However when using this method the determination (see \autoref{sec:adaptivity}) 
 
 
 \subsection{Some implicit time integration schemes}
+\label{sec:some-implicit-time-integrators}
 
 For the rest of this section we will use as examples three time integration schemes with good stability and accuracy properties that are widely employed in practice.
 All three are implicit schemes, for reasons of stability as explained in \autoref{sec:explicit-vs-implicit-schemes}.

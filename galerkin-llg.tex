@@ -180,8 +180,10 @@ To create a useable implementation of the methodology derived in \autoref{Deriva
 For simplicity we choose the two types of basis functions to be the same: $\sbf_l = \tbf_l$.
 This choice defines the Galerkin method (and results in a symmetric matrix $\Am$, if the original equation has the corresponding symmetry) \cite[215]{Zeinkiewicz1967}.
 
-The overall aim is to approximate an arbitrary function at a finite set of points called the ``nodes'', $x_\ndi$, by a linear combination of a finite set of \emph{simple} functions, $\tbf_\ndi$.
-There are a variety of useful choices for $\tbf_\ndi$ but we will focus on a carefully constructed set of polynomials--the Lagrange interpolation basis functions, defined as
+??ds think I need to mention piecewiseness and zero outside element, finite support = sparse
+
+The overall aim is to approximate an arbitrary function at a finite set of points called the ``nodes'', $x_\ndi$, by a linear combination of a finite set of easy-to-work-with functions, $\tbf_\ndi$.
+There are a variety of useful choices for $\tbf_\ndi$ but we will focus on a carefully constructed set of polynomials: the Lagrange interpolation basis functions, defined as
 \begin{equation}
   L_\ndi(x)=\prod_{k\neq i}\Bigg(\dfrac{x-x_{k}}{x_\ndi-x_{k}}\Bigg).
 \end{equation}
@@ -498,9 +500,24 @@ Hence
 \begin{equation}
   I = - \intd{\grad \mv : \bigb{\grad \testv \times \mv}} 
       - \intd{\grad \mv : \bigb{\testv \times \grad \mv}},
+      \label{eq:72}
 \end{equation}
 where ``$:$'' is the componentwise scalar product, \eg $\grad \av : \grad \cv = \grad a_0 \cdot \grad b_0 + \grad a_1 \cdot \grad b_1 + \grad a_2 \cdot \grad b_2$.
-The second term of this expression is zero by the properties of the triple product, so after reordering some terms we are left with
+
+Note that the $:$ operator obeys the usual triple product identity
+\begin{equation}
+  \av : (\av \times \bv) = \zerov,
+  \label{triple:-identity}
+\end{equation}
+and it's permutations because
+\begin{equation}
+  \begin{aligned} 
+    \threevecnum{\av} : \bigb{\threevecnum{\av} \times \bv} &= \av_0 \cdot (\av_0 \times \bv) + \ldots, \\
+    & = 0 + 0 + 0
+  \end{aligned}
+\end{equation}
+
+Hence the second term of \eqref{eq:72} is zero and after reordering some terms we are left with
 \begin{equation}
   \label{eq:final-lap-residual}
   I = - \intd{\bigb{\mv \times \grad \mv} : \grad \testv}.
@@ -552,7 +569,7 @@ Note that in our method $\sbf_k \equiv \tbf_k$ except for Dirichlet boundary $\p
 In one dimension the $\sk$ and $\tn$ are as given in \eqref{eq:simple_lagrange}.
 The extension to higher dimensions is straightforward: see \eg \cite[25]{HowardElmanDavidSilvester2006}.
 
-So substituting the basis representations, \eqref{eq:unknowns-basis} and \eqref{eq:47} into the continuous residuals we obtain approximations for the residuals in terms of a finite number of nodal values\footnote{We do not write this form out here as it is long, messy and does not illuminate anything}.
+So substituting the basis representations, \eqref{eq:unknowns-basis} and \eqref{eq:47} into the continuous residuals we obtain approximations for the residuals in terms of a finite number of nodal values.\footnote{We do not write this form out here as it is long, messy and does not illuminate anything.}
 Next we replace the requirement that the residuals be zero for all test functions in the infinite dimensional set $\tsinf$ with the equivalent requirement for all functions in the finite set $\tsbasis$. 
 This results in a finite number of conditions (the residuals) on a finite number of variables (the nodal values) and so the spatial discretisation is complete.
 
@@ -566,63 +583,114 @@ As described in \autoref{sub:Actual-Finite-Elements} we also convert this ``glob
 \section{Time Discretisation}
 \label{sec:time-discretisation-resi}
 
-??ds cleanp too
+In this section we discuss how to deal with the time derivative in the LLG residual \eqref{eq:llg-res-final}.
+As discussed in \autoref{sec:numer-meth-micr}, we will apply standard time integration methods used for ODEs.
+This application of independent spatial and time discretisations is known as semi-discretisation or the method of lines.
 
-To deal with the time derivative in the residual we apply a time discretisation scheme (\ie we use the method of lines).
-As discussed in \autoref{sec:model-conclusions} we aim to use the implicit midpoint rule in our final model but other methods are useful for comparison.
+We cannot simply apply the time integration methods in the way they are written in \autoref{sec:some-implicit-time-integrators} (and in most text books) because our LLG residual \eqref{eq:llg-res-final} cannot be written in the required form $\pd{\yv}{t} = \fv(t, \yv)$ since it is an implicit function of the time derivative.\footnote{Actually we could have started with the LL form \eqref{eq:LLG} where the derivative can be given explicitly, but as mentioned above this method is simpler.}
+Instead we rearrange the time integration method to give discrete substitutions for the time derivative, $\yv$ values and $t$.
 
-Let $\dtn$ be the time-step, let $\mv_k^\tl$ denote the value of $\mv_k$ at the $\tl$-th time-step, and consider only the value of $\mv_k$ at a single node.
-Then the mid-point method is defined by d'Aquino\cite{DAquino2005} as
+Let $\dtn$ be the size of the $n$th time step, let $x_n$ denote value of $x$ at the $n$-th time-step.\footnote{This notation has some potential to be confused with the nodal value notation of \autoref{sec:spat-discr-resi}, hopefully the meaning will be clear from the context.}
+The simplest case is the first order backwards difference method (BDF1), which is defined by the substitution
 \begin{equation}
-  \label{eq:mid-point-scheme}
-  \dmdt \left( \frac{\mv_k^{\tl+1} + \mv_k^\tl}{2} \right) = \frac{\mv_k^{\tl+1} - \mv_k^l}{ \dtn}.
-\end{equation}
-So by substituting equation~\eqref{eq:mid-point-scheme} into the spatially discretised residuals with $\mv_k = \frac{\mv_k^{\tl+1} + \mv^\tl_k}{2}$ we obtain a fully discretised system of equations in  $\mv_k^{\tl+1}$ and $\mv_k^\tl$.
-Alternatively we can write it in terms of half a step of the first order backwards Euler method followed by a simple algebraic update \cite{Malidi2005}
-\begin{equation}
-  \label{eq:imr-bdf1}
   \begin{aligned}
-    \dmdt \left(\mv_k^{l+\half} \right) &= \frac{\mv_k^{l+\half} - \mv_k^{l}}{\dtn/2}, \\
-    \mv_k^{l+1} &= 2\mv_k^{l+\half} - \mv_k^l.
+    \pd{\yv}{t} &\rightarrow \frac{\yv_{n+1} - \yv_n}{\dtn}, \\
+    \yv &\rightarrow \yv_{n+1}, \\
+    t &\rightarrow t_{n+1}.
+    \label{eq:impl-bdf1}
+  \end{aligned}
+\end{equation}
+This substitution can be obtained by simple algebraic rearrangements of \eqref{eq:bdf1}.
+Similarly the second order backwards difference method (BDF2) can be found (with some more complex algebra) to be:
+\begin{equation}
+  \begin{aligned}
+    \pd{\yv}{t} &\rightarrow \yv_{n+1}\bigb{\frac{1}{\dtn} + \frac{1}{\dtn + \dtx{n-1}}}
+    - \yv_n \frac{\dtn + \dtx{n-1}}{\dtn\dtx{n-1}}
+    + \yv_{n-1} \frac{\dtn}{(\dtn + \dtx{n-1})\dtx{n-1}}, \\
+    \yv &\rightarrow \yv_{n+1}, \\
+    t &\rightarrow t_{n+1}.
+    \label{eq:impl-bdf2}
   \end{aligned}
 \end{equation}
 
-
-The constant time step second order backwards difference method is defined as\cite{Atkinson2009}
+The implicit midpoint rule is defined by the substitutions
 \begin{equation}
-  \label{eq:bdf2-scheme}
-  \dmdt(\mv_k^{\tl+1}) = \frac{3 \mv_k^{\tl+1} - 4 \mv_k^{\tl} + \mv_k^{\tl-1}}{2\dtn},
+  \begin{aligned}
+    \pd{\yv}{t} &\rightarrow \frac{\yv_{n+1} - \yv_n}{\dtn}, \\
+    \yv &\rightarrow \frac{\yv_{n+1} + \yv_n}{2}, \\
+    t &\rightarrow \frac{t_{n+1} + t_n}{2}.
+    \label{eq:impl-imr}
+  \end{aligned}
 \end{equation}
-which can similarly be substituted into the spatially discretised residuals with $\mv_k = \mv_k^{\tl+1}$ to obtain a fully discretised system of equations in of $\mv_k^{\tl+1}$, $\mv_k^\tl$ and $\mv_k^{\tl-1}$.
+Alternatively, as mentioned in \autoref{sec:some-implicit-time-integrators}, we can define the implicit midpoint rule in terms a step of BDF1 with $\dtn^\bdfo = \dtn^\imr/2$ to obtain $\yv_{n+\half}$ followed by the algebraic update
+\begin{equation}
+  \begin{aligned}
+    \label{eq:imr-bdf1}
+    \yv_{n+1} &= 2\yv_{n+\half} - \yv_n.
+  \end{aligned}
+\end{equation}
+
+The trapezoid rule (TR) is defined (recursively) by
+\begin{equation}
+  \begin{aligned}
+    \pd{\yv}{t} &\rightarrow \evalatb{\pd{\yv}{t}}{n+1} 
+    = \frac{2(\yv_{n+1} - \yv_n)}{\dtn} - \evalatb{\pd{\yv}{t}}{n}, \\
+    \yv &\rightarrow \yv_{n+1}, \\
+    t &\rightarrow t_{n+1}.
+    \label{eq:impl-tr}
+  \end{aligned}
+\end{equation}
+
+So by applying one of the substitutions \eqref{eq:impl-bdf1}-\eqref{eq:impl-tr} to the system of spatially discretised residuals we obtain a fully discrete problem.
+The properties of these time discretisations are exactly as discussed in \autoref{sec:time-discretisation}.
 
 
-\section{Jacobian calculation}
+
+
+\section{The analytical Jacobian}
 \label{sec:llg-jacobian-calculation}
 
-To solve this system by a Newton method we also need to know the Jacobian matrix of the residuals differentiated with respect to the variables at the target time step: $\phim_\ik^{\tl+1}$ and $\mv_\ik^{\tl+1}$.
+To solve our fully discrete system by a Newton method we also need to know the Jacobian matrix of each residual differentiated with respect to the $(n+1)$th variable at the time step.
+This can be handled by numerical differentiation (\eg by approximating each derivative using a finite difference method), but analytical Jacobians are typically faster to compute and give better convergence properties than numerical approximations.
+Additionally for the solution of the linear systems it is often useful to know analytically the structure of the system being solved.
+
+Note that the ``real'' implementation of the implicit midpoint rule \eqref{eq:impl-imr} introduces a factor of $1/2$ in various places due to the substitution $ \yv \rightarrow \frac{\yv_{n+1} + \yv_n}{2}$, the derivations below do not include this ??ds yet?
+
+For this section we must use the scalar test function form of the residuals (since that is the form used in our final implementation).
+
+We first note that the effect of differentiation by a nodal value on the function $\phim$ is quite simple:
+\begin{equation}
+  \begin{aligned}
+    &\pd{\phim}{\phim_l} = \pd{}{\phim_l} \bigs{ \sum_k \phim_k \sk } = \sbf_l, \\
+    &\pd{\phim}{\mv_l} = \pd{}{\mv_l} \bigs{ \sum_k \phim_k \sk } = \zerov^T, \\
+  \end{aligned}
+\end{equation}
+and similarly for the interpolated magnetisation, $\mv$:
+\begin{equation}
+  \begin{aligned}
+    &\pd{\mv}{\mv_l} = \pd{}{\mv_l} \bigs{ \sum_k \mv_k \sk } = \sbf_l \text{I}_3, \\
+    &\pd{\mv}{\phim_l} = \pd{}{\phim_l} \bigs{ \sum_k \mv_k \sk } = \zerov, \\
+\end{aligned} 
+\end{equation}
 
 \subsection{Poisson Jacobian}
 \label{sec:poisson-jacobian}
 
-Starting from the Poisson residual equation~\eqref{??ds poisson} and dropping terms that obviously contain no dependence on $\phim$ we get
+Starting from the Poisson residual equation~\eqref{res:contphi} and dropping terms that obviously contain no dependence on $\phim_k$ we get
 \begin{equation}
   \begin{aligned}
     \label{eq:poisson-jacobian}
-    \Am_{n,l} &= \pd{}{\phim_{,l}} \sum_k \intd{ -(\nabla \tbf_n \cdot \nabla \sbf_k) \phim_{,k}}, \\
+    \Am_{n,l} &= \pd{}{\phim_{l}} \sum_k \intd{ -(\nabla \tbf_n \cdot \nabla \sbf_k) \phim_{k}}, \\
     &= -\intd{\grad \tbf_n \cdot \grad \sbf_l}.
   \end{aligned}
 \end{equation}
 This block of the Jacobian is comparatively simple because the Poisson equation is linear. 
-It corresponds to the well known discrete Laplacian operator\cite{HowardElmanDavidSilvester2006}.
+It corresponds to the well known discrete Laplacian operator \cite{HowardElmanDavidSilvester2006}.
 
 
 \subsection{LLG Jacobian}
 \label{sec:llg-jacobian}
 
-We first note that the effect of differentiation on a single interpolated value is quite simple
-\begin{equation}
-  \pd{}{\mv_l} \left( \sum_k \mv_k \sk \right) = \sbf_l \text{I}_3.
-\end{equation}
 Unfortunately in most of the Jacobian calculations we have multiple terms depending on $\mv$ joined together by a cross product.
 The process of differentiating these terms can be made much easier by making use of the ``skew operator'' which represents a cross product as a small matrix-vector multiplication.
 The skew operator is given by
@@ -636,9 +704,20 @@ The skew operator is given by
   \label{eqn:skew}
 \end{equation}
 
-Some properties are:
+Written using this skew operator the LLG residual is
+\begin{equation}
+  \begin{aligned}
+    \rllgv_n = \int_{\magd}
+    & \dmdt \tbf_n + \skewm{\mv} \cdot \left( \happ + \hca - \nabla \phi - \dampc \dmdt
+    \right) \tbf_n \\
+    &- (\skewm{\mv} \grad \mv) : \grad \tbf_n)
+    \d\magd.
+  \end{aligned}
+\end{equation} 
+
+Some useful properties of this skew operator are:
 \begin{itemize}
-\item Skew-matrix-vector multiplication is a cross product
+\item Skew-matrix-vector multiplication is the cross product
   \begin{equation}
     \skewm{\av} \cdot \bv
     = \begin{pmatrix}
@@ -648,21 +727,21 @@ Some properties are:
     \end{pmatrix}
     \cdot \threevec{b_1}{b_2}{b_3}
     = \threevec{-a_3b_2 + a_2b_3}{a_3b_1 - a_1b_3}{-a_2b_1 + a_1b_2}
-    = \av \times \bv
+    = \av \times \bv.
   \end{equation}
 
-\item No effect on derivatives
+\item The skew operator has no effect on derivatives and vice-versa
   \begin{equation}
-    \pd{}{x} \skewm{\av} = \skewm{ \pd{\av}{x} }
+    \pd{}{x} \skewm{\av} = \skewm{ \pd{\av}{x} }.
   \end{equation}
 
-\item Linearity
+\item The skew operator is linear
   \begin{equation}
-    \skewm{\av + \alpha \bv} = \skewm{\av} + \alpha \skewm{\bv}
+    \skewm{\av + c \bv} = \skewm{\av} + c \skewm{\bv}.
   \end{equation}
 
-\item Easy to represent the Jacobian of a cross-product:
-
+\item It is easy to represent the Jacobian of a cross-product using the skew operator.
+  The derivative with respect to $a_1$ is: 
   \begin{equation}
     \pd{}{a_1} \skewm{\av} \cdot \bv = \begin{pmatrix}
       0 & 0 & 0 \\
@@ -670,8 +749,7 @@ Some properties are:
       0 & 1 & 0
     \end{pmatrix}\bv = \threevec{0}{-b_3}{b_2}.
   \end{equation}
-  Note that this is the first column of $-\skewm{\bv}$.
-  It turns out that
+  Note that this is the first column of $-\skewm{\bv}$, it turns out that
   \begin{equation}
     \pd{}{\av} \skewm{\av} \cdot \bv = \begin{pmatrix}
       0 & b_3 & -b_2 \\
@@ -680,135 +758,137 @@ Some properties are:
     \end{pmatrix} = -\skewm{\bv}.
     \label{eq:61}
   \end{equation}
-
-\item Simple behaviour when applied to interpolated values and differentiated:
-
-  Due to linearity and the fact that all entries of $\pd{\mv_{l}}{\mv_{k}}$ are zero unless $l=k$ we have
-  \begin{equation}
-    \pd{}{\mv_l} \skewm{\intp{\mv}} \cdot \bv = \sum_k \sbf_k \pd{}{\mv_l} \bigb{\skewm{\mv_k} \bv} = \sbf_l \pd{}{\mv_l} \bigb{\skewm{\mv_l} \cdot \bv}.
-  \end{equation}
-
-  Then using \eqref{eq:61} we have
-  \begin{equation}
-    \pd{}{\mv_l} \skewm{\intp{\mv}} \cdot \bv = - \sbf_l\skewm{\bv}.
-    \label{eq:diff-skew-interp}
-  \end{equation}
-
+  This is the main reason for preferring to calculate the Jacobian using this notation.
 \end{itemize}
 
-Now note that combining the points above with the chain rule we get:
-  \begin{equation}
-    \begin{aligned}
-      \pd{}{\mv_l} \bigb{\skewm{\mv}\cdot \gv(\mv)} 
-      &= \skewm{\mv}\cdot \pd{\gv(\mv)}{\mv_l} - \sbf_l \skewm{\gv(\mv)}.
-    \end{aligned}
-  \end{equation}
-In the context of the LLG Jacobian $\pd{\gv(\mv)}{\mv_l}$ is typically some scalar multiplied by an identity matrix.
-Hence we can obtain a simple representation of most of the terms in the Jacobian in terms of the skew operator.
-
-As a simple example of how this can be used we first examine the differentiation of the $\mv \times (\happ + \hms)$ term of the Landau-Lifshitz equation residual (note that these two fields are not (directly) dependant on $\mv$).
-\begin{align}
-  \circled{c} &= \intpb{\mv} \times (\happ + \hms), \notag\\
-              &= \skewm{\intp{\mv}} \cdot (\happ + \hms).
-\end{align}
-Now it is easy to see that applying \eqref{eq:diff-skew-interp} gives us the Jacobian contribution
-\begin{align}
-  \pd{\circled{c}}{\mv_l} = - \sbf_l \skewm{\happ + \hms}.
-\end{align}
-
-Written using this skew operator the LLG residual is
+Due to the linearity of the skew operator we can write the Jacobian of a cross product including an interpolated value as 
 \begin{equation}
   \begin{aligned}
-    \rllg_n = \int_{\magd}
-      & \dmdt \tbf_n \\
-      &+ \skewm{\mv} \cdot \left( \happ + \hca - \nabla \phi - \dampc \dmdt
-        \right) \tbf_n \\
-      &- (\skewm{\mv} \grad \mv) : \grad \tbf_n)
-      \d\magd
+    \pd{}{\mv_l} \bigb{\skewm{\mv} \bv} &= \pd{}{\mv_l} \skewm{\intp{\mv}} \bv, \\
+    &= \sum_k \sbf_k \pd{}{\mv_l} \bigb{\skewm{\mv_k} \bv},
+  \end{aligned} 
+\end{equation}
+then using the fact that the entries of $\pd{\mv_{l}}{\mv_{k}}$ are zero for $l \neq k$ we get
+\begin{equation}
+  \pd{}{\mv_l} \bigb{\skewm{\mv} \bv}  = \sbf_l \pd{}{\mv_l} \bigb{\skewm{\mv_l} \cdot \bv}.
+\end{equation}
+Next by using \eqref{eq:61} we obtain
+\begin{equation}
+  \pd{}{\mv_l} \bigb{\skewm{\mv} \bv} = - \sbf_l\skewm{\bv},
+  \label{eq:diff-skew-interp}
+\end{equation}
+finally by combining \eqref{eq:diff-skew-interp} with the product rule we obtain the identity
+\begin{equation}
+  \begin{aligned}
+    \pd{}{\mv_l} \bigb{\skewm{\mv}\cdot \gv(\mv)} 
+    &= \skewm{\mv}\cdot \pd{\gv(\mv)}{\mv_l} - \sbf_l \skewm{\gv(\mv)}.
+    \label{eq:68}
   \end{aligned}
-\end{equation} 
+\end{equation}
+This provides us with a simple representation for almost all of the terms in the LLG Jacobian.
+
+% As a simple example of how this can be used we first examine the differentiation of the $\mv \times (\happ + \hms)$ term of the Landau-Lifshitz equation residual (note that these two fields are not directly dependent on $\mv$).
+% \begin{align}
+%   \circled{c} &= \mv \times (\happ + \hms), \notag\\
+%               &= \skewm{\mv} \cdot (\happ + \hms).
+% \end{align}
+% Now it is easy to see that applying \eqref{eq:68} with $\gv = \happ + \hms$ gives us the Jacobian contribution
+% \begin{align}
+%   \pd{}{\mv_l} \circled{c} = - \sbf_l \skewm{\happ + \hms},
+% \end{align}
+% since $\pd{\gv(\mv)}{\mv_l} \equiv 0$.
 
 
-Some more points before the main Jacobian calculation:
-\begin{itemize}
-\item Note that $\hca$ is a vector function of $\mv$ so differentiating it gives a 3x3 magnetocrystalline anisotropy Jacobian matrix $\Jmca$.
-
-\item 
-  \begin{equation}
-    \begin{aligned}
-      \pd{}{\mv_l} \left(\nabla \mv \compdot \nabla \tbf\right) 
-      &= \pd{}{\mv_l} \threevecdup{\left( \sum_k \mv_k \grad \sbf_k \right) \cdot \grad \tbf}, \\
-      &=  \sum_k \pd{\mv_k}{\mv_l} \threevecdup{\grad \sbf_k \cdot \grad \tbf}, \\
-      &=  \Idm_3 \left(\nabla \sbf_l \cdot \nabla \tbf \right).
-    \end{aligned}
-  \end{equation}
-
-
-\item We write
-  \begin{equation}
-    \Jmts \sbf_l = \pd{}{\mv_l} \left(\pd{\mv}{t} \right),
-  \end{equation}
-  where $\Jmts$ is some constant matrix that depends on the time integration scheme.
-  For BDF2 $\Jmts = \frac{3}{2\dtn} \Idm_3$, for the implicit midpoint rule $\Jmts = \frac{1}{\dtn} \Idm_3$.
-\end{itemize}
-
-
-To simplify the calculations we write the Jacobian as the sum of simpler Jacobians:
+Now we calculate the Jacobian itself. 
+To simplify the calculations we write the Jacobian as the sum of the individual terms:
 \begin{equation}
   \begin{aligned}
-    \Fm_{n,l} &= \pd{\rllg_n}{\mv_l} = A_{n,l} + B_{n,l} + C_{n,l}, \\
-    A_{n,l} &= \pd{(\text{time residual})_n}{\mv_l}, \\
-    B_{n,l} &= \pd{(\text{exchange residual})_n}{\mv_l}, \\
-    C_{n,l} &= \pd{(\text{other residuals})_n}{\mv_l}.
+    \Fm_{n,l} &= \pd{\rllgv_n}{\mv_l} = A_{n,l} + B_{n,l} + C_{n,l} + D_{n,l}, \\
+    A_{n,l} &= \pd{}{\mv_l} \intd{\dmdt \tbf_n}, \\
+    B_{n,l} &= \pd{}{\mv_l} \intd{- \skewm{\mv} \cdot (\grad \mv \compdot \grad \tbf_n)}, \\
+    C_{n,l} &= \pd{}{\mv_l} \intd{ \skewm{\mv} \cdot \hca  \tbf_n}, \\
+    D_{n,l} &= \pd{}{\mv_l} \intd{  \skewm{\mv} \cdot \bigb{ \happ - \nabla \phi - \dampc \dmdt} \tbf_n}.
   \end{aligned}
 \end{equation}
 
-
-First we calculate the simple Jacobian contribution due to the lone time derivative on the LHS
+First we the contribution due to the lone time derivative on the LHS:
 \begin{equation}
   \begin{aligned}
     A_{n,l} &= \pd{}{\mv_l} \intd{ \dmdt \tbf_n } \\
-           &= \Jmts \intd{ \sbf_l \tbf_n}.
+           &= \jts \Idm_3 \intd{ \sbf_l \tbf_n}.
   \end{aligned}
 \end{equation}
-This is a 3x3 block diagonal matrix where each block is a simple mass matrix multiplied by the time integrator weight.
+This is a $3\times3$ block diagonal matrix where each block is a simple mass matrix multiplied by a constant depending on the time integration method.
 
-Next we calculate the contribution from damping and the various simple fields
+Next we calculate the contribution from the damping, applied field and magnetostatic field.
+If we write the damping term in the form of \eqref{eq:68} we have $\gv(\mv) = \dmdt$, so
+\begin{equation}
+  \label{eq:69}
+  \pd{\gv(\mv)}{\mv_l} = \pd{}{\mv_l} \left(\pd{\mv}{t} \right) = \jts \sbf_l \Idm_3,
+\end{equation}
+where $\jts$ is the constant that multiplies $\mv_{n+1}$ in the approximation of the time derivative, for example when using the implicit midpoint rule $\jts = 1/\dtn$.
+Now using \eqref{eq:68} with \eqref{eq:69} we immediately obtain
 \begin{equation}
   \begin{aligned} 
-    C_{n,l} &= \pd{}{\mv_l} \intd{  \skewm{\mv} \cdot
-      \left( \happ + \hca - \nabla \phi - \dampc \dmdt
+    D_{n,l} &= \pd{}{\mv_l} \intd{  \skewm{\mv} \cdot
+      \left( \happ - \nabla \phi - \dampc \dmdt
       \right) \tbf_n}, \\
-    &= \intd{ \tbf_n \sbf_l \left( -\skewm{\happ + \hca - \nabla \phi - \dampc \dmdt}
-       + \dampc \jts \skewm{\mv}\right)}, \\
-    &= \skewm{\intd{ \tbf_n  \sbf_l \left( \nabla \phi + \dampc \dmdt
-          + \dampc \jts \mv - \happ - \hca \right) }}.
+    &= \int_\magd \tbf_n \big( -\sbf_l\skewm{\happ} + \sbf_l\skewm{\nabla \phi} + \dampc\sbf_l \skewm{\dmdt} - \dampc\sbf_l \jts \skewm{\mv} \Idm_3
+    \big) \d\magd, \\
+    &= \intd{ \tbf_n \sbf_l \bigb{ \skewm{-\happ + \nabla \phi 
+          + \dampc \dmdt - \dampc \jts \mv}}}. \\
   \end{aligned}
 \end{equation}
-This is a 3x3 block skew-symmetric matrix where each block is something like a mass matrix multiplied by a collection of field/magnetisation components.
+This is a $3\times3$ skew-symmetric matrix where each element is something like a mass matrix element multiplied by a collection of field/magnetisation components.
 
-Finally we calculate the most complex term: the exchange contribution
+Now the contribution due to magnetocrystalline anisotropy.
+Writing the residual in the form of \eqref{eq:68} we have 
+\begin{equation}
+  \gv(\mv) = \hca = \kone (\mv \cdot \ev) \ev,  
+\end{equation}
+and so 
+\begin{equation}
+  \begin{aligned}
+    \pd{\gv(\mv)}{\mv_l} &= \pd{}{\mv_l} \bigb{ \kone (\mv \cdot \ev) \ev}, \\
+    &= \kone \bigb{ \pd{}{m_{x,l}} (\mv \cdot \ev), 
+      \pd{}{m_{x,l}} (\mv \cdot \ev),
+      \pd{}{m_{x,l}} (\mv \cdot \ev) }  \tensorprod \ev, \\
+    &= \kone \sbf_l \; \ev  \tensorprod \ev.
+    \label{eq:70}
+  \end{aligned}
+\end{equation}
+Then combining \eqref{eq:68} and \eqref{eq:70} we obtain
+\begin{equation}
+  \begin{aligned} 
+    C_{n,l} &= \pd{}{\mv_l} \intd{ \skewm{\mv} \cdot \hca  \tbf_n}, \\
+    &= \intd{ -\tbf_n \sbf_l\skewm{\hca} 
+       + \kone \tbf_n \sbf_l \skewm{\mv} \; (\ev  \tensorprod \ev) }.
+  \end{aligned}
+\end{equation}
+This term is a full $3\times3$ matrix in general, but note that if $\ev$ is aligned with the axes (as is typical) then only one entry of $(\ev  \tensorprod \ev)$ is non-zero.
+
+Finally we calculate the exchange contribution.
+We first need an identity
+\begin{equation}
+  \begin{aligned}
+    \pd{}{\mv_l} \left(\nabla \mv \compdot \nabla \tbf\right) 
+    &= \pd{}{\mv_l} \threevecdup{\left( \sum_k \mv_k \grad \sbf_k \right) \cdot \grad \tbf}, \\
+    &=  \sum_k \pd{\mv_k}{\mv_l} \threevecdup{\grad \sbf_k \cdot \grad \tbf}, \\
+    &=  \Idm_3 \left(\nabla \sbf_l \cdot \nabla \tbf \right).
+    \label{eq:71}
+  \end{aligned}
+\end{equation}
+Then using \eqref{eq:68} and \eqref{eq:71} we get
 \begin{equation}
   \begin{aligned}
     B_{n,l} &=  \pd{}{\mv_l} \intd{- \skewm{\mv} \cdot (\grad \mv \compdot \grad \tbf_n)} ,\\
     &= \intd{ \sbf_l \skewm{\grad \mv \compdot \grad \tbf_n}
-       - \skewm{\mv} \left( \nabla \sbf_l \cdot \nabla \tbf \right)}, \\
-     &= \skewm{ \intd{ \sbf_l \left( \grad \mv \compdot \grad \tbf_n \right)
-         - \mv \left( \nabla \sbf_l \cdot \nabla \tbf \right)}}.
+       - \skewm{\mv} \left( \nabla \sbf_l \cdot \nabla \tbf_n \right)}, \\
+     &= \intd{\skewm{ \sbf_l \grad \mv \compdot \grad \tbf_n
+       - \mv \left( \nabla \sbf_l \cdot \nabla \tbf_n \right)}},
    \end{aligned}
  \end{equation}
-We can simplify this slightly more by expanding the shape function representation and using chain rule
-\begin{equation}
-  \begin{aligned}
-    B_{n,l} &= \skewm{ \sum_k \intd{ \sbf_l \left( \mv_k \grad \sbf_k \compdot \grad \tbf_n \right)
-        - \mv_k \sbf_k \left( \nabla \sbf_l \cdot \nabla \tbf \right)}}, \\
-    &= \skewm{ \sum_k \intd{ \bigb{(\sbf_l \grad \sbf_k - \sbf_k \grad \sbf_l)
-        \cdot \grad \tbf_n}  \mv_k }}. \\
-  \end{aligned}
-\end{equation} 
-So again we have a 3x3 block skew-symmetric matrix.
-However this time each block is something like a Laplacian block (two derivatives).
-
+which is a skew-symmetric $3\times 3$ matrix with each element something like an element of a  discrete Laplacian (\ie two derivatives). 
 
 When written in block form the total LLG Jacobian is
 \begin{equation}
@@ -817,39 +897,42 @@ When written in block form the total LLG Jacobian is
     \jts \Mm    & -\Km_z       & \Km_y \\
     \Km_z         & \jts\Mm    & -\Km_x \\
     -\Km_y        & \Km_x        & \jts \Mm
-  \end{pmatrix}, 
+  \end{pmatrix} + \Jmca,
 \end{equation}
 where $\Mm$ is the mass matrix
 \begin{equation}
   \label{eq:mass-matrix}
-  \Mm_{i,j} = \intd{\tbf_i \sbf_j},
+  \Mm_{i,j} = \intd{\tbf_i \sbf_j};
 \end{equation}
-and $\Km_i$ are the various contributions from $B$ and $C$.
+$\Km_i$ are the skew-symmetric contributions from $B$, $C$ and $D$; and
+\begin{equation}
+  \Jmca = \kone \skewm{\mv} \; (\ev  \tensorprod \ev).
+\end{equation}
 
-\section{LLG-magnetostatics coupling Jacobians}
+\subsection{LLG-magnetostatics coupling Jacobians}
 \label{sec:llg-magn-coupl}
 
-Now we derive the Jacobian entries corresponding to $\Pm = \pd{\rllg}{\phim}$ and $\Qm = \pd{\rphi}{\mv}$.
+In this section we derive the Jacobian entries corresponding to $\Pm = \pd{\rllgv}{\phim}$ and $\Qm = \pd{\rphi}{\mv}$.
 
-First $\Pm$, obviously most of the terms in the llg residual are dropped when differentiated with respect to any $\phim_{,i}$ value so the calculation is quite simple
+First $\Pm_{n,l}$, this is a $3 \times 1$ matrix because we are dealing with a vector of three residuals at once.
+Obviously most of the terms in the llg residual are dropped when differentiated with respect to any $\phim_{l}$ so the calculation is quite simple
 \begin{equation}
   \begin{aligned}
-    \Pm_{n,l} &= \pd{\rllg_n}{\phim_l} 
+    \Pm_{n,l} &= \pd{\rllgv_n}{\phim_l} 
     = \pd{}{\phim_l} \intd{ -\tbf_n \mv \times \grad \phim}, \\
     &= -\intd{ \tbf_n \mv \times \grad \sbf_l}, \\
-    &= -\intd{ \tbf_n \threevec{m_y\pd{\sbf_l}{z} - m_z \pd{\sbf_l}{y}}
-      {-m_x\pd{\sbf_l}{z} + m_z \pd{\sbf_l}{x}}
-      {m_x\pd{\sbf_l}{y} - m_y \pd{\sbf_l}{x}}}.
+    % &= -\intd{ \tbf_n \threevec{m_y\pd{\sbf_l}{z} - m_z \pd{\sbf_l}{y}}
+    %   {-m_x\pd{\sbf_l}{z} + m_z \pd{\sbf_l}{x}}
+    %   {m_x\pd{\sbf_l}{y} - m_y \pd{\sbf_l}{x}}}.
   \end{aligned}
 \end{equation}
-Note that this is a $3 \times 1$ block matrix because we are dealing with a vector of three residuals at once.
 
-Next $\Qm$, which will be a $1 \times 3$ block matrix because we are dealing with differentiation by three variables (the three components of $\mv$) at once.
+Next $\Qm_{n,l}$, a $1 \times 3$ matrix because we are dealing with differentiation by three variables (the three components of $\mv$) at once.
 \begin{equation}
   \begin{aligned}
     \Qm_{n,l} &= \pd{\rphi_n}{\mv_l} = \pd{}{\mv_l} \intd{ -\tbf_n \div \mv}, \\
-    &= \pd{}{\mv_l} \intd{ \sum_j -\tbf_n \div (\sbf_j \mv_j)}, \\
-    &= \pd{}{\mv_l} \intd{ \sum_j -\tbf_n \left( \pd{\sbf_j}{x} m_{x,j} 
+    &= \sum_j \pd{}{\mv_l} \intd{ -\tbf_n \div (\sbf_j \mv_j)}, \\
+    &= \sum_j \pd{}{\mv_l} \intd{ -\tbf_n \left( \pd{\sbf_j}{x} m_{x,j} 
         + \pd{\sbf_j}{y} m_{y,j} + \pd{\sbf_j}{z} m_{z,j} \right) }, \\
     &= -\intd{ \tbf_n \left( \pd{\sbf_l}{x}, 
         \pd{\sbf_l}{y}, \pd{\sbf_l}{z} \right) }, \\
@@ -865,9 +948,9 @@ So in block form the complete Jacobian is
     \Km_z         & \jts\Mm    & -\Km_x     & \Pm_y \\
     -\Km_y        & \Km_x      & \jts \Mm & \Pm_z \\
     \Qm_x       & \Qm_y      & \Qm_z    & \Am     \\
-  \end{pmatrix},
+  \end{pmatrix} + \Jmca,
 \end{equation}
-where $\Am$ is the Poisson Jacobian.
+where $\Jmca$ is appropriately zero padded.
 Alternatively
 \begin{equation}
 \Jm =
@@ -885,7 +968,7 @@ Alternatively
 % ??ds add less than ntol to end of other residuals elsewhere?
 
 In weak form methods such as FEM (see \autoref{sec:intr-finite-ele-diff}) it turns out that standard (\ie Gaussian) quadrature schemes do not retain the conservation properties of the IMR.
-The problem is that (outside of the infinite node limit) weak form equations make statements about the integral properties of the solution, whereas magnetisation length is a nodal property.
+The problem is that (outside of the infinite node limit) the weak form equations make statements about the integral properties of the solution, whereas magnetisation length is a nodal property.
 The solution is to use an alternative quadrature scheme which directly links the nodal values with the integral values.
 The downside of such a scheme is that the accuracy of the evaluation of integrals is reduced (since the standard schemes are chosen for their optimal accuracy).
 
@@ -898,45 +981,45 @@ We then show that the introduction of nodal integration schemes reattains the co
 Finally we present some numerical experiments.
 
 
-\subsection{Gaussian integration}
+\subsection{Failure of Gaussian integration}
 
-\subsubsection{Failure of $\abs{\mv}$ conservation with Gaussian quadrature}
-
-\newcommand{\ipg}[2]{\intd{{#1} \cdot {#2}}}
-
-We begin with the weak form of the LLG equation
-\begin{equation}
-  \label{eq:weak-llg}
-  \intd{\dmdt \cdot \testv + \mv \times \hv[t, \mv] \cdot \testv - \dampc \mv \times \dmdt \cdot \testv} = 0, \quad \forall \testv
-\end{equation}
-where $\testv = \threevec{\test}{\test}{\test}$ and $\test \in \ts$ is a scalar test function.
-
+% Midpoint values:
 \newcommand{\midpoint}[1]{\hat{#1}}
 \newsubcommand{\mvm}{\midpoint{\mv}}{n}
 \newcommand{\tm}{\midpoint{t}_n}
-
-\newcommand{\pdsub}[3]{\mathrlap{\pd{#1\mathrlap{_{#2}}}{#3}}\phantom{\pd{#1_{#2}}{#3}}}
 \newcommand{\dtop}{\delta}
-\newcommand{\dmdtm}{\pdsub{\mv}{n}{t}}
-\newcommand{\dmdtml}{\pdsub{\mv}{n,l}{t}}
-\newcommand{\dmdtmj}{\pdsub{\mv}{n,j}{t}}
+\newcommand{\pdsub}[3]{\mathrlap{\pd{#1\mathrlap{_{#2}}}{#3}}\phantom{\pd{#1_{#2}}{#3}}}
+\newcommand{\dmdtm}{\pdsub{\midpoint{\mv}}{n}{t}}
+\newcommand{\dmdtml}{\pdsub{\midpoint{\mv}}{n,l}{t}}
+\newcommand{\dmdtmj}{\pdsub{\midpoint{\mv}}{n,j}{t}}
+
+\newcommand{\ipg}[2]{\intd{{#1} \cdot {#2}}}
+
+We begin with the weak form of the LLG equation using vector test functions
+\begin{equation}
+  \label{eq:weak-llg}
+  \intd{ \bigs{\dmdt  + \mv \times \hv[t, \mv] - \dampc \mv \times \dmdt} \cdot \testv 
+    + \bigb{\mv \times \grad \mv} : \grad \testv } = 0 \quad \forall \testv,
+\end{equation}
+where $\hv$ contains all the non-exchange effective fields.
 
 % To simplify the notation we use inner product notation for the integral of a dot product:
 % \begin{equation}
 %   \intd{\av \cdot \bv} = \ipg{\av}{\bv}.
 % \end{equation}
 
-Substituting in the IMR we obtain
+Substituting in the IMR from \eqref{eq:impl-imr} we obtain
 \begin{equation}
   \label{eq:weak-llg-imr}
-  \ipg{\dmdtm}{\testv} + \ipg{(\mvm \times \hv[\tm, \mvm])}{\testv} - \dampc \ipg{(\mvm \times \dmdtm)}{\testv} = 0, \quad \forall \testv .
+  \intd{\bigb{\dmdtm + \mvm \times \hv[\tm, \mvm] - \dampc \mvm \times \dmdtm} \cdot \testv
+  + \bigb{\mvm \times \grad \mvm} : \grad \testv} = 0 \quad \forall \testv.
 \end{equation}
 
 where $\midpoint{x} = \frac{x_{n+1} + x_{n}}{2}$ is the midpoint value of $x$ and $\dtop x = \frac{x_{n+1} - x_n}{\dtn}$ is the midpoint derivative.
 
 To obtain our result we examine the case where $\testv = \mvm$.
 Note that $\mvm$ is in the vector space of test functions because we are using identical test and shape function spaces and $\mvm$ at any point must only be a linear combination of shape functions.
-So by \eqref{eq:weak-llg-imr}, and using the fact that $(\av \times \bv) \cdot \av) = 0$ we have
+So by substituting $\testv = \mvm$ into \eqref{eq:weak-llg-imr} then using the triple product identity $(\av \times \bv) \cdot \av = 0$ and \eqref{triple:-identity} we get
 \begin{equation}
   \label{eq:23}
   \begin{aligned}
@@ -946,8 +1029,9 @@ So by \eqref{eq:weak-llg-imr}, and using the fact that $(\av \times \bv) \cdot \
   \end{aligned}
 \end{equation}
 
-At first glance it appears that we have achieved conservation. However this is only an integral relationship, meaning that the values of the integrand at the nodes are not constrained.
-We can see this in more detail by substituting in the space interpolation of $\mv$ at the Gaussian integral evaluation points.
+At first glance it appears that we have achieved conservation.
+However this is only an integral relationship, meaning that the values of the integrand at the nodes are not necessarily constrained.
+We can see this in more detail by substituting in the space interpolation of $\mv$ at the Gaussian knot points.
 Dropping the constant factor of $2\dtn$ and assuming that $\abs{\mv_n} = 1$ everywhere this gives
 \begin{equation}
   \begin{aligned} 
@@ -957,166 +1041,177 @@ Dropping the constant factor of $2\dtn$ and assuming that $\abs{\mv_n} = 1$ ever
 \end{equation}
 
 This can be satisfied without requiring that all $\abs{\mv_{n+1, k}} = 1$.
-For example if we set the number of nodes to two (a 1D problem with linear shape functions) and assume magnetisation only along the $z$-axis then this condition becomes:
+For example if we set the number of nodes to two (a 1D problem with linear shape functions) and assume magnetisation only along the $z$-axis (\ie  $\mv = (0, 0, m_z)$) then this condition becomes:
 \begin{equation}
   \begin{aligned}
     1 &= \sum_l w_l \abs{\sum_k \mv_{n+1, k} \tbf_k(\xv_l)}^2, \\
-    &= w_0 (m_0 a + m_1 b)(m_0 a + m_1 b) + w_1 (m_0 c + m_1 d)(m_0 c + m_1 d), \\
-    &= m_0^2 (w_0 a^2 + w_1 c^2) + m_1^2 (w_0 b^2 + w_1 c^2) + m_0 m_1 (2w_0ab + 2w_1cd), \\
-    &= m_0^2 \alpha + m_1^2 \beta + m_0 m_1 \gamma, \\
+    &= w_0 (m_{z,0} a + m_{z,1} b)(m_{z,0} a + m_{z,1} b) + w_1 (m_{z,0} c + m_{z,1} d)(m_{z,0} c + m_{z,1} d), \\
+    &= m_{z,0}^2 (w_0 a^2 + w_1 c^2) + m_{z,1}^2 (w_0 b^2 + w_1 c^2) + m_{z,0} m_{z,1} (2w_0ab + 2w_1cd), \\
+    &= m_{z,0}^2 \alpha + m_{z,1}^2 \beta + m_{z,0} m_{z,1} \gamma, \\
   \end{aligned}
 \end{equation}
-where $a,b,c,d$ are the values of shape functions at the integration points, $m_l = m_{z}$ at node l and $\alpha, \beta, \gamma$ are constants.
+where $a,b,c,d$ are the values of shape functions at the integration points, $m_{z,l}$ is the value of $m_z$ at node $l$ and $\alpha, \beta, \gamma$ are constants.
 So given any $m_{z,0}$ we can solve the above expression to find an $m_{z,1}$ that satisfies the constraint.
-Since $m_z$ all magnetisation is along the $z$-axis in this example we can vary magnetisation length arbitrarily while still satisfying the constraint.
+Since we have chosen $\mv = (0, 0, m_z)$ this means we can vary the magnetisation length at node 0 arbitrarily while still satisfying the constraint.
 
 A similar expression is obtained if nodal magnetistations are chosen for the test function used in \eqref{eq:23} instead of the magnetisation function, as in \autoref{sec:weak-cons-absmv}.
 
 Finally it is interesting to note that if the magnetisation is constant in space at times $t_n$ and $t_{n+1}$ then the integral condition in \eqref{eq:23} \emph{is} sufficient to give conservation of the magnetisation length at nodes.
 
 
-\subsubsection{Failure of energy conservation with Gaussian quadrature}
-
-The proof of energy conservation does not fail directly.
-However, non-constant magnetisation length means that the derivation of the boundary condition is no longer applicable (??ds check this, non-constant |m| should destroy Neumann condition therefore symmetry is gone).
-Hence the effective field is no longer symmetrical and the proof of energy conservation no longer applies.
-
 \subsection{A local nodal integration scheme}
 
-In order to regain conservation properties in a weak-form-based method we introduce a nodal integration scheme based on that used by Bartels et. al.\cite{Bartels2006}:
+In order to regain conservation properties in a weak-form-based method we introduce a nodal integration scheme used by Bartels et. al. \cite{Bartels2006}:
 \begin{equation}
   \label{eq:nodal-integration}
   \int f(\xv) \d \xv \approx \sum_{l\in \text{nodes}} \beta_l f(\xv_l),
 \end{equation}
 where $\beta_l$ is a weight.
 This is simply the weighted sum of the value of the integrand at nodes.
-
 As an additional benefit this greatly simplifies the calculations since no interpolation of the values to the integration points is needed.
-For example with reduced integration (and using that $\tbf_k(\xv_l) = \delta_{kl}$) the residual contribution of the time derivative term of LLG of test function $k$ becomes
-\begin{equation}
-  \begin{aligned}
-    \intd{\dmdt \cdot \tbfv_k} &= \frac{1}{\dtn} \intd{(\mv_{n+1}(\xv) + \mv_{n}(\xv)) \cdot \tbfv_k(\xv)}, \\
-    & = \frac{1}{\dtn} \sum_{l\in \text{nodes}} \beta_l (\mv_{n+1, l} + \mv_{n, l}) \cdot \tbfv_k(\xv_l), \\
-    & = \frac{1}{\dtn} \beta_k (\mv_{n+1, k} + \mv_{n, k}) \cdot \threevec{1}{1}{1}.
-  \end{aligned}
-\end{equation}
+% For example with reduced integration (and using that $\tbf_k(\xv_l) = \delta_{kl}$) the residual contribution of the time derivative term of LLG of test function $k$ becomes
+% \begin{equation}
+%   \begin{aligned}
+%     \intd{\dmdt \cdot \tbfv_k} &= \frac{1}{\dtn} \intd{(\mv_{n+1}(\xv) + \mv_{n}(\xv)) \cdot \tbfv_k(\xv)}, \\
+%     & = \frac{1}{\dtn} \sum_{l\in \text{nodes}} \beta_l (\mv_{n+1, l} + \mv_{n, l}) \cdot \tbfv_k(\xv_l), \\
+%     & = \frac{1}{\dtn} \beta_k (\mv_{n+1, k} + \mv_{n, k}) \cdot \threevec{1}{1}{1}.
+%   \end{aligned}
+% \end{equation}
 
 % \subsubsection{Derivation of weights for local integration}
 
 We now need to derive a suitable $\beta_l$.
 To do so we represent the quadrature scheme as an integral of an interpolating polynomial which matches the desired integration scheme, then we rearrange the equation to find the weights (see, \eg \cite[480]{Kincaid2002}).
-In \texttt{oomph-lib} all integration is done in local co-ordinates (as discussed in \autoref{sec:fem-integration-??ds}), so we now calculate weights applicable in this case.
+In \texttt{oomph-lib} all integration is done in local coordinates as discussed in \autoref{sec:numer-eval-integrals}, so we now calculate weights applicable in for a local coordinate quadrature.
 
-A suitable quadrature-interpolation-polynomial for our case is the shape/test function for the node.
+A suitable set of quadrature-interpolation-polynomials for our case are the shape functions.
 So we have:
 \begin{equation}
   \label{eq:nodal-quad-weights}
   \begin{aligned}
-    \int_{\magd_e} f(\xv) \d \xv &= \int_{\magd_e} f(\sv) \pd{\sv}{\xv} \d \sv, \\
-    &\approx \int_{\magd_e} \sum_l f(\sv_l) \tbf_l(\sv) J_l \d \sv, \\
-    &\approx  \sum_l f(\sv_l) J_l \int_{\magd_e} \tbf_l(\sv)  \d \sv,
+    \int_{\magd_e} f(\xv) \d \xv &= \int_{\magd_e} f(\sv) J(\sv) \d \sv, \\
+    &\approx \int_{\magd_e} \bigb{\sum_l f(\sv_l) \tbf_l(\sv)} J(\sv) \d \sv, \\
+    &\approx \sum_l f(\sv_l) \int_{\magd_e} \tbf_l(\sv) J(\sv) \d \sv,
   \end{aligned} 
 \end{equation}
-where $J_l =  \evalatb{\pd{\sv}{\xv}}{\sv=\sv_l}$ is the Jacobian of the transformation from local to global coordinates evaluated at the $l$-th integration point.
+where $J =  \pd{\sv}{\xv}$ is the Jacobian of the transformation from local to global coordinates.
 Comparing \eqref{eq:nodal-integration} with \eqref{eq:nodal-quad-weights} we see that
 \begin{equation}
-  \beta_l =  J_l \int_{\magd_e} \tbf_l(\sv)  \d \sv.
+  \begin{aligned}
+    \beta_l &= \int_{\magd_e} \tbf_l(\sv) J(\sv) \d \sv \bigb{= \int_{\magd_e} \tbf_l \d\xv}.
+  \end{aligned} 
 \end{equation}
-The equivalent weight for global integration is $\beta_l = \int_{\magd} \tbf_l(\xv) \d \xv$, as used by Bartels \etal\cite{Bartels2006}.
 
 If $f(\sv)$ is a linear polynomial then our nodal quadrature scheme is exact.
-However most terms in the LLG residual are higher order, due to them containing one or more interpolated terms (each a linear polynomial) mulitiplied by a test function (also a linear polynomial).
-An exception is the exchange residual, \eg the $x$-component:
+This is somewhat worse that the case with Gaussian quadrature where polynomials of up to 3rd order are integrated exactly
+% However most terms in the LLG residual are higher order, due to them containing one or more interpolated terms (each a linear polynomial) mulitiplied by a test function (also a linear polynomial).
+One term in the residual is linear and so still integrated exactly: the exchange residual. For example the $x$-component is:
 \begin{equation}
   \begin{aligned}
-    \rex_{,x} = - \intd{ m_y \bigb{\grad \tbf \cdot \grad m_z}} + \intd{ m_z \bigb{\grad \tbf_n \cdot \grad m_y}},
+    r_{\text{exch},x} = - \intd{ m_y \bigb{\grad \tbf \cdot \grad m_z}} + \intd{ m_z \bigb{\grad \tbf_n \cdot \grad m_y}},
   \end{aligned}
 \end{equation}
 which is linear because the gradient terms are constants ($m_i$ and $\tbf_n$ are linear polynomials so their derivatives are constant).
-Hence the exchange term is integrated exactly.
-
 
 
 \subsubsection{Conservation of $\abs{\mv}$ at nodes}
 \label{sec:weak-cons-absmv}
 
-??ds add weak exchange residual!
-
-Starting from the IMR discretised weak form of the LLG \eqref{eq:weak-llg-imr}, after minimising the residual we have that
+Starting from the IMR discretised weak form of the LLG \eqref{eq:weak-llg-imr}, after minimising the residual using \eg the Newton-Raphson method to tolerance $\ntol$ we have
 \begin{equation}
-  \intd{\dmdtm \cdot \testv + (\mvm \times \hv[\tm, \mvm]) \cdot \testv - \dampc (\mvm \times \dmdtm) \cdot \testv } < \ntol, \quad \forall \testv .
+  \intd{ \bigs{\dmdtm  + (\mvm \times \hv[\tm, \mvm]) - \dampc (\mvm \times \dmdtm)} \cdot \testv + \bigb{\mvm \times \grad \mvm} : \grad \testv} < \ntol, \quad \forall \testv.
 \end{equation}
-
-Next we examine the choice of the test function as the midpoint nodal value of $\mv$ at node j multiplied by the $j$th test basis function, $\testv = \mvm_{,j} \tbf_j$.
-This choice is clearly in the vector space of test functions because it is simply a constant multiple of a basis function.
-The result is
-\begin{equation}
-  \sum_l \beta_l \jstox_l \bigs{\dmdtml \cdot \mvm_{,j}\tbf_j(\xv_l) + (\mvm_{,l} \times \hv[\tm, \mvm_{,l}]) \cdot \mvm_{,j}\tbf_j(\xv_l) - \dampc (\mvm_{,l} \times \dmdtml) \cdot \mvm_{,j}\tbf_j(\xv_l)} < \ntol.
-\end{equation}
-
-Using $\tbf_k(\xv_l) = \delta_{kl}$ we can eliminate the summation
-\begin{equation}
-  \beta_j \jstox_j \bigs{\dmdtmj \cdot \mvm_{,j} + (\mvm_{,j} \times \hv[\tm, \mvm_{,j}]) \cdot \mvm_{,j} - \dampc (\mvm_{,j} \times \dmdtmj) \cdot \mvm_{,j}} < \ntol.
-\end{equation}
-By the properties of the triple product the procession and damping terms vanish. Then expanding the midpoint values gives us our conservation result:
+For the purposes of this derivation we choose the test function to be the midpoint nodal value of $\mv$ at node $j$ multiplied by the $j$th test basis function, $\testv = \mvm_{,j} \tbf_j$.
+This choice is clearly in the vector space of test functions because it is simply a constant multiple of a basis function of that space.
+So we know that
 \begin{equation}
   \begin{aligned}
-    \frac{\beta_j \jstox_j}{2\dtn}(\mv_{n+1,j} - \mv_{n,j}) \cdot (\mv_{n+1, j} + \mv_{n, j}) &< \ntol, \\
-    \abs{\mv_{n+1, j}}^2 - \abs{\mv_{n, j}}^2 &< \frac{2\dtn}{\beta_j \jstox_j}\ntol.
+    \sum_l \beta_l \bigg[& \bigb{\dmdtml + \mvm_{,l} \times \hv[\tm, \mvm_{,l}] - \dampc \mvm_{,l} \times \dmdtml} \cdot \mvm_{,j}\tbf_j(\xv_l) \\
+      &+ \bigb{\mvm \times \grad \mvm} : \grad (\mvm_{,j}\tbf_j(\xv_l)) \bigg] < \ntol.
+  \end{aligned}
+\end{equation}
+Using $\tbf_k(\xv_l) = \delta_{kl}$ we can eliminate the summation leaving
+\begin{equation}
+  \begin{aligned}
+    \beta_j \bigg[& \bigb{\dmdtmj  + (\mvm_{,j} \times \hv[\tm, \mvm_{,j}])  - \dampc (\mvm_{,j} \times \dmdtmj)} \cdot \mvm_{,j} \\
+    &+ \bigb{\mvm \times \grad \mvm} : \grad (\mvm_{,j})
+    \bigg] < \ntol.
+  \end{aligned} 
+\end{equation}
+Now, by the properties of the triple product, the precession and damping terms vanish leaving
+\begin{equation}
+  \beta_j \dmdtmj \cdot  \mvm_{,j} < \ntol.
+\end{equation}
+Then expanding the midpoint values gives the desired conservation result:
+\begin{equation}
+  \begin{aligned}
+    \frac{\beta_j}{2\dtn}(\mv_{n+1,j} - \mv_{n,j}) \cdot (\mv_{n+1, j} + \mv_{n, j}) &< \ntol, \\
+    \abs{\mv_{n+1, j}}^2 - \abs{\mv_{n, j}}^2 &< \frac{2\dtn}{\beta_j} \ntol.
   \end{aligned}
 \end{equation}
 
-This can obviously be repeated for all nodes $j$, hence each nodal magnetisation length is conserved.
+This is applicable for all nodes $j$, hence all nodal magnetisation lengths are conserved.
 
 
 \subsubsection{Energy loss}
+??ds add weak exchange residual? is it safe to leave it inside $\hv$? Don't think so because that needs $\sob^2$...
 
-??ds add weak exchange residual!
+The energy loss property can be derived in exactly the same way as in \autoref{eq:weak-llg-imr} except that instead of arbitrarily taking an $\ltwo$ inner product we replace the test function with a carefully chosen function.
+The relevant choice of test function is
+\begin{equation}
+  \testv = \hv[\tm, \mvm] - \dampc \dmdtm.
+\end{equation}
+The term $\dampc \dmdtm = \dampc\frac{mv_{n+1} - \mv_n}{\dtn}$ is clearly in the space of test functions since it is a linear combination of two magnetisation functions (which are in the equivalent solution space).
+The term $\hv[\tm, \mvm]$ is more complex... ??ds is it in there?
+
+After making this substitution and applying the triple product identity we have
+\begin{equation}
+  \intd{\dmdtm \cdot \hv[\tm, \mvm]} - \dampc \intd{\dmdtm \cdot \dmdtm} < \ntol,
+\end{equation}
+which after using a midpoint approximation for the applied field is exactly \eqref{eq:54} of the derivation of the energy loss property for the strong form of the LLG.
+The rest of the derivation proceeds identically.
 
 
-Again we start from the IMR discretised weak form of the LLG \eqref{eq:weak-llg-imr} and proceed by choosing specific test functions.
-In this case we first choose $\testv = \dmdtm$, which gives:
-\begin{equation}
-  \label{eq:test-dmdt}
-  \begin{aligned}
-    \intd{\dmdtm \cdot \dmdtm} - \intd{\dmdtm  \cdot (\mvm \times \hv[\tm, \mvm])} < \ntol.
-  \end{aligned}
-\end{equation}
+% Again we start from the IMR discretised weak form of the LLG \eqref{eq:weak-llg-imr} and proceed by choosing specific test functions.
+% In this case we first choose $\testv = \dmdtm$, which gives:
+% \begin{equation}
+%   \label{eq:test-dmdt}
+%   \begin{aligned}
+%     \intd{\dmdtm \cdot \dmdtm} - \intd{\dmdtm  \cdot (\mvm \times \hv[\tm, \mvm])} < \ntol.
+%   \end{aligned}
+% \end{equation}
 
-Secondly we choose $\testv = \hv[\tm, \mvm]$ to obtain:
-\begin{equation}
-  \label{eq:test-h}
-  \begin{aligned}
-    &\intd{\dmdtm \cdot \hv[\tm, \mvm]} - \dampc \intd{\hv[\tm, \mvm] \cdot (\mvm \times \dmdtm)} < \ntol \\
-    &= \intd{\dmdtm \cdot \hv[\tm, \mvm]} - \dampc \intd{\dmdtm \cdot (\hv[\tm, \mvm] \times \mvm)}, \\
-    &= \intd{\dmdtm \cdot \hv[\tm, \mvm]} + \dampc \intd{\dmdtm \cdot (\mvm \times \hv[\tm, \mvm])}.
-  \end{aligned}
-\end{equation}
+% Secondly we choose $\testv = \hv[\tm, \mvm]$ to obtain:
+% \begin{equation}
+%   \label{eq:test-h}
+%   \begin{aligned}
+%     &\intd{\dmdtm \cdot \hv[\tm, \mvm]} - \dampc \intd{\hv[\tm, \mvm] \cdot (\mvm \times \dmdtm)} < \ntol \\
+%     &= \intd{\dmdtm \cdot \hv[\tm, \mvm]} - \dampc \intd{\dmdtm \cdot (\hv[\tm, \mvm] \times \mvm)}, \\
+%     &= \intd{\dmdtm \cdot \hv[\tm, \mvm]} + \dampc \intd{\dmdtm \cdot (\mvm \times \hv[\tm, \mvm])}.
+%   \end{aligned}
+% \end{equation}
 
-Combining equations~\eqref{eq:test-dmdt} and \eqref{eq:test-dmdt} results in
-\begin{equation}
-  0 = \intd{\dmdtm \cdot \hv[\tm, \mvm]} + \dampc \intd{\dmdtm \cdot \dmdtm},
-\end{equation}
-\ie
-\begin{equation}
-  \intd{\mv_{n+1} \cdot \hv[\tm, \mvm]} = \intd{\mv_n \cdot \hv[\tm, \mvm]} - \dtn \dampc \intd{\dmdtm \cdot \dmdtm}.
-\end{equation}
-With zero applied field $\hv[t, \mv] = \hv[\mv]$ is a symmetrical linear operator on $\mv$ with respect to the inner product $\intd{\av \cdot \bv}$ (see \autoref{sec:energy-field-relation}), using this property in a similar manner to \autoref{sec:prop-imr-llg} we obtain
-\begin{equation}
-  \frac{1}{2}\intd{\mv_{n+1} \cdot \hv[\mv_{n+1}]} = \frac{1}{2}\intd{\mv_n \cdot \hv[\mv_n]} - \dtn \dampc \intd{\dmdtm \cdot \dmdtm}.
-\end{equation}
-But, as mentioned in \autoref{sec:prop-imr-llg} $\frac{1}{2}\intd{\mv \cdot \hv[\mv]}$ is the total micromagnetic energy of the domain (when $\happ = \zerov$), hence we have
-\begin{equation}
-  \e_{n+1} = \e_n - \dtn \dampc \intd{\dmdtm \cdot \dmdtm},
-\end{equation}
-which is the midpoint discretisation of the analytical energy loss rate given by equation~\eqref{eq:energy-decay}.
-In particular when $\dampc = 0$ the energy is conserved.
+% Combining equations~\eqref{eq:test-h} and \eqref{eq:test-dmdt} results in
+% \begin{equation}
+%    \intd{\dmdtm \cdot \hv[\tm, \mvm]} + \dampc \intd{\dmdtm \cdot \dmdtm} < (1 + \dampc) \ntol,
+% \end{equation}
+% \ie
+% \begin{equation}
+%   \intd{\mv_{n+1} \cdot \hv[\tm, \mvm]} - \intd{\mv_n \cdot \hv[\tm, \mvm]} + \dtn \dampc \intd{\dmdtm \cdot \dmdtm} < (1 + \dampc) \dtn \ntol.
+% \end{equation}
+% With zero applied field $\hv[t, \mv] = \hv[\mv]$ is a symmetrical linear operator on $\mv$ with respect to the inner product $\intd{\av \cdot \bv}$ (see \autoref{sec:energy-field-relation} for a proof), using this property in a similar manner to \autoref{sec:proof-energy-prop} we obtain
+% \begin{equation}
+%   \frac{1}{2}\intd{\mv_{n+1} \cdot \hv[\mv_{n+1}]} = \frac{1}{2}\intd{\mv_n \cdot \hv[\mv_n]} - \dtn \dampc \intd{\dmdtm \cdot \dmdtm}.
+% \end{equation}
+% But $\frac{1}{2}\intd{\mv \cdot \hv[\mv]}$ is the total micromagnetic energy of the domain (when $\happ = \zerov$), hence we have
+% \begin{equation}
+%   \e_{n+1} = \e_n - \dtn \dampc \intd{\dmdtm \cdot \dmdtm},
+% \end{equation}
+% which is the midpoint discretisation of the analytical energy loss rate given by equation~\eqref{eq:energy-decay}, exactly as derived in \autoref{sec:proof-energy-prop}.
+% The extension to the case with the applied field proceeds exactly as for the strong form of the LLG discussed in \autoref{sec:proof-energy-prop}.
 
-The extension to the case with the applied field proceeds exactly as for the strong form of the LLG, as discussed in \autoref{sec:prop-imr-llg}.
-The final result is
-\begin{equation}
-  ??ds
-\end{equation}
+Note that this proof did not depend on the use of nodal quadrature.
+??ds but without $|\mv|$ conservation we can't hope to conserve other things?
 
 
 \subsection{Numerical experiments}
@@ -1187,7 +1282,7 @@ This clearly demonstrates the necessity and effectiveness of the nodal quadratur
 \label{sec:effect-newt-toler-m-conservation}
 
 Since the non-linear residual \eqref{eq:weak-llg} used in the derivation of the conservation properties is only true up to the accuracy of the linearisation method we would expect to see some effect when modifying this accuracy.
-In our model Newton's method is used for linearisation (see \autoref{sec:newt-meth}) so the relevant measure of accuracy is the Newton tolerance.
+In our model Newton's method is used for linearisation (see \autoref{sec:newt-raph})so the relevant measure of accuracy is the Newton tolerance.
 
 The obvious experiment to carry out would be to vary the Newton tolerance and examine how the error in $\abs{\mv}$ is affected.
 However Newton's method extremely quickly meaning that the final residual is sometimes orders of magnitude smaller than the tolerance, this would hide any corrolation between the tolerance and the error.
@@ -1204,20 +1299,20 @@ The results are shown in \autoref{fig:mean-ml-error-2d-nodal-newton-tests}, ther
 \end{figure}
 
 
-\subsubsection{Adaptivity}
-??ds - no need for this? leave it to the final subsection?
+% \subsubsection{Adaptivity}
+% ??ds - no need for this? leave it to the final subsection?
 
-It remains to demonstrate that the adaptivity scheme introduced in \autoref{sec:adaptive-imr} is effective for the finite element problem with nodal integration.
-Since there is still no relationship with previous time step sizes in the conservation proofs with nodal integration we don't expect there to be any issues with variable step size and conservation.
+% It remains to demonstrate that the adaptivity scheme introduced in \autoref{sec:adaptive-imr} is effective for the finite element problem with nodal integration.
+% Since there is still no relationship with previous time step sizes in the conservation proofs with nodal integration we don't expect there to be any issues with variable step size and conservation.
 
-Additionally our discretisation can be written as semi-discretisation in space (giving a system of ODEs) followed by the application of IMR in time.
-Hence we have no reason to expect the adaptive IMR to behave any differently to in the pure ODE case.
+% Additionally our discretisation can be written as semi-discretisation in space (giving a system of ODEs) followed by the application of IMR in time.
+% Hence we have no reason to expect the adaptive IMR to behave any differently to in the pure ODE case.
 
-\subsubsection{BEM}
-??ds - no need for this? leave it to the final subsection?
+% \subsubsection{BEM}
+% ??ds - no need for this? leave it to the final subsection?
 
 
-??ds
+% ??ds
 
 
 \subsection{Conclusions}
