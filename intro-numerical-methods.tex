@@ -1,30 +1,31 @@
 \chapter{Numerical Methods for Dynamic Micromagnetic Modelling}
 \label{sec:numer-meth-micr}
 
-In this Chapter we give an overview of numerical methods that have been or could be used in dynamic micromagnetic calculations.
-These calculations involve solving some form of the LLG equation \eqref{eq:LLG} with fields determined by energy derivatives as discussed in \autoref{sec:cont-micromag}.
-These systems of partial differential equations (PDEs) can only be solved analytically in a few extremely simple cases \cite{Aharoni1996},\footnote{For example the Stoner-Wolfarth theory for the rotation of a single grain \cite{Stoner1948a}.} so numerical solution methods are almost always required.
+??ds In general should I cite models using each method?
 
-Many numerical methods for solving non-linear PDEs, such as \eqref{eq:LLG}, can be thought of as a combination of various component methods, each of which handles a different part of the conversion from a purely mathematical description into a complete algorithm which can be performed by a computer\footnote{Technically proofs of convergence etc. should be carried out for every different combination of time and space discretisation\cite[382]{Iserles2009}; in practice suprises seem to be rare, at least within micromagnetics.}.
 
-The essential components of such a numerical method are:
+In this Chapter we give an overview of numerical methods that have previously been used in dynamic micromagnetic calculations.
+These calculations involve solving some form of the LLG equation \eqref{eq:LLG} with effective fields determined by energy derivatives as discussed in \autoref{sec:cont-micromag}.
+These systems of partial differential equations (PDEs) can only be solved analytically in a few extremely simple cases\footnote{For example the Stoner-Wolfarth theory for the rotation of a single grain \cite{Stoner1948a}.} \cite{Aharoni1996}, so numerical solution methods are almost always necessary.
+
+Many numerical methods for solving non-linear PDEs, such as \eqref{eq:LLG}, can be thought of as a combination of various component methods, each of which handles a different part of the conversion from a continuous PDE into an algorithm which can be performed by a computer\footnote{Technically proofs of convergence etc. should be carried out for every different combination of time and space discretisation\cite[382]{Iserles2009}; in practice suprises seem to be rare, at least within micromagnetics.}.
+
+The essential components of a numerical method for solving PDE problems are:
 \begin{itemize}
-\item Spatial discretisation: convert space derivatives into algebraic relationships between points in space, \eg Finite elements, finite differences, macrospin models. 
-\item Time discretisation (a.k.a. time integration):  convert time derivatives into algebraic relationships between points in time, \eg Runge-Kutta methods, backwards difference formulae (BDF), implicit midpoint rule (IMR).
+\item Spatial discretisation: convert space derivatives into algebraic relationships between discrete points in space, \eg finite elements, finite differences, macrospin models. 
+\item Time discretisation (a.k.a. time integration):  convert time derivatives into algebraic relationships between points in time, \eg Runge-Kutta methods, backwards difference formulae.
 \end{itemize}
 For some choices of time and space discretisations additional component methods are needed:
 \begin{itemize}
-\item Linearisation: Convert a system of non-linear algebraic equations into a sequence of systems of linear algebraic equations, \eg Newton-Raphson method, Picard/fixed-point iteration. 
+\item Linearisation procedure: Solve a system of non-linear algebraic equations, often by an iterative procedure which requires the solution of a sequence of systems of linear algebraic equations, \eg Newton-Raphson method, Picard/fixed-point iteration. 
 \item Linear solver: solve a system of linear algebraic equations, \eg LU decomposition, Krylov solvers, multigrid methods. 
 \end{itemize}
 
 Additionally in micromagnetic modelling the calculation of the magnetostatic field is required.
 If the integral form given in \eqref{eq:Hmsint} is used then an additional integral evaluation method is needed to handle it.
-Alternatively if the equivalent potential formulation \eqref{eq:Hms}, \eqref{eq:cont-phi-bound} is used then more PDEs are added to the system of PDEs describing the magnetisation dynamics.
+Alternatively, if the equivalent potential formulation \eqref{eq:Hms}, \eqref{eq:cont-phi-bound} is used then the magnetostatic field calculation simply requires solving additional PDEs.
 
-It should be noted that not all methods fit into this framework of independent methods for each part of the problem.
-In particular one example which uses a combined space/time discretisation to obtain some interesting properties is discussed (briefly) in \autoref{sec:advanced-lin}.
-In general however, the modularity of both understanding and code given by thinking of a PDE solver as a combination of components is extremely powerful.
+It should be noted that not all methods fit into this framework of applying separate methods for each part of the problem, see \autoref{sec:advanced-lin} for one example.
 
 
 \section{Spatial Discretisation}
@@ -33,37 +34,34 @@ In general however, the modularity of both understanding and code given by think
 \subsection{Macrospins}
 \label{sec:sd-macrospins}
 
-In a granular material (a material consisting of magnetic grains separated by a non-magnetic material) the simplest way to handle spatial derivatives in the problem is to assume that within each grain the exchange coupling is so strong that they are zero, \ie that each grain rotates as a single \emph{macrospin}.
+In a granular magnetic material (a material consisting of magnetic grains separated by a non-magnetic material) the simplest way to handle spatial variation in the problem is to assume that within each grain the exchange effective field is so strong that the magnetisation is constant, \ie that each grain behaves as a single \emph{macrospin}.
 We assign a single value of $\Mv$ to each macrospin and proceed to calculate energy, effective field and/or magnetisation of each macrospin as required.
-One caveat is that the magnetostatic self field is not automatically accounted for since there is no modelling of intra-grain effects.
+One caveat is that the effects of the magnetostatic field of a grain on the grain itself is not automatically accounted for since there is no modelling of intra-grain effects.
 Hence it must be calculated and included separately to the magnetostatic interactions between grains.
 When included in this way the magnetostatic self field is often called the \emph{shape anisotropy} since it is dependent on the shape of the grain and acts in a similar way to the magnetocrystalline anisotropy. 
-The same approach may be used with any system in which there are a number of ``small'',\footnote{All dimensions of the bodies must be much smaller than the exchange length so that all magnetisation within the body is approximately parallel.} separate magnetic bodies with approximately uniform magnetisation inside the body.
+
+This macrospin approach may be used with any system in which there are a number of ``small'',\footnote{All dimensions of the bodies must be much smaller than the exchange length so that all magnetisation within the body is approximately parallel.} separate magnetic bodies with approximately uniform magnetisation inside the body.
 
 The obvious downside of a macrospin approach is that it only applies to a fairly specific geometry, although the case of a granular media has been of much interest for magnetic data storage. 
 Additionally, if there are non-uniformities in magnetisation within the regions where it has been assumed constant the model may be inaccurate.
 
-However it is often simpler to construct a macrospin model than to use the methods described in \autoref{sec:sd-finite-diff-meth} and~\ref{sec:sd-finite-elem-meth}.
+However it is often simpler to construct a macrospin model than to use the more general methods described in \autorefs{sec:sd-finite-diff-meth, sec:sd-finite-elem-meth}.
 Also the assumption that each grain has uniform magnetisation will reduce the number of calculations needed.
 
-Closely related to macrospin models are atomistic models\cite{Evans2014}.
+Closely related to macrospin models are atomistic models \cite{Evans2014}.
 In these models the assumption of a continuous magnetisation $\mv(\xv, t)$ is dropped in favor of an assumption that each atom is the location of a single macrospin.
 As such they allow modelling of some systems, such as antiferromagnetic materials, that are inaccessible using micromagnetics.
-However the required spatial resolution comes with a large increase in computational cost.
+However, the required spatial resolution comes with a large increase in computational cost.
 
 
 \subsection{Finite Difference Methods}
 \label{sec:sd-finite-diff-meth}
 
 Another method of spatial discretisation is the finite difference method: a single magnetisation vector is assigned to each point on (or ``cell'' in) a simple square/cubic grid which covers the entire domain.
-Spatial derivatives are then approximated by expressions of the form
-\begin{equation}
-  \evalatb{\pd{f}{x}}{x'} \approx \frac{f(x' + h) - f(x')}{h},
-\end{equation}
-where $h$ is the distance between points in the grid.
+Spatial derivatives in the PDE are then approximated by using truncated Taylor series expansions.
 
 The finite difference method works well for very simple geometries when the grid can be lined up with all geometric features.
-For example when we are interested in how the magnetisation evolves over time in a non-granular cuboid-shaped thin film of magnetic material a finite difference method will be sufficient (\eg in the $\mu$mag standard problems\cite{mumag-website}).
+For example when we are interested in how the magnetisation evolves over time in a non-granular cuboid-shaped thin film of magnetic material a finite difference method will be sufficient (\eg in the $\mu$mag standard problems \cite{mumag-website}).
 
 However when the geometry involves curves, diagonals, hexagonal grains, bit patterned media or any other more complex geometric system other methods are better suited.
 
@@ -72,7 +70,7 @@ However when the geometry involves curves, diagonals, hexagonal grains, bit patt
 \label{sec:sd-finite-elem-meth}
 
 A more complex method of spatial discretisation is the finite element method \cite{HowardElmanDavidSilvester2006}.
-Here the magnetic body is divided up into a finite number of polygonal \emph{elements}, which can vary in both size and shape.
+Here the magnetic body is divided up into a finite number of non-overlapping polygonal \emph{elements}, which can vary in both size and shape.
 Within each of these elements each magnetisation component is approximated by a simple polynomial function of space, typically a linear polynomial.
 Spatial derivatives are calculated by simply differentiating these polynomial functions.
 More details of the finite element method are given in \autoref{sec:intr-finite-ele-diff}.
@@ -90,9 +88,8 @@ Also the set up time and memory usage can be greater because of the additional `
 \section{Time Integration}
 \label{sec:time-discretisation}
 
-Time integration is for....
-
-When discussing time integration schemes it is helpful to use a (vector) initial value ordinary differential equation:
+Time integration schemes are used to convert the time derivatives of a PDE into a form that can be handled computationally. 
+When discussing time integration schemes it is helpful to use a (vector) initial value ordinary differential equation as an example:
 \begin{equation}
   \begin{aligned}
     \frac{d \yv}{dt} &= \ffv{t, \yv}, \\
@@ -101,106 +98,103 @@ When discussing time integration schemes it is helpful to use a (vector) initial
   \end{aligned}
 \end{equation}
 where $\fv(t,\yv)$ is a known function and $\yv_0$ is the (known) initial condition.
-After the application of one of the spatial discretisations described above the PDE describing the Landau-Lifshitz-Gilbert equation is reduced to this problem, sometimes called a \emph{semi-discretised} PDE.
+After the application of one of the spatial discretisations described above a PDE is typically reduced to the form \eqref{eq:45}, this sometimes is called a \emph{semi-discretised} PDE.
 
-The time discretisation methods discussed here all bear a strong similarity to the finite difference method discussed in \autoref{sec:sd-finite-diff-meth}, except that the variable discretised is time instead of space.
-This is appropriate since there is no analogue of geometric features in time, hence typically no need for the more advanced finite element method.
+The time integration methods discussed here all bear a strong similarity to the finite difference method discussed in \autoref{sec:sd-finite-diff-meth}, except that the independant variable discretised is time instead of space.
+This is appropriate since time is one-dimesional, hence no complex geometry is possible and so typically there is no need for the more advanced finite element method.
 
-Some key attributes of a time discretisation scheme are: \cite{Atkinson2009}
+Some key attributes of a time integration scheme are \cite{Atkinson2009}:
 \begin{itemize}
-
 \item \textbf{Accuracy (order)} -- An estimate of how rapidly the approximate solution converges as the time step size is reduced.
 
-\item \textbf{Stability} -- Roughly speaking a scheme is stable if the approximate solution does not ``blow up'' (\ie become catastophically inaccurate, infinite, oscillate in non-physical ways, \ldots) when time steps are larger than maximum stable step (see \autoref{sec:A-stability} for a more rigorous description).
+\item \textbf{Stability} -- Roughly speaking a scheme is stable if the approximate solution does not ``blow up'' (\ie become catastophically inaccurate, infinite, oscillate in non-physical ways, \ldots) for sufficiently large time steps (see \autoref{sec:A-stability} for a more rigorous description).
 
-\item \textbf{Preservation of geometrical properties} -- Some differential equations have properties which should ideally be conserved in the discretised system.
-For example the properties of the Landau-Lifshitz-Gilbert equation discussed in \autoref{sec:prop-cont-llg}.
+\item \textbf{Conservation properties} -- Some differential equations have properties which should ideally be conserved in the discretised system.
+For example, certain important properties of the Landau-Lifshitz-Gilbert equation discussed in \autoref{sec:prop-cont-llg}.
+Schemes which conserve such properties are often referred to as ``geometric'' integrators.
 
 \item \textbf{Self-starting} -- A scheme is self starting if it only requires a single initial value.
-This is desirable because the methods of estimating additional initial values make the final scheme more complex and may introduce additional errors.
+This is desirable because methods of estimating additional initial values make the final scheme more complex and may introduce additional errors.
 \end{itemize}
 
-These attributes are discussed more rigorously in the rest of this Section.
+These attributes are discussed more rigorously in the rest of this section.
 
 \subsection{Explicit and implicit time integration schemes}
 \label{sec:explicit-vs-implicit-schemes}
 
-Explicit time discretisation schemes give the value at some future time in terms of the value at the present time and/or previous times.
-The simplest such scheme is the (forward) Euler method
+Explicit time discretisation schemes calculate the value at the next time step in terms of the value(s) at the present and/or previous time steps.
+The simplest such scheme is the \emph{(forward) Euler method}
 \begin{equation}
   \label{eq:44}
   \yv_{n+1} = \yv_n + \dtn f(t_n, \yv_n),
 \end{equation}
-where $\dtn$ is the $n$-th time-step. 
-Clearly, given $f(t,y)$ and an initial value for $y(t_0)$ we can solve for $y(t_n)$ for any $n$. However the stability and convergence behaviour of this simple scheme is less than impressive. Typically more advanced explicit schemes are used which give increased stability \cite{Atkinson2009}.
-Also the so called ``CFL condition'' (Courant-Freidrich-Lewy condition) can force the use of lower time-steps in explicit solvers if a finite element/difference spatial discretisation with small elements/cells is used.
+where $\dtn = t_{n+1} - t_n$ is the $n$-th time step size and $\yv_i$ is the approximation to $\yv(t_i)$.
+Clearly, given $f(t,y)$ and an initial value for $y(t_0)$ we can solve for $y(t_n)$ for any $n$.
 
-Implicit time discretisation schemes allow much longer time-steps to be used without loss of stability.
-However an implicit scheme gives the value at the next time-step in terms of current/previous times and in terms of the \emph{value at the next time-step}.
-Hence at each step a (linear or non-linear) system of equations must be solved, however the increase in maximum time-step size offsets this increase in calculation time per step in many cases.
-
-The backwards differences schemes are a simple and commonly used example. The first order formula is
+In contrast to explicit schemes, implicit schemes use the value at the next time step in its own calculation.
+Hence at each step a (possibly non-linear) system of equations must be solved.
+The simplest implicit scheme is the \emph{backward Euler method} (BDF1)
 \begin{equation}
-  \label{eq:bdf1}
+  \label{eq:bdf1-definition}
   \yv_{n+1} = \yv_n + \dtn \ffv{t_{n+1}, \yv_{n+1}}.
 \end{equation}
 
-Micromagnetics solvers for non-stiff systems commonly use the RK4 (fourth order Runge-Katta) method \cite{Suess2002}.
-Micromagnetics models commonly use BDF schemes of various order \cite{Suess2002} or the implicit midpoint rule \cite{DAquino2005} for the modelling of stiff systems.
+At first glance it seems that the additional solution of a system of equations required for a step of an implicit scheme mean would that explicit schemes are more efficent, and it is true that one step of an implicit method requires more computational effort than a step of an explicit method.
+However all explicit time integration schemes suffer from issues of limited stability for some problems, and so are forced to use time step sizes much smaller than would be required for reasons of accuracy (see \autoref{sec:A-stability} for details).
+In these cases implicit schemes can be much more efficient, problems where this is the case are often called ``stiff'' problems.
+The semi-discretisation of a PDE often results in a stiff problem.
+In \autoref{cha:stiffn-llg-equat} we investigate stiffness in micromagnetics problems.
 
 
-??ds move?
-Other micromagnetic models use a combination of implicit and explicit schemes: everything except for the magnetostatic field is discretised as normal using an implicit scheme, the magnetostatic field is updated (using an explicit calculation) after each time step. 
-This method gains a larger time-step from the implicit method but the system of equations to be solved remains sparse.
-However when using this method the determination (see \autoref{sec:adaptivity}) of the time-step must be done specially (\ie not using normal adaptivity) since the system of equations contains no information on the magnetostatic field \cite{Schrefl1997}.
+% Micromagnetics solvers for non-stiff systems commonly use the RK4 (fourth order Runge-Katta) method \cite{Suess2002}.
+% Micromagnetics models commonly use BDF schemes of various order \cite{Suess2002} or the implicit midpoint rule \cite{DAquino2005} for the modelling of stiff systems.
 
 
 \subsection{Some implicit time integration schemes}
 \label{sec:some-implicit-time-integrators}
 
-For the rest of this section we will use as examples three time integration schemes with good stability and accuracy properties that are widely employed in practice.
-All three are implicit schemes, for reasons of stability as explained in \autoref{sec:explicit-vs-implicit-schemes}.
+For the remainder of this section we will use three time integration schemes with good stability and accuracy properties that are widely employed in practice as examples.
+All three are implicit schemes for reasons of stability, as mentioned in \autoref{sec:explicit-vs-implicit-schemes}.
 
-Trapezoid rule (TR) is the average of the forward and backward Euler methods from \autoref{sec:explicit-vs-implicit-schemes}:
+\emph{Trapezoid rule} (TR) is the average of the forward and backward Euler methods from \autoref{sec:explicit-vs-implicit-schemes}:
 \begin{equation}
   \yv_{n+1} = \dtn (\ffv{t_{n+1}, \yv_{n+1}} + \ffv{t_n, \yv_n})/2.
+  \label{eq:tr-definition}
 \end{equation}
 
-The second order backwards difference formula (BDF2) is:
+The \emph{second order backwards difference formula} (BDF2) is:
 \begin{equation}
   \frac{\yv_{n+1} - \yv_n}{\dtn} = \frac{\dtn}{2\dtn + \dtx{n-1}} \frac{\yv_n - \yv_{n-1}}{\dtx{n-1}} 
   + \frac{\dtn + \dtx{n-1}}{2\dtn + \dtx{n-1}} \fv(t_{n+1}, \yv_{n+1}).
 \end{equation}
 
-The method that this thesis focuses on (for reasons that will become clear through the rest of this section) is the implicit midpoint rule (IMR).
-It is given by
+The method that this thesis focuses on (for reasons that will become clear through the remainder of this section) is the \emph{implicit midpoint rule} (IMR).
+It is given by:
 \begin{equation}
   \label{eq:imr-definition}
   \yv_{n+1} = \yv_n + \dtn \ffv{\frac{t_{n+1} + t_n}{2}, \frac{\yv_n + \yv_{n+1}}{2}}.
 \end{equation}
-Note that for ODEs such that $\fv$ is linear in both $t$ and $\yv$ this is equvalent to TR, and in general the properties of the two methods are similar.
+Note that for cases where $\fv$ is linear in both $t$ and $\yv$ IMR, \eqref{eq:imr-definition}, is equvalent to TR, \eqref{eq:tr-definition}.
+In general the properties of the two methods are similar.
 
-IMR is trivial to implement in any existing implicit solver: take a BDF1 step as usual then update via
+IMR is trivial to implement in any existing implicit solver: take a step of BDF1, \eqref{eq:bdf1-definition}, using $\dtn^\bdfo = \dtn^\imr/2$ then update via
 \begin{equation}
   \begin{aligned}
-    t_{n+1} &\rightarrow t_{n+1} + \dtn, \\
-    \mv_{n+1} &\rightarrow 2\mv_{n+1} - \mv_n
+    t_{n+1} &\rightarrow t_{n+1} + \dtn^\imr/2, \\
+    \mv_{n+1} &\rightarrow 2\mv_{n+1} - \mv_n.
   \end{aligned}
 \end{equation}
 This is exactly equivalent to IMR with a step size of $2\dtn$ \cite{Malidi2005}.
 
-TR and IMR are both self starting.
-BDF2 requires an additional startup value.
-This can be generated, for example, by taking a step of IMR, TR or BDF1 before beginning the use of BDF2. 
-
+TR and IMR are both self starting, while BDF2 requires an additional startup value.
+This can be generated, for example, by taking a single step of IMR or TR before beginning the use of BDF2.
 
 
 \subsection{Local truncation error and order}
 \label{sec:deriv-local-trunc}
 
-The local truncation error (LTE) of a time integration scheme is the error due to a single integration step.
-It can be calculated by substituting $\yv_n = \yv(t_n)$, $\yv_{n-1} = \yv(t_{n-1})$, etc. into the approximation for the next time-step then subtracting the result from the exact solution at the next time-step, $\yv(t_{n+1})$. 
-\ie
+The \emph{local truncation error} (LTE) of a time integration scheme is the error due to a single integration step.
+It can be calculated by substituting $\yv_n = \yv(t_n)$, $\yv_{n-1} = \yv(t_{n-1})$, etc. into the approximation for the next time-step, then subtracting the result from the exact solution at the next time-step, $\yv(t_{n+1})$, \ie
 \begin{equation}
   \label{eq:60}
   \lte = \yv(t_{n+1}) - \hat{\yv}_{n+1},
@@ -216,68 +210,68 @@ If the local truncation error of a time integration scheme is such that
 \begin{equation}
   \lte \leq c \dtn^p
 \end{equation}
-then we say that it is of order $p$.
+then we say that the scheme is of order $p$.
 
-
-It is important to distinguish the local truncation error from the global (temporal) error
+It is important to distinguish the local truncation error from the \emph{global (temporal) error}
 \begin{equation}
   \label{eq:global-temporal-error}
-  \begin{aligned}
-    E_n &= \yv(t_{n+1}) - \yv_{n+1}, \\
-    E_n^\imr &=  \yv(t_{n+1}) - \yv_n^\imr - \dtn \ffv{ \thf, \frac{\yv_n^\imr + \yv_{n+1}^\imr}{2} }.
-  \end{aligned}
+    E_n = \yv(t_{n+1}) - \yv_{n+1}.
 \end{equation}
-The difference is that the global error includes any error accumulated over previous time steps (the exact values $\yv(t_n)$ in \eqref{eq:60} are replaced by their approximations).
+The difference is that the global error includes any error accumulated over previous time steps (\ie the exact values $\yv(t_n)$ in \eqref{eq:60} are replaced by their approximations).
+Note that because of this accumulation the global error will typically be larger than the LTE.
+For example the global error of IMR expressed in the same form as \eqref{eq:trunc-start} is
+\begin{equation}
+  E_n^\imr =  \yv(t_{n+1}) - \yv_n^\imr - \dtn \ffv{ \thf, \frac{\yv_n^\imr + \yv_{n+1}^\imr}{2} }.
+\end{equation}
 
 We now give a derivation of the local truncation error of IMR. 
 The derivations for TR and BDF2 are much simpler and can be found in most text books on the subject.
-We first Taylor expand $\yv(t_{n+1})$ and $\yv(t_{n})$ about $\thf$.
-We use the midpoint rather than one of the end points (as typically used in these calculations) because it results in simpler calculations.
-Assuming that $\yv(t)$ is ``sufficiently smooth'' for the required derivatives to exist its Taylor series expansion at $t_{n+1}$ about $\thf$ is given by
+We first write the Taylor expansion $\yv(t_{n+1})$ and $\yv(t_{n})$ about $\thf$.
+We use the midpoint rather than one of the end points (a typical choice in such calculations) because it results in simpler expressions.
+Assuming that $\yv(t)$ is ``sufficiently smooth'' for the required derivatives to exist, its Taylor series expansion at $t_{n+1}$ about $\thf$ is given by
 \begin{equation}
   \yv(t_{n+1}) = \yv(\thf + \frac{\dtn}{2}) = \yvhf + \frac{\dtn}{2} \yvhf['] 
   + \frac{\dtn^2}{8} \yvhf['']
   + \frac{\dtn^3}{48} \yvhf[''']
-  \porder{\dtn^4}.
+  + \order{\dtn^4}.
   \label{eq:taylornp1}
 \end{equation}
-Similarly the expansion at $t_n$ about $\thf$ is
+Similarly, the expansion at $t_n$ about $\thf$ is
 \begin{equation}
   \yv(t_n) = \yv(\thf - \frac{\dtn}{2}) = \yvhf - \frac{\dtn}{2} \yvhf['] 
   + \frac{\dtn^2}{8} \yvhf[''] 
   - \frac{\dtn^3}{48} \yvhf['''] 
-  \porder{\dtn^4}.
+  + \order{\dtn^4}.
   \label{eq:taylorn}
 \end{equation}
-
-Substituting equations~\eqref{eq:taylornp1} and \eqref{eq:taylorn} into equation~\eqref{eq:trunc-start} gives\footnote{If we had chosen to Taylor expand about $t_n$ there would be an additional term in $\yv_n''$ here.}
+Substituting \eqref{eq:taylornp1} and \eqref{eq:taylorn} into \eqref{eq:trunc-start} gives\footnote{If we had chosen to Taylor expand about $t_n$ there would be an additional term in $\yv_n''$ in \eqref{eq:trunc-mid}.}
 \begin{equation}
   \lte^\imr = \underbrace{\frac{\dtn^3}{24} \yvhf[''']}_{\text{I}}
   + \underbrace{\dtn\bigs{ \yvhf['] - \ffv{\thf, \frac{\yv(t_n) + \yv_{n+1}}{2}} }}_{\text{II}}
-  \porder{\dtn^4}.
+  + \order{\dtn^4}.
   \label{eq:trunc-mid}
 \end{equation}
 
-There are two parts to this error: the first term (I) is fairly standard in second order time integrators.
+There are two parts to \eqref{eq:trunc-mid}: the first term (I) is fairly standard for second order time integration schemes (see \eg \autoref{cha:trunc-errors}).
 The second term (II) originates from the use of an approximation to $\yv(\thf)$ in the evaluation of $\fv$ (\ie the Runge-Kutta nature of IMR).
 The rest of the derivation requires applying Taylor expansions to II and is carried out in \autoref{sec:full-imr-lte-calculation}.
-The final result shows that IMR is second order:
+The final result shows that IMR is of second order:
 \begin{equation}
   \lte^\imr = \frac{\dtn^3}{24} \left[\yvhf['''] - 3 \dfdyhf \cdot \yvhf[''] \right]
-  \porder{\dtn^4},
+  + \order{\dtn^4},
   \label{eq:trunc-final}
 \end{equation}
 where $\dfdyhf = \pd{\fv}{\yv}\evalat{t=\thf}$ is the Jacobian of $\fv$ with respect to $\yv$ evaluated at $t=\thf$.
-An additional condition required in the derivation is that ??ds the eigenvalues of $\dtn\dfdyhf$ are less than one, the implications of this are discussed in \autoref{sec:order-reduction}.
+An additional condition required in the derivation is that ??ds the magnitude of the eigenvalues of $\dtn\dfdyhf$ are less than one, the implications of this are discussed in \autoref{sec:order-reduction}.
 
-The TR\cite[261]{GreshoSani} and BDF2\cite[715]{GreshoSani} methods are also second order.
+The TR \cite[261]{GreshoSani} and BDF2 \cite[715]{GreshoSani} methods are also second order.
 Their local truncation errors are similar to term I of \eqref{eq:trunc-mid}:
 \begin{equation}
   \label{eq:tr-lte}
   \lte^\tr = \yv_{n+1} - \yv(t_{n+1}) = -\frac{\dtn^3 \yv_n'''}{12}
   + \order{\dtn^4},
 \end{equation}
-
+and
 \begin{equation}
   \label{eq:bdf2-lte}
   \lte^\bdf = \yv_{n+1} - \yv(t_{n+1}) = \frac{(\dtn + \dtx{n-1})^2}{\dtn(2\dtn + \dtx{n-1})}
@@ -392,15 +386,15 @@ From \autoref{sec:full-imr-lte-calculation}, \eqref{eq:trunc-implicit-form} we h
 \begin{equation}
   \begin{aligned}
     (1 + \frac{\dtn \lambda}{2})\lte^\imr &= \frac{\dtn^3}{24}
-    \bigs{g'''(\thf) - 3 \lambda g''(\thf)} \porder{\dtn^4}, \\ 
+    \bigs{g'''(\thf) - 3 \lambda g''(\thf)} + \order{\dtn^4}, \\ 
   \end{aligned}
 \end{equation}
 Then using $\abs{\lambda\dtn} >> 1$:
 \begin{equation}
   \begin{aligned}
     \frac{\dtn \lambda}{2} \lte^\imr &= \frac{\dtn^3}{24}
-    \bigs{g'''(\thf) - 3 \lambda g''(\thf)} \porder{\dtn^4}, \\ 
-    \lte^\imr &= \frac{\dtn^2}{12\lambda} \left[g'''(\thf) - 3 \lambda g''(\thf) \right] \porder{\dtn^4}.
+    \bigs{g'''(\thf) - 3 \lambda g''(\thf)} + \order{\dtn^4}, \\ 
+    \lte^\imr &= \frac{\dtn^2}{12\lambda} \left[g'''(\thf) - 3 \lambda g''(\thf) \right] + \order{\dtn^4}.
   \end{aligned}
 \end{equation}
 So we can see that the order has been reduced by a factor of $1/\dtn$.
@@ -1021,6 +1015,13 @@ Magnetostatic calculations on the resulting non-uniform mesh are typically then 
 The use of refined meshes to fully resolve the geometry can often result in stiff problems, requiring the use of implicit time integration schemes for good efficiency.
 In all ``real world'' models using implicit time integration known to the author the Newton-Raphson method is used for linearisation.
 Typically some form of preconditioned Krylov solver is then used to solve the resulting linear systems.
+
+??ds rewrite
+Many FEM/BEM micromagnetic models use a combination of implicit and explicit schemes: everything except for the magnetostatic field is discretised using an implicit scheme, the magnetostatic field is updated (using an explicit calculation) after each time step. 
+This method has the benefit of a larger time-step from the implicit method but the system of equations to be solved is smaller.
+However when using this method the adaptive time step calculation must be done specially (\ie not using normal adaptivity) since the system of equations contains no information on the magnetostatic field \cite{Schrefl1997}.
+Also stability is no longer guaranteeded because an ad-hoc modification to the time integration method.
+Finally any geometric integration properties may be lost (\eg IMR loses the energy property when used in combination with \emph{any} explicit field calculations). 
 
 \subsection{Non-linear solvers and geometric integration}
 

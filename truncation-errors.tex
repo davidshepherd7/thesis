@@ -1,4 +1,5 @@
 \chapter{Truncation errors for some ODE methods}
+\label{cha:trunc-errors}
 
 \begin{table}[h]
   \centering
@@ -47,7 +48,7 @@ Hence we need an expansion of the form
 \begin{equation}
   \begin{aligned}
     \fv(\thf, \frac{\yv(t_n) + \yv_{n+1}}{2}) &= \fv(\thf, \yvhf + \dyn), \\
-    &= \fv(\thf, \yvhf) + \dfdyhf \cdot \dyn  \porder{\dyn^2}
+    &= \fv(\thf, \yvhf) + \dfdyhf \cdot \dyn  + \order{\dyn^2}
     \label{eq:f-taylor}
   \end{aligned}
 \end{equation}
@@ -68,8 +69,8 @@ So we use the LTE of IMR to rewrite equation~\eqref{eq:51} as
 Substituting in the Taylor expansions for $\yv(t_n)$ and $\yv(t_{n+1})$ about $\thf$ (from equations~\eqref{eq:taylornp1} and \eqref{eq:taylorn}) gives
 \begin{equation}
   \begin{aligned}
-    \dyn &= \yvhf + \frac{\dtn^2}{8} \yvhf[''] - \yvhf - \frac{1}{2} \lte^\imr \porder{\dtn^4}\\
-    &= \frac{\dtn^2}{8} \yvhf[''] - \frac{1}{2} \lte^\imr \porder{\dtn^4}
+    \dyn &= \yvhf + \frac{\dtn^2}{8} \yvhf[''] - \yvhf - \frac{1}{2} \lte^\imr + \order{\dtn^4}\\
+    &= \frac{\dtn^2}{8} \yvhf[''] - \frac{1}{2} \lte^\imr + \order{\dtn^4}
     \label{eq:dy-value}
   \end{aligned}
 \end{equation}
@@ -78,7 +79,7 @@ Substituting in the Taylor expansions for $\yv(t_n)$ and $\yv(t_{n+1})$ about $\
 Substituting the above value for $\dyn$ into the Taylor series expansion of $\fv$ from \eqref{eq:f-taylor} gives
 \begin{equation}
   \fv(\thf, \frac{\yv(t_n) + \yv_{n+1}}{2}) = \yvhf[']
-  + \frac{\dtn^2}{8} \dfdyhf \cdot \yvhf[''] - \frac{1}{2} \dfdyhf \cdot \lte^\imr \porder{\dtn^4}
+  + \frac{\dtn^2}{8} \dfdyhf \cdot \yvhf[''] - \frac{1}{2} \dfdyhf \cdot \lte^\imr + \order{\dtn^4}
   . \label{eq:fy-taylor}
 \end{equation}
 and using \eqref{eq:fy-taylor} in \eqref{eq:trunc-mid} gives the local truncation error
@@ -87,10 +88,10 @@ and using \eqref{eq:fy-taylor} in \eqref{eq:trunc-mid} gives the local truncatio
     (I + \frac{\dtn}{2}\dfdyhf) \cdot\lte^\imr
     &= \dtn \yvhf['] + \frac{\dtn^3}{24} \yvhf[''']
     - \dtn \yvhf[']
-    - \frac{\dtn^3}{8} \dfdyhf \cdot \yvhf[''] \porder{\dtn^4}
+    - \frac{\dtn^3}{8} \dfdyhf \cdot \yvhf[''] + \order{\dtn^4}
     \\
     &= \frac{\dtn^3}{24} \left[\yvhf['''] - 3 \dfdyhf \cdot \yvhf[''] \right]
-    \porder{\dtn^4}.
+    + \order{\dtn^4}.
     \label{eq:trunc-implicit-form}
   \end{aligned}
 \end{equation}
@@ -98,7 +99,7 @@ and using \eqref{eq:fy-taylor} in \eqref{eq:trunc-mid} gives the local truncatio
 Using a geometric series representation we can show that if all eigenvalues of  $-\frac{\dtn}{2}\dfdyhf$ are s.t. $\abs{\lambda} < 1$\cite{??ds} (which will always be true for some ``small enough'' $\dtn$) then
 ??ds can we divide by the largest eigenvalue somewhere to do this?
 \begin{equation}
-  (I + \frac{\dtn}{2}\dfdyhf)^{-1} = I - \frac{\dtn \dfdyhf}{2}  \porder{\dtn^2},
+  (I + \frac{\dtn}{2}\dfdyhf)^{-1} = I - \frac{\dtn \dfdyhf}{2}  + \order{\dtn^2},
 \end{equation}
 and so\footnote{Assuming that $\dfdyhf$ is not inversely proportional to $\dtn$.}
 \begin{equation}
