@@ -146,9 +146,14 @@
 % \def\subsectionautorefname{Section} % capitalise, say section not subsection
 
 \usepackage[sort&compress, % on multiple refs sort them and write as range
-capitalise, % Use Section not section etc.
-noabbrev % Use Table not Tab. etc.
-]{cleveref}
+            capitalise, % Use Section not section etc.
+            noabbrev, % Use Table not Tab. etc.
+            nameinlink % Make the name (eg Section) part of the hyperlink
+            ]{cleveref}
+
+% Call subsections sections
+\crefname{subsection}{Section}{Sections}
+\Crefname{subsection}{Section}{Sections}
 
 % just use (...) for equations
 \crefformat{equation}{#2(#1)#3}
