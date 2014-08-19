@@ -201,43 +201,41 @@ After substituting in our definition for the three dimensional Green's function 
 Similar equations are solved when using the standard boundary element method, hence the name.
 
 Also note that $\phim = \phione + \phitwo$ everywhere and so
-\begin{align}
-  \label{eq:18}
-  \phim^\inte(\xv) &= \bm \big[ \phione^\inte(\xv) \big] \\
-  &= \gamma(\xv) \phione^\inte(\xv)
-  - \int_{\boundd} \phione^\inte(\yv) \pd{\Green}{\nv(\yv)} \d \yv. \notag
-\end{align}
+\begin{equation}
+  \begin{aligned}
+    \label{eq:18}
+    \phim^\inte(\xv) &= \bm \big[ \phione^\inte(\xv) \big] \\
+    &= \gamma(\xv) \phione^\inte(\xv)
+    - \int_{\boundd} \phione^\inte(\yv) \pd{\Green}{\nv(\yv)} \d \yv.
+  \end{aligned}
+\end{equation}
 
 Either equation~\eqref{eq:6} or \eqref{eq:18} can be used to give boundary conditions for $\phitwo \in \magd$ or $\phim \in \magd$ respectively.
 We will proceed using equation~\eqref{eq:18} for simplicity since it eliminates $\phitwo$ from later calculations.
 
 Hence, given the solution for $\mv(\xv) \in \magd$ the complete continuous problem is
- \begin{subequations}
-   \label{eq:phi-bem-continuous}
-   \begin{align}
-     \label{eq:phim-bem-continuous}
-     \lap \phim(\xv) &= \div \mv(\xv) \quad & \xv \in \magd, \\
-     \label{eq:phi1-bem-continuous}
-     \lap \phione(\xv) &= \div \mv(\xv)    & \xv \in \magd,
-   \end{align}
- \end{subequations}
+\begin{equation}
+  \begin{aligned}
+    \lap \phim(\xv) &= \div \mv(\xv) \quad & \xv \in \magd, \\
+    \lap \phione(\xv) &= \div \mv(\xv)    & \xv \in \magd,
+  \end{aligned}
+  \label{eq:phi-bem-continuous}
+\end{equation}
 with boundary conditions
- \begin{subequations}
-   \label{eq:phi-bem-continuous-bc}
-   \begin{align}
-     \label{eq:phim-bem-continuous-bc}
-     \phim(\xv) &= \bm \big[ \phione(\xv) \big]      & \xv \in \boundd, \\
-     \label{eq:phi1-bem-continuous-bc}
-       \pd{\phione(\xv)}{\nv} &= \mv \cdot \nv  & \xv \in \boundd.
-   \end{align}
- \end{subequations}
+\begin{equation}
+  \begin{aligned}
+    \phim(\xv) &= \bm \big[ \phione(\xv) \big]      & \xv \in \boundd, \\
+    \pd{\phione(\xv)}{\nv} &= \mv \cdot \nv  & \xv \in \boundd.
+    \label{eq:phi-bem-continuous-bc}
+  \end{aligned}
+\end{equation}
 Here we have dropped the distinction between $\inte$ and $\exte$ since all exterior values have been eliminated.
 
 
 \section{Discretisation}
 \label{sec:discretisation}
 
-The bulk equations~\eqref{eq:phi-bem-continuous} and the boundary condition on $\phione$, equation~\eqref{eq:phi1-bem-continuous-bc}, are identical to those discussed in \autoref{sec:llg-initial-equations}.
+The bulk equations~\eqref{eq:phi-bem-continuous} and the Neumann boundary condition on $\phione$ in \eqref{eq:phi-bem-continuous-bc} are identical to those discussed in \autoref{sec:llg-initial-equations}.
 As such the weak residual form, discretisation and Jacobian calculations are identical for these equations.
 Therefore all that remains to be discretised is the operator $\bm$.
 We let

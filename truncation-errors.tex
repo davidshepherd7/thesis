@@ -44,12 +44,13 @@ Continuing from equation~\eqref{eq:trunc-mid} at the end of \autoref{sec:deriv-l
 
 In order to be able to cancel terms we now need to Taylor expand $\fv\left( \thf, \frac{\yv(t_n) + \yv_{n+1}}{2} \right)$ in $\yv$ about $\yvhf$.
 Hence we need an expansion of the form
-\begin{align}
-  \fv(\thf, \frac{\yv(t_n) + \yv_{n+1}}{2}) &= \fv(\thf, \yvhf + \dyn),
-                                              \notag \\
-                                            &= \fv(\thf, \yvhf) + \dfdyhf \cdot \dyn  \porder{\dyn^2}
-                                              \label{eq:f-taylor}
-\end{align}
+\begin{equation}
+  \begin{aligned}
+    \fv(\thf, \frac{\yv(t_n) + \yv_{n+1}}{2}) &= \fv(\thf, \yvhf + \dyn), \\
+    &= \fv(\thf, \yvhf) + \dfdyhf \cdot \dyn  \porder{\dyn^2}
+    \label{eq:f-taylor}
+  \end{aligned}
+\end{equation}
 where $\dfdyhf = \dfdy(\thf, \yvhf)$ is a \emph{matrix} of partial derivatives of each element of $\fv$ with respect to each element of the vector $\yv$ (\ie almost a Jacobian, except without the time derivative).
 Note that the $\fv$ term is multiplied by an additional factor of $\dtn$ in \eqref{eq:trunc-start}, so for this part of the derivation we can drop terms of higher order than $\order{\dtn^2}$ and still retain the same asymptotic accuracy.
 
@@ -65,12 +66,13 @@ So we use the LTE of IMR to rewrite equation~\eqref{eq:51} as
   \dyn = \frac{\yv(t_n) + \yv(t_{n+1}) - \lte^\imr}{2} - \yvhf.
 \end{equation}
 Substituting in the Taylor expansions for $\yv(t_n)$ and $\yv(t_{n+1})$ about $\thf$ (from equations~\eqref{eq:taylornp1} and \eqref{eq:taylorn}) gives
-\begin{align}
-  \dyn &= \yvhf + \frac{\dtn^2}{8} \yvhf[''] - \yvhf - \frac{1}{2} \lte^\imr \porder{\dtn^4} \notag\\
-       &= \frac{\dtn^2}{8} \yvhf[''] - \frac{1}{2} \lte^\imr \porder{\dtn^4}
-         \label{eq:dy-value}
-\end{align}
-
+\begin{equation}
+  \begin{aligned}
+    \dyn &= \yvhf + \frac{\dtn^2}{8} \yvhf[''] - \yvhf - \frac{1}{2} \lte^\imr \porder{\dtn^4}\\
+    &= \frac{\dtn^2}{8} \yvhf[''] - \frac{1}{2} \lte^\imr \porder{\dtn^4}
+    \label{eq:dy-value}
+  \end{aligned}
+\end{equation}
 
 
 Substituting the above value for $\dyn$ into the Taylor series expansion of $\fv$ from \eqref{eq:f-taylor} gives
@@ -80,16 +82,18 @@ Substituting the above value for $\dyn$ into the Taylor series expansion of $\fv
   . \label{eq:fy-taylor}
 \end{equation}
 and using \eqref{eq:fy-taylor} in \eqref{eq:trunc-mid} gives the local truncation error
-\begin{align}
-  (I + \frac{\dtn}{2}\dfdyhf) \cdot\lte^\imr
-  &= \dtn \yvhf['] + \frac{\dtn^3}{24} \yvhf[''']
+\begin{equation}
+  \begin{aligned}
+    (I + \frac{\dtn}{2}\dfdyhf) \cdot\lte^\imr
+    &= \dtn \yvhf['] + \frac{\dtn^3}{24} \yvhf[''']
     - \dtn \yvhf[']
     - \frac{\dtn^3}{8} \dfdyhf \cdot \yvhf[''] \porder{\dtn^4}
-    \notag \\
-  &= \frac{\dtn^3}{24} \left[\yvhf['''] - 3 \dfdyhf \cdot \yvhf[''] \right]
+    \\
+    &= \frac{\dtn^3}{24} \left[\yvhf['''] - 3 \dfdyhf \cdot \yvhf[''] \right]
     \porder{\dtn^4}.
     \label{eq:trunc-implicit-form}
-\end{align}
+  \end{aligned}
+\end{equation}
 
 Using a geometric series representation we can show that if all eigenvalues of  $-\frac{\dtn}{2}\dfdyhf$ are s.t. $\abs{\lambda} < 1$\cite{??ds} (which will always be true for some ``small enough'' $\dtn$) then
 ??ds can we divide by the largest eigenvalue somewhere to do this?

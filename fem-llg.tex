@@ -363,11 +363,13 @@ Details of the extension to include the effects of the external region using the
 We define $\boundd_D$ and $\boundd_\Neu$ respectively to represent the region of the boundary domain where a Dirichlet condition or Neumann is imposed on the potential.
 So on $\boundd_\Neu$ $\nabla \phim(\xv) \cdot \nv = g_\Neu(\xv)$ and on $\boundd_D$ $\phim(\xv) = g_D(\xv)$.
 We also define the following function spaces for convenience
-\begin{align}
+\begin{equation}
+\begin{aligned}
   \label{eq:037}
   \Dfs & = \set{ v \st v(\xv) = g_D(\xv) \; \forall \xv \in \boundd_D }, \\
   \Dfs_0 &= \set{ v \st v(\xv) = 0 \; \forall \xv \in \boundd_D }.
-\end{align}
+\end{aligned}
+\end{equation}
 
 Recall from \autoref{sec:magn-bound-cond} that the boundary condition on the magnetisation is
 \begin{equation}
@@ -788,14 +790,18 @@ finally by combining \eqref{eq:diff-skew-interp} with the product rule we obtain
 This provides us with a simple representation for almost all of the terms in the LLG Jacobian.
 
 % As a simple example of how this can be used we first examine the differentiation of the $\mv \times (\happ + \hms)$ term of the Landau-Lifshitz equation residual (note that these two fields are not directly dependent on $\mv$).
-% \begin{align}
-%   \circled{c} &= \mv \times (\happ + \hms), \notag\\
+% \begin{equation}
+%\begin{aligned}
+%   \circled{c} &= \mv \times (\happ + \hms),\\
 %               &= \skewm{\mv} \cdot (\happ + \hms).
-% \end{align}
+% \end{aligned}
+%\end{equation}
 % Now it is easy to see that applying \eqref{eq:68} with $\gv = \happ + \hms$ gives us the Jacobian contribution
-% \begin{align}
+% \begin{equation}
+%\begin{aligned}
 %   \pd{}{\mv_l} \circled{c} = - \sbf_l \skewm{\happ + \hms},
-% \end{align}
+% \end{aligned}
+%\end{equation}
 % since $\pd{\gv(\mv)}{\mv_l} \equiv 0$.
 
 

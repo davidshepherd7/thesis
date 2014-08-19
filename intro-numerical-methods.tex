@@ -470,12 +470,14 @@ These results are applicable to cases where, after any spatial discretisation, e
 For the purposes of this section we assume that the linearisation method is exact, \ie the discretised but non-linear Landau-Lifshitz-Gilbert equation is satisfied exactly.
 
 As can be seen from \eqref{eq:imr-definition} the IMR is defined by the following substitutions:
-\begin{align}
+\begin{equation}
+\begin{aligned}
   \label{eq:55}
   \pd{\mv}{t} &\rightarrow \frac{\mv_{n+1} - \mv_n}{\dtn}, \\
   \mv &\rightarrow \frac{\mv_{n+1} + \mv_n}{2}, \\
   t &\rightarrow \frac{t_{n+1} + t_n}{2}.
-\end{align}
+\end{aligned}
+\end{equation}
 So the IMR-discretised LLG is
 \begin{equation}
   \frac{\mv_{n+1} - \mv_n}{\dtn} = - \frac{\mv_{n+1} + \mv_n}{2} \times

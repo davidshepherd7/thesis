@@ -40,16 +40,18 @@ First we reduce the derivative order in the simpler exchange term, $\mxex$:
   \intd{\tbf \threevec{m_2 \lap m_3 - m_3 \lap m_2 }
       {m_1 \lap m_3 - m_3 \lap m_1 }
       {m_1 \lap m_2 - m_2 \lap m_1 }}
-  \notag
+ 
 \end{equation}
 Considering the first term of a single component of this we can use the same techniques as in \autoref{sec:magn-field-resid} to give
-\begin{align}
+\begin{equation}
+\begin{aligned}
   \intd{(\tbf m_i) \lap m_j}
   &= \int_\boundd (\tbf m_i) \ddn{m_j} \d\boundd
-  - \intd{\nabla(\tbf m_i) \cdot \nabla m_j}, \notag \\
+  - \intd{\nabla(\tbf m_i) \cdot \nabla m_j}, \\
   &= 0 - \intd{\tbf \nabla m_i \cdot \nabla m_j}
-  -  \intd{m_i \nabla \tbf \cdot \nabla m_j}, \notag
-\end{align}
+  -  \intd{m_i \nabla \tbf \cdot \nabla m_j},
+\end{aligned}
+\end{equation}
 where we have substituted in equation~\eqref{eqn:mbc} (the boundary condition on $\mv$).
 So the entire first component is:
 \begin{equation}
@@ -77,7 +79,7 @@ In a slight abuse of notation we write
 
 Next the second term of equation~\eqref{ll-eqn:exresterms}
 \begin{equation}
-  \mxmxex = \intd{\tbf \mv \times \left( \mv \times \lap \mv \right)}, \notag
+  \mxmxex = \intd{\tbf \mv \times \left( \mv \times \lap \mv \right)},
 \end{equation}
 which, unfortunately, does not have such neat cancellations.
 First note that we can use the identity
@@ -100,24 +102,28 @@ or using the notation given in equation~\eqref{ll-eqn:gradvecm}
 \end{equation}
 
 The $i$-th component of term $\mxmxex_1$ is
-\begin{align}
-  \left[\mxmxex_1\right]_i &= \sum_j \int_\magd (\tbf m_i  m_j) \lap m_j \d\magd, \notag \\
+\begin{equation}
+\begin{aligned}
+  \left[\mxmxex_1\right]_i &= \sum_j \int_\magd (\tbf m_i  m_j) \lap m_j \d\magd, \\
   &= \sum_j \int_\boundd \tbf  m_i  m_j \ddn{m_j} \d\boundd
-  - \int_\magd  \nabla(\tbf m_i  m_j) \cdot \nabla m_j  \d\magd, \notag \\
+  - \int_\magd  \nabla(\tbf m_i  m_j) \cdot \nabla m_j  \d\magd, \\
   &= \sum_j 0 - \int_\magd m_j \nabla(\tbf m_i) \cdot \nabla m_j
-  + \tbf m_i (\nabla m_j)^2 \d\magd, \notag \\
+  + \tbf m_i (\nabla m_j)^2 \d\magd, \\
   &= - \sum_j \int_\magd m_j \nabla(\tbf m_i) \cdot \nabla m_j
   + \tbf m_i (\nabla m_j)^2 \d\magd.
-\end{align}
+\end{aligned}
+\end{equation}
 
 So finally we have the exchange contribution to the Landau-Lifshitz-Gilbert equation residual with no derivatives higher than first order:
-\begin{align}
+\begin{equation}
+\begin{aligned}
   [\rex]_i &= \int_\magd \tbf\left(  \epsilon_{ilp} m_l\nabla m_p \cdot \nabla \tbf \right)
-  + \dampc \left(\nabla \tbf \cdot \nabla m_i \right) \notag\\
+  + \dampc \left(\nabla \tbf \cdot \nabla m_i \right)\\
   &- \dampc \sum_j \left[ m_j
     \left(\nabla(\tbf m_i) \cdot \nabla m_j \right)
     + \tbf m_i (\nabla m_j)^2 \right] \d\magd.
-\end{align}
+\end{aligned}
+\end{equation}
 
 
 \section{Spatial Discretisation}
@@ -143,27 +149,31 @@ Note that in our method $\sbf_k \equiv \tbf_k$, but we continue to write the two
 So substituting the basis representations, \eqref{ll-eq:unknowns-basis} and \eqref{ll-eq:47} into the residuals we obtain a spatially discretised version of the problem.
 %% \begin{gather}
 %%   \label{ll-res:tintro}
-%%   \text{Given $\happ(\xv,t)$ and $\hca(\xv,t)$, $\forall k$, $\forall \ndi$ find} \notag \\
+%%   \text{Given $\happ(\xv,t)$ and $\hca(\xv,t)$, $\forall k$, $\forall \ndi$ find} \\
 %%   \phim_{,k} \in \ts \cap \Dfs, \quad
 %%   \mv_{k} \in \ts \text{ and }
-%%   \pd{\mv_k(t)}{t} \in \ts \notag
+%%   \pd{\mv_k(t)}{t} \in \ts
 %% \end{gather}
 %% such that
-%% \begin{align}
+%% \begin{equation}
+\begin{aligned}
 %%   r_{\phim, \ndi} =
-%%   & - \int_{\magd} \sum_k (\nabla \tn \cdot \nabla \sk) \phim_{,k} \d \magd \notag
+%%   & - \int_{\magd} \sum_k (\nabla \tn \cdot \nabla \sk) \phim_{,k} \d \magd
 %%   - \int_{\magd} (\nabla \cdot (\sum_k \mv_k \sk) ) \tn \d \magd \\
 %%   & + \int_{\boundd_{\Neu}} \tn g_\Neu \d \boundd = 0,
 %%   \label{ll-res:tphi}
-%% \end{align}
+%% \end{aligned}
+\end{equation}
 %% and
-%% \begin{align}
+%% \begin{equation}
+\begin{aligned}
 %%   \rll &= \int_\magd \tbf \intp{\dmdt} + \left(\intp{\mv} \times \hs \right)
-%%   \notag\\
+%%  \\
 %%   &+ \left(\intp{\mv} \times \left(\intp{\mv} \times \hs \right) \right) \d\magd
-%%   \notag\\
+%%  \\
 %%   &+ \rex.
-%% \end{align}
+%% \end{aligned}
+\end{equation}
 
 
 Note that we could move the discretised values of the unknowns outside of the integrals because they are constant in space. However we prefer to evaluate values at points within the elements where possible (by integrating using Gaussian quadrature) since some quantities are discontinous at the nodes.\footnote{For example if the basis functions are linear then derivatives are discontinous at the nodes.}

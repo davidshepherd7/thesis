@@ -264,10 +264,12 @@ Also for all problems the appropriate discretisation parameters (time step size 
 
 We start from the Landau-Lifshitz-Gilbert equation with the magnetostatic, applied, exchange and magnetocrystalline (effective) fields. 
 \begin{align}
-  \pd{\Mv^*}{t^*} &= - \gymagc \Mv^* \times \Hv^* + \frac{\alpha}{M_s} \Mv^* \times \pd{\Mv^*}{t^*}, \label{eqn:llgnd} \\
+  \pd{\Mv^*}{t^*} &= - \gymagc \Mv^* \times \Hv^* + \frac{\alpha}{M_s} \Mv^* \times \pd{\Mv^*}{t^*}, 
+                    \label{eqn:llgnd} \\
   \Hv^* &= \Happ^* - \nabla^* \phi^* + \frac{2\Exchc^*}{\mu_0 M_s} \nabla^{*2} \mv + \frac{2\Kone^*}{\mu_0 M_s} (\mv \cdot \ev) \ev,
           \label{eqn:effnd} \\
-  \nabla^{*2} \phi^* &= \nabla^* \cdot \Mv^*, \label{eqn:phind}
+  \nabla^{*2} \phi^* &= \nabla^* \cdot \Mv^*, 
+                       \label{eqn:phind}
 \end{align}
 where we use $^*$ to denote the dimensional variables, operators and constants that will be non-dimensionalised. We assume for simplicity that $M_s$, $\Exchc$ and $\Kone$ are all
 constant throughout the magnetic materials used.
@@ -288,8 +290,7 @@ Note that $\Mv$ and $\Hv$ have the same units so we use the same normalisation f
 
 Combining equation~\eqref{eqn:llgnd} with the definitions~\eqref{eqn:nddefs} gives
 \begin{equation}
-  \notag
-  \dmdt \gymagc M_s^2 =
+   \dmdt \gymagc M_s^2 =
   - \gymagc M_s^2 \mv \times \hv + \frac{\alpha}{M_s} \gymagc M_s^3 \mv \times \dmdt,
 \end{equation}
 
