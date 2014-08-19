@@ -5,7 +5,7 @@
 
 \subsection{Finite Element Integrals}
 
-In a basic finite element method the only integrals that need to be evaluated are those giving the residuals. After discretisation these take the form of sums of shape functions multiplied by test functions (and/or derivatives of either). Hence if the shape and test functions are chosen to be polynomials, as is usually the case, then the integrals can easily be evaluated using e.g. a Gauss-Legendre quadrature scheme of appropriate order designed for the element geometry.\cite{??ds: Gauss-Legendre schemes for arbitrary geometry, Milan gave Mousavi2010 but it is more about polygons with large numbers of sides not 3D ones}
+In a basic finite element method the only integrals that need to be evaluated are those giving the residuals. After discretisation these take the form of sums of shape functions multiplied by test functions (and/or derivatives of either). Hence if the shape and test functions are chosen to be polynomials, as is usually the case, then the integrals can easily be evaluated using e.g. a Gauss-Legendre quadrature scheme of appropriate order designed for the element geometry \cite{??ds: Gauss-Legendre schemes for arbitrary geometry, Milan gave Mousavi2010 but it is more about polygons with large numbers of sides not 3D ones}.
 
 For example we typically use shape and test functions which are both polynomials of degree $a$. In this case a Gauss-Legendre quadrature scheme with $a$ points  will be able to exactly and efficiently evaluate the required integrals.
 
@@ -44,7 +44,7 @@ Alternatively a weight function can be introduced to optimise the scheme for int
 \end{equation}
 
 The \emph{degree} of a quadrature scheme is the maximum degree of polynomial that can be integrated exactly by the scheme (for all other functions the quadrature is only an approximation).
-This is often considered to be a good measure of the accuracy of the scheme, but may not be appropriate in some cases.\cite{Trefethen2008}
+This is often considered to be a good measure of the accuracy of the scheme, but may not be appropriate in some cases \cite{Trefethen2008}.
 The highest degree possible is $2n + 1$ where $n + 1$ is the number of points used by the scheme ??ds-citation.
 
 A quadrature scheme is \emph{progressive} (or \emph{nested}) if higher order schemes can reuse knots from lower order schemes.
@@ -72,7 +72,7 @@ Some commonly used quadrature schemes are:
 \subsection{Clenshaw-Curtis}
 \begin{itemize}
 \item Degree $n$.
-\item The degree may not actually reflect the accuracy of the scheme. It is only significantly outperformed by Gauss-Legendre for functions which are analytic for a large region around the domain of integration.\cite{Trefethen2008}
+\item The degree may not actually reflect the accuracy of the scheme. It is only significantly outperformed by Gauss-Legendre for functions which are analytic for a large region around the domain of integration \cite{Trefethen2008}.
 \item Progressive: if $n$ is doubled ($n = \text{number of points} - 1$) all existing points are reused.
 \item The knots are given by $x_i = \cos(\frac{i \pi}{n}), \quad 0 \leq i \leq n$ (the zeros of the Chebyshev polynomials).
 \item Coefficients can be rapidly calculated using fast Fourier transform methods (can be useful if various weight functions are used).
@@ -123,9 +123,9 @@ Finally a numerical scheme can be extremely general allowing the same integratio
 
 \subsection{Special Quadrature Schemes}
 
-One method of numerically evaluating singular functions is to construct a specialised quadrature scheme that accounts for the singularity. This is done by inserting a singular weight function, $W(x)$ into equation~\eqref{eq:9} and calculating a set of weights that already include the contribution from the singularity.\cite{Kolm2001} However a different set of weights is needed for different singularity positions or types. Hence for near-singular integrals this method is useless since it would require recalculation of the weights for every possible distance to the singularity.
+One method of numerically evaluating singular functions is to construct a specialised quadrature scheme that accounts for the singularity. This is done by inserting a singular weight function, $W(x)$ into equation~\eqref{eq:9} and calculating a set of weights that already include the contribution from the singularity \cite{Kolm2001}. However a different set of weights is needed for different singularity positions or types. Hence for near-singular integrals this method is useless since it would require recalculation of the weights for every possible distance to the singularity.
 
-Possibly the simplest method of dealing with singular integrals is to use an adaptive (or predictive) quadrature. However neither type of refinement performs particularly well. With order refinement the number of points required to achieve good accuracy is very high. If subdivision (or a combination) is used then the degree of the scheme suffers and so a higher than optimal order is needed to evaluate the individual parts.\cite{Telles1987}
+Possibly the simplest method of dealing with singular integrals is to use an adaptive (or predictive) quadrature. However neither type of refinement performs particularly well. With order refinement the number of points required to achieve good accuracy is very high. If subdivision (or a combination) is used then the degree of the scheme suffers and so a higher than optimal order is needed to evaluate the individual parts \cite{Telles1987}.
 
 \subsection{Transformations}
 

@@ -3,7 +3,7 @@
 
 In this Chapter we give an overview of numerical methods that have been or could be used in dynamic micromagnetic calculations.
 These calculations involve solving some form of the LLG equation \eqref{eq:LLG} with fields determined by energy derivatives as discussed in \autoref{sec:cont-micromag}.
-These systems of partial differential equations (PDEs) can only be solved analytically in a few extremely simple cases,\footnote{For example the Stoner-Wolfarth theory for the rotation of a single grain.\cite{Stoner1948a}}\cite{Aharoni1996} so numerical solution methods are almost always required.
+These systems of partial differential equations (PDEs) can only be solved analytically in a few extremely simple cases \cite{Aharoni1996},\footnote{For example the Stoner-Wolfarth theory for the rotation of a single grain \cite{Stoner1948a}.} so numerical solution methods are almost always required.
 
 Many numerical methods for solving non-linear PDEs, such as \eqref{eq:LLG}, can be thought of as a combination of various component methods, each of which handles a different part of the conversion from a purely mathematical description into a complete algorithm which can be performed by a computer\footnote{Technically proofs of convergence etc. should be carried out for every different combination of time and space discretisation\cite[382]{Iserles2009}; in practice suprises seem to be rare, at least within micromagnetics.}.
 
@@ -81,7 +81,7 @@ The main advantage of the finite element method is that it can accurately approx
 An additional advantage is that the size of elements (and thus the accuracy of the approximation) can be varied arbitrarily as needed to give better accuracy in more complex or important regions. 
 The choice of element size can be done automatically using \emph{adaptive mesh refinement}: after each calculation an error estimate is calculated (known as \emph{a posteriori} error estimation).
 If the error is determined to be too high anywhere the mesh is refined near that region and the calculation is repeated.
-Hence, given the desired error and a method to estimate the error, a mesh giving an efficient and accurate approximation can be automatically generated.\cite{Schrefl1999}
+Hence, given the desired error and a method to estimate the error, a mesh giving an efficient and accurate approximation can be automatically generated \cite{Schrefl1999}.
 
 The major downside of finite element models is that the underlying mathematics is more complex than that required for other methods, especially finite difference methods.
 Also the set up time and memory usage can be greater because of the additional ``bookkeeping'' required to keep track of the more complex meshes.
@@ -454,7 +454,7 @@ Equation~\eqref{eq:LLG} can be expressed in terms of only the angles $(\theta,\p
 \end{equation}
 However to extend this to systems where $\Mv$ varies with space we have to use a separate spherical polar coordinate system at each point where $\dMdt$ is calculated.
 Also a Cartesian global coordinate system is still needed to calculate the interactions between the discretised points (\ie magnetostatics, exchange coupling).
-Hence we have to convert back and forth between coordinate systems during the simulation.\cite{Scholz2003} 
+Hence we have to convert back and forth between coordinate systems during the simulation \cite{Scholz2003}.
 Finally problems can occur with this approach as the polar angle, $\theta$, approaches zero because $\pd{\Mv}{t} \propto \frac{1}{\sin(\theta)}$ \cite{Fukushima2005}.
 
 Geometric integration schemes aim to solve this problem by constructing a time integration scheme that naturally preserves the value of $|M_s|$.

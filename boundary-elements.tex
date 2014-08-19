@@ -3,7 +3,7 @@
 \label{sec:hybr-finit-elem}
 The hybrid finite/boundary element method works similarly to the normal finite element method except that one or more sub-regions are mapped onto their boundary \cite{Rammohan2002}.
 The main advantage of this is that we reduce the dimensionality of these sub-regions one since we only have to solve equations on the boundary instead of the entire space.
-In our case this is likely to give an advantage over a pure finite element method since we no longer need to mesh a long way outside the magnetic domain to accurately account for the effect of the external region. Also other methods for dealing with infinite domains can often give additional errors due to the truncation of the external domain.\cite{Bottauscio2008}
+In our case this is likely to give an advantage over a pure finite element method since we no longer need to mesh a long way outside the magnetic domain to accurately account for the effect of the external region. Also other methods for dealing with infinite domains can often give additional errors due to the truncation of the external domain \cite{Bottauscio2008}.
 
 On the downside this mapping typically results in a dense matrix after discretisation, to which we cannot apply sparse matrix techniques.
 Also the integrals that need to be computed may involve singularities, which introduce additional complications and may reduce accuracy or increase computation time.
@@ -114,7 +114,7 @@ Finally from equations \eqref{eqn:phibound}, \eqref{eq:21} and \eqref{eqn:phione
 
 \subsection{Double Layer Potentials}
 \label{sec:double-layer-potent}
-A double layer potential can be thought of as the potential due to a layer of dipoles of magnitude $\mu(\xv)$ in direction $\nv$ over the surface $S$.\cite{Sternberg1946} We will demonstrate that we can use a double layer potential to calculate $\phitwo^\inte$ in terms of $\phione^\inte$.
+A double layer potential can be thought of as the potential due to a layer of dipoles of magnitude $\mu(\xv)$ in direction $\nv$ over the surface $S$ \cite{Sternberg1946}. We will demonstrate that we can use a double layer potential to calculate $\phitwo^\inte$ in terms of $\phione^\inte$.
 
 The double layer potential at a point $\xv \in \real^d$ is defined as \cite{eom_double_layer_potential}
 \begin{equation}
