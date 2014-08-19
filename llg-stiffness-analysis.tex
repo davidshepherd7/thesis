@@ -58,7 +58,7 @@ As the time integrator we use a two stage Runge-Kutta method (RK2), also known a
   \end{aligned} 
 \end{equation}
 Time derivatives are calculated within the Galerkin method by inverting the finite-element mass matrix using a diagonally preconditioned conjugate gradient solver.
-The magnetostatic potential $\phim$ is recalculated using the FEM/BEM method at appropriate time and magnetisation values during each stage of \eqref{eq:heunn}.
+The magnetostatic potential $\phim$ is recalculated using the FEM/BEM method at appropriate time and magnetisation values during each stage of \cref{eq:heunn}.
 The Poisson solves required for the evaluation of the potentials $\phione$ and $\phim$ use a conjugate gradient solver preconditioned with algebraic multigrid\footnote{One V(1,1) cycle of Hypre's BoomerAMG preconditioner\cite{hypre} with Gauss-Seidel smoothing, CLJP coarsening and a connection strength threshold of 0.7.}.
 
 
@@ -102,7 +102,7 @@ As mentioned above, the simple geometry of this problem means that the physics c
 \end{equation}
 where $\mv = \mv(t)$.
 
-To assess physical stiffness and find a suitable $\dtinitial$ we solved \eqref{eq:ode-llg} using the RK2 and IMR methods detailed above with $\dtx{} = 0.1$.
+To assess physical stiffness and find a suitable $\dtinitial$ we solved \cref{eq:ode-llg} using the RK2 and IMR methods detailed above with $\dtx{} = 0.1$.
 Using IMR with $\alpha = 0.01$ we found a relative error in the final switching time of $0.3\%$ (absolute error  $1.2 \text{ time units} \approx 6\text{ps}$), for other values of $\alpha$ the percentage error is even smaller.
 The relative error in switching time with $\alpha = 0.01$ using RK2 was $2.25\%$ (this order of magnitude error difference may be a testament to the accuracy of geometric integration\cite{DAquino2005}).
 Since these results are from an ODE calculation the error is only due to the time integration, with no contributions from spatial discretisation.

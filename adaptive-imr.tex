@@ -61,7 +61,7 @@ or using a Butcher tableu \cite[135]{HairerNorsettWanner} as shown in \cref{tab:
   \label{tab:butcher-imr}
 \end{table}
 
-Note that unlike multistep methods, such as the second order backwards difference (BDF2), \eqref{eq:basic-midpoint} is valid for both constant and variable step sizes because there is no dependence on previous steps.
+Note that unlike multistep methods, such as the second order backwards difference (BDF2), \cref{eq:basic-midpoint} is valid for both constant and variable step sizes because there is no dependence on previous steps.
 
 
 \section{Adaptive implicit midpoint rule}
@@ -75,7 +75,7 @@ However it can only appear in the LTE expression for a time integrator using mid
 So this term of the error cannot be easily approximated using a Milne-device-like method.
 
 An alternative approach, commonly used in Runge-Kutta time integrators, is to repeat the calculation using a higher order method and compare the two answers to directly obtain an LTE estimate \cite[165]{HairerWanner}.
-However evaluations of the derivative function ($\fv$ in equation~\eqref{eq:43}) are expensive, and the calculation of a step of a high order Runge-Kutta method requires a number of function evaluations.
+However evaluations of the derivative function ($\fv$ in equation~\cref{eq:43}) are expensive, and the calculation of a step of a high order Runge-Kutta method requires a number of function evaluations.
 Hence such approaches usually rely on pairs of Runge-Kutta methods which share most of their derivative evaluation points but have different orders of accuracy.
 These are known as embedded Runge-Kutta methods, a widely used example is the Dormand–Prince pair (order 4/5) used in MATLAB's \texttt{ode45} function \cite{matlab-ode45}.
 
@@ -127,7 +127,7 @@ The $k$-th Lagrange interpolation polynomial \cite[124]{BurdenFaires}, \cite[400
     &\quad + \yv[t_{n+1}, \ldots, t_{n+1-k}](t-t_{n+1})\cdots(t-t_{n-k}).
   \end{aligned}
 \end{equation}
-Differentiating \eqref{eqn:divided-diff-intp} with respect to $t$, recalling that divided differences are constants and handling the product term with the chain rule we obtain
+Differentiating \cref{eqn:divided-diff-intp} with respect to $t$, recalling that divided differences are constants and handling the product term with the chain rule we obtain
 \begin{equation}
   \begin{aligned}
     \pv_k'(t) &= \yv[t_{n+1}, t_n] + \yv[t_{n+1}, t_n, t_{n-1}]\bigb{(t - t_n) + (t - t_{n+1})} \\
@@ -156,7 +156,7 @@ This gives
   \label{eq:ebdf-general}
 \end{equation}
 
-For $k=1$ equation \eqref{eq:ebdf-general} reduces to
+For $k=1$ equation \cref{eq:ebdf-general} reduces to
 \begin{equation}
   \begin{aligned}
     \fv(t_n, \yv_n) &= \yv[t_{n+1}, t_n], \\
@@ -200,7 +200,7 @@ Unfortunately we are interested in the case $k=3$ which is:
   \end{aligned}
   \label{eq:ebdf-3-initial}
 \end{equation}
-Solving \eqref{eq:ebdf-3-initial} for $\yv_{n+1}$ by hand would be complex and extremely error prone.
+Solving \cref{eq:ebdf-3-initial} for $\yv_{n+1}$ by hand would be complex and extremely error prone.
 Instead a script (available online \cite{ebdf3-sympy-script}) was written using the \texttt{python} programming language with the \texttt{SymPy} library\cite{sympy}.
 The resulting method is
 \begin{equation}
@@ -217,8 +217,8 @@ The resulting method is
 For constant time steps the result is much simpler: $ b = 3\dtn$, $c_n = -3/2$, $c_{n-1} = 3$ and  $c_{n-2} = -1/2$.
 This matches with the result in \cite[364]{HairerNorsettWanner}.
 
-It should be noted that the calculation of the coefficients in equation~\eqref{eqn:ebdf-coeffs} could be comparatively expensive if the number of $y$-values was small ($\sim \order{100}$ operations assuming no compiler optimisation of the multiplications).
-However when used in finite-element or finite-difference calculations the number of $y$-values is at least tens of thousands, so the cost of equation~\eqref{eqn:ebdf-coeffs} is trivial by comparision with, for example, the calculation of $\ffv{t_n, \yv_n}$.
+It should be noted that the calculation of the coefficients in equation~\cref{eqn:ebdf-coeffs} could be comparatively expensive if the number of $y$-values was small ($\sim \order{100}$ operations assuming no compiler optimisation of the multiplications).
+However when used in finite-element or finite-difference calculations the number of $y$-values is at least tens of thousands, so the cost of equation~\cref{eqn:ebdf-coeffs} is trivial by comparision with, for example, the calculation of $\ffv{t_n, \yv_n}$.
 
 
 \subsection{Computing the next step size}
@@ -265,7 +265,7 @@ Assuming that we have values for $\yv_n$, $\yv_{n-1}$, $\yv_{n-2}$ (these can be
 \item Calculate $\yv_{n+1}^\ebdf$ from $\yv_n$, $\yv_{n-1}$, $\yv_{n-2}$ using eBDF3.
 \item Calculate $\yv_{n+1}$ from $\yv_n$ using IMR.
 \item Calculate $\dtx{n+1}$ from $\yv_{n+1}^\ebdf$, $\yv_{n+1}$ and $\dtn$ using
-  \eqref{eq:next-step-dt}.
+  \cref{eq:next-step-dt}.
 \item If $t > t_{\text{max}}$ then stop, otherwise set $n := n+1$ and go to step 1.
 \end{enumerate}
 
@@ -275,12 +275,12 @@ Steps 1 and 2 are interchangable, but in some cases the value $\yv_{n+1}^\ebdf$ 
 \subsection{Application to Implicit ODEs}
 \label{sec:extens-impl-odes}
 
-We sometimes wish to solve a system of equations where $\yv'(t)$ is given implicitly\footnote{This use of ``implicit'' is unrelated to the notion of implicitness in the time integration scheme.} (for example in the Gilbert form of the Landau-Lifshitz-Gilbert equation), in this case equation~\eqref{eq:43} becomes
+We sometimes wish to solve a system of equations where $\yv'(t)$ is given implicitly\footnote{This use of ``implicit'' is unrelated to the notion of implicitness in the time integration scheme.} (for example in the Gilbert form of the Landau-Lifshitz-Gilbert equation), in this case equation~\cref{eq:43} becomes
 \begin{equation}
   \ffv{t, \yv(t), \yv'(t)} = 0.
 \end{equation}
 
-We note that equation~\eqref{eq:basic-midpoint} can also be written in the from
+We note that equation~\cref{eq:basic-midpoint} can also be written in the from
 \begin{equation}
   \yv'(\thf) = \frac{\yv_{n+1} - \yv_n}{\dtn} =  \ffv{\thf, \frac{\yv_n + \yv_{n+1}}{2}}.
 \end{equation}
@@ -414,7 +414,7 @@ with the exact solution
 This example will test that the single step of the eBDF method provides reliable LTE estimates even in cases of extreme stiffness.
 The time steps should start small but rapidly increase as the initial transient decays.
 
-The results of the applying the three methods to problem~\eqref{eqn:imr-test-stiff} with $\lambda = 100$ (fairly stiff) are shown in \cref{fig:imr-stiff-example}.
+The results of the applying the three methods to problem~\cref{eqn:imr-test-stiff} with $\lambda = 100$ (fairly stiff) are shown in \cref{fig:imr-stiff-example}.
 The behaviour of the three time integrators is essentially the same, indicating that our adaptivity algorithm is effective for stiff problems.
 
 \begin{figure}
@@ -430,7 +430,7 @@ The behaviour of the three time integrators is essentially the same, indicating 
 
 \begin{figure}
   \centering  \includegraphics[width=1\textwidth]{plots/aimr_odes/strong_order_reduction-errornormsvs-dtsvs-tracevaluesvstimes}
-  \caption{Absolute error, time step size and computed solutions for the stiff order reduction example ODE given in equation~\eqref{eqn:imr-test-order-reduction}
+  \caption{Absolute error, time step size and computed solutions for the stiff order reduction example ODE given in equation~\cref{eqn:imr-test-order-reduction}
     .}
   \label{fig:imr-order-reduction-example}
 \end{figure}
@@ -441,10 +441,10 @@ The behaviour of the three time integrators is essentially the same, indicating 
   \label{fig:imr-order-reduction-convergence}
 \end{figure}
 
-The order reduction effect should be automatically detected and adjusted for by a good adaptive time step selection algorithm so as a final example we study \eqref{eqn:imr-test-order-reduction}, the test ODE for order reduction discussed in \cref{sec:order-reduction}.
+The order reduction effect should be automatically detected and adjusted for by a good adaptive time step selection algorithm so as a final example we study \cref{eqn:imr-test-order-reduction}, the test ODE for order reduction discussed in \cref{sec:order-reduction}.
 For these experiments we chose an oscillatory function, $g(t) = \sin(t)$ and $\lambda = 100$.
 
-So, using \eqref{eq:reduced-order-imr-truncation-error}, the dominant term LTE of IMR for the case when $\dtn \gtrsim 0.01$ is
+So, using \cref{eq:reduced-order-imr-truncation-error}, the dominant term LTE of IMR for the case when $\dtn \gtrsim 0.01$ is
 \begin{equation}
   \lte^\imr = \frac{\dtn^2}{4} \sin(\thf),
 \end{equation}
@@ -473,7 +473,7 @@ To avoid introducing spatial discretisation issues we choose an example problem 
 With this geometry and with uniform initial magnetisation the magnetostatic field can be analytically shown to be $\hms = -\mv/3$ throughout the domain \cite[112]{Aharoni1996}.
 This means that the magnetisation remains uniform for sufficiently small spheres such that the increase in exchange energy is larger than the decrease in magnetostatic energy that could be gained by a non-uniform state.
 
-In this case the Landau-Lifshitz form of the Landau-Lifshitz-Gilbert equation \eqref{eqn:nd-llg-full} reduces to
+In this case the Landau-Lifshitz form of the Landau-Lifshitz-Gilbert equation \cref{eqn:nd-llg-full} reduces to
 \begin{equation}
   \begin{aligned}
     (1 + \dampc^2) \dmdt &= - \mv \times \hv - \dampc \mv \times \bigs{\mv \times \hv}, \\
@@ -524,7 +524,7 @@ We choose parameters $H = 1.1$ and $\dampc = 0.01$ (roughly the physically relev
 The initial magnetisation is just off the $z$-axis in order to avoid a singularity in the reversal time when $\theta_1 = 0$, more precisely $\mv_0 = (0.01, 0.0, 1.0)/\sqrt{1.0001}$. 
 The maximum time is set to 1000 units for all simulations (sufficient time for the magnetisation to fully switch).
 
-In the experiments below the LL form \eqref{eq:ll-nd-llglike} of the LLG is used for ease of implementation.
+In the experiments below the LL form \cref{eq:ll-nd-llglike} of the LLG is used for ease of implementation.
 Linearisation is carried out using the Newton-Raphson method, the $3 \times 3$ Jacobian is calculated analytically and inverted using a direct solve.
 Unless otherwise specified the Newton tolerance is $\newtontol = 10^{-12}$, the adaptive integrator tolerance is $\toltt = 10^{-4}$ and the initial time step is $\dtinitial = 10^{-3}$ (sufficiently small to allow the adaptive algorithm to naturally increase $\dtn$ to the required value).
 

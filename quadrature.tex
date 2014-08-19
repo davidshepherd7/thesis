@@ -13,7 +13,7 @@ For example we typically use shape and test functions which are both polynomials
 
 Some of the integrals to be evaluated in boundary element methods contain singular or near singular terms. As such they are much more difficult to evaluate than the integrals encountered in the finite element method. Hence the rest of this section will focus on these integrals.
 
-In $d$ dimensions for target node $i$ and source node $j$ (see \cref{sec:hybr-finit-elem}, equation~\eqref{eq:19}) the non-constant part of the boundary element integral is:
+In $d$ dimensions for target node $i$ and source node $j$ (see \cref{sec:hybr-finit-elem}, equation~\cref{eq:19}) the non-constant part of the boundary element integral is:
 \begin{equation}
   \label{eq:7}
    I_{\ibasis\ibasisb} = \int_{\boundd_\ibasis} \psi_\ibasis(\yv) \frac{\nv \cdot \ruv_{\ibasis,\ibasisb}}{| \xv_\ibasisb - \yv| ^{d-1}} d\yv.
@@ -123,7 +123,7 @@ Finally a numerical scheme can be extremely general allowing the same integratio
 
 \subsection{Special Quadrature Schemes}
 
-One method of numerically evaluating singular functions is to construct a specialised quadrature scheme that accounts for the singularity. This is done by inserting a singular weight function, $W(x)$ into equation~\eqref{eq:9} and calculating a set of weights that already include the contribution from the singularity \cite{Kolm2001}. However a different set of weights is needed for different singularity positions or types. Hence for near-singular integrals this method is useless since it would require recalculation of the weights for every possible distance to the singularity.
+One method of numerically evaluating singular functions is to construct a specialised quadrature scheme that accounts for the singularity. This is done by inserting a singular weight function, $W(x)$ into equation~\cref{eq:9} and calculating a set of weights that already include the contribution from the singularity \cite{Kolm2001}. However a different set of weights is needed for different singularity positions or types. Hence for near-singular integrals this method is useless since it would require recalculation of the weights for every possible distance to the singularity.
 
 Possibly the simplest method of dealing with singular integrals is to use an adaptive (or predictive) quadrature. However neither type of refinement performs particularly well. With order refinement the number of points required to achieve good accuracy is very high. If subdivision (or a combination) is used then the degree of the scheme suffers and so a higher than optimal order is needed to evaluate the individual parts \cite{Telles1987}.
 

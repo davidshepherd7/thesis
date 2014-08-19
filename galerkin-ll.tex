@@ -9,7 +9,7 @@ Final equations to be solved are... ??ds copy from appendix
 \section{Landau-Lifshitz-Gilbert Equation Residuals}
 
 
-For the Landau-Lifshitz equation~\eqref{eq:ndll} we have a vector of three residuals.
+For the Landau-Lifshitz equation~\cref{eq:ndll} we have a vector of three residuals.
 \begin{equation}
   \begin{aligned}
     \rll = \int_\magd \tbf \dmdt &+ \tbf \mv \times \hat{\hv}
@@ -52,7 +52,7 @@ Considering the first term of a single component of this we can use the same tec
   -  \intd{m_i \nabla \tbf \cdot \nabla m_j},
 \end{aligned}
 \end{equation}
-where we have substituted in equation~\eqref{eqn:mbc} (the boundary condition on $\mv$).
+where we have substituted in equation~\cref{eqn:mbc} (the boundary condition on $\mv$).
 So the entire first component is:
 \begin{equation}
   \begin{aligned}
@@ -77,7 +77,7 @@ In a slight abuse of notation we write
 \end{equation}
 (in a similar way to how we write the vector of Laplacians of $m_i$ as $\lap \mv$.
 
-Next the second term of equation~\eqref{ll-eqn:exresterms}
+Next the second term of equation~\cref{ll-eqn:exresterms}
 \begin{equation}
   \mxmxex = \intd{\tbf \mv \times \left( \mv \times \lap \mv \right)},
 \end{equation}
@@ -96,7 +96,7 @@ Term $\mxmxex_2$ can again be dealt with by the same tricks as in \cref{sec:magn
 \begin{equation}
   \left[ \mxmxex_2 \right]_i = -0 + \intd{\nabla \tbf \cdot \nabla m_i},
 \end{equation}
-or using the notation given in equation~\eqref{ll-eqn:gradvecm}
+or using the notation given in equation~\cref{ll-eqn:gradvecm}
 \begin{equation}
   \mxmxex_2 = \int_\magd \nabla \mv \cdot \nabla \tbf  \d\magd.
 \end{equation}
@@ -146,7 +146,7 @@ Similarly the test functions can be approximated by a sum over the test basis fu
 \end{equation}
 Note that in our method $\sbf_k \equiv \tbf_k$, but we continue to write the two functions differently for generality. Also the basis functions for the space of test functions are often simply refered to as the test functions since they are used equivalently.
 
-So substituting the basis representations, \eqref{ll-eq:unknowns-basis} and \eqref{ll-eq:47} into the residuals we obtain a spatially discretised version of the problem.
+So substituting the basis representations, \cref{ll-eq:unknowns-basis} and \cref{ll-eq:47} into the residuals we obtain a spatially discretised version of the problem.
 %% \begin{gather}
 %%   \label{ll-res:tintro}
 %%   \text{Given $\happ(\xv,t)$ and $\hca(\xv,t)$, $\forall k$, $\forall \ndi$ find} \\

@@ -65,7 +65,7 @@ The applied field part of the effective field is \emph{not} linear or symmetrica
   If $m_i \in \ltwo$ and $\ddn{m_i} = 0$ on all of $\boundd$ then $\lap$ is a linear operator on $m_i$.
 \end{theorem}
 \begin{proof}
-  Apply equation~\eqref{eqn:laplace-divergence} twice: first with $\ff = a$, $\gf = b$, then the other way around.
+  Apply equation~\cref{eqn:laplace-divergence} twice: first with $\ff = a$, $\gf = b$, then the other way around.
   \begin{equation}
     \begin{aligned}
       \ip{\lap a}{b} &= \intd{\left(\lap a \right) b}, \\
@@ -103,9 +103,9 @@ For simplicity write
 
 \begin{proof}
 
-  Essentially we just apply identity~\eqref{eqn:grad-divergence}, rearrange the result using the symmetry of the kernel, $\knl$, and apply the identity again in reverse. We drop the $\xv$ argument from $\phim$ where it is obvious.
+  Essentially we just apply identity~\cref{eqn:grad-divergence}, rearrange the result using the symmetry of the kernel, $\knl$, and apply the identity again in reverse. We drop the $\xv$ argument from $\phim$ where it is obvious.
 
-  Using~\eqref{eqn:grad-divergence} we get
+  Using~\cref{eqn:grad-divergence} we get
   \begin{equation}
     \begin{aligned}
       \ip{\hmsop[\av]}{\bv} &= -\intd{\bv \cdot \grad \phim[\av] }, \\

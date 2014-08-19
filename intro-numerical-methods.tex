@@ -5,10 +5,10 @@
 
 
 In this Chapter we give an overview of numerical methods that have previously been used in dynamic micromagnetic calculations.
-These calculations involve solving some form of the LLG equation \eqref{eq:LLG} with effective fields determined by energy derivatives as discussed in \cref{sec:cont-micromag}.
+These calculations involve solving some form of the LLG equation \cref{eq:LLG} with effective fields determined by energy derivatives as discussed in \cref{sec:cont-micromag}.
 These systems of partial differential equations (PDEs) can only be solved analytically in a few extremely simple cases\footnote{For example the Stoner-Wolfarth theory for the rotation of a single grain \cite{Stoner1948a}.} \cite{Aharoni1996}, so numerical solution methods are almost always necessary.
 
-Many numerical methods for solving non-linear PDEs, such as \eqref{eq:LLG}, can be thought of as a combination of various component methods, each of which handles a different part of the conversion from a continuous PDE into an algorithm which can be performed by a computer\footnote{Technically proofs of convergence etc. should be carried out for every different combination of time and space discretisation\cite[382]{Iserles2009}; in practice suprises seem to be rare, at least within micromagnetics.}.
+Many numerical methods for solving non-linear PDEs, such as \cref{eq:LLG}, can be thought of as a combination of various component methods, each of which handles a different part of the conversion from a continuous PDE into an algorithm which can be performed by a computer\footnote{Technically proofs of convergence etc. should be carried out for every different combination of time and space discretisation\cite[382]{Iserles2009}; in practice suprises seem to be rare, at least within micromagnetics.}.
 
 The essential components of a numerical method for solving PDE problems are:
 \begin{itemize}
@@ -22,8 +22,8 @@ For some choices of time and space discretisations additional component methods 
 \end{itemize}
 
 Additionally in micromagnetic modelling the calculation of the magnetostatic field is required.
-If the integral form given in \eqref{eq:Hmsint} is used then an additional integral evaluation method is needed to handle it.
-Alternatively, if the equivalent potential formulation \eqref{eq:Hms}, \eqref{eq:cont-phi-bound} is used then the magnetostatic field calculation simply requires solving additional PDEs.
+If the integral form given in \cref{eq:Hmsint} is used then an additional integral evaluation method is needed to handle it.
+Alternatively, if the equivalent potential formulation \cref{eq:Hms}, \cref{eq:cont-phi-bound} is used then the magnetostatic field calculation simply requires solving additional PDEs.
 
 It should be noted that not all methods fit into this framework of applying separate methods for each part of the problem, see \cref{sec:advanced-lin} for one example.
 
@@ -98,7 +98,7 @@ When discussing time integration schemes it is helpful to use a (vector) initial
   \end{aligned}
 \end{equation}
 where $\fv(t,\yv)$ is a known function and $\yv_0$ is the (known) initial condition.
-After the application of one of the spatial discretisations described above a PDE is typically reduced to the form \eqref{eq:45}, this sometimes is called a \emph{semi-discretised} PDE.
+After the application of one of the spatial discretisations described above a PDE is typically reduced to the form \cref{eq:45}, this sometimes is called a \emph{semi-discretised} PDE.
 
 The time integration methods discussed here all bear a strong similarity to the finite difference method discussed in \cref{sec:sd-finite-diff-meth}, except that the independant variable discretised is time instead of space.
 This is appropriate since time is one-dimesional, hence no complex geometry is possible and so typically there is no need for the more advanced finite element method.
@@ -174,10 +174,10 @@ It is given by:
   \label{eq:imr-definition}
   \yv_{n+1} = \yv_n + \dtn \ffv{\frac{t_{n+1} + t_n}{2}, \frac{\yv_n + \yv_{n+1}}{2}}.
 \end{equation}
-Note that for cases where $\fv$ is linear in both $t$ and $\yv$ IMR, \eqref{eq:imr-definition}, is equvalent to TR, \eqref{eq:tr-definition}.
+Note that for cases where $\fv$ is linear in both $t$ and $\yv$ IMR, \cref{eq:imr-definition}, is equvalent to TR, \cref{eq:tr-definition}.
 In general the properties of the two methods are similar.
 
-IMR is trivial to implement in any existing implicit solver: take a step of BDF1, \eqref{eq:bdf1-definition}, using $\dtn^\bdfo = \dtn^\imr/2$ then update via
+IMR is trivial to implement in any existing implicit solver: take a step of BDF1, \cref{eq:bdf1-definition}, using $\dtn^\bdfo = \dtn^\imr/2$ then update via
 \begin{equation}
   \begin{aligned}
     t_{n+1} &\rightarrow t_{n+1} + \dtn^\imr/2, \\
@@ -217,9 +217,9 @@ It is important to distinguish the local truncation error from the \emph{global 
   \label{eq:global-temporal-error}
     E_n = \yv(t_{n+1}) - \yv_{n+1}.
 \end{equation}
-The difference is that the global error includes any error accumulated over previous time steps (\ie the exact values $\yv(t_n)$ in \eqref{eq:60} are replaced by their approximations).
+The difference is that the global error includes any error accumulated over previous time steps (\ie the exact values $\yv(t_n)$ in \cref{eq:60} are replaced by their approximations).
 Note that because of this accumulation the global error will typically be larger than the LTE.
-For example the global error of IMR expressed in the same form as \eqref{eq:trunc-start} is
+For example the global error of IMR expressed in the same form as \cref{eq:trunc-start} is
 \begin{equation}
   E_n^\imr =  \yv(t_{n+1}) - \yv_n^\imr - \dtn \ffv{ \thf, \frac{\yv_n^\imr + \yv_{n+1}^\imr}{2} }.
 \end{equation}
@@ -244,7 +244,7 @@ Similarly, the expansion at $t_n$ about $\thf$ is
   + \order{\dtn^4}.
   \label{eq:taylorn}
 \end{equation}
-Substituting \eqref{eq:taylornp1} and \eqref{eq:taylorn} into \eqref{eq:trunc-start} gives\footnote{If we had chosen to Taylor expand about $t_n$ there would be an additional term in $\yv_n''$ in \eqref{eq:trunc-mid}.}
+Substituting \cref{eq:taylornp1} and \cref{eq:taylorn} into \cref{eq:trunc-start} gives\footnote{If we had chosen to Taylor expand about $t_n$ there would be an additional term in $\yv_n''$ in \cref{eq:trunc-mid}.}
 \begin{equation}
   \lte^\imr = \underbrace{\frac{\dtn^3}{24} \yvhf[''']}_{\text{I}}
   + \underbrace{\dtn\bigs{ \yvhf['] - \ffv{\thf, \frac{\yv(t_n) + \yv_{n+1}}{2}} }}_{\text{II}}
@@ -252,7 +252,7 @@ Substituting \eqref{eq:taylornp1} and \eqref{eq:taylorn} into \eqref{eq:trunc-st
   \label{eq:trunc-mid}
 \end{equation}
 
-There are two parts to \eqref{eq:trunc-mid}: the first term (I) is fairly standard for second order time integration schemes (see \eg \cref{cha:trunc-errors}).
+There are two parts to \cref{eq:trunc-mid}: the first term (I) is fairly standard for second order time integration schemes (see \eg \cref{cha:trunc-errors}).
 The second term (II) originates from the use of an approximation to $\yv(\thf)$ in the evaluation of $\fv$ (\ie the Runge-Kutta nature of IMR).
 The rest of the derivation requires applying Taylor expansions to II and is carried out in \cref{sec:full-imr-lte-calculation}.
 The final result shows that IMR is of second order:
@@ -265,7 +265,7 @@ where $\dfdyhf = \pd{\fv}{\yv}\evalat{t=\thf}$ is the Jacobian of $\fv$ with res
 An additional condition required in the derivation is that ??ds the magnitude of the eigenvalues of $\dtn\dfdyhf$ are less than one, the implications of this are discussed in \cref{sec:order-reduction}.
 
 The TR \cite[261]{GreshoSani} and BDF2 \cite[715]{GreshoSani} methods are also second order.
-Their local truncation errors are similar to term I of \eqref{eq:trunc-mid}:
+Their local truncation errors are similar to term I of \cref{eq:trunc-mid}:
 \begin{equation}
   \label{eq:tr-lte}
   \lte^\tr = \yv_{n+1} - \yv(t_{n+1}) = -\frac{\dtn^3 \yv_n'''}{12}
@@ -293,7 +293,7 @@ To discuss the stability of time integrators the following test equation is wide
   \yv(t) = \exp(\lambda t).
 \end{equation}
 
-A-stablility\footnote{The A does not stand for anything, it is just ``A''\cite[40]{HairerWanner}, in particular it does \emph{not} mean ``absolute stability''.} is the property that a method is has no stability restrictions on the time step size when used to integrate \eqref{eq:ode-test-f} for all $\lambda$ with $\realp(\lambda) \leq 0$.
+A-stablility\footnote{The A does not stand for anything, it is just ``A''\cite[40]{HairerWanner}, in particular it does \emph{not} mean ``absolute stability''.} is the property that a method is has no stability restrictions on the time step size when used to integrate \cref{eq:ode-test-f} for all $\lambda$ with $\realp(\lambda) \leq 0$.
 When $\realp(\lambda) > 0$ the ODE itself is unstable and so stability is not expected in general.
 A-stability is a good way to classify the suitability of a time integrator for solving ``stiff'' ODEs.
 Such ODEs often emerge from the semi-discretisation of a PDE.
@@ -311,7 +311,7 @@ Also second order is in some sense ``good enough'' for LLG integration since the
 Some time integration methods create additional, non-physical damping in approximate solutions, even when none exists in the exact solution.
 This is problematic for the modelling of highly oscillatory ODEs, such as the LLG with low damping.
 
-We say that a time integration method causes spurious damping if when solving the test ODE \eqref{eq:ode-test-f} with $\lambda = i\omega$ the magnitude of $y$ decreases over time.
+We say that a time integration method causes spurious damping if when solving the test ODE \cref{eq:ode-test-f} with $\lambda = i\omega$ the magnitude of $y$ decreases over time.
 
 For example, for the implicit midpoint rule:
 \begin{equation}
@@ -362,7 +362,7 @@ The analysis for the second order BDF2 case is more complex due to the fact that
 \label{sec:order-reduction}
 
 It is known that certain implicit Runge-Kutta methods are susceptible to reduced accuracy when used to solve certain extremely stiff problems \cite[156]{Atkinson1994}\cite[225]{HairerWanner}.
-In the case of the implicit midpoint rule this corresponds to the case when the error due to term II of \eqref{eq:trunc-mid} is large. This occurs when $\pd{\fv}{\yv}\evalat{\thf{}}$ is large, \ie when the error in $\ffv{t, \yv}$ due to a small error in $\yv$ is large.
+In the case of the implicit midpoint rule this corresponds to the case when the error due to term II of \cref{eq:trunc-mid} is large. This occurs when $\pd{\fv}{\yv}\evalat{\thf{}}$ is large, \ie when the error in $\ffv{t, \yv}$ due to a small error in $\yv$ is large.
 
 The concept of ``B-convergence'' is used to analyse this effect.
 Roughly speaking a Runge-Kutta method is B-convergent of order $r$ if the global error is  $\order{\dtx{\text{max}}^r}$ for all sufficiently smooth ODEs without any assumption about the size of $\pd{\fv}{\yv}$.
@@ -382,7 +382,7 @@ for some function $g(t)$ and parameter $\lambda \geq 0$.
 Note that $\pd{f}{y} = \lambda$, so we can directly control the second term of the IMR truncation error.
 
 We now derive the LTE for IMR in this example when $\abs{\lambda\dtn} >> 1$.
-From \cref{sec:full-imr-lte-calculation}, \eqref{eq:trunc-implicit-form} we have that
+From \cref{sec:full-imr-lte-calculation}, \cref{eq:trunc-implicit-form} we have that
 \begin{equation}
   \begin{aligned}
     (1 + \frac{\dtn \lambda}{2})\lte^\imr &= \frac{\dtn^3}{24}
@@ -441,7 +441,7 @@ However this approach fundamentally changes the system of equations being solved
 
 ??Ds rewrite:
 If we have a system with only a single (macro)spin (\ie a single value of $\Mv$ represents the magnetisation of the entire system) it is easy to avoid this problem by using a spherical polar coordinate system $(r,\theta,\phi)$.
-Equation~\eqref{eq:LLG} can be expressed in terms of only the angles $(\theta,\phi)$ representing the direction of $\Mv$ and the non-convex constraint is automatically enforced since
+Equation~\cref{eq:LLG} can be expressed in terms of only the angles $(\theta,\phi)$ representing the direction of $\Mv$ and the non-convex constraint is automatically enforced since
 \begin{equation}
   \label{eq:40}
   \pd{\abs{\Mv}}{t} = \pd{r}{t} \equiv 0.
@@ -463,7 +463,7 @@ In this section we show that the discrete form of the Landau-Lifshitz-Gilbert eq
 These results are applicable to cases where, after any spatial discretisation, each spatial point is time evolved by simply integrating the LLG with the values for that point, \ie finite difference and macrospin discretisations (but not finite elements).
 For the purposes of this section we assume that the linearisation method is exact, \ie the discretised but non-linear Landau-Lifshitz-Gilbert equation is satisfied exactly.
 
-As can be seen from \eqref{eq:imr-definition} the IMR is defined by the following substitutions:
+As can be seen from \cref{eq:imr-definition} the IMR is defined by the following substitutions:
 \begin{equation}
 \begin{aligned}
   \label{eq:55}
@@ -501,12 +501,12 @@ More precisely:
 \end{equation}
 This means that any orthogonality relationships between $\lop \mv$ and $\dmdt$ in the continuous case carry over to the discrete case. ??ds more detail on what this means
 
-We can now examine the change in magnetisation length using the same technique as in \cref{sec:prop-cont-llg}: take the dot product with $\frac{\mv_{n+1} + \mv_n}{2}$ on both sides of~\eqref{eqn:disc-llg} and use the triple product identity \eqref{eq:dot-cross-id} to get
+We can now examine the change in magnetisation length using the same technique as in \cref{sec:prop-cont-llg}: take the dot product with $\frac{\mv_{n+1} + \mv_n}{2}$ on both sides of~\cref{eqn:disc-llg} and use the triple product identity \cref{eq:dot-cross-id} to get
 \begin{equation}
   \label{eq:63}
   \frac{\mv_{n+1} + \mv_n}{2} \cdot \frac{\mv_{n+1} - \mv_n}{\dtn} = 0.
 \end{equation}
-Now using~\eqref{eqn:imr-linop} with $\lop$ as the identity operator gives us
+Now using~\cref{eqn:imr-linop} with $\lop$ as the identity operator gives us
 \begin{equation}
   \frac{\ip{\mv_{n+1}}{\mv_{n+1}} - \ip{\mv_n}{\mv_n} }{2 \dtn} = 0.
 \end{equation}
@@ -517,7 +517,7 @@ Therefore
 \ie the magnetisation length does not change between time steps.
 
 
-Note that for other time integration schemes the property \eqref{eqn:imr-linop} typically does not hold.
+Note that for other time integration schemes the property \cref{eqn:imr-linop} typically does not hold.
 For example in the case of BDF1 we have
 \begin{equation}
   \begin{aligned}
@@ -530,7 +530,7 @@ For example in the case of BDF1 we have
 \end{equation}
 so orthogonality properties from the continuous form do not carry over in general.
 
-Also note that the derivation of \eqref{eq:63} only requires that the midpoint representation of magnetisation be used for terms directly in the llg, it does not require anything about the effective field calcuation.
+Also note that the derivation of \cref{eq:63} only requires that the midpoint representation of magnetisation be used for terms directly in the llg, it does not require anything about the effective field calcuation.
 This explains why the semi-explicit modification to IMR also conserves the magnetisation length. 
 
 
@@ -570,7 +570,7 @@ We write the error term as
   \happerror = \frac{\dtn^2}{4} \evalatb{\spd{\happ}{t}}{\frac{t_{n+1} + t_n}{2}}  + \order{\dtn^4}.
 \end{equation}
 
-In the same manner as the previous section we derive the change in energy of the discrete LLG by taking the $\ltwo$ inner product of equation~\eqref{eqn:disc-llg} with
+In the same manner as the previous section we derive the change in energy of the discrete LLG by taking the $\ltwo$ inner product of equation~\cref{eqn:disc-llg} with
 \begin{equation}
   \mphop + \frac{\happ(t_{n+1}) + \happ(t_n)}{2} + \happerror - \dampc \mpdmdt,
 \end{equation}
@@ -582,7 +582,7 @@ resulting in
     \label{eq:54}
   \end{aligned}
 \end{equation}
-The $\hop$ term in \eqref{eq:54} can be simplified by using the orthogonality identity~\eqref{eqn:imr-linop} and then written as an energy using \eqref{eq:energy-hop}
+The $\hop$ term in \cref{eq:54} can be simplified by using the orthogonality identity~\cref{eqn:imr-linop} and then written as an energy using \cref{eq:energy-hop}
 \begin{equation}
   \begin{aligned}
     \ltip{\mphop}{\mpdmdt} 
@@ -615,7 +615,7 @@ where
     \label{eq:52}
   \end{aligned}
 \end{equation}
-Finally we insert the results of equations~\eqref{eq:50} and \eqref{eq:52} into \eqref{eq:54} to find
+Finally we insert the results of equations~\cref{eq:50} and \cref{eq:52} into \cref{eq:54} to find
 \begin{equation}
   \frac{\e_{n+1} - \e_n}{\dtn}
   = -\dampc \ltnorm{\mpdmdt}^2
@@ -623,7 +623,7 @@ Finally we insert the results of equations~\eqref{eq:50} and \eqref{eq:52} into 
   + \happerror.
   \label{eqn:imr-llg-energy}
 \end{equation}
-If the applied field is linear (and so $\happerror = 0$) this is exactly the midpoint discretisation of the continuous energy balance equation~\eqref{eq:energy-decay}.
+If the applied field is linear (and so $\happerror = 0$) this is exactly the midpoint discretisation of the continuous energy balance equation~\cref{eq:energy-decay}.
 In particular the energy is conserved when $\dampc = 0$ and the applied field is constant.
 
 Note that when $\happ$ is piecewise linear, for example going from zero field to a constant field at a certain point in time, time steps can be trivially selected such that each non-linear change happens exactly at the start/end of a step.
@@ -844,8 +844,8 @@ Also Banas et. al.\cite{Banas2008} \cite{Banas2010} created a multigrid precondi
 \label{sec:magn-field-calc}
 
 Methods for the calculation of magnetostatic fields break down into two categories: intergral and potential methods.
-Integral methods are based on efficiently approximating the very large number of integrals required by \eqref{eq:Hmsint}.
-Potential methods are based on the use of the potential form \eqref{eq:Hms} with standard spatial discretisation methods, but some special treatment is required for the boundary conditions at infinity \eqref{eq:cont-phi-bound}.
+Integral methods are based on efficiently approximating the very large number of integrals required by \cref{eq:Hmsint}.
+Potential methods are based on the use of the potential form \cref{eq:Hms} with standard spatial discretisation methods, but some special treatment is required for the boundary conditions at infinity \cref{eq:cont-phi-bound}.
 
 More recently models have been developed which extend the magnetic field calculations to include all of Maxwells equations (and so to calculate the electric field and its effects on the magnetic field as well).
 Such models greatly increase the number of degrees of freedom in the problem: 3 magnetisation components, 3 magnetic field components and 3 electrical field components are needed, whereas for magnetostatic calculations only the magnetisation and possibly up to 2 potentials are needed.
@@ -882,7 +882,7 @@ Integral methods are based on the expression
   \label{eq:Hmsint2}
 \end{equation}
 
-After the application of a discretisation scheme the integrals in \eqref{eq:Hmsint2} become a sum over all nodes.
+After the application of a discretisation scheme the integrals in \cref{eq:Hmsint2} become a sum over all nodes.
 The naive way to calculate the magnetostatic fields would then be to work through the list of nodes calculating the field at each of them, so for each node a sum of the contributions from all other nodes must be calculated.
 Hence this results in a computation time that scales as $\order{N^2}$ (where $N$ is the number of points used in the space discretisation), this is usually unacceptably slow.
 
@@ -893,7 +893,7 @@ In this section we refer to magnetic charges to mean the macrospins/cells/nodes 
 
 The fast Fourier transform method (FFT) is a simple and efficient method for calculating the magnetostatic field when the magnetic charges are on a regular lattice and the boundary conditions are periodic.
 
-The calculation of $\Hms$ in equation~\eqref{eq:Hmsint} can be thought of as applying a convolution operator (\ie $\Hms = D \big[\Mv\big]$).
+The calculation of $\Hms$ in equation~\cref{eq:Hmsint} can be thought of as applying a convolution operator (\ie $\Hms = D \big[\Mv\big]$).
 The matrix corresponding to this operator is only dependent on the geometry, hence it can be precomputed, Fourier transformed and stored.
 Then all that is needed to calculate the magnetostatic field is to apply a Fourier transform to $\Mv$, compute the convolution and transform the result back into the time domain by applying the inverse Fourier transform.
 Because of the regularity, applying the convolution in the frequency domain is very fast and hence the complexity of the calculation is limited by the complexity of a fast Fourier transform.
@@ -913,7 +913,7 @@ The fast multipole method takes advantage of the fact that distant magnetic char
 
 For the field calculation at a specific point the full calculation is only performed for nearby magnetic charges.
 Groups of more distant charges are approximated (lumped) as a single multipole placed at the centre of the group.
-As the charges become more distant they contribute much less to the field due to the $\frac{1}{(\xv - \xv')^2}$ scaling in equation~\eqref{eq:Hmsint2}.
+As the charges become more distant they contribute much less to the field due to the $\frac{1}{(\xv - \xv')^2}$ scaling in equation~\cref{eq:Hmsint2}.
 Hence for distant points the a cheaper but less accurate approximation can be used without reducing the accuracy of the final result.
 
 The trick for quickly calculating fields at a large number of points is to pre-calculate multipole approximations for a range of accuracies over all space.
@@ -951,7 +951,7 @@ and
 \end{equation}
 
 This is a differential equation and so inside the domain it can be solved simply by applying the finite element or finite difference discretisation methods.
-However \eqref{eq:phi-inf-bound}, the boundary condition on $\phim$ at infinity, is problematic.
+However \cref{eq:phi-inf-bound}, the boundary condition on $\phim$ at infinity, is problematic.
 We obviously can not apply this condition directly using standard methods, since that would involve either an infinite number of elements or infinitely large elements.
 Hence other techniques must be used, such techniques are the subject of the rest of this section.
 
@@ -964,8 +964,8 @@ The speed of the internal field calculation is $\order{N}$ since it is just a st
 One way to avoid an infinite domain is to truncate the external region at some finite distance from the magnetic domain.
 However the relationship between truncation distance and accuracy is problem dependent (since the size of the external field at any point depends on the problem geometry) and does not lead to good accuracy even for large truncation distances.
 
-A more sophisticated method is to use asymptotic boundary conditions \cite{Yang1997}. The idea here is to use a truncated external region to calculate the boundary conditions on the magnetic domain that correspond to \eqref{eq:phi-inf-bound} being applied at infinity.
-Additionally the fact that any solution to the Poisson equation~\eqref{eq:Hms2} can be represented as an infinite series of harmonic functions is used to improve the accuracy.
+A more sophisticated method is to use asymptotic boundary conditions \cite{Yang1997}. The idea here is to use a truncated external region to calculate the boundary conditions on the magnetic domain that correspond to \cref{eq:phi-inf-bound} being applied at infinity.
+Additionally the fact that any solution to the Poisson equation~\cref{eq:Hms2} can be represented as an infinite series of harmonic functions is used to improve the accuracy.
 Unfortunately the accuracy of this approach is still quite low, even for large truncation distances \cite{Bottauscio2008}.
 
 
