@@ -19,7 +19,7 @@ Shorter wavelength implies higher frequency, \ie shorter characteristic time sca
 These modes interact with the solution, and the large variation in time scales causes stiffness in a similar way to physical effects.
 For a rigorous discussion of this effect in terms of the eigenvalues of the time integration operator see e.g. \cite[Sec 8.2]{Atkinson2009}.
 
-As discussed in \autoref{sec:time-discretisation} time integration methods can be roughly divided into two classes: those which are not good at solving stiff problems and those which are.
+As discussed in \cref{sec:time-discretisation} time integration methods can be roughly divided into two classes: those which are not good at solving stiff problems and those which are.
 These two classes correspond to \emph{explicit} methods that calculate the value at the next time exclusively in terms of previous values and \emph{implicit} methods in which a system of equations must be solved. 
 Typically one step of an implicit method requires more computational effort than a step of an explicit method because of this solve.
 However good implicit methods are unconditionally stable, allowing them to take much larger time steps when applied to stiff problems \cite[Chap. 4]{Iserles2009}.
@@ -32,11 +32,11 @@ Finally, we study the effects of stiffness on methods which combine explicit mag
 
 \section{The model}
 
-In these experiments we use the FEM discretisation of the non-dimensionalised LLG as discussed in \autoref{sec:galerk-meth-llg}.
-When in use magnetostatics are handled using the FEM/BEM discretisation as discussed in \autoref{sec:hybr-finit-elem}.
+In these experiments we use the FEM discretisation of the non-dimensionalised LLG as discussed in \cref{sec:galerk-meth-llg}.
+When in use magnetostatics are handled using the FEM/BEM discretisation as discussed in \cref{sec:hybr-finit-elem}.
 
 \subsection{Implicit time integration}
-For implicit integration we use the implicit midpoint rule (IMR) with constant time steps as discussed in \autoref{sec:adaptive-imr}.
+For implicit integration we use the implicit midpoint rule (IMR) with constant time steps as discussed in \cref{sec:adaptive-imr}.
 The complete problem (including the magnetostatic potential equations) is then linearised using Newton's method.
 The resulting linear system is solved using GMRES with an incomplete LU decomposition\footnote{Hypre's Euclid preconditioner\cite{hypre} with no drop tolerance and factorisation level 1.} of the sparse parts of the system as a preconditioner, ignoring the dense block in the Jacobian arising from the BEM.
 
@@ -63,7 +63,7 @@ The Poisson solves required for the evaluation of the potentials $\phione$ and $
 
 
 \subsection{Semi-implicit time integration}
-The semi-implicit time integration method (SIMR) used is the implicit midpoint rule combined with the semi-implicitisation discussed in \autoref{sec:semi-implicit-bem}.
+The semi-implicit time integration method (SIMR) used is the implicit midpoint rule combined with the semi-implicitisation discussed in \cref{sec:semi-implicit-bem}.
 
 
 \section{The Test Case}
@@ -72,7 +72,7 @@ As our example problem we chose a sphere with a radius of one exchange length.
 The initial magnetisation is $\mv = [0.2, 0, 1.0]/|\mv|$, the applied field is $\happ =[0, 0, -1.1]$. 
 We considered three values for the Gilbert damping constant: $\alpha = 1, 0.1$ and $0.01$.
 With this geometry and uniform magnetisation the magnetostatic field can be analytically shown to be $\hms = -\mv/3$ throughout the domain \cite[112]{Aharoni1996}, and so, due to energy considerations, the magnetisation remains uniform for spheres of radius $R < 2.082 \sqrt{3} \sim 3.606$ exchange lengths \cite[211]{HubertSchafer}.
-??ds repeated from \autoref{sec:imr-ode-llg-numer-exper}
+??ds repeated from \cref{sec:imr-ode-llg-numer-exper}
 
 % Note that analytically the magnetostatic field has no effect on the dynamics because it is always anti-parallel to $\mv$ (the cross product of anti-parallel vectors is zero).
 The dynamics are therefore very simple: the magnetisation processes around the $z$-axis while gradually damping towards the applied field (along the negative $z$-axis).
@@ -123,8 +123,8 @@ Additionally, since no stability issues were seen for any value of $\alpha$, we 
 \end{figure}
 
 
-The results of the experiments with $\hms = \zerov$ are shown in \autoref{fig:no-hms-stability}.
-Results with full FEM/BEM magnetostatics and results with the analytical formula for magnetostatics are shown in \autoref{fig:hms-stability} and \ref{fig:analytic-hms-stability} respectively. 
+The results of the experiments with $\hms = \zerov$ are shown in \cref{fig:no-hms-stability}.
+Results with full FEM/BEM magnetostatics and results with the analytical formula for magnetostatics are shown in \cref{fig:hms-stability} and \ref{fig:analytic-hms-stability} respectively. 
 
 In all cases we find that as the damping constant is reduced by an order of magnitude, stable explicit time step sizes are reduced by approximately a factor of two (due to an increase in the stiffness).
 
@@ -144,14 +144,14 @@ In all cases we find that as the damping constant is reduced by an order of magn
   \label{fig:analytic-hms-stability}
 \end{figure}
 
-Comparing \autoref{fig:no-hms-stability} and \ref{fig:hms-stability} we see that using FEM/BEM magnetostatics significantly increases the stiffness, requiring roughly an order of magnitude smaller explicit time steps.
-However, from \autoref{fig:analytic-hms-stability} we see that adding the exact field does not induce stiffness, so we can conclude that this effect is due to the FEM/BEM discretisation and not the magnetostatic field itself.
+Comparing \cref{fig:no-hms-stability} and \ref{fig:hms-stability} we see that using FEM/BEM magnetostatics significantly increases the stiffness, requiring roughly an order of magnitude smaller explicit time steps.
+However, from \cref{fig:analytic-hms-stability} we see that adding the exact field does not induce stiffness, so we can conclude that this effect is due to the FEM/BEM discretisation and not the magnetostatic field itself.
 From our data we cannot predict whether other methods of calculating the magnetostatic field, such as multipole methods, will result in similar increases in the number of explicit time steps required.
 However we expect that the effect is due to the coupling with the additional Poisson problems, thus any potential based method is likely to exhibit similar behaviour.
 
-\autoref{fig:hms-stability} shows that using a semi-implicit method with explicit magnetostatic calculations (SIMR) imposes no stability restrictions on the time step due to spatial discretisation for the spatial resolutions required for micromagnetic problems.
+\cref{fig:hms-stability} shows that using a semi-implicit method with explicit magnetostatic calculations (SIMR) imposes no stability restrictions on the time step due to spatial discretisation for the spatial resolutions required for micromagnetic problems.
 
-To further analyse our results we need an estimate of the ratio of computational effort for explicit vs implicit time steps. Without magnetostatics we find that each step of IMR takes on average 5.86 times more computation time than a step of RK2. With magnetostatics each step of SIMR only takes 3.40 times more computation time than a step of RK2 (the difference is due to the cost of solving multiple Poisson problems at each Runge-Kutta stage). Using these ratios we can calculate the stable RK2 time step required to have equivalent computational efficiency to IMR with step size 0.1. This stable step size is marked on \autoref{fig:no-hms-stability}, \ref{fig:hms-stability} and \ref{fig:analytic-hms-stability} with a dashed line.
+To further analyse our results we need an estimate of the ratio of computational effort for explicit vs implicit time steps. Without magnetostatics we find that each step of IMR takes on average 5.86 times more computation time than a step of RK2. With magnetostatics each step of SIMR only takes 3.40 times more computation time than a step of RK2 (the difference is due to the cost of solving multiple Poisson problems at each Runge-Kutta stage). Using these ratios we can calculate the stable RK2 time step required to have equivalent computational efficiency to IMR with step size 0.1. This stable step size is marked on \cref{fig:no-hms-stability}, \ref{fig:hms-stability} and \ref{fig:analytic-hms-stability} with a dashed line.
 
 Based on these results we say that a problem is ``stiff'', and that an implicit method will perform significantly better than an explicit one, if the ratio of the desired time step, $\dtinitial$ to the maximum stable explicit time step, $\dtmax$ is greater than 20.
 % This roughly agrees with the results of Suess \etal \cite{Suess2002}, who used the widely used (and presumably heavily optimised) CVODE package to solve the mumag standard problem 4 using similar techniques to ours. % Their bdf2 steps are extremely slow, probably bad preconditioner.

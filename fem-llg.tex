@@ -7,7 +7,7 @@ We then apply the finite element method (with the Newton-Raphson method for line
 \section{Introduction to the finite element method}
 \label{sec:intr-finite-ele-diff}
 
-As discussed in \autoref{sec:sd-finite-elem-meth} the finite element method (FEM) is a discretisation method which converts a differential equation into a system of algebraic equations.
+As discussed in \cref{sec:sd-finite-elem-meth} the finite element method (FEM) is a discretisation method which converts a differential equation into a system of algebraic equations.
 It allows for more complex geometries than the finite difference method, at the cost of increased complexity.
 
 A simple problem is used to illustrate these methods: solving the Poisson
@@ -132,7 +132,7 @@ Similarly, for $V_S$
     y(0) = y_a,\, y(1) = y_b }.
 \end{equation}
 We call $\sbf_l$ the shape functions.
-Different choices of $\tbf_{\ndi}$ and $\sbf_l$ lead to different methods, the choice corresponding to the finite element method will be discussed in \autoref{sub:Actual-Finite-Elements}.
+Different choices of $\tbf_{\ndi}$ and $\sbf_l$ lead to different methods, the choice corresponding to the finite element method will be discussed in \cref{sub:Actual-Finite-Elements}.
 For now we continue with the conversion of the problem into a general discrete form.
 
 We currently have the discrete weak formulation of \eqref{eq:poisson1}: find $y_{h}\in V_{S}^{h}$ such that
@@ -160,7 +160,7 @@ Substituting \eqref{eq:y-spans} into equation~\eqref{eq:discrete_weak_test_fns_r
   \label{eq:31}
 \end{equation}
 
-The functions $f$, $\tbf$ and $\sbf$ are known and so the integrals in \eqref{eq:31} are just numbers (which must be calculated at some point, see \autoref{sec:numer-eval-integrals}).
+The functions $f$, $\tbf$ and $\sbf$ are known and so the integrals in \eqref{eq:31} are just numbers (which must be calculated at some point, see \cref{sec:numer-eval-integrals}).
 Hence we introduce a matrix $\Am$ and a vector $\mathbf{b}$ containing these numbers:
 \begin{equation}
   \intui{ \sbf_{l}'\tbf'_{\ndi} } =\Am_{l\ndi},\qquad\intui{ f\tbf_{\ndi} } =b_{j},\label{eq:Aij_bj}
@@ -176,7 +176,7 @@ This can be solved to find the vector of unknown coefficients $\mathbf{c}$ which
 \subsection{Finite Elements in One Dimension}
 \label{sub:Actual-Finite-Elements}
 
-To create a useable implementation of the methodology derived in \autoref{Derivation-of-weighted-residuals} we must first define basis functions for the spaces $V_{T}^{h}$ and $V_S^h$.
+To create a useable implementation of the methodology derived in \cref{Derivation-of-weighted-residuals} we must first define basis functions for the spaces $V_{T}^{h}$ and $V_S^h$.
 For simplicity we choose the two types of basis functions to be the same: $\sbf_l = \tbf_l$.
 This choice defines the Galerkin method (and results in a symmetric matrix $\Am$, if the original equation has the corresponding symmetry) \cite[215]{Zeinkiewicz1967}.
 
@@ -220,7 +220,7 @@ We then create a \emph{local} numbering scheme for the nodes and functions in ea
 In one dimension the boundary of each element consists of two points, one at each end.
 In the local scheme it is natural to label these points by the element number $e$ and a local node number, \ie $x_{0}^{(e)}$ and $x_{1}^{(e)}$.
 In the global scheme each node is labelled by a unique node number, \ie $x_{\ndi}$ for $\ndi=0,\ldots,N$.
-The concept is best illustrated by a diagram, see \autoref{fig:local-global-numbering}.
+The concept is best illustrated by a diagram, see \cref{fig:local-global-numbering}.
 
 \begin{figure}
   \center
@@ -341,14 +341,14 @@ Similar ``full integration'' quadratures for triangular and tetrahedral elements
 \section{Application to spatial discretisation of the LLG}
 \label{sec:llg-initial-equations}
 
-We now apply the methodology discussed in \autoref{sec:intr-finite-ele-diff} to the Landau-Lifshitz-Gilbert equation.
+We now apply the methodology discussed in \cref{sec:intr-finite-ele-diff} to the Landau-Lifshitz-Gilbert equation.
 We start with the Gilbert form of the LLG \eqref{eq:Gilbert} with the various effective fields and the potential method for calculating the magnetostatic field \eqref{eq:Hms}.
 We use the Gilbert form of the Landau-Lifshitz-Gilbert equation even though it is less immediately intuitive because it greatly reduces the complexity of all derivatations--the Landau-Lifshitz form contains a double cross product term.
 A side effect of this choice is that explict timestepping schemes cannot be used since the time dependence of the fundamental equation is defined implicitly.
 
 \subsection{Initial equations}
 
-After non-dimensionalisation (see \autoref{sec:land-lifsh-gilb-normalisation}) the Landau-Lifshitz-Gilbert equation with effective fields is given by
+After non-dimensionalisation (see \cref{sec:land-lifsh-gilb-normalisation}) the Landau-Lifshitz-Gilbert equation with effective fields is given by
 \begin{equation}
   \begin{aligned}
     \dmdt &= - \mv \times \hv + \alpha \mv \times \dmdt, \\
@@ -359,7 +359,7 @@ After non-dimensionalisation (see \autoref{sec:land-lifsh-gilb-normalisation}) t
 \end{equation}
 
 For now we consider the magnetostatic potential only within the magnetic domain, $\magd$, with Neumann or Dirichlet boundary conditions on the boundary, $\boundd$. 
-Details of the extension to include the effects of the external region using the FEM/BEM method are given in \autoref{sec:hybr-finit-elem}, both Dirichlet and Neumann cases will be required.
+Details of the extension to include the effects of the external region using the FEM/BEM method are given in \cref{sec:hybr-finit-elem}, both Dirichlet and Neumann cases will be required.
 We define $\boundd_D$ and $\boundd_\Neu$ respectively to represent the region of the boundary domain where a Dirichlet condition or Neumann is imposed on the potential.
 So on $\boundd_\Neu$ $\nabla \phim(\xv) \cdot \nv = g_\Neu(\xv)$ and on $\boundd_D$ $\phim(\xv) = g_D(\xv)$.
 We also define the following function spaces for convenience
@@ -371,7 +371,7 @@ We also define the following function spaces for convenience
 \end{aligned}
 \end{equation}
 
-Recall from \autoref{sec:magn-bound-cond} that the boundary condition on the magnetisation is
+Recall from \cref{sec:magn-bound-cond} that the boundary condition on the magnetisation is
 \begin{equation}
   \label{eq:m-bc}
   \mv \times \dmdn = \zerov,
@@ -382,7 +382,7 @@ No special function space is needed for the solutions and test functions of $\mv
 
 \subsection{Conversion to Weak Form Residuals}
 
-We now convert the above equations into their residual weak forms as described in \autoref{Derivation-of-weighted-residuals}.
+We now convert the above equations into their residual weak forms as described in \cref{Derivation-of-weighted-residuals}.
 In the following we will need the identity\footnote{This can be easily derived by applying the product rule to $\nabla \cdot (v \nabla \phim)$.}
 \begin{equation}
   (\lap \phim) \test = \nabla \cdot (v \nabla \phim) - \nabla \phim \cdot \nabla v.
@@ -403,7 +403,7 @@ where $\phim \in \sob^2(\magd) \cap \Dfs$, $\mv$ is some sufficiently smooth giv
 Recall that the  residual must be zero $\forall \test \in \sob^0(\magd) \cap \Dfs_0$.
 
 The use of \eqref{eqn:phires1} for calculating $\rphi$ would require the existence of second order derivatives.
-We prefer to reduce the order of these derivatives as discussed in \autoref{Derivation-of-weighted-residuals} to relieve the smoothness requirements on our solution.
+We prefer to reduce the order of these derivatives as discussed in \cref{Derivation-of-weighted-residuals} to relieve the smoothness requirements on our solution.
 As before we do this by ``transfering'' the derivatives onto the test functions \cite{HowardElmanDavidSilvester2006}.
 
 Using identity \eqref{eq:20} and the divergence theorem \eqref{eq:div-thm} gives
@@ -552,7 +552,7 @@ The final problem statement is:
 \label{sec:spat-discr-resi}
 
 The next step is to choose a finite dimensional approximation, $\ts$, for the infinite dimensional test and solution function spaces, $\tsinf$, such that the residuals \eqref{res:contphi} and \eqref{eq:llg-res-final} become discrete in space.
-Just as in \autoref{sub:Actual-Finite-Elements} we represent the finite dimensional spaces using a set of piecewise linear polynomials, $\tsbasis$, as basis functions.
+Just as in \cref{sub:Actual-Finite-Elements} we represent the finite dimensional spaces using a set of piecewise linear polynomials, $\tsbasis$, as basis functions.
 
 The approxmiations to the unknown functions $\mv$ and $\phim$ are represented as a sum over the shape functions $\sk \in \tsbasis$ (or $\tsbasis \cap \Dfs$ for $\phim$ with Dirichlet conditions) as
 \begin{equation}
@@ -575,7 +575,7 @@ So substituting the basis representations, \eqref{eq:unknowns-basis} and \eqref{
 Next we replace the requirement that the residuals be zero for all test functions in the infinite dimensional set $\tsinf$ with the equivalent requirement for all functions in the finite set $\tsbasis$. 
 This results in a finite number of conditions (the residuals) on a finite number of variables (the nodal values) and so the spatial discretisation is complete.
 
-As described in \autoref{sub:Actual-Finite-Elements} we also convert this ``global'' representation into a number of ``local'' representations--one on each element.
+As described in \cref{sub:Actual-Finite-Elements} we also convert this ``global'' representation into a number of ``local'' representations--one on each element.
 
 % Let $\magd_\eli$ represent the volume of element $e$, let $\boundd_\eli$ represent any part of the boundary of the element which is on $\boundd$ (nothing for most elements).
 % Then the contribution of element $\eli$ to the residuals at node $\ndi$ is exactly as given in equations~\eqref{res:tintro}-\eqref{res:tllg} except that the integrations are performed over $\magd_\eli$ and $\boundd_\eli$ rather than $\magd$ and $\boundd$.
@@ -586,13 +586,13 @@ As described in \autoref{sub:Actual-Finite-Elements} we also convert this ``glob
 \label{sec:time-discretisation-resi}
 
 In this section we discuss how to deal with the time derivative in the LLG residual \eqref{eq:llg-res-final}.
-As discussed in \autoref{sec:numer-meth-micr}, we will apply standard time integration methods used for ODEs.
+As discussed in \cref{sec:numer-meth-micr}, we will apply standard time integration methods used for ODEs.
 This application of independent spatial and time discretisations is known as semi-discretisation or the method of lines.
 
-We cannot simply apply the time integration methods in the way they are written in \autoref{sec:some-implicit-time-integrators} (and in most text books) because our LLG residual \eqref{eq:llg-res-final} cannot be written in the required form $\pd{\yv}{t} = \fv(t, \yv)$ since it is an implicit function of the time derivative.\footnote{Actually we could have started with the LL form \eqref{eq:LLG} where the derivative can be given explicitly, but as mentioned above this method is simpler.}
+We cannot simply apply the time integration methods in the way they are written in \cref{sec:some-implicit-time-integrators} (and in most text books) because our LLG residual \eqref{eq:llg-res-final} cannot be written in the required form $\pd{\yv}{t} = \fv(t, \yv)$ since it is an implicit function of the time derivative.\footnote{Actually we could have started with the LL form \eqref{eq:LLG} where the derivative can be given explicitly, but as mentioned above this method is simpler.}
 Instead we rearrange the time integration method to give discrete substitutions for the time derivative, $\yv$ values and $t$.
 
-Let $\dtn$ be the size of the $n$th time step, let $x_n$ denote value of $x$ at the $n$-th time-step.\footnote{This notation has some potential to be confused with the nodal value notation of \autoref{sec:spat-discr-resi}, hopefully the meaning will be clear from the context.}
+Let $\dtn$ be the size of the $n$th time step, let $x_n$ denote value of $x$ at the $n$-th time-step.\footnote{This notation has some potential to be confused with the nodal value notation of \cref{sec:spat-discr-resi}, hopefully the meaning will be clear from the context.}
 The simplest case is the first order backwards difference method (BDF1), which is defined by the substitution
 \begin{equation}
   \begin{aligned}
@@ -624,7 +624,7 @@ The implicit midpoint rule is defined by the substitutions
     \label{eq:impl-imr}
   \end{aligned}
 \end{equation}
-Alternatively, as mentioned in \autoref{sec:some-implicit-time-integrators}, we can define the implicit midpoint rule in terms a step of BDF1 with $\dtn^\bdfo = \dtn^\imr/2$ to obtain $\yv_{n+\half}$ followed by the algebraic update
+Alternatively, as mentioned in \cref{sec:some-implicit-time-integrators}, we can define the implicit midpoint rule in terms a step of BDF1 with $\dtn^\bdfo = \dtn^\imr/2$ to obtain $\yv_{n+\half}$ followed by the algebraic update
 \begin{equation}
   \begin{aligned}
     \label{eq:imr-bdf1}
@@ -644,7 +644,7 @@ The trapezoid rule (TR) is defined (recursively) by
 \end{equation}
 
 So by applying one of the substitutions \eqref{eq:impl-bdf1}-\eqref{eq:impl-tr} to the system of spatially discretised residuals we obtain a fully discrete problem.
-The properties of these time discretisations are exactly as discussed in \autoref{sec:time-discretisation}.
+The properties of these time discretisations are exactly as discussed in \cref{sec:time-discretisation}.
 
 
 
@@ -973,7 +973,7 @@ Alternatively
 
 % ??ds add less than ntol to end of other residuals elsewhere?
 
-In weak form methods such as FEM (see \autoref{sec:intr-finite-ele-diff}) it turns out that standard (\ie Gaussian) quadrature schemes do not retain the conservation properties of the IMR.
+In weak form methods such as FEM (see \cref{sec:intr-finite-ele-diff}) it turns out that standard (\ie Gaussian) quadrature schemes do not retain the conservation properties of the IMR.
 The problem is that (outside of the infinite node limit) the weak form equations make statements about the integral properties of the solution, whereas magnetisation length is a nodal property.
 The solution is to use an alternative quadrature scheme which directly links the nodal values with the integral values.
 The downside of such a scheme is that the accuracy of the evaluation of integrals is reduced (since the standard schemes are chosen for their optimal accuracy).
@@ -1060,7 +1060,7 @@ where $a,b,c,d$ are the values of shape functions at the integration points, $m_
 So given any $m_{z,0}$ we can solve the above expression to find an $m_{z,1}$ that satisfies the constraint.
 Since we have chosen $\mv = (0, 0, m_z)$ this means we can vary the magnetisation length at node 0 arbitrarily while still satisfying the constraint.
 
-A similar expression is obtained if nodal magnetistations are chosen for the test function used in \eqref{eq:23} instead of the magnetisation function, as in \autoref{sec:weak-cons-absmv}.
+A similar expression is obtained if nodal magnetistations are chosen for the test function used in \eqref{eq:23} instead of the magnetisation function, as in \cref{sec:weak-cons-absmv}.
 
 Finally it is interesting to note that if the magnetisation is constant in space at times $t_n$ and $t_{n+1}$ then the integral condition in \eqref{eq:23} \emph{is} sufficient to give conservation of the magnetisation length at nodes.
 
@@ -1088,7 +1088,7 @@ As an additional benefit this greatly simplifies the calculations since no inter
 
 We now need to derive a suitable $\beta_l$.
 To do so we represent the quadrature scheme as an integral of an interpolating polynomial which matches the desired integration scheme, then we rearrange the equation to find the weights (see, \eg \cite[480]{Kincaid2002}).
-In \texttt{oomph-lib} all integration is done in local coordinates as discussed in \autoref{sec:numer-eval-integrals}, so we now calculate weights applicable in for a local coordinate quadrature.
+In \texttt{oomph-lib} all integration is done in local coordinates as discussed in \cref{sec:numer-eval-integrals}, so we now calculate weights applicable in for a local coordinate quadrature.
 
 A suitable set of quadrature-interpolation-polynomials for our case are the shape functions.
 So we have:
@@ -1162,7 +1162,7 @@ This is applicable for all nodes $j$, hence all nodal magnetisation lengths are 
 \subsubsection{Energy loss}
 ??ds add weak exchange residual? is it safe to leave it inside $\hv$? Don't think so because that needs $\sob^2$...
 
-The energy loss property can be derived in exactly the same way as in \autoref{eq:weak-llg-imr} except that instead of arbitrarily taking an $\ltwo$ inner product we replace the test function with a carefully chosen function.
+The energy loss property can be derived in exactly the same way as in \cref{eq:weak-llg-imr} except that instead of arbitrarily taking an $\ltwo$ inner product we replace the test function with a carefully chosen function.
 The relevant choice of test function is
 \begin{equation}
   \testv = \hv[\tm, \mvm] - \dampc \dmdtm.
@@ -1205,7 +1205,7 @@ The rest of the derivation proceeds identically.
 % \begin{equation}
 %   \intd{\mv_{n+1} \cdot \hv[\tm, \mvm]} - \intd{\mv_n \cdot \hv[\tm, \mvm]} + \dtn \dampc \intd{\dmdtm \cdot \dmdtm} < (1 + \dampc) \dtn \ntol.
 % \end{equation}
-% With zero applied field $\hv[t, \mv] = \hv[\mv]$ is a symmetrical linear operator on $\mv$ with respect to the inner product $\intd{\av \cdot \bv}$ (see \autoref{sec:energy-field-relation} for a proof), using this property in a similar manner to \autoref{sec:proof-energy-prop} we obtain
+% With zero applied field $\hv[t, \mv] = \hv[\mv]$ is a symmetrical linear operator on $\mv$ with respect to the inner product $\intd{\av \cdot \bv}$ (see \cref{sec:energy-field-relation} for a proof), using this property in a similar manner to \cref{sec:proof-energy-prop} we obtain
 % \begin{equation}
 %   \frac{1}{2}\intd{\mv_{n+1} \cdot \hv[\mv_{n+1}]} = \frac{1}{2}\intd{\mv_n \cdot \hv[\mv_n]} - \dtn \dampc \intd{\dmdtm \cdot \dmdtm}.
 % \end{equation}
@@ -1213,8 +1213,8 @@ The rest of the derivation proceeds identically.
 % \begin{equation}
 %   \e_{n+1} = \e_n - \dtn \dampc \intd{\dmdtm \cdot \dmdtm},
 % \end{equation}
-% which is the midpoint discretisation of the analytical energy loss rate given by equation~\eqref{eq:energy-decay}, exactly as derived in \autoref{sec:proof-energy-prop}.
-% The extension to the case with the applied field proceeds exactly as for the strong form of the LLG discussed in \autoref{sec:proof-energy-prop}.
+% which is the midpoint discretisation of the analytical energy loss rate given by equation~\eqref{eq:energy-decay}, exactly as derived in \cref{sec:proof-energy-prop}.
+% The extension to the case with the applied field proceeds exactly as for the strong form of the LLG discussed in \cref{sec:proof-energy-prop}.
 
 Note that this proof did not depend on the use of nodal quadrature.
 ??ds but without $|\mv|$ conservation we can't hope to conserve other things?
@@ -1223,7 +1223,7 @@ Note that this proof did not depend on the use of nodal quadrature.
 \subsection{Numerical experiments}
 \label{sec:numer-exper}
 
-In the following experiments we use the wave exact solution in 2D (see \autoref{sec:wave-like-solution}) for simplicity and because an exact solution is known.
+In the following experiments we use the wave exact solution in 2D (see \cref{sec:wave-like-solution}) for simplicity and because an exact solution is known.
 The solution parameters used are $\kvec = 2\pi$ so that the solution is periodic on domains of unit size and $c = 0.35\pi$ which gives large amplitude oscillations without while still remaining in the wave-like parameter regime.
 
 The Newton tolerance is set to $10^{-14}$ unless otherwise specified.
@@ -1250,7 +1250,7 @@ First we examine the evolution of the magnetisation length error over time in a 
 We used $\dampc = 0.001$, a mesh of square elements with $6561$ nodes and constant time step sizes of $\dtn = 0.001$. 
 These choices of mesh and time step resolve the solution well, as can be seen in the convergence experiments above.
 The maximum time was $t_{max} = 5$ ($\approx 20$ wave periods), the damping is small enough that the oscillations continue well past this time. % trace in folder ??ds check it
-\autoref{fig:mean-ml-error-2d-gauss} shows the behaviour of the maximum (over all nodes) error in magnetisation length, \autoref{fig:mean-ml-error-2d-nodal} shows the equivalent plot when using nodal quadrature.
+\cref{fig:mean-ml-error-2d-gauss} shows the behaviour of the maximum (over all nodes) error in magnetisation length, \cref{fig:mean-ml-error-2d-nodal} shows the equivalent plot when using nodal quadrature.
 When using nodal quadrature the error never grows much larger than the Newton tolerance, whereas when using Gaussian quadrature the error grows to $\order{10^{-5}}$ within the short simultation.
 
 \begin{figure}
@@ -1273,7 +1273,7 @@ This clearly demonstrates the necessity and effectiveness of the nodal quadratur
 % using the same data as for the figures above, look in their folders for parameter sets data parsing command: parse.py -d /mnt/moredata/optoomph/user_drivers/micromagnetics/experiments/parameter_sweeps/parameter_file_0/ -l=-dt -l=-damping --split=-integration --print-data max-max-ml --print-data ml -l=initial_nnode
 
 
-??ds describe very long time behaviour in \autoref{fig:mean-ml-error-2d-nodal-long-time}.
+??ds describe very long time behaviour in \cref{fig:mean-ml-error-2d-nodal-long-time}.
 
 \begin{figure}
   \centering
@@ -1288,12 +1288,12 @@ This clearly demonstrates the necessity and effectiveness of the nodal quadratur
 \label{sec:effect-newt-toler-m-conservation}
 
 Since the non-linear residual \eqref{eq:weak-llg} used in the derivation of the conservation properties is only true up to the accuracy of the linearisation method we would expect to see some effect when modifying this accuracy.
-In our model Newton's method is used for linearisation (see \autoref{sec:newt-raph})so the relevant measure of accuracy is the Newton tolerance.
+In our model Newton's method is used for linearisation (see \cref{sec:newt-raph})so the relevant measure of accuracy is the Newton tolerance.
 
 The obvious experiment to carry out would be to vary the Newton tolerance and examine how the error in $\abs{\mv}$ is affected.
 However Newton's method extremely quickly meaning that the final residual is sometimes orders of magnitude smaller than the tolerance, this would hide any corrolation between the tolerance and the error.
 Instead we plot the error against the actual maximum residual obtained (specifically: the mean over time steps of $\norm{\rv}_\infty$ after the Newton method has converged). 
-The results are shown in \autoref{fig:mean-ml-error-2d-nodal-newton-tests}, there is a clear corrolation between small residuals and small length errors.
+The results are shown in \cref{fig:mean-ml-error-2d-nodal-newton-tests}, there is a clear corrolation between small residuals and small length errors.
 
 
 \begin{figure}
@@ -1308,7 +1308,7 @@ The results are shown in \autoref{fig:mean-ml-error-2d-nodal-newton-tests}, ther
 % \subsubsection{Adaptivity}
 % ??ds - no need for this? leave it to the final subsection?
 
-% It remains to demonstrate that the adaptivity scheme introduced in \autoref{sec:adaptive-imr} is effective for the finite element problem with nodal integration.
+% It remains to demonstrate that the adaptivity scheme introduced in \cref{sec:adaptive-imr} is effective for the finite element problem with nodal integration.
 % Since there is still no relationship with previous time step sizes in the conservation proofs with nodal integration we don't expect there to be any issues with variable step size and conservation.
 
 % Additionally our discretisation can be written as semi-discretisation in space (giving a system of ODEs) followed by the application of IMR in time.

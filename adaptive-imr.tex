@@ -6,8 +6,8 @@
 \label{sec:adaptive-imr}
 
 
-The implicit midpoint rule (IMR) is a well known time integration method with a number of favourable properties when applied to standard ordinary differential equations (see \autoref{sec:time-discretisation} or \cite[204]{HairerNorsettWanner}).
-It also has beneficial ``geometric integration'' properties when applied the Landau-Lifshitz-Gilbert equation (discussed in \autoref{sec:ensuring-constant-mv} and \autoref{sec:energy-cons}) and energy conservation properties when applied to the semi-discretised Navier-Stokes equations \cite{Sanderse2013}.
+The implicit midpoint rule (IMR) is a well known time integration method with a number of favourable properties when applied to standard ordinary differential equations (see \cref{sec:time-discretisation} or \cite[204]{HairerNorsettWanner}).
+It also has beneficial ``geometric integration'' properties when applied the Landau-Lifshitz-Gilbert equation (discussed in \cref{sec:ensuring-constant-mv} and \cref{sec:energy-cons}) and energy conservation properties when applied to the semi-discretised Navier-Stokes equations \cite{Sanderse2013}.
 However IMR belongs to the implicit Runge-Kutta family of methods, and as such it is a non-trivial task to create an efficient adaptive time step selection algorithm.
 In this \secpaper{} we describe a novel adaptive IMR algorithm based on estimates of the local truncation error by a predictor step.
 
@@ -47,7 +47,7 @@ The IMR can also be written in the standard form for Runge-Kutta methods as
     \yv_{n+1} &= \yv_n + 1 \cdot \dtn k_1,
   \end{aligned}
 \end{equation}
-or using a Butcher tableu \cite[135]{HairerNorsettWanner} as shown in \autoref{tab:butcher-imr}.
+or using a Butcher tableu \cite[135]{HairerNorsettWanner} as shown in \cref{tab:butcher-imr}.
 
 \begin{table}
   \begin{equation*}
@@ -68,7 +68,7 @@ Note that unlike multistep methods, such as the second order backwards differenc
 
 \subsection{Construction of an LTE estimate}
 
-Due to the complexity of the local truncation error of the implicit midpoint rule there are difficulties with the Milne-device approach described in \autoref{sec:adaptivity}.
+Due to the complexity of the local truncation error of the implicit midpoint rule there are difficulties with the Milne-device approach described in \cref{sec:adaptivity}.
 In particular, the LTE of IMR has a term involving the error due to the approximation $\yv(\thf) \sim \yvm$.
 In order to perform the algebraic rearrangements to obtain the LTE we need the this term to appear in the LTE of the predictor.
 However it can only appear in the LTE expression for a time integrator using midpoint approximation, and the only such second order time integrator is IMR itself.
@@ -105,7 +105,7 @@ Setting $\pv'(t_{n+1}) = \ffv{t_{n+1}, \yv_{n+1}}$ gives the familiar implicit B
 If we instead $\pv'(t_{n}) = \ffv{t_{n}, \yv_{n}}$ we obtain the explicit BDF methods \cite[364]{HairerNorsettWanner}.
 
 We now derive the first three eBDF methods.
-The derivation of the implicit BDF methods is shown in \autoref{cha:deriv-impl-backw} and may be useful for comparison.
+The derivation of the implicit BDF methods is shown in \cref{cha:deriv-impl-backw} and may be useful for comparison.
 
 The Newton divided differences are defined recursively by
 \begin{equation}
@@ -245,7 +245,7 @@ We limit $\frac{\dtx{n+1}}{\dtn}$ to 4 to help improve stability.
 % ??ds this is still flakey, test things? Use reltol? Ask Matthias?
 
 % A final modification is to include limitations on the step size that prevent issues with numerical accuracy.
-% We assume that the equations being modelled are non-dimensionalised so that the initial Newton residual (see \autoref{sec:newt-raph}) is $\sim \order{\dtn}$ (The initial guess is the value at the previous step, the change in the solution value in one step should be $\sim\order{\dtn}$).
+% We assume that the equations being modelled are non-dimensionalised so that the initial Newton residual (see \cref{sec:newt-raph}) is $\sim \order{\dtn}$ (The initial guess is the value at the previous step, the change in the solution value in one step should be $\sim\order{\dtn}$).
 % In this case the minimum time step we can take is approximately the Newton tolerance (otherwise the Newton method will converge ``early'' because the residual is small to begin with).
 % Similarly the maximum time step we can take is $\sim \order{\frac{\texttt{newtontol}}{10^{-16}} = 10^{8}}$ before the Newton method will have difficulty converging due to numerical errors.
 
@@ -303,7 +303,7 @@ Note that the LLG can be defined explicitly as well as implicitly so this limita
 %  Generate and update plots with commands in the plots dir
 
 In this Section we show the results of some initial testing of the proposed adaptive IMR algorithm for some simple ODE examples.
-Numerical experiments with the LLG equation are detailed in \autoref{??ds}.
+Numerical experiments with the LLG equation are detailed in \cref{??ds}.
 
 
 \subsection{Implementation}
@@ -375,7 +375,7 @@ The adaptive algorithm should oscillate the step size in time with the oscillati
   \label{fig:imr-osc-example}
 \end{figure}
 
-The ODE was solved with parameters $\omega = 2 \pi$ and $\beta = 0.5$, the results are shown in \autoref{fig:imr-osc-example}.
+The ODE was solved with parameters $\omega = 2 \pi$ and $\beta = 0.5$, the results are shown in \cref{fig:imr-osc-example}.
 All three methods have similar errors and time step sizes.
 The IMR method choses slighly smaller steps than TR (which probably explains the slightly lower error magnitudes.
 BDF2 has the worst errors as expected because its error coefficient is the largest.
@@ -386,7 +386,7 @@ Hence the fact that the global error increases above the tolerance, $\toltt$, is
 Interestingly, there is a slight lag on the time step response of the IMR method as time steps become larger.
 This could be due to the fact that IMR uses data from three previous steps in its LTE estimate, whereas the others only use two previous steps.
 
-In \autoref{fig:imr-osc-example-scatter} we show plots of the decrease in global error norm as the tolerence is decreased. 
+In \cref{fig:imr-osc-example-scatter} we show plots of the decrease in global error norm as the tolerence is decreased. 
 The consistent decrease in the error norms indicates that the all of the adaptive methods are able to control the error in the expected manner.
 Plots for the example problems the following Sections are very similar and so are not shown.
 
@@ -414,7 +414,7 @@ with the exact solution
 This example will test that the single step of the eBDF method provides reliable LTE estimates even in cases of extreme stiffness.
 The time steps should start small but rapidly increase as the initial transient decays.
 
-The results of the applying the three methods to problem~\eqref{eqn:imr-test-stiff} with $\lambda = 100$ (fairly stiff) are shown in \autoref{fig:imr-stiff-example}.
+The results of the applying the three methods to problem~\eqref{eqn:imr-test-stiff} with $\lambda = 100$ (fairly stiff) are shown in \cref{fig:imr-stiff-example}.
 The behaviour of the three time integrators is essentially the same, indicating that our adaptivity algorithm is effective for stiff problems.
 
 \begin{figure}
@@ -441,7 +441,7 @@ The behaviour of the three time integrators is essentially the same, indicating 
   \label{fig:imr-order-reduction-convergence}
 \end{figure}
 
-The order reduction effect should be automatically detected and adjusted for by a good adaptive time step selection algorithm so as a final example we study \eqref{eqn:imr-test-order-reduction}, the test ODE for order reduction discussed in \autoref{sec:order-reduction}.
+The order reduction effect should be automatically detected and adjusted for by a good adaptive time step selection algorithm so as a final example we study \eqref{eqn:imr-test-order-reduction}, the test ODE for order reduction discussed in \cref{sec:order-reduction}.
 For these experiments we chose an oscillatory function, $g(t) = \sin(t)$ and $\lambda = 100$.
 
 So, using \eqref{eq:reduced-order-imr-truncation-error}, the dominant term LTE of IMR for the case when $\dtn \gtrsim 0.01$ is
@@ -453,11 +453,11 @@ Note that for TR and BDF2 $\lte \propto \dtn^3 \cos(t)$, while for BDF1 $\lte \p
 Hence we expect to see the adaptive IMR perform similarly to BDF1, and to select much smaller time steps than TR and BDF2 in order to control the larger errors.
 To test this we also run the experiment with an adaptive BDF1 (backwards Euler) method using Milne's method for adaptivity.
 
-The results are shown in \autoref{fig:imr-order-reduction-example}. 
+The results are shown in \cref{fig:imr-order-reduction-example}. 
 As expected the implicit midpoint rule selects time step sizes similarly to the first order BDF1 method due to order reduction.
 This allows it to retain similar accuracies to the TR and BDF2 methods at the cost of requiring many more time steps.
 
-The convergence of the solution as $\toltt$ is reduced with fixed $\lambda = 100$ is shown in \autoref{fig:imr-order-reduction-convergence}.
+The convergence of the solution as $\toltt$ is reduced with fixed $\lambda = 100$ is shown in \cref{fig:imr-order-reduction-convergence}.
 Note that IMR still displays second order convergence (albeit with a much larger constant error). 
 This is because we are not increasing $\lambda$ as we decrease $\toltt$, so we measuring the normal convergence not B-convergence.
 
@@ -467,7 +467,7 @@ This is because we are not increasing $\lambda$ as we decrease $\toltt$, so we m
 
 In this section we present numerical experiments with adaptive IMR on a simple LLG problem.
 We show that the adaptive midpoint method retains the conservation properties of the fixed step midpoint method and that the adaptivity is effective when applied to the LLG.
-Experiments with more complex examples are shown in \autoref{sec:numer-exper} and \autoref{cha:numer-experiments}.
+Experiments with more complex examples are shown in \cref{sec:numer-exper} and \cref{cha:numer-experiments}.
 
 To avoid introducing spatial discretisation issues we choose an example problem that can be modelled using only an ODE: the reversal of a ``small'' spherical particle under spatially-uniform applied field.
 With this geometry and with uniform initial magnetisation the magnetostatic field can be analytically shown to be $\hms = -\mv/3$ throughout the domain \cite[112]{Aharoni1996}.
@@ -532,7 +532,7 @@ The Newton residual is
 \begin{equation}
   \rv = (1 + \dampc^2) \dmdt + \skewm{\mv} \cdot \hv + \dampc \skewm{\mv}\skewm{\mv} \cdot \hv.
 \end{equation}
-The corresponding Jacobian can be easily derived using the methods discussed in \autoref{sec:llg-jacobian}, it is:
+The corresponding Jacobian can be easily derived using the methods discussed in \cref{sec:llg-jacobian}, it is:
 \begin{equation}
   J = (1 + \dampc^2) J_{ts} \Idm_3 - \skewm{\hv} - \dampc \skewm{ \mv \times \hv }
   - \dampc \skewm{\mv} \skewm{\hv}.
@@ -542,7 +542,7 @@ This experiment allows us to check the conservation properties of IMR, to compar
 
 \subsection{Implicit midpoint rule results}
 
-The behaviour of the magnetisation and the time step selection is shown in \autoref{fig:imr-llg-ode}.
+The behaviour of the magnetisation and the time step selection is shown in \cref{fig:imr-llg-ode}.
 The time step selection can be seen to be working as expected: large steps are chosen at the start when very little switching occurs. Then the step size decreases as switching occurs and finally grows again as the switching finishes. 
 The many small peaks in time step are due to the periodic precession.
 
@@ -553,7 +553,7 @@ The many small peaks in time step are due to the periodic precession.
   \label{fig:imr-llg-ode}
 \end{figure}
 
-The conservation of the magnetisation length is shown in \autoref{fig:ml-aimr-ode}.
+The conservation of the magnetisation length is shown in \cref{fig:ml-aimr-ode}.
 For comparison the same calculation using BDF2 and TR results in magnetisation length errors of order $10^{-3}$ and $10^{-4}$ respectively.
 To show that this conservation property is not dependent on $\dampc$, $\toltt$ or $\dtn$ we ran the experiment for each damping of $\dampc= 1, 0.1, 0.01$ with fixed steps of $\dtn=0.1, 0.05, 0.01, 0.005$ and adaptive step with $\toltt =10^{-2}, 10^{-3}, 10^{-4}, 10^{-5}, 10^{-6}$. 
 The maximum error in magnetisation length was $1.07\E{-10}$, easily within the range of Newton error build-up.
@@ -566,7 +566,7 @@ The maximum error in magnetisation length was $1.07\E{-10}$, easily within the r
   \label{fig:ml-aimr-ode}
 \end{figure}
 
-The effective damping ??ds shown in \autoref{fig:aimr-llg-ode-energy}.
+The effective damping ??ds shown in \cref{fig:aimr-llg-ode-energy}.
 
 \begin{figure}
   \centering
@@ -594,7 +594,7 @@ The effective damping ??ds shown in \autoref{fig:aimr-llg-ode-energy}.
 \end{figure}
 
 
-For comparison in \autoref{fig:bdf2-llg-ode} we show a plot of the solution calculated using the same parameters but using the BDF2 method.
+For comparison in \cref{fig:bdf2-llg-ode} we show a plot of the solution calculated using the same parameters but using the BDF2 method.
 The accuracy of the switching time is completely terrible, this is probably due to numerical damping.
 TR accuracy is good, but requires renormalisation.
 

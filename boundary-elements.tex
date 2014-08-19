@@ -31,7 +31,7 @@ Applying Dirichlet, Neumann or mixed boundary conditions shows that the boundary
 
 \subsection{Problem Description}
 \label{sec:problem-description}
-Let $\phim^\inte$ be the value of $\phim$ (with subscripts as appropriate) close to the boundary $\boundd$ and just inside the magnetic domain  and $\phim^\exte$ the value of $\phim$ just outside the magnetic domain\footnote{More precisely $\phim^\inte(\xv) = \lim_{\xv \rightarrow \boundd} \phim(\xv)$ from inside the magnetic domain, $\phim^\exte(\xv) = \lim_{\xv \rightarrow \boundd} \phim(\xv)$ from outside the magnetic domain.} (see \autoref{fig:BEM-geometry}).
+Let $\phim^\inte$ be the value of $\phim$ (with subscripts as appropriate) close to the boundary $\boundd$ and just inside the magnetic domain  and $\phim^\exte$ the value of $\phim$ just outside the magnetic domain\footnote{More precisely $\phim^\inte(\xv) = \lim_{\xv \rightarrow \boundd} \phim(\xv)$ from inside the magnetic domain, $\phim^\exte(\xv) = \lim_{\xv \rightarrow \boundd} \phim(\xv)$ from outside the magnetic domain.} (see \cref{fig:BEM-geometry}).
 
 We have the following \emph{physical} conditions\footnote{Equations~\eqref{eq:2}-\eqref{eqn:phibound} come from the definition of $\phim$, requirement for finite total energy, $\Bv^\text{int} \cdot \nv = \Bv^\text{ext} \cdot \nv$ and ??ds respectively.} on the total magnetostatic potential $\phim$:
 \begin{equation}
@@ -182,7 +182,7 @@ Also our $\phim^\inte$ and $\phim^\exte$ definitions correspond respectively to 
 \subsection{Application to Magnetostatic Calculations}
 \label{sec:appl-magn-calc}
 
-From \autoref{sec:double-layer-potent} we can see that conditions \eqref{eq:8}, \eqref{eq:5} and \eqref{eq:4} on $\phitwo$ are satisfied by a double layer potential with magnitude
+From \cref{sec:double-layer-potent} we can see that conditions \eqref{eq:8}, \eqref{eq:5} and \eqref{eq:4} on $\phitwo$ are satisfied by a double layer potential with magnitude
 \begin{equation}
   \label{eq:24}
   \mu(\xv) = - \phione^\inte(\xv).
@@ -235,7 +235,7 @@ Here we have dropped the distinction between $\inte$ and $\exte$ since all exter
 \section{Discretisation}
 \label{sec:discretisation}
 
-The bulk equations~\eqref{eq:phi-bem-continuous} and the Neumann boundary condition on $\phione$ in \eqref{eq:phi-bem-continuous-bc} are identical to those discussed in \autoref{sec:llg-initial-equations}.
+The bulk equations~\eqref{eq:phi-bem-continuous} and the Neumann boundary condition on $\phione$ in \eqref{eq:phi-bem-continuous-bc} are identical to those discussed in \cref{sec:llg-initial-equations}.
 As such the weak residual form, discretisation and Jacobian calculations are identical for these equations.
 Therefore all that remains to be discretised is the operator $\bm$.
 We let
@@ -466,7 +466,7 @@ It is also sometimes useful to be able to use structured quadrilateral meshes fo
 Both of these approaches are impossible with the analytical formula above.
 It is likely that similar analytical results could be derived for each of these cases, but it is simpler and more general to use a numerical approach instead.
 
-As discussed in \autoref{sec:bem-singularity} the integral $I_G$ is non-singular, so no special techniques are needed for its integration (other than what is needed to attain good accuracy).
+As discussed in \cref{sec:bem-singularity} the integral $I_G$ is non-singular, so no special techniques are needed for its integration (other than what is needed to attain good accuracy).
 As such an adaptive quadrature method can effectively calculate the integrals.
 Our algorithm is roughly as follows:
 \begin{enumerate}

@@ -42,16 +42,7 @@
 % Commonly recommend, not sure what it does...
 \usepackage[UKenglish]{babel}
 
-
-% Section etc. labelling 
-% ============================================================
-\def\chapterautorefname{Chapter} % capitalise
-\def\sectionautorefname{Section} % capitalise
-\def\subsectionautorefname{Section} % capitalise, say section not subsection
-
-
-\setcounter{tocdepth}{1} % Set contents to only go down to section level
-
+% ??ds make sure spaces befor all cite commands
 
 
 
@@ -143,6 +134,25 @@
 %% % Use superscript cite instead of normal ones
 %% \let\cite=\supercite
 
+
+
+% Section etc. labelling 
+% ============================================================
+
+% This goes last because apparently other packages can break cleveref 
+
+% \def\chapterautorefname{Chapter} % capitalise
+% \def\sectionautorefname{Section} % capitalise
+% \def\subsectionautorefname{Section} % capitalise, say section not subsection
+
+\usepackage[sort&compress, % on multiple refs sort them and write as range
+capitalise, % Use Section not section etc.
+noabbrev % Use Table not Tab. etc.
+]{cleveref}
+\crefformat{equation}{#2(#1)#3} % just use () for equations
+
+
+\setcounter{tocdepth}{1} % Set contents to only go down to section level
 
 
 %% Flow charts

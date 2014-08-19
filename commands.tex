@@ -11,15 +11,15 @@
 \def\sc@mergesubs_#1{_{\sc@thesub#1}}
 
 
-% define a macro to allow multiple references to be passed to \autoref
-\newcommand\autorefs[1]{\@first@ref#1,@}
+% define a macro to allow multiple references to be passed to \cref
+\newcommand\crefs[1]{\@first@ref#1,@}
 \def\@throw@dot#1.#2@{#1}% discard everything after the dot
 \def\@set@refname#1{%    % set \@refname to autoefname+s using \getrefbykeydefault
   \edef\@tmp{\getrefbykeydefault{#1}{anchor}{}}%
   \def\@refname{\@nameuse{\expandafter\@throw@dot\@tmp.@autorefname}s}%
 }
 \def\@first@ref#1,#2{%
-  \ifx#2@\autoref{#1}\let\@nextref\@gobble% only one ref, revert to normal \autoref
+  \ifx#2@\cref{#1}\let\@nextref\@gobble% only one ref, revert to normal \cref
   \else%
   \@set@refname{#1}%  set \@refname to autoref name
   \@refname~\ref{#1}% add autoefname and first reference

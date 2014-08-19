@@ -13,7 +13,7 @@ For example we typically use shape and test functions which are both polynomials
 
 Some of the integrals to be evaluated in boundary element methods contain singular or near singular terms. As such they are much more difficult to evaluate than the integrals encountered in the finite element method. Hence the rest of this section will focus on these integrals.
 
-In $d$ dimensions for target node $i$ and source node $j$ (see \autoref{sec:hybr-finit-elem}, equation~\eqref{eq:19}) the non-constant part of the boundary element integral is:
+In $d$ dimensions for target node $i$ and source node $j$ (see \cref{sec:hybr-finit-elem}, equation~\eqref{eq:19}) the non-constant part of the boundary element integral is:
 \begin{equation}
   \label{eq:7}
    I_{\ibasis\ibasisb} = \int_{\boundd_\ibasis} \psi_\ibasis(\yv) \frac{\nv \cdot \ruv_{\ibasis,\ibasisb}}{| \xv_\ibasisb - \yv| ^{d-1}} d\yv.
@@ -155,7 +155,7 @@ These methods can also help to deal with near-singular integrals in exactly the 
 
 In the finite element method all the integrals that must be evaluated are very simple (see section ??). All that is required is a quadrature scheme of degree high enough to exactly integrate the test functions. Hence we use an appropriate order Gauss-Legendre scheme.
 
-However for the boundary element part of a hybrid model some integrals are singular or nearly-singular (see \autoref{sec:discretisation}). This requires the use of more complex and/or higher order schemes.
+However for the boundary element part of a hybrid model some integrals are singular or nearly-singular (see \cref{sec:discretisation}). This requires the use of more complex and/or higher order schemes.
 
 \subsection{Other Boundary Element and Hybrid BEM/FEM Codes}
 

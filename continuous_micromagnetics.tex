@@ -31,7 +31,7 @@ where $\mu_0$ is the magnetic constant (or permeability of free space).
   \caption{The domain labels used: $\magd$ is the magnetic material, $\boundd$ is the boundary and $\extd$ is the (infinite) external region.} \label{fig:domain_labels}
 \end{figure}
 
-Our labelling of the domains is shown in \autoref{fig:domain_labels}.
+Our labelling of the domains is shown in \cref{fig:domain_labels}.
 We call the region of magnetic material $\magd$, it's boundary $\boundd$ and the external domain $\extd$.
 
 When working with equations in dimensional form we always use S.I. units.
@@ -88,7 +88,7 @@ Then the exchange effective field is given by
 Magnetic materials generate a magnetic field, which in turn affects the magnetic material emitting the field. 
 This type of field is also known as the demagnetising field as it tends to oppose the magnetisation of the body. 
 The magnetostatic field, $\Hms$, can be written in two ways: an integral form or a differential (potential) form. 
-% These methods are discussed in \autoref{sec:magstat-field-calc-inte} and \ref{sec:magstat-field-calc-pote} respectively.
+% These methods are discussed in \cref{sec:magstat-field-calc-inte} and \ref{sec:magstat-field-calc-pote} respectively.
 
 The integral form of the magnetostatic field at a point $\xv \in \real^3$ due to the magnetic body $\magd$ with boundary $\boundd$ can be given in terms of magnetisation $\Mv$ by an integral over all volume and surface ``magnetic charges'' ($\nabla \cdot \Mv$ and $\Mv \cdot \nv$ respectively) as
 \begin{equation}
@@ -185,7 +185,7 @@ where $\Hv$ is the total effective field
   \Hv = \Happ + \Hca + \Hex + \Hms.
   \label{eq:Heff}
 \end{equation}
-Equation~\eqref{eq:38} represents the precession of the magnetisation about the effective field, as shown in \autoref{fig:LLG-terms}. Other effective fields can be added to equation~\eqref{eq:Heff} to model other physical effects such as finite temperature or magnetostriction.
+Equation~\eqref{eq:38} represents the precession of the magnetisation about the effective field, as shown in \cref{fig:LLG-terms}. Other effective fields can be added to equation~\eqref{eq:Heff} to model other physical effects such as finite temperature or magnetostriction.
 
 Equation~\eqref{eq:38} describes an undamped precessional motion, \ie no energy is lost and the magnetisation continues to precess forever. This is obviously not the case for many problems of interest so an empirical damping term is added \cite{Landau1935}:
 \begin{equation}
@@ -217,7 +217,7 @@ which we refer to as the Landau-Lifshitz form of the Landau-Lifshitz-Gilbert equ
 
 Equations~\eqref{eq:LL}, \eqref{eq:Gilbert} and \eqref{eq:LLG} link the unknown magnetisation vector as a function of time, $\Mv(t)$, with the effective field, $\Hv$.
 To determine $\Mv$ at an arbitrary time we need to integrate either of the above equations with respect to time starting from a known initial magnetisation $\Mv(0)$.
-This is usually done numerically by employing a time integration method, as will be discussed in \autoref{sec:time-discretisation}.
+This is usually done numerically by employing a time integration method, as will be discussed in \cref{sec:time-discretisation}.
 
 Note that there is no spatial dependence directly contained in equations~\eqref{eq:LL}, \eqref{eq:Gilbert} and \eqref{eq:LLG}.
 However the exchange effective field and magnetostatic field may contain spatial dependence, so usually the final equation to be solved after all substitutions is a partial differential equation (PDE).
@@ -236,7 +236,7 @@ By far the most commonly used boundary conditions on the magnetisation $\Mv$ (in
 
 This condition can be arranged into a simpler form: we first note that for equation~\eqref{eq:llg-bc} to hold either $\Mv = \zerov$, $\dMdn = \zerov$, or $\Mv$ is parallel to $\dMdn$.
 Clearly $\Mv$ is not the zero vector inside the ferromagnet.
-Also we know that the magnetisation length does not change,\footnote{Physically this is part of the definition of the problem. The proof that this fact is embodied in the LLG equation is given in \autoref{sec:prop-cont-llg}.} therefore $\pd{\Mv}{\av} \cdot \Mv = 0$ for any direction $\av$ (since the change in magnetisation projected onto the magnetisation direction is the change in magnetisation length). 
+Also we know that the magnetisation length does not change,\footnote{Physically this is part of the definition of the problem. The proof that this fact is embodied in the LLG equation is given in \cref{sec:prop-cont-llg}.} therefore $\pd{\Mv}{\av} \cdot \Mv = 0$ for any direction $\av$ (since the change in magnetisation projected onto the magnetisation direction is the change in magnetisation length). 
 Hence $\Mv$ and $\dMdn$ cannot be parallel.
 So the final boundary condition is simply
 \begin{equation}
@@ -385,7 +385,7 @@ However this means that time scale changes (\ie the $t^*$s are different) when s
 \subsection{Non-dimensionalisation of the energy}
 \label{sec:energy-calculations}
 
-We repeat the process used in \autoref{sec:land-lifsh-gilb-normalisation} to get a set of non-dimensionalised energy equations, starting from the equations given in \autoref{sec:energy-magnetic-body}:
+We repeat the process used in \cref{sec:land-lifsh-gilb-normalisation} to get a set of non-dimensionalised energy equations, starting from the equations given in \cref{sec:energy-magnetic-body}:
 
 \begin{equation*}
   \Eapp^* = - \mu_0 \int_{\magd} \Mv^* \cdot \Happ^* \d \magd^*,
