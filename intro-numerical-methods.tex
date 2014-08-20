@@ -511,7 +511,7 @@ Hence,
     &= \frac{1}{\sqrt{1 + \dtn^2 \omega^2}} \abs{y_n}, \\
   \end{aligned}
 \end{equation}
-and the magnitude of $y$ decreases over time--the solution is damped.
+and the magnitude of $y$ decreases over time, \ie the solution is damped.
 The analysis for the second order BDF2 case is more complex due to the fact that it is a multistep method, but the result is the same: the solution suffers from non-physical damping \cite[265]{GreshoSani}.
 
 
@@ -568,7 +568,7 @@ So we can see that the order has been reduced by one power of $\dtn$ compared wi
 
 Adaptive time integration methods automatically select time step sizes in response to an estimate of the local truncation error.
 This can improve efficiency depending on the equation being solved, for example on problems where a high frequency part of the solution is gradually damped out the time step can increase by orders of magnitude at later times without loss of accuracy.
-Adaptive integration also greatly simplifies the use of the simulation program--the user only has to choose the allowed local temporal error and the program will handle the rest.
+Adaptive integration also greatly simplifies the use of the simulation program: the user only has to choose the allowed local temporal error and the program will handle the rest.
 
 Most local truncation error estimators for implicit integrators (e.g. TR, BDF2) use a Milne-device based method \cite[707-716]{GreshoSani}.
 This means that they compute an explicit estimate of the solution $\yv^E_{n+1} \sim \yv(t_{n+1})$  (sometimes known as a predictor step) to the same order of accuracy as the implicit method and using only derivatives that are required for the implicit method (so that no additional $\fv$ evaluations are needed).
@@ -922,7 +922,7 @@ Disadvandages:
 \begin{itemize}
 \item Method is limited to first order: so need step sizes orders of magnitude smaller.
 \item Have to use specialised time integration scheme (no geometric, adaptive, ... schemes).
-\item Specific to the LLG equation--standard code libraries may not work, not as widely understood as standard FEM, extension to related equations (stochastic LLG, LLGS, LLB) is non-trivial.
+\item Specific to the LLG equation: standard code libraries may not work, not as widely understood as standard FEM, extension to related equations (stochastic LLG, LLGS, LLB) is non-trivial.
 \end{itemize}
 
 The limitation to first order has been worked around recently, however the higher order schemes lose either stability or linearity \cite{Kritsikis2014}.
