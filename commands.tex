@@ -124,6 +124,7 @@
 
 \newcommand{\xv}{\myvector{x}}
 \newcommand{\yv}{\myvector{y}}
+\newcommand{\dydt}{\pd{\yv}{t}}
 \newcommand{\zv}{\myvector{z}}
 \newcommand{\lv}{\myvector{l}}
 
@@ -354,11 +355,20 @@
 % tol
 \newcommand{\newtontol}{\epsilon_{\text{N}}}
 \newcommand{\ntol}{\newtontol}
+\newcommand{\nrtol}{\epsilon_{\text{Nr}}}
+
+
+% list of discrete values
+\newcommand{\mydiscrete}[1]{\tilde{#1}}
+\newcommand{\mvdis}{\mydiscrete{\mv}}
+\newcommand{\yvdis}{\mydiscrete{\yv}}
+
 
 \newcommand{\resi}{\rv}
 \newcommand{\jac}{\mathrm{J}}
-\newcommand{\nowm}{\mv^0}
-\newcommand{\nextm}{\hat{\mv}}
+\newcommand{\nlit}[2]{{#1}^{(#2)}}
+\newcommand{\nowy}{\nlit{\yvdis}{0}}
+\newcommand{\nexty}{\yvdis^E}
 \newcommand{\corr}{\myvector{\delta}}
 
 % Operators
