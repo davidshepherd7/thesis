@@ -30,7 +30,7 @@ The downside is that the Jacobian will contain the dense matrix $\bm$, which mak
 In this section we will discuss solvers which can make this process comparatively efficient.
 
 Another advantage of this method over the semi-implicit method arises when using IMR.
-The energy conservation property of IMR is the most unique of its geometrical integration properties\footnote{A number of explicit integration schemes can obtain length conservation: Cayley transform methods\cite{Lewis2003}, semi-analytical methods\cite{Wiele2010} and various types of semi-implicit midpoint rule methods\cite{Spargo2003}\cite{Mentink2010} (including the one described in this section).}, but it is lost when a semi-implicit method is used.
+The energy conservation property of IMR is the most unique of its geometrical integration properties\footnote{A number of explicit integration schemes can obtain length conservation: Cayley transform methods \cite{Lewis2003}, semi-analytical methods \cite{Wiele2010} and various types of semi-implicit midpoint rule methods \cite{Spargo2003} \cite{Mentink2010} (including the one described in this section).}, but it is lost when a semi-implicit method is used.
 
 To enforce the Dirichlet boundary condition within the Newton solver we use the slightly odd residual
 \newcommand{\rphimb}{\rphi_b}
@@ -170,7 +170,7 @@ The strategy is as follows:
 \item If not finished then goto 2.
 \end{enumerate}
 
-A simple second order extrapolation formula (based on Lagrange interpolation\cite[312]{Kincaid2002}) is 
+A simple second order extrapolation formula (based on Lagrange interpolation \cite[312]{Kincaid2002}) is 
 \begin{equation}
   \label{eq:65}
   f(t) = \frac{t - t_1}{t_0 - t_1}f(t_0) + \frac{t - t_0}{t_1 - t_0}f(t_1).
@@ -187,7 +187,7 @@ If we are using the implicit midpoint rule with constant time steps then the ext
   \label{eq:67}
   \hat{\phim}_{n+1} = \frac{1}{2} \phim_{n-1} + \frac{3}{2} \phim_n,
 \end{equation}
-which matches with the extrapolation formula given for a different semi-implicit version of the midpoint rule\cite{Serpico2001}.
+which matches with the extrapolation formula given for a different semi-implicit version of the midpoint rule \cite{Serpico2001}.
 
 Notes:
 \begin{itemize}

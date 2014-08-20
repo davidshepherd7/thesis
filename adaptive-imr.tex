@@ -201,7 +201,7 @@ Unfortunately we are interested in the case $k=3$ which is:
   \label{eq:ebdf-3-initial}
 \end{equation}
 Solving \cref{eq:ebdf-3-initial} for $\yv_{n+1}$ by hand would be complex and extremely error prone.
-Instead a script (available online \cite{ebdf3-sympy-script}) was written using the \texttt{python} programming language with the \texttt{SymPy} library\cite{sympy}.
+Instead a script (available online \cite{ebdf3-sympy-script}) was written using the \texttt{python} programming language with the \texttt{SymPy} library \cite{sympy}.
 The resulting method is
 \begin{equation}
   \label{eqn:ebdf-coeffs}
@@ -255,7 +255,7 @@ The motivation for this is the use of a modified Newton-Raphson method where the
 In the case of ODE solvers this is extremely beneficial because the Jacobian is usually dense and direct solvers are used to solve it--by keeping the Jacobian constant the number of solves and Jacobian assemblys are greatly reduced.
 The downside is a reduction in the convergence speed of the Newton method.
 Keeping the step size constant for as long as possible is required here because modifications to the time step cause modifications to the Jacobian.
-However for PDE solvers, and in particular for PDE solvers using iterative methods to solve the linear systems there is little-to-no benefit in using this technique (the reduction in convergence speed is worse than the gain of not assembling/solving the sparse Jacobian)\cite[128]{Iserles2009}.
+However for PDE solvers, and in particular for PDE solvers using iterative methods to solve the linear systems there is little-to-no benefit in using this technique (the reduction in convergence speed is worse than the gain of not assembling/solving the sparse Jacobian) \cite[128]{Iserles2009}.
 
 
 \subsection{The final algorithm}

@@ -8,7 +8,7 @@ In this Chapter we give an overview of numerical methods that have previously be
 These calculations involve solving some form of the LLG equation \cref{eq:LLG} with effective fields determined by energy derivatives as discussed in \cref{sec:cont-micromag}.
 These systems of partial differential equations (PDEs) can only be solved analytically in a few extremely simple cases\footnote{For example the Stoner-Wolfarth theory for the rotation of a single grain \cite{Stoner1948a}.} \cite{Aharoni1996}, so numerical solution methods are almost always necessary.
 
-Many numerical methods for solving non-linear PDEs, such as \cref{eq:LLG}, can be thought of as a combination of various component methods, each of which handles a different part of the conversion from a continuous PDE into an algorithm which can be performed by a computer\footnote{Technically proofs of convergence etc. should be carried out for every different combination of time and space discretisation\cite[382]{Iserles2009}; in practice suprises seem to be rare, at least within micromagnetics.}.
+Many numerical methods for solving non-linear PDEs, such as \cref{eq:LLG}, can be thought of as a combination of various component methods, each of which handles a different part of the conversion from a continuous PDE into an algorithm which can be performed by a computer\footnote{Technically proofs of convergence etc. should be carried out for every different combination of time and space discretisation \cite[382]{Iserles2009}; in practice suprises seem to be rare, at least within micromagnetics.}.
 
 The essential components of a numerical method for solving PDE problems are:
 \begin{itemize}
@@ -222,7 +222,7 @@ This removes the need to truncate or discretise the infinite external domain.
 The name comes from the similarity of the use of a dipole layer with the boundary element method, and the fact that the standard finite element method is used to calculate the required potentials in the bulk.
 The full details of the method applied to magnetostatic calculations is discussed in \cref{sec:hybr-finit-elem}.
 
-A comparison by Bottauscio\cite{Bottauscio2008} found that using the FEM/BEM method was more accurate than applying asymptotic boundary conditions for a calculation of the time evolution of the magnetisation of a sphere with zero exchange coupling.
+A comparison by Bottauscio \cite{Bottauscio2008} found that using the FEM/BEM method was more accurate than applying asymptotic boundary conditions for a calculation of the time evolution of the magnetisation of a sphere with zero exchange coupling.
 Even with a truncation distance of four times the size of the magnetic sphere (the total domain was $4^d$ times larger then the sphere) the accuracy when using asymptotic boundary conditions was worse and did not improve between truncation distances of three and four times the magnetic sphere radius.
 Even when exchange coupling was added (giving an easier test) the truncation method was worse than the FEM/BEM method.
 
@@ -812,7 +812,7 @@ Also note that none of the above is applicable to the semi-explicit modification
 
 The fixed step midpoint method is ``almost symplectic'' for the LLG equation with zero damping, , \ie the property equivalent to Hamiltonian flow for  dissipative systems is conserved up to $\order{??ds}$ \cite{DAquino2005} \cite{Austin1993}.
 
-It is well known that most adaptive schemes are not symplectic\cite[91]{Iserles2009} because they constantly change the ``nearby Hamiltonian'' that is followed by the symplectic integrator.
+It is well known that most adaptive schemes are not symplectic \cite[91]{Iserles2009} because they constantly change the ``nearby Hamiltonian'' that is followed by the symplectic integrator.
 Therefore the adaptive IMR is not expected to have the almost-symplectic property discussed in \cref{??ds}.
 
 
@@ -909,8 +909,8 @@ However for non-linear systems resulting from time stepping we always have a ver
 
 ??ds clean up or remove?
 
-Linearisation based on choice of test functions of much interest in recent times, initially for only exchange effective field\cite{Alouges2008}.
-Has recently been extended to handle general effective field contributions\cite{Banas2012}.
+Linearisation based on choice of test functions of much interest in recent times, initially for only exchange effective field \cite{Alouges2008}.
+Has recently been extended to handle general effective field contributions \cite{Banas2012}.
 
 Advantages:
 \begin{itemize}
@@ -941,7 +941,7 @@ The problem can be stated as: Given a sparse $n \times n $ matrix $\Am$ and a ve
   \label{eq:linear-system}
   \Am \xv = \bv.
 \end{equation}
-This is a very well studied problem, see for example\cite{Saad2000}, but efficent techniques for very large $n$ (which corresponds to a large spatial problem and/or good spatial resolution) are complex and problem dependent.
+This is a very well studied problem, see for example \cite{Saad2000}, but efficent techniques for very large $n$ (which corresponds to a large spatial problem and/or good spatial resolution) are complex and problem dependent.
 
 
 \subsection{Direct methods}
@@ -1010,7 +1010,7 @@ Essentially the preconditioner needs to be a reasonable but cheap to calculate a
 The construction of a preconditioner which is effective independent of the mesh size is a difficult and problem dependent task. 
 
 Some work has been done on preconditioning for the LLG by Suess et. al. \cite{Suess2002}.
-Also Banas et. al.\cite{Banas2008} \cite{Banas2010} created a multigrid preconditioner for the Maxwell-LLG equation with a fixed point linearisation method (and their time step sizes are a factor of 20 smaller than a similar algorithm using a Newton-Raphson linearisation on the same problem).
+Also Banas et. al. \cite{Banas2008} \cite{Banas2010} created a multigrid preconditioner for the Maxwell-LLG equation with a fixed point linearisation method (and their time step sizes are a factor of 20 smaller than a similar algorithm using a Newton-Raphson linearisation on the same problem).
 
 
 
@@ -1067,7 +1067,7 @@ In \cref{sec:fully-implicit-bem} we describe and demonstrate a novel efficent an
 
 % For the spatial discretisation a macrospin model is not considered because its application is limited to cases with well separated grains and because it is not able to model effects inside a grain.
 % Therefore a finite element spatial discretisation will be used because the ability to treat arbitrary geometries is extremely desirable (for example in the modelling of bit patterned media).
-% Additionally \texttt{oomph-lib}\cite{oomph-lib-website} (a multi-physics open source finite element modelling library) gives an excellent framework in which to construct a new finite element micromagnetic model.
+% Additionally \texttt{oomph-lib} \cite{oomph-lib-website} (a multi-physics open source finite element modelling library) gives an excellent framework in which to construct a new finite element micromagnetic model.
 % This choice will also allow easy extension to the modelling of heat assisted magnetic recording using a finite element discretisation of the heat equation to model heat flow.
 
 % The magnetostatic field will be evaluated from a scalar potential by the hybrid finite/boundary element method.

@@ -24,7 +24,7 @@ There are three key parts to the integrand: firstly the basis function $\psi(\yv
 
 So for three-dimensional problems we still have a weakly singular integral to deal with.
 
-??ds not done yet... probably goes in another section... We deal with this using a change of variables as described by Telles\cite{Telles1987}.
+??ds not done yet... probably goes in another section... We deal with this using a change of variables as described by Telles \cite{Telles1987}.
 
 ??ds or not - according to other references Telles does not remove the singularity?
 
@@ -131,7 +131,7 @@ Possibly the simplest method of dealing with singular integrals is to use an ada
 
 Another approach to numerically evaluate singular integrals is to use a transformation. Here some change of variables is made that concentrates the knots close to the singularity without reducing the overall degree of the scheme.
 
-??ds Not actually numerically valid for singular integrals according to Huang\cite{Huang1993}
+??ds Not actually numerically valid for singular integrals according to Huang \cite{Huang1993}
 
 % transformation with J=0 at x=0
 
@@ -169,7 +169,7 @@ We begin by examining the integration schemes used by existing open source codes
 \item \textbf{Julian} (NIST theoretical/computational material science BEM code) - close to singularities: analytic if possible otherwise high order Gauss-Legendre, further away lower order Gauss-Legendre). [function meshElementIntegrateScalar and calling functions]
 \end{itemize}
 
-We can see that existing codes largely use analytic methods. In particular \texttt{namg} and \texttt{magpar} both use the expression given by Lindholm\cite{Lindholm1984} \footnote{Actually Lindholm never claims to have invented the formula but he did write it in a more accessible form, which is probably why he is cited.}. However, as has been noted above and by Fredkin and Koehler\cite{Fredkin1990} there are various possible advantages to the use of numerical methods for the evaluation of the boundary element integrals. Hence we will investigate the possibilities of such a method.
+We can see that existing codes largely use analytic methods. In particular \texttt{namg} and \texttt{magpar} both use the expression given by Lindholm \cite{Lindholm1984} \footnote{Actually Lindholm never claims to have invented the formula but he did write it in a more accessible form, which is probably why he is cited.}. However, as has been noted above and by Fredkin and Koehler \cite{Fredkin1990} there are various possible advantages to the use of numerical methods for the evaluation of the boundary element integrals. Hence we will investigate the possibilities of such a method.
 
 \subsection{Choice of Quadrature Scheme}
 

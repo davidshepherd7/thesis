@@ -38,7 +38,7 @@ When in use magnetostatics are handled using the FEM/BEM discretisation as discu
 \subsection{Implicit time integration}
 For implicit integration we use the implicit midpoint rule (IMR) with constant time steps as discussed in \cref{sec:adaptive-imr}.
 The complete problem (including the magnetostatic potential equations) is then linearised using Newton's method.
-The resulting linear system is solved using GMRES with an incomplete LU decomposition\footnote{Hypre's Euclid preconditioner\cite{hypre} with no drop tolerance and factorisation level 1.} of the sparse parts of the system as a preconditioner, ignoring the dense block in the Jacobian arising from the BEM.
+The resulting linear system is solved using GMRES with an incomplete LU decomposition\footnote{Hypre's Euclid preconditioner \cite{hypre} with no drop tolerance and factorisation level 1.} of the sparse parts of the system as a preconditioner, ignoring the dense block in the Jacobian arising from the BEM.
 
 \subsection{Explicit time integration}
 For the explicit integration we need to use an explicit rearrangement \cite[181]{Aharoni1996} of the LLG equation
@@ -59,7 +59,7 @@ As the time integrator we use a two stage Runge-Kutta method (RK2), also known a
 \end{equation}
 Time derivatives are calculated within the Galerkin method by inverting the finite-element mass matrix using a diagonally preconditioned conjugate gradient solver.
 The magnetostatic potential $\phim$ is recalculated using the FEM/BEM method at appropriate time and magnetisation values during each stage of \cref{eq:heunn}.
-The Poisson solves required for the evaluation of the potentials $\phione$ and $\phim$ use a conjugate gradient solver preconditioned with algebraic multigrid\footnote{One V(1,1) cycle of Hypre's BoomerAMG preconditioner\cite{hypre} with Gauss-Seidel smoothing, CLJP coarsening and a connection strength threshold of 0.7.}.
+The Poisson solves required for the evaluation of the potentials $\phione$ and $\phim$ use a conjugate gradient solver preconditioned with algebraic multigrid\footnote{One V(1,1) cycle of Hypre's BoomerAMG preconditioner \cite{hypre} with Gauss-Seidel smoothing, CLJP coarsening and a connection strength threshold of 0.7.}.
 
 
 \subsection{Semi-implicit time integration}
@@ -90,7 +90,7 @@ This provides bounds on the maximum stable step of $\dtmax \in [\dtx{a}, 2\dtx{a
 
 % The spherical mesh is generated using a face splitting algorithm: begin with an icosahedron (a polygon with 20 triangular faces) then divide each face into three triangles and move the newly created node onto the surface of the sphere.
 % Repeat the division to generate progressively more accurate (and expensive) approximations to the surface of a sphere.
-% The list of faces is then used as input to tetgen\cite{tetgen-website} to generate an unstructured tetrahedral mesh.
+% The list of faces is then used as input to tetgen \cite{tetgen-website} to generate an unstructured tetrahedral mesh.
 
 As mentioned above, the simple geometry of this problem means that the physics can be captured by an ODE version of the LLG:
 \begin{equation}
@@ -104,7 +104,7 @@ where $\mv = \mv(t)$.
 
 To assess physical stiffness and find a suitable $\dtinitial$ we solved \cref{eq:ode-llg} using the RK2 and IMR methods detailed above with $\dtx{} = 0.1$.
 Using IMR with $\alpha = 0.01$ we found a relative error in the final switching time of $0.3\%$ (absolute error  $1.2 \text{ time units} \approx 6\text{ps}$), for other values of $\alpha$ the percentage error is even smaller.
-The relative error in switching time with $\alpha = 0.01$ using RK2 was $2.25\%$ (this order of magnitude error difference may be a testament to the accuracy of geometric integration\cite{DAquino2005}).
+The relative error in switching time with $\alpha = 0.01$ using RK2 was $2.25\%$ (this order of magnitude error difference may be a testament to the accuracy of geometric integration \cite{DAquino2005}).
 Since these results are from an ODE calculation the error is only due to the time integration, with no contributions from spatial discretisation.
 Based on these results we conclude that $\dtinitial = 0.1$ gives a sufficiently small temporal error to be a reasonable maximum time step size.
 Additionally, since no stability issues were seen for any value of $\alpha$, we conclude that any lack of stability in the PDE case must arise purely from the spatial discretisation rather than the underlying physics.
@@ -155,7 +155,7 @@ To further analyse our results we need an estimate of the ratio of computational
 
 Based on these results we say that a problem is ``stiff'', and that an implicit method will perform significantly better than an explicit one, if the ratio of the desired time step, $\dtinitial$ to the maximum stable explicit time step, $\dtmax$ is greater than 20.
 % This roughly agrees with the results of Suess \etal \cite{Suess2002}, who used the widely used (and presumably heavily optimised) CVODE package to solve the mumag standard problem 4 using similar techniques to ours. % Their bdf2 steps are extremely slow, probably bad preconditioner.
-A caveat is that both types of model could be further optimised using, for example parallelism, improved preconditioning, mass lumping, boundary matrix compression\cite[Sec. 3]{Knittel2011} etc.
+A caveat is that both types of model could be further optimised using, for example parallelism, improved preconditioning, mass lumping, boundary matrix compression \cite[Sec. 3]{Knittel2011} etc.
 
 Typical advice for the number of elements per exchange length is that an absolute minimum number is one, and in order to show that the results are mesh independent the mesh must be refined a few times \cite[Sec. 11]{nmag-manual}.
 This leads to a reasonable finest mesh with around three elements per exchange length.
@@ -163,12 +163,12 @@ This leads to a reasonable finest mesh with around three elements per exchange l
 We see that with FEM/BEM magnetostatics, realistic damping ($\alpha = 0.01$) and at least three elements per exchange length the problem is stiff.
 
 Without FEM/BEM magnetostatics stiffness only occurs if refinement to around five or more elements per exchange length is needed for any part of the domain.
-Problems that require this level of refinement include resolving the geometry in studies of granular or patterned media\cite{Suess2002} and resolving vortex-core-like structures\cite{Andreas2014}.
+Problems that require this level of refinement include resolving the geometry in studies of granular or patterned media \cite{Suess2002} and resolving vortex-core-like structures \cite{Andreas2014}.
 
 On the other hand LLG problems can be only moderately stiff if refinement is only needed up to the level of a few elements per exchange length, as is often required for simple geometries.
 This is consistent with the fact that the mu-mag standard problem 4 is often solved using explicit integration methods with spatial refinement of around 0.5 exchange lengths \cite{mumag-website}.
 
-Similar experiments with the standard 4th order Runge-Kutta method\cite[41]{Iserles2009} and $\alpha=1.0$ (plots not shown) give essentially the same results as for RK2. As $\alpha$ is reduced the maximum stable step size $\dtmax$ is reduced, but not as rapidly as for RK2. However due to the increased computational cost per time step (a factor of two) the onset of stiffness (for all $\alpha$) occurs at roughly the same spatial discretisation as for RK2 with $\alpha = 0.1$.
+Similar experiments with the standard 4th order Runge-Kutta method \cite[41]{Iserles2009} and $\alpha=1.0$ (plots not shown) give essentially the same results as for RK2. As $\alpha$ is reduced the maximum stable step size $\dtmax$ is reduced, but not as rapidly as for RK2. However due to the increased computational cost per time step (a factor of two) the onset of stiffness (for all $\alpha$) occurs at roughly the same spatial discretisation as for RK2 with $\alpha = 0.1$.
 
 Finally we point out that the discussion above assumes that the accuracy obtained with $\dtx{} = \dtinitial$ is sufficient.
 If higher accuracy than this is required then smaller time steps are needed regardless of stability, so the limitations imposed by stiffness are proportionally less significant.
