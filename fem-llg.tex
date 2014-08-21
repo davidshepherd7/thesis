@@ -11,7 +11,7 @@ As discussed in \cref{sec:sd-finite-elem-meth} the finite element method (FEM) i
 It allows for more complex geometries than the finite difference method, at the cost of increased complexity.
 
 A simple problem is used to illustrate these methods: solving the Poisson
-equation in one spatial dimension.
+equation with Dirichlet boundary conditions in one dimension.
 This is relevant to 
 Find\footnote{A function $g\in C^{k}(0,1)$ if $g$ and it's first $k$ derivatives are continuous on $(0,1)$.} $y(x)\in C^{2}(0,1)$ such that
 \begin{equation}
@@ -32,7 +32,7 @@ If a set of functions $\set{\phi_i}$ is such that $V=\text{span}(\phi_i)$ then w
 If $V$ has a basis consisting of a finite number of functions then we say that $V$ is finite dimensional, otherwise $V$ is infinite dimensional.
 In a FEM we are interested in approximating an infinite dimensional space (the space of solutions) by a finite dimensional space (the space of approximations).
 
-The $n$-th Sobelov space is the space of all functions such that they and their $n$-th derivatives (in all dimensions) are in $L^2$. For example
+The $n$-th Sobolev space is the space of all functions such that they and their $n$-th derivatives (in all dimensions) are in $L^2$. For example
 \begin{equation}
   \label{eq:H1}
   \sob^1(\magd) = \set{ y \st y, \pd{y}{x_i} \in L^2(\magd) \; \forall x_i }
@@ -52,18 +52,19 @@ For simplicity we start, as before, with the one-dimensional Poisson equation
 
 The formulation used in \cref{eq:poisson1} (called a strong formulation) is too restrictive for our purposes.
 It disallows some useful approximating functions, and in higher dimensional cases restricts the geometries that can be modelled \cite{HowardElmanDavidSilvester2006}. 
-However for well behaved functions the following weak formulation is equivalent: find $y\in V_{s}$ such that
+For ``well behaved'' functions the following weak formulation is equivalent but without these restrictions: find $y\in V_{s}$ such that
 \begin{equation}
   -\int_{0}^{1}y''v\, dx=\int_{0}^{1}fv\, dx \qquad \forall v\in V_{T}.
   \label{eq:26}
 \end{equation}
 
-Here $V_{T}$ is some appropriate space of test functions. The test
-functions must satisfy $V_{T}\subseteq \sob^0(0,1)$, in order to ensure that the integrals in \cref{eq:26} are well defined. 
-Thus
+Here $V_{T}$ is some appropriate space of \emph{test functions}.
+The test functions must satisfy $V_{T}\subseteq \sob^0(0,1)$, in order to ensure that the integrals in \cref{eq:26} are well defined. 
+Additionally \cref{eq:26} should not depend directly on the boundary values since they are fixed, this can be done by forcing the test functions to be zero on the boundaries.
+So an appropriate test function space is
 \begin{equation}
   \label{eq:28}
-  V_{T}=\set{v : [0,1] \rightarrow \real \st v \in \sob^0(0,1)}.
+  V_{T}=\set{v : [0,1] \rightarrow \real \st v \in \sob^0(0,1),\; v(0) =0,\; v(1)=0}.
 \end{equation}
 
 The space $V_{s}$ is the solution space
@@ -72,12 +73,12 @@ The space $V_{s}$ is the solution space
 \end{equation}
 \ie the space of functions that are sufficiently smooth for the integrals to be finite and that satisfy the boundary conditions.
 
-To see that the weak form is equivalent to \cref{eq:poisson1} consider the case when $f(x) - y''(x)$ is non-zero at a point $x \in [0,1]$. 
-Since \cref{eq:26} must hold for all functions we can choose a function which is non-zero at $x$ and hence the equality in \cref{eq:26} fails.
-So $f(x) - y''(x) = 0$ must hold at all points inside the domain.
+To see that the weak form is equivalent to \cref{eq:poisson1} consider the case when $f(x) + y''(x)$ is non-zero at a point $x \in (0,1)$, \ie when the strong form \cref{eq:poisson1} is not satisfied. 
+Since \cref{eq:26} must hold for all functions we can choose a function which is non-zero at $x$ and hence the equality in \cref{eq:26} will fail.
+So $f(x) + y''(x) = 0$ must hold at all points $x \in (0,1)$.
 We call this the method of weighted residuals because we use an integral of the residual weighted by a test function to approximate the true equation \cite[210, 214]{Zeinkiewicz1967}.
 
-The smoothness restrictions on our weak form approximation can be further reduced using integration by parts
+The smoothness restrictions on our weak form approximation can be further reduced using the integration by parts formula:
 \begin{equation}
   \intui{qp'} = \Big[ pq \Big]_{0}^{1} - \intui{p q'},
 \end{equation}
@@ -88,15 +89,11 @@ Let $p=y'$ and $q=v$, then
   \label{eq:29}
 \end{equation}
 
-??ds mention Neumann
-
-We now introduce a second constraint to the test functions: $v=0$
-at the boundaries (\ie $v_a=v_b=0$), so the bracketed term in \cref{eq:29} is
-zero and we are left with
+Using the fact that the test functions must be zero at the boundaries the square bracketed term in \cref{eq:29} is zero and we are left with
 \begin{equation}
   -\intui{ y''v } = \intui{ y'v' }.
 \end{equation}
-
+ 
 Hence our problem can be reduced to the following: find 
 \begin{equation}
 y\in V_{S}'=\set{y \st y \in \sob^1(0,1),\, y(0) = y_a, y(1) = y_b },
@@ -112,12 +109,16 @@ Note that this rearrangement has removed the second derivative in $y$, hence we 
 This allows a wider range of shape functions to be used but comes at the expense of requiring more smoothness in the test functions.
 Also note that if $y_a = y_b = 0$ then $V_{S}'=V_{T}'$, our test and solution spaces are identical.
 
+An alternative class of boundary condition, called Neumann conditions, specify the values of $y'$ at the boundary.
+This allows the bracketed term in \cref{eq:29} to be calculated directly.
+In this case we do not force the test functions to be zero on the boundary.
+
 \subsection{A Discretisation}
 
-\Cref{eq:symmetric-weak-poisson} is still inapplicable as a computational method since the test (and solution) space is infinite dimensional (\ie the problem is still continuous).
+\Cref{eq:symmetric-weak-poisson} is still inapplicable as a computational method since the test and solution spaces are infinite dimensional (\ie the problem is still continuous).
 So for the next step we approximate $V_{T}'$ by a finite dimensional function space $V_{T}^{h}\subset V_{T}'$ such that
 \begin{equation}
-  V_{T}^{h}=\text{span} \set{ \tbf_{\ndi} }_{n=1}^{N}
+  V_{T}^{h}=\text{span} \set{ \tbf_{\ndi} }_{n=0}^{N}
   = \set{v_h \st v_h = \sum_{n=0}^{N}\alpha_{\ndi} \tbf_{\ndi},\, \alpha_{\ndi} \in \real,\,
     v_a = v_b =0 },
   \label{eq:30}
@@ -127,35 +128,28 @@ The distinction between the test functions and the test basis functions is often
 Similarly, for $V_S$
 \begin{equation}
   \label{eq:34}
-  V_{S}^{h}=\text{span} \set{ \sbf_{l} }_{l=1}^{N_l}
-  = \set{y_h \st y_h = \sum_{l=0}^{N_l}c_{l} \sbf_{l},\, c_{l} \in \real,\,
+  V_{S}^{h}=\text{span} \set{ \sbf_{l} }_{l=0}^{N_l}
+  = \set{y_h \st y_h = \sum_{l=0}^{N_l}y_{l} \sbf_{l},\, y_{l} \in \real,\,
     y(0) = y_a,\, y(1) = y_b }.
 \end{equation}
 We call $\sbf_l$ the shape functions.
 Different choices of $\tbf_{\ndi}$ and $\sbf_l$ lead to different methods, the choice corresponding to the finite element method will be discussed in \cref{sub:Actual-Finite-Elements}.
 For now we continue with the conversion of the problem into a general discrete form.
 
-We currently have the discrete weak formulation of \cref{eq:poisson1}: find $y_{h}\in V_{S}^{h}$ such that
-\begin{equation}
-  \intui{ y'_{h}v_{h}' } =\intui{ fv_{h} } \qquad\forall v_{h}\in V_{T}^{h}.
-  \label{eq:discrete-weak-prob}
-\end{equation}
-Replacing $v_{h}$ from \cref{eq:discrete-weak-prob} by $\tbf_{\ndi}$ gives an equivalent set of conditions
+Replacing $v_{h}$ from \cref{eq:poisson1} by $\tbf_{\ndi}$ gives an equivalent set of conditions
 \begin{equation}
   \intui{  y'_{h} \tbf_{\ndi}'  }  = \intui{ f\tbf_{\ndi} } \qquad n=0,\ldots,N,
   \label{eq:discrete_weak_test_fns_replaced}
 \end{equation}
-
 Since $y_{h}\in V_{S}^{h}$ we can also replace $y_{h}$ by a linear combination of the shape functions, \ie
 \begin{equation}
-  y_{h}=\sum_{l=0}^{N_l}c_{l}\sbf_{l},
+  y_{h}=\sum_{l=0}^{N_l} y_{l}\sbf_{l},
   \label{eq:y-spans}
 \end{equation}
 where $c_l \in \real$ are (unknown) coefficients.
-
 Substituting \cref{eq:y-spans} into \cref{eq:discrete_weak_test_fns_replaced} gives
 \begin{equation}
-  \sum_{l=0}^{N_l}c_{l}\intui{ \sbf_{l}'\tbf'_{\ndi} } =\intui{ f\tbf_{\ndi} } 
+  \sum_{l=0}^{N_l} y_{l}\intui{ \sbf_{l}'\tbf'_{\ndi} } =\intui{ f\tbf_{\ndi} } 
   \qquad n=0,\ldots,N.
   \label{eq:31}
 \end{equation}
@@ -163,111 +157,97 @@ Substituting \cref{eq:y-spans} into \cref{eq:discrete_weak_test_fns_replaced} gi
 The functions $f$, $\tbf$ and $\sbf$ are known and so the integrals in \cref{eq:31} are just numbers (which must be calculated at some point, see \cref{sec:numer-eval-integrals}).
 Hence we introduce a matrix $\Am$ and a vector $\mathbf{b}$ containing these numbers:
 \begin{equation}
-  \intui{ \sbf_{l}'\tbf'_{\ndi} } =\Am_{l\ndi},\qquad\intui{ f\tbf_{\ndi} } =b_{j},\label{eq:Aij_bj}
+  \begin{aligned}
+    \Am_{l\ndi} &= \intui{ \sbf_{l}'\tbf'_{\ndi} }, \\
+    b_{j} &= \intui{ f\tbf_{\ndi} }. \\
+    \label{eq:Aij_bj}
+  \end{aligned}
 \end{equation}
 and the problem is reduced to a system of linear equations
 \begin{equation}
-  A\mathbf{c} = \mathbf{b}.
+  \Am \yv = \bv.
   \label{eq:final_galerkin}
 \end{equation}
-This can be solved to find the vector of unknown coefficients $\mathbf{c}$ which can be substituted into \cref{eq:y-spans} to give an approximation for $y$.
+This can be solved to find the vector of unknown coefficients $\yv$ which can be substituted into \cref{eq:y-spans} to give an approximation for $y(x)$.
 
 
 \subsection{Finite Elements in One Dimension}
 \label{sub:Actual-Finite-Elements}
 
-To create a useable implementation of the methodology derived in \cref{Derivation-of-weighted-residuals} we must first define basis functions for the spaces $V_{T}^{h}$ and $V_S^h$.
-For simplicity we choose the two types of basis functions to be the same: $\sbf_l = \tbf_l$.
-This choice defines the Galerkin method (and results in a symmetric matrix $\Am$, if the original equation has the corresponding symmetry) \cite[215]{Zeinkiewicz1967}.
+To create a usable implementation of the methodology derived in \cref{Derivation-of-weighted-residuals} we must first define basis functions for the spaces $V_{T}^{h}$ and $V_S^h$.
+We choose the test and solution basis functions to be the same: $\sbf_l = \tbf_l$.
+This choice defines a Galerkin method (and results in a symmetric matrix $\Am$ if the original equation has the corresponding symmetry) \cite[215]{Zeinkiewicz1967}.
 
-??ds think I need to mention piecewiseness and zero outside element, finite support = sparse
+The overall aim is to approximate an arbitrary function by a linear combination of a finite set of easy-to-work-with functions, $\tbf_\ndi$.
+A good class of functions to satisfy this requirement is the polynomials: they are trivial to add, subtract and differentiate; and can be easily numerically integrated (see \cref{sec:numer-eval-integrals}).
 
-The overall aim is to approximate an arbitrary function at a finite set of points called the ``nodes'', $x_\ndi$, by a linear combination of a finite set of easy-to-work-with functions, $\tbf_\ndi$.
-There are a variety of useful choices for $\tbf_\ndi$ but we will focus on a carefully constructed set of polynomials: the Lagrange interpolation basis functions, defined as
+Additionally it is desirable that the final matrix $\Am$ be sparse (to allow efficient linear algebra).
+For this to happen we need $\intui{ \sbf_{l}'\tbf'_{\ndi} } = 0$ for most pairs of $l, \ndi$. 
+An obvious way to achieve this is to have each basis function only overlap (in space) with a few other basis functions, for example by having each basis function non-zero only on a small region.
+Basis functions with this property are said to have ``local support''.
+
+These two points lead us to the use of a carefully constructed set of \emph{piecewise polynomials} as our basis functions.
+We first split the domain into $N_e$ regions called \emph{elements}, each with a \emph{node} at either end.
+We then define two ``local'' basis functions within each element as
 \begin{equation}
-  L_\ndi(x)=\prod_{k\neq i}\Bigg(\dfrac{x-x_{k}}{x_\ndi-x_{k}}\Bigg).
+  \tbf^{(e)}_{0}=\dfrac{x-x^{(e)}_{1}}{x^{(e)}_{0}-x^{(e)}_{1}},\qquad
+  \tbf^{(e)}_{1}=\dfrac{x-x^{(e)}_{0}}{x^{(e)}_{1}-x^{(e)}_{0}},
+  \label{eq:simple_lagrange}
 \end{equation}
-This definition results in the following useful properties of $L_{\ndi}(x)$
+where $x^{(e)}_0$ and $x^{(e)}_1$ are the positions of the nodes of element $e$.
+This definition results in a useful property of $\tbf^{(e)}_{\ndi}(x)$:
 \begin{equation}
   \label{eq:35}
-  L_{\ndi}(x_{\ndi}) =
+  \tbf^{(e)}_{\ndi}(x_{\ndi}) =
   \begin{cases}
     1 & k = \ndi, \\
     0 & k \neq \ndi,
   \end{cases}
 \end{equation}
-since at each $x_{\ndi}$ with $k \neq \ndi$ one of the numerators is zero and at
-$x = x_{\ndi}$ all of the numerators are equal to their corresponding denominator.
-
-Polynomials are chosen because they are easy to manipulate computationally, for example differentiation and integration are simple even in higher dimensions.
-Also note that an arbitrary level of accuracy can be achieved when approximating the a smooth function by piecewise polynomials, provided that the polynomials are only non-zero on a sufficiently small area (\ie after sufficient mesh refinement).
-
-We now consider the simple case where we approximate the function at two points $x_{0}$ and $x_{1}$ (linear interpolation).
-Then the Lagrange basis functions are simply
-\begin{equation}
-  L_{0}=\dfrac{x-x_{1}}{x_{0}-x_{1}},\qquad
-  L_{1}=\dfrac{x-x_{0}}{x_{1}-x_{0}}.
-  \label{eq:simple_lagrange}
-\end{equation}
-The interpolation of a function on the interval $[x_{0},x_{1}]$ is then given by
-\begin{equation}
-  y_{h}(x)=y(x_{0})L_{0}(x)+y(x_{1})L_{1}(x).
-\end{equation}
-It is advantageous to work with such low order polynomials even for very complex models because evaluation of integrals and interpolated values is simple and cheap to compute.
-We can achieve this by splitting the domain into a set of $N$ \emph{elements} $e_{0},e_{1},\ldots,e_{N-1}$, each with a node at either end. % which can be of varying size (in contrast to the basic finite difference method where the nodes had to be equally spaced)
-We then create a \emph{local} numbering scheme for the nodes and functions in each element and a \emph{global} numbering scheme to keep track of the same nodes and functions over the entire domain.
-
-In one dimension the boundary of each element consists of two points, one at each end.
-In the local scheme it is natural to label these points by the element number $e$ and a local node number, \ie $x_{0}^{(e)}$ and $x_{1}^{(e)}$.
-In the global scheme each node is labelled by a unique node number, \ie $x_{\ndi}$ for $\ndi=0,\ldots,N$.
-The concept is best illustrated by a diagram, see \cref{fig:local-global-numbering}.
-
-\begin{figure}
-  \center
-  \includegraphics[width=0.8\textwidth]{./images/local_global_numbering}
-  \caption{The local and global numbering schemes for nodes in a one-dimensional
-    finite element model.}
-  \label{fig:local-global-numbering}
-\end{figure}
-
-The process of assigning a global node number to each local node is known as the local to global mapping.
-Good book keeping of the mapping is essential, especially in higher dimensions when this it becomes much more complex.
-
-We define the local basis functions in element $e$ as
-\begin{equation}
-  L_{0}^{(e)}(x)=\dfrac{x-x_{1}^{(e)}}{x_{0}^{(e)}-x_{1}^{(e)}},\qquad
-  L_{1}^{(e)}(x)=\dfrac{x-x_{0}^{(e)}}{x_{1}^{(e)}-x_{0}^{(e)}}
-  \qquad\text{for }x\in e=[x_{0}^{(e)},x_{1}^{(e)}].
-  \label{eq:32}
-\end{equation}
-Except for the test functions when $\ndi$ is a boundary node.
-In this case we define $L_\ndi^{(e)} = 0$.
-The $\ndi$th global basis function is then defined as:
+since at $x_{\ndi}$ with $k \neq \ndi$ the numerator is zero and at $x = x_{\ndi}$ the numerator and denominator are equal.
+Next we define the $\ndi$th (global) basis function as:
 \begin{equation}
   \label{eq:33}
-  L_\ndi(x) =
+  \tbf_\ndi(x) =
   \begin{cases}
-    L_\ndi^{(e)}(x) & \text{if node $\ndi$ is in element $e$,} \\
+    \tbf_\ndi^{(e)}(x) & \text{if $x \in [x^{(e)}_0, x^{(e)}_1]$ and node $\ndi$ is in element $e$,} \\
     0 & \text{otherwise.}
   \end{cases}
 \end{equation}
+So each basis function is only non-zero on the elements neighbouring the node where it has a maximum value.
+We call the set of such polynomial basis functions $\tsbasis$.
 
 \begin{figure}
   \center
-  % ??ds numbering: change e_i to element e, e_{i+1} to e+1, x_i to x_\ndi, x^(i) to x^(e) L_i to L_\ndi
   \includegraphics[width=0.8\textwidth]{./images/local_global_functions}
-  \caption{The linear Lagrange basis functions and numbering schemes for a one-dimensional
-    finite element model.\label{fig:local_global_functions}}
+  \caption{The local and global piecewise polynomial basis functions and numbering schemes for a one-dimensional finite element model.   % ??ds numbering: change e_i to element e, e_{i+1} to e+1, x_i to x_\ndi, x^(i) to x^(e) L_i to \tbf_\ndi
+  }
+  \label{fig:local_global_functions}
 \end{figure}
 
-The global basis functions for are clearly integrable (\ie in $L^2[0,1]$) since they are just a combination of local basis functions and they satisfy the boundary conditions by definition.
-So the global basis functions are members of $V_T^h$ and $V_S^h$.
+
+
+% \begin{figure}
+%   \center
+%   \includegraphics[width=0.8\textwidth]{./images/local_global_numbering}
+%   \caption{The local and global numbering schemes for nodes in a one-dimensional
+%     finite element model.}
+%   \label{fig:local-global-numbering}
+% \end{figure}
+
+The basis functions for are clearly integrable (\ie in $L^2[0,1]$) since they are just a combination of local basis functions, which are obviously integrable.
+So to obtain sets of functions which are subsets of $V_T^h$ and $V_S^h$ we merely need to remove the test functions which are non-zero on Dirichlet boundaries.
+
+It is advantageous to work with such low order polynomials even for very complex models because evaluation of integrals and interpolated values is simple and cheap to compute.
+Also note that an arbitrary level of accuracy can be achieved when approximating the a smooth function by piecewise polynomials by increasing the number of polynomials used (\ie after sufficient mesh refinement).
+
+The description here generalises to higher dimensions fairly easily: nodes are placed at every corner/vertex of the element and the polynomials used are replaced by higher dimensional ones with equivalent properties \cite[20]{HowardElmanDavidSilvester2006}.
 
 To calculate the matrix $\Am$ and the vector $\mathbf{b}$ from equation \cref{eq:Aij_bj} needed for \cref{eq:final_galerkin} we first calculate the local contributions from each element: $\Am^{(e)}$ and $\mathbf{b}^{(e)}$.
-Then the local-to-global mapping tells us which local nodes map to a given global node and so the global matrix $\Am$ and vector $\mathbf{b}$ can be assembled by summing the appropriate local contributions.
+Then we only require a local-to-global mapping tells us which local nodes map to a given global node and the global matrix $\Am$ and vector $\mathbf{b}$ can be assembled by summing the appropriate local contributions.
 
 For our one-dimensional Poisson case the calculation of $\Am^{(e)}$ is quite
-simple, substituting the two local basis functions \cref{eq:32} into
+simple, substituting the two local basis functions \cref{eq:simple_lagrange} into
 \cref{eq:Aij_bj} and using $h=x_{1}^{(e)}-x_{0}^{(e)}$ we are left with
 \begin{equation}
   \Am^{(e)} = \dfrac{1}{h}
@@ -309,9 +289,9 @@ However because we only ever need to evaluate integrals of polynomial functions 
 Gaussian quadrature is the quadrature scheme derived by choosing the knots such that when $n$ knots are used it is able to exactly evaluate integrals of polynomials up to order $2n + 1$ (this is the highest possible order).
 
 In higher dimensions the integration is not quite so simple.
-Quadrature schemes only apply over specificly shaped elements (or at least must be non-trivially modified for other geometries).
+Quadrature schemes only apply over specifically shaped domains (or at least must be non-trivially modified for alternative geometries).
 To get around this issue we use a coordinate transformation to a reference element \cite[29]{HowardElmanDavidSilvester2006}.
-So \eg any four sided element is mapped to a square element $[-1, 1] \times [-1, 1]$, and standard quadrature schemes can be used.
+So \eg any four sided element is mapped to the square $[-1, 1] \times [-1, 1]$, and standard quadrature schemes can be used.
 The final difficulty is to calculate the Jacobian of the transformation: if the ``local'' position variable is $\sv$ then the Jacobian is
 \begin{equation}
   J = \abs{ \pd{\sv}{\xv}} = \frac{1}{\abs{\pd{\xv}{\sv}}},
@@ -330,8 +310,6 @@ where the definition of $f_s(\sv)$ is
   f_s(\sv) = f\bigb{\sum_j  \xv_j \sbf_j(\sv)}.
 \end{equation}
 
-??ds use local coords in diagrams?
-
 Gaussian quadratures for square and cube elements can be trivially constructed from the one dimensional quadrature using a tensor product formula.
 Similar ``full integration'' quadratures for triangular and tetrahedral elements exist \eg \cite{oomph-lib-integral.cc}.
 
@@ -341,10 +319,10 @@ Similar ``full integration'' quadratures for triangular and tetrahedral elements
 \section{Application to spatial discretisation of the LLG}
 \label{sec:llg-initial-equations}
 
-We now apply the methodology discussed in \cref{sec:intr-finite-ele-diff} to the Landau-Lifshitz-Gilbert equation.
+We now apply the finite element method as discussed in \cref{sec:intr-finite-ele-diff} (together with the Newton-Raphson discussed in \cref{sec:newt-raph}) to the Landau-Lifshitz-Gilbert equation.
 We start with the Gilbert form of the LLG \cref{eq:Gilbert} with the various effective fields and the potential method for calculating the magnetostatic field \cref{eq:Hms}.
-We use the Gilbert form of the Landau-Lifshitz-Gilbert equation even though it is less immediately intuitive because it greatly reduces the complexity of all derivatations--the Landau-Lifshitz form contains a double cross product term.
-A side effect of this choice is that explict timestepping schemes cannot be used since the time dependence of the fundamental equation is defined implicitly.
+We use the Gilbert form of the LLG even though it is less intuitive because only contains single cross product terms, reducing the complexity of derivations.
+A side effect of this choice is that explicit time integration schemes cannot be used since the time derivative is only defined implicitly.
 
 \subsection{Initial equations}
 
@@ -370,6 +348,7 @@ We also define the following function spaces for convenience
   \Dfs_0 &= \set{ v \st v(\xv) = 0 \; \forall \xv \in \boundd_D }.
 \end{aligned}
 \end{equation}
+??ds think this is wrong for solution space: can't we just use the full set and say that the Dirichlet boundary node values are fixed? 
 
 Recall from \cref{sec:magn-bound-cond} that the boundary condition on the magnetisation is
 \begin{equation}
@@ -380,9 +359,9 @@ It turns out that this Neumann-like condition is exactly what is needed in the d
 No special function space is needed for the solutions and test functions of $\mv$ since only Neumann conditions are used.
 
 
-\subsection{Conversion to Weak Form Residuals}
+\subsection{Weak form residuals and relaxed smoothness requirements}
 
-We now convert the above equations into their residual weak forms as described in \cref{Derivation-of-weighted-residuals}.
+We now convert equations \cref{eqn:ndllg-starting} into their residual weak forms as described in \cref{Derivation-of-weighted-residuals}.
 In the following we will need the identity\footnote{This can be easily derived by applying the product rule to $\nabla \cdot (v \nabla \phim)$.}
 \begin{equation}
   (\lap \phim) \test = \nabla \cdot (v \nabla \phim) - \nabla \phim \cdot \nabla v.
@@ -394,19 +373,22 @@ We will also make use of the divergence theorem
   \label{eq:div-thm}
 \end{equation}
 
-The residual equation for the magnetostatic potential becomes
+The Newton residual for the magnetostatic potential is given by
 \begin{gather}
   \rphi(\phim) = \intd{ (\lap \phim) \test }
   - \intd{ (\nabla \cdot \mv) \test}, \label{eqn:phires1}
 \end{gather}
-where $\phim \in \sob^2(\magd) \cap \Dfs$, $\mv$ is some sufficiently smooth given function.
-Recall that the  residual must be zero $\forall \test \in \sob^0(\magd) \cap \Dfs_0$.
+where $\phim \in \sob^2(\magd) \cap \Dfs$ and $\mv$ is some sufficiently smooth function.
+
+Recall that problem is to find some $\phim$ such that the residual is zero $\forall \test \in \sob^0(\magd) \cap \Dfs_0$.
+We will find such a $\phim$ using the Newton-Raphson method.
+Note that while the use of a linearisation method is unnecessary for the magnetostatic potential alone (since \cref{eqn:phires1} is linear in $\phim$) it becomes necessary once the LLG itself is included.
 
 The use of \cref{eqn:phires1} for calculating $\rphi$ would require the existence of second order derivatives.
 We prefer to reduce the order of these derivatives as discussed in \cref{Derivation-of-weighted-residuals} to relieve the smoothness requirements on our solution.
-As before we do this by ``transfering'' the derivatives onto the test functions \cite{HowardElmanDavidSilvester2006}.
+As before we do this by ``transferring'' the derivatives onto the test functions \cite{HowardElmanDavidSilvester2006}.
 
-Using identity \cref{eq:20} and the divergence theorem \cref{eq:div-thm} gives
+Integrating identity \cref{eq:20} over the domain and applying the divergence theorem \cref{eq:div-thm} we obtain
 \begin{equation}
   \begin{aligned}
     \intd{ (\lap \phim) \test} &=  \intd{\nabla \cdot (\test \nabla \phim)}
@@ -416,18 +398,17 @@ Using identity \cref{eq:20} and the divergence theorem \cref{eq:div-thm} gives
     \label{eqn:identitygauss}
   \end{aligned} 
 \end{equation}
-
-We now substitute \cref{eqn:identitygauss} into \cref{eqn:phires1} to find
+Next substituting \cref{eqn:identitygauss} into \cref{eqn:phires1} gives
 \begin{equation}
   \rphi(\phim) = \intb{ \test (\nabla \phim \cdot \nv) }
   - \intd{ \nabla \test \cdot \nabla \phim }
-  - \intd{ (\nabla \cdot \mv) \test },
+  - \intd{ (\nabla \cdot \mv) \test }.
 \end{equation}
 This contains only first order derivatives so the solution space for $\phim$ is relaxed to $\sob^1(\magd) \cap \Dfs$. 
 However all first partial derivatives of the test functions are now required to be integrable, \ie $v \in \sob^1(\magd)$ instead of $v \in \sob^0(\magd)$.
 
 Note that the boundary integral is always zero on the Dirichlet region of the boundary by our definition of the test functions. 
-Hence the boundary integral is only non-zero over $\boundd_{\Neu}$ where we know $(\nabla \phim \cdot \nv) = g_{\Neu}$.
+Hence the boundary integral is only non-zero over $\boundd_{\Neu}$ where we know $\nabla \phim \cdot \nv = g_{\Neu}$.
 So the final residual is
 \begin{equation}
   \rphi(\phim) = \int_{\boundd_\Neu} \test g_\Neu \d \boundd
@@ -437,8 +418,9 @@ So the final residual is
 \end{equation}
 
 
-For the Landau-Lifshitz-Gilbert equation, \cref{eqn:ndllg-starting}, we have a set of three residuals per test function. 
+Next we apply the same process to the Landau-Lifshitz-Gilbert equation with effective fields, \cref{eqn:ndllg-starting}.
 For now we sidestep the details of time discretisation by assuming $\dmdt$ to be just another function of $\xv$.
+The weak form of the LLG is
 \begin{equation}
   \rllgv(\mv, \test) = \int_\magd \Big( \dmdt
   + (\mv \times \hca) + (\mv \times \happ) \\
@@ -447,17 +429,18 @@ For now we sidestep the details of time discretisation by assuming $\dmdt$ to be
   \Big) \test \d\magd
   . \label{res:contllg}
 \end{equation}
-Similarly to the previous examples the aim is to find $\mv \in \sob^2(\magd)$ such that $\rllgv(\mv, \test) = 0$ $\forall \test \in \sob^0(\magd)$.
+Similarly to the previous examples the idea is to apply the Newton-Raphson method to find $\mv \in \sob^2(\magd)$ such that $\rllgv(\mv, \test) \approx 0$ $\forall \test \in \sob^0(\magd)$.
 
-Note that in \cref{res:contllg} the residual is a vector, it is equivalent to write
+Note that in \cref{res:contllg} the residual is a vector.
+However it is equivalent to write
 \begin{equation}
   \rllg(\mv, \testv) = \int_\magd \Big( \ldots  \Big) \cdot \testv \d\magd,
 \end{equation}
-where $\testv \in (\sob^0(\magd))^3$.
-To see that $\rllg(\mv, \testv) = 0\; \forall \testv \in (\sob^0(\magd))^3$ implies $\rllg(\mv, \test) = 0 \; \forall \test \in \sob^0(\magd)$ consider three vector test functions: $(\test, 0, 0)$, $(0, \test, 0)$ and $(0, 0, \test)$.
+where $\testv \in (\sob^0(\magd))^3$ and the bracketed term is exactly the same as in \cref{res:contllg}.
+To see that $\rllg(\mv, \testv) = 0\; \forall \testv \in (\sob^0(\magd))^3$ implies $\rllgv(\mv, \test) = 0 \; \forall \test \in \sob^0(\magd)$ consider three vector test functions: $(\test, 0, 0)$, $(0, \test, 0)$ and $(0, 0, \test)$.
 Clearly $\rllg(\mv, (\test, 0, 0)) = \rllg(\mv, \testv)[0]$, and similarly for the other two cases.
-To see the inverse: note that if $\rllg(\mv, \test) = 0\; \forall \test \in \sob^0(\magd)$ then each term of every dot product in $\rllg(\mv, \testv) \; \forall \testv \in (\sob^0(\magd))^3$ is zero, and so each total residual is zero.
-The use of vector test functions makes certain manipulations simpler so, for the rest of this section, we will work with a vector test function.
+To see the inverse relationship (\ie $\rllgv(\mv, \test) = 0 \ldots$ implies $\rllg(\mv, \testv) = 0 \ldots$) note that if $\rllg(\mv, \test) = 0\; \forall \test \in \sob^0(\magd)$ then each term of every dot product in $\rllg(\mv, \testv)$ is zero and so the total residual is zero $\forall \testv \in (\sob^0(\magd))^3$.
+The use of vector test functions makes certain manipulations simpler so, for the remainder of this section, we will work with vector test functions.
 
 We again wish to reduce the order of the required derivatives, this time on $\mv$ in the term
 \begin{equation}
@@ -479,7 +462,7 @@ Doing so we obtain
   I = \sum_{i=0}^2 \intb{b_i (\grad m_i \cdot \nv)} - \intd{\grad b_i \cdot \grad m_i}.
 \end{equation}
 
-It turns out that the first term is exactly the weak form of the boundary condition from \cref{eq:m-bc}.
+It turns out that the first term is exactly the weak form of \cref{eq:m-bc}, the boundary condition on $\mv$:
 \begin{equation}
   \begin{aligned}
     \sum_{i=0}^2 \intb{b_i (\grad m_i \cdot \nv)} 
@@ -504,22 +487,21 @@ Hence
       - \intd{\grad \mv : \bigb{\testv \times \grad \mv}},
       \label{eq:72}
 \end{equation}
-where ``$:$'' is the componentwise scalar product, \eg $\grad \av : \grad \cv = \grad a_0 \cdot \grad b_0 + \grad a_1 \cdot \grad b_1 + \grad a_2 \cdot \grad b_2$.
+where ``$:$'' is the component-wise scalar product, \eg $\grad \av : \grad \cv = \grad a_0 \cdot \grad b_0 + \grad a_1 \cdot \grad b_1 + \grad a_2 \cdot \grad b_2$.
 
 Note that the $:$ operator obeys the usual triple product identity
 \begin{equation}
   \av : (\av \times \bv) = \zerov,
   \label{triple:-identity}
 \end{equation}
-and it's permutations because
+and permutations of \cref{triple:-identity}, because
 \begin{equation}
   \begin{aligned} 
     \threevecnum{\av} : \bigb{\threevecnum{\av} \times \bv} &= \av_0 \cdot (\av_0 \times \bv) + \ldots, \\
     & = 0 + 0 + 0
   \end{aligned}
 \end{equation}
-
-Hence the second term of \cref{eq:72} is zero and after reordering some terms we are left with
+Hence the second term of \cref{eq:72} is zero, so after reordering terms we are left with
 \begin{equation}
   \label{eq:final-lap-residual}
   I = - \intd{\bigb{\mv \times \grad \mv} : \grad \testv}.
@@ -554,7 +536,7 @@ The final problem statement is:
 The next step is to choose a finite dimensional approximation, $\ts$, for the infinite dimensional test and solution function spaces, $\tsinf$, such that the residuals \cref{res:contphi,eq:llg-res-final} become discrete in space.
 Just as in \cref{sub:Actual-Finite-Elements} we represent the finite dimensional spaces using a set of piecewise linear polynomials, $\tsbasis$, as basis functions.
 
-The approxmiations to the unknown functions $\mv$ and $\phim$ are represented as a sum over the shape functions $\sk \in \tsbasis$ (or $\tsbasis \cap \Dfs$ for $\phim$ with Dirichlet conditions) as
+The approximations to the unknown functions $\mv$ and $\phim$ are represented as a sum over the shape functions $\sk \in \tsbasis$ (or $\tsbasis \cap \Dfs$ for $\phim$ with Dirichlet conditions) as
 \begin{equation}
   \begin{aligned}
     \mv &\approx \sum_{k = 0}^{N} \sk \, \mv_k, \\
@@ -575,7 +557,7 @@ So substituting the basis representations, \cref{eq:unknowns-basis,eq:47} into t
 Next we replace the requirement that the residuals be zero for all test functions in the infinite dimensional set $\tsinf$ with the equivalent requirement for all functions in the finite set $\tsbasis$. 
 This results in a finite number of conditions (the residuals) on a finite number of variables (the nodal values) and so the spatial discretisation is complete.
 
-As described in \cref{sub:Actual-Finite-Elements} we also convert this ``global'' representation into a number of ``local'' representations--one on each element.
+As described in \cref{sub:Actual-Finite-Elements} we also convert this ``global'' representation into a ``local'' representation on each element.
 
 % Let $\magd_\eli$ represent the volume of element $e$, let $\boundd_\eli$ represent any part of the boundary of the element which is on $\boundd$ (nothing for most elements).
 % Then the contribution of element $\eli$ to the residuals at node $\ndi$ is exactly as given in equations~\cref{res:tintro}-\cref{res:tllg} except that the integrations are performed over $\magd_\eli$ and $\boundd_\eli$ rather than $\magd$ and $\boundd$.
@@ -971,8 +953,6 @@ Alternatively
 \section{Geometric integration with the finite element method}
 \label{sec:nodal-integration}
 
-% ??ds add less than ntol to end of other residuals elsewhere?
-
 In weak form methods such as FEM (see \cref{sec:intr-finite-ele-diff}) it turns out that standard (\ie Gaussian) quadrature schemes do not retain the conservation properties of the IMR.
 The problem is that (outside of the infinite node limit) the weak form equations make statements about the integral properties of the solution, whereas magnetisation length is a nodal property.
 The solution is to use an alternative quadrature scheme which directly links the nodal values with the integral values.
@@ -1217,7 +1197,7 @@ The rest of the derivation proceeds identically.
 % The extension to the case with the applied field proceeds exactly as for the strong form of the LLG discussed in \cref{sec:proof-energy-prop}.
 
 Note that this proof did not depend on the use of nodal quadrature.
-??ds but without $|\mv|$ conservation we can't hope to conserve other things?
+??ds but without $|\mv|$ conservation we can't hope to conserve other things? I think, need to think about this more.
 
 
 \subsection{Numerical experiments}
