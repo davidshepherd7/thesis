@@ -806,18 +806,36 @@ Finally, we insert the results of \cref{eq:50,eq:52} into \cref{eq:54} to find
 \end{equation}
 If the applied field is linear (and $\happerror = 0$) this is exactly the midpoint discretisation of the continuous energy balance \cref{eq:energy-decay}.
 In particular the energy is conserved when $\dampc = 0$ and the applied field is constant.
+This relationship is illustrated in \cref{fig:commutation-imr-energy}.
 
 When $\happ$ is piecewise linear, for example when a field is instantaneously switched on, time steps can be trivially selected such that each non-linear change happens exactly at the start/end of a step, and so again $\happerror = 0$.
 Since the time between such changes in field must be longer than the time scale of the dynamics such a choice of time steps will have no effect on the efficiency of the computation.
 
 Also note that none of the above is applicable to the semi-explicit modification of IMR since in that case $\mphop$ is replaced by an expression of the form $a\hop \bigs{\mv_n} + b\hop \bigs{\mv_{n-1}}$.
 
-??ds draw commutation diagram
+\begin{figure}
+  \centering
+  \begin{tikzpicture}[node distance = 10cm, auto, >=latex']
+    \node[block] (start) {Continuous LLG};
+    \node[block, right of=start] (discrete) {IMR discretised LLG};
+    \node[block, below of=start, node distance = 3cm] (energy) {Continuous energy};
+    \node[block, right of=energy] (denergy) {IMR discretised energy};
+
+    \path [->] (start) edge node {Discretise} (discrete);
+    \path [->] (start) edge node {Derive energy} (energy);
+    \path [->] (energy) edge node {Discretise} (denergy);
+    \path [->] (discrete) edge node {Derive energy} (denergy); 
+  \end{tikzpicture}
+  \caption{Commutation relationship between the IMR discretisation and the LLG energy derivation. 
+In contrast to other time integration methods the result is independent of the order of operations.}
+\label{fig:commutation-imr-energy}
+\end{figure}
+
 
 \subsection{Symplecity}
 
 ??ds This section will probably not end up in the final thesis, although I'm a bit worried because it may turn out to be important and I don't understand it too well.
-However dAquino didn't do any experiments on this either, so I can probably get away with skipping it!
+However d'Aquino didn't do any experiments on this either, so I can probably get away with skipping it!
 
 The implicit midpoint rule with fixed step size is ``almost symplectic'' for the LLG equation with zero damping, , \ie the property equivalent to Hamiltonian flow for  dissipative systems is conserved up to $\order{??ds}$ \cite{DAquino2005} \cite{Austin1993}.
 
