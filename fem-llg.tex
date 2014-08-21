@@ -106,7 +106,7 @@ such that
 \end{equation}
 
 Note that this rearrangement has removed the second derivative in $y$, hence we only require $y \in \sob^1(0,1)$ instead of $y \in \sob^2(0,1)$.
-This allows a wider range of shape functions to be used but comes at the expense of requiring more smoothness in the test functions.
+This allows a wider range of solution functions to be used but comes at the expense of requiring more smoothness in the test functions.
 Also note that if $y_a = y_b = 0$ then $V_{S}'=V_{T}'$, our test and solution spaces are identical.
 
 An alternative class of boundary condition, called Neumann conditions, specify the values of $y'$ at the boundary.
@@ -132,7 +132,7 @@ Similarly, for $V_S$
   = \set{y_h \st y_h = \sum_{l=0}^{N_l}y_{l} \sbf_{l},\, y_{l} \in \real,\,
     y(0) = y_a,\, y(1) = y_b }.
 \end{equation}
-We call $\sbf_l$ the shape functions.
+We call $\sbf_l$ the solution basis functions.
 Different choices of $\tbf_{\ndi}$ and $\sbf_l$ lead to different methods, the choice corresponding to the finite element method will be discussed in \cref{sub:Actual-Finite-Elements}.
 For now we continue with the conversion of the problem into a general discrete form.
 
@@ -141,7 +141,7 @@ Replacing $v_{h}$ from \cref{eq:poisson1} by $\tbf_{\ndi}$ gives an equivalent s
   \intui{  y'_{h} \tbf_{\ndi}'  }  = \intui{ f\tbf_{\ndi} } \qquad n=0,\ldots,N,
   \label{eq:discrete_weak_test_fns_replaced}
 \end{equation}
-Since $y_{h}\in V_{S}^{h}$ we can also replace $y_{h}$ by a linear combination of the shape functions, \ie
+Since $y_{h}\in V_{S}^{h}$ we can also replace $y_{h}$ by a linear combination of the basis functions, \ie
 \begin{equation}
   y_{h}=\sum_{l=0}^{N_l} y_{l}\sbf_{l},
   \label{eq:y-spans}
@@ -296,7 +296,7 @@ The final difficulty is to calculate the Jacobian of the transformation: if the 
 \begin{equation}
   J = \abs{ \pd{\sv}{\xv}} = \frac{1}{\abs{\pd{\xv}{\sv}}},
 \end{equation}
-where the elements of the Jacobian matrix $\pd{\xv}{\sv}$ can be calculated by interpolating $x$ using the local shape functions and differentiating.
+where the elements of the Jacobian matrix $\pd{\xv}{\sv}$ can be calculated by interpolating $x$ using the local solution basis functions and differentiating.
 
 So the final integration scheme is
 \begin{equation}
@@ -536,7 +536,7 @@ The final problem statement is:
 The next step is to choose a finite dimensional approximation, $\ts$, for the infinite dimensional test and solution function spaces, $\tsinf$, such that the residuals \cref{res:contphi,eq:llg-res-final} become discrete in space.
 Just as in \cref{sub:Actual-Finite-Elements} we represent the finite dimensional spaces using a set of piecewise linear polynomials, $\tsbasis$, as basis functions.
 
-The approximations to the unknown functions $\mv$ and $\phim$ are represented as a sum over the shape functions $\sk \in \tsbasis$ (or $\tsbasis \cap \Dfs$ for $\phim$ with Dirichlet conditions) as
+The approximations to the unknown functions $\mv$ and $\phim$ are represented as a sum over the solution basis functions $\sk \in \tsbasis$ (or $\tsbasis \cap \Dfs$ for $\phim$ with Dirichlet conditions) as
 \begin{equation}
   \begin{aligned}
     \mv &\approx \sum_{k = 0}^{N} \sk \, \mv_k, \\
@@ -549,7 +549,7 @@ Similarly the approximations to the test functions are represented as a sum over
   \label{eq:47}
   \test \approx \sum_{\ndi = 0}^{N} \tn \, a_\ndi.
 \end{equation}
-Note that in our method $\sbf_k \equiv \tbf_k$ except for Dirichlet boundary $\phim$ shape functions, but we continue to write them differently for generality.
+Note that in our method $\sbf_k \equiv \tbf_k$ except for Dirichlet boundary $\phim$ basis functions, but we continue to write them differently for generality.
 In one dimension the $\sk$ and $\tn$ are as given in \cref{eq:simple_lagrange}.
 The extension to higher dimensions is straightforward: see \eg \cite[25]{HowardElmanDavidSilvester2006}.
 
@@ -959,7 +959,7 @@ The solution is to use an alternative quadrature scheme which directly links the
 The downside of such a scheme is that the accuracy of the evaluation of integrals is reduced (since the standard schemes are chosen for their optimal accuracy).
 
 In the micromagnetics literature this is known as reduced integration \cite{Cimrak2008}.
-However in other finite element literature ``reduced integration'' refers to using a lower order Gaussian quadrature than needed to exactly integrate the shape and test functions.
+However in other finite element literature ``reduced integration'' refers to using a lower order Gaussian quadrature than needed to exactly integrate the solution and test basis functions.
 The term ``Nodal integration'' is more the standard term for schemes where the nodal values are used directly in the quadrature (typically with mesh-free methods \eg \cite{Puso2008}).
 
 In this section we first show why standard quadrature schemes cannot have the required conservation properties.
@@ -1004,7 +1004,7 @@ Substituting in the IMR from \cref{eq:impl-imr} we obtain
 where $\midpoint{x} = \frac{x_{n+1} + x_{n}}{2}$ is the midpoint value of $x$ and $\dtop x = \frac{x_{n+1} - x_n}{\dtn}$ is the midpoint derivative.
 
 To obtain our result we examine the case where $\testv = \mvm$.
-Note that $\mvm$ is in the vector space of test functions because we are using identical test and shape function spaces and $\mvm$ at any point must only be a linear combination of shape functions.
+Note that $\mvm$ is in the vector space of test functions because we are using identical test and solution function spaces and $\mvm$ at any point must only be a linear combination of basis functions.
 So by substituting $\testv = \mvm$ into \cref{eq:weak-llg-imr} then using the triple product identity $(\av \times \bv) \cdot \av = 0$ and \cref{triple:-identity} we get
 \begin{equation}
   \label{eq:23}
@@ -1027,7 +1027,7 @@ Dropping the constant factor of $2\dtn$ and assuming that $\abs{\mv_n} = 1$ ever
 \end{equation}
 
 This can be satisfied without requiring that all $\abs{\mv_{n+1, k}} = 1$.
-For example if we set the number of nodes to two (a 1D problem with linear shape functions) and assume magnetisation only along the $z$-axis (\ie  $\mv = (0, 0, m_z)$) then this condition becomes:
+For example if we set the number of nodes to two (\ie 1D problem with linear basis functions) and assume magnetisation only along the $z$-axis (\ie  $\mv = (0, 0, m_z)$) then this condition becomes:
 \begin{equation}
   \begin{aligned}
     1 &= \sum_l w_l \abs{\sum_k \mv_{n+1, k} \tbf_k(\xv_l)}^2, \\
@@ -1036,7 +1036,7 @@ For example if we set the number of nodes to two (a 1D problem with linear shape
     &= m_{z,0}^2 \alpha + m_{z,1}^2 \beta + m_{z,0} m_{z,1} \gamma, \\
   \end{aligned}
 \end{equation}
-where $a,b,c,d$ are the values of shape functions at the integration points, $m_{z,l}$ is the value of $m_z$ at node $l$ and $\alpha, \beta, \gamma$ are constants.
+where $a,b,c,d$ are the values of basis functions at the integration points, $m_{z,l}$ is the value of $m_z$ at node $l$ and $\alpha, \beta, \gamma$ are constants.
 So given any $m_{z,0}$ we can solve the above expression to find an $m_{z,1}$ that satisfies the constraint.
 Since we have chosen $\mv = (0, 0, m_z)$ this means we can vary the magnetisation length at node 0 arbitrarily while still satisfying the constraint.
 
@@ -1070,7 +1070,7 @@ We now need to derive a suitable $\beta_l$.
 To do so we represent the quadrature scheme as an integral of an interpolating polynomial which matches the desired integration scheme, then we rearrange the equation to find the weights (see, \eg \cite[480]{Kincaid2002}).
 In \texttt{oomph-lib} all integration is done in local coordinates as discussed in \cref{sec:numer-eval-integrals}, so we now calculate weights applicable in for a local coordinate quadrature.
 
-A suitable set of quadrature-interpolation-polynomials for our case are the shape functions.
+A suitable set of quadrature-interpolation-polynomials for our case are the test basis functions.
 So we have:
 \begin{equation}
   \label{eq:nodal-quad-weights}
