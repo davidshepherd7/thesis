@@ -70,7 +70,8 @@ A more complex method of spatial discretisation is the finite element method \ci
 Here the magnetic body is divided up into a finite number of non-overlapping polygonal \emph{elements}, which can vary in both size and shape.
 Within each of these elements each magnetisation component is approximated by a simple polynomial function of space, typically a linear polynomial.
 Spatial derivatives are calculated by simply differentiating these polynomial functions.
-More details of the finite element method are given in \cref{sec:intr-finite-ele-diff}.
+In contrast to macrospin and finite difference methods the actual equations solved by the finite element method are a \emph{weak} form of the standard PDE (or the \emph{strong} form).
+More details of the weak form and the finite element method are given in \cref{sec:intr-finite-ele-diff}.
 
 The main advantage of the finite element method is that it can accurately approximate any geometrical feature by an appropriate arrangement of the polygonal elements.
 An additional advantage is that the size of elements (and thus the accuracy of the approximation) can be varied arbitrarily as needed to give better accuracy in more complex or important regions. 
@@ -199,7 +200,7 @@ and
 
 This is a differential equation and so inside the domain, $\magd$, it can be solved simply by applying the finite element or finite difference discretisation methods.
 However \cref{eq:phi-inf-bound}, the boundary condition on $\phim$ at infinity, is problematic.
-We obviously can not apply this condition directly using standard methods, since that would involve either an infinite number of elements or infinitely large elements.
+We obviously can not apply this condition directly using standard methods, since that would involve either an infinite number of elements or infinitely large elements (actually these are  possible but impose heavy limitations on the allowed mesh geometries see \eg \cite{Alouges2001} and \cite{Fidler2000} respectively).
 Hence other techniques must be used, such techniques are the subject of the rest of this section.
 
 The speed of the internal field calculation is $\order{N}$ since it is just a standard FEM or FD calculation, however applying the boundary conditions can require additional processing time.
@@ -628,11 +629,8 @@ The main problem with this method is that an additional degree of freedom is nee
 \subsubsection{Conservation of $\abs{\mv}$ by IMR in a macrospin model}
 \label{sec:proof-magn-length-ode-imr-llg}
 
-??ds add  $< \ntol$ to derivation
-
 In this section we show that the discrete form of the Landau-Lifshitz-Gilbert equation that results from the use of the implicit midpoint rule maintains the magnetisation length conservation property of the continuous form shown in \cref{sec:prop-cont-llg}.
-These results are applicable to cases where, after any spatial discretisation, each spatial point is time evolved by simply integrating the LLG with the values for that point, \ie finite difference and macrospin discretisations (but not finite elements).
-??ds check/clarify this
+These results are applicable to strong form equations, \ie finite difference and macrospin discretisations but not finite elements.
 For the purposes of this section we assume that the discretised non-linear Landau-Lifshitz-Gilbert equation is satisfied exactly, \ie the linearisation method is exact.
 
 As can be seen from \cref{eq:imr-definition} the IMR is defined by the following substitutions:
