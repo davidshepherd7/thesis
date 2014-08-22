@@ -9,7 +9,7 @@
 The implicit midpoint rule (IMR) is a well known time integration method with a number of favourable properties when applied to standard ordinary differential equations (see \cref{sec:time-discretisation} or \cite[204]{HairerNorsettWanner}).
 It also has beneficial ``geometric integration'' properties when applied the Landau-Lifshitz-Gilbert equation (discussed in \cref{sec:ensuring-constant-mv,sec:energy-cons}) and energy conservation properties when applied to the semi-discretised Navier-Stokes equations \cite{Sanderse2013}.
 However IMR belongs to the implicit Runge-Kutta family of methods, and as such it is a non-trivial task to create an efficient adaptive time step selection algorithm.
-In this \secpaper{} we describe a novel adaptive IMR algorithm based on estimates of the local truncation error by a predictor step.
+In \thisref{sec:adaptive-imr} we describe a novel adaptive IMR algorithm based on estimates of the local truncation error by a predictor step.
 
 
 \section{Fixed step size implicit midpoint rule}
