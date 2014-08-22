@@ -27,10 +27,10 @@ One way to reduce the problems associated with the dense nature of $\bm$ is to u
 Solve the entire system as one coupled non-linear pde.
 This means that we are using a well understood time integration scheme rather than some relatively unknown approximation.
 The downside is that the Jacobian will contain the dense matrix $\bm$, which makes solving the system in a naive manner extremely expensive.
-In this section we will discuss solvers which can make this process comparatively efficient.
+In \thisref{sec:fully-implicit-bem} we will discuss solvers which can make this process comparatively efficient.
 
 Another advantage of this method over the semi-implicit method arises when using IMR.
-The energy conservation property of IMR is the most unique of its geometrical integration properties\footnote{A number of explicit integration schemes can obtain length conservation: Cayley transform methods \cite{Lewis2003}, semi-analytical methods \cite{Wiele2010} and various types of semi-implicit midpoint rule methods \cite{Spargo2003} \cite{Mentink2010} (including the one described in this section).}, but it is lost when a semi-implicit method is used.
+The energy conservation property of IMR is the most unique of its geometrical integration properties\footnote{A number of explicit integration schemes can obtain length conservation: Cayley transform methods \cite{Lewis2003}, semi-analytical methods \cite{Wiele2010} and various types of semi-implicit midpoint rule methods \cite{Spargo2003} \cite{Mentink2010} (including the one described in \thisref{sec:solution-strategies}).}, but it is lost when a semi-implicit method is used.
 
 To enforce the Dirichlet boundary condition within the Newton solver we use the slightly odd residual
 \newcommand{\rphimb}{\rphi_b}

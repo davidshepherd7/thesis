@@ -1,7 +1,7 @@
 \chapter{A finite element method for the Landau-Lifshitz-Gilbert Equation}
 \label{sec:galerk-meth-llg}
 
-In this chapter we introduce first give a general introduction to the finite element method.
+In \thisref{sec:galerk-meth-llg} we introduce first give a general introduction to the finite element method.
 We then apply the finite element method (with the Newton-Raphson method for linearisation) to the Landau-Lifshitz-Gilbert equation with exchange and a simple magnetostatic field approximation.
 
 \section{Introduction to the finite element method}
@@ -360,6 +360,7 @@ No special function space is needed for the solutions and test functions of $\mv
 
 
 \subsection{Weak form residuals and relaxed smoothness requirements}
+\label{sec:weak-form-residuals}
 
 We now convert equations \cref{eqn:ndllg-starting} into their residual weak forms as described in \cref{Derivation-of-weighted-residuals}.
 In the following we will need the identity\footnote{This can be easily derived by applying the product rule to $\nabla \cdot (v \nabla \phim)$.}
@@ -440,7 +441,7 @@ where $\testv \in (\sob^0(\magd))^3$ and the bracketed term is exactly the same 
 To see that $\rllg(\mv, \testv) = 0\; \forall \testv \in (\sob^0(\magd))^3$ implies $\rllgv(\mv, \test) = 0 \; \forall \test \in \sob^0(\magd)$ consider three vector test functions: $(\test, 0, 0)$, $(0, \test, 0)$ and $(0, 0, \test)$.
 Clearly $\rllg(\mv, (\test, 0, 0)) = \rllg(\mv, \testv)[0]$, and similarly for the other two cases.
 To see the inverse relationship (\ie $\rllgv(\mv, \test) = 0 \ldots$ implies $\rllg(\mv, \testv) = 0 \ldots$) note that if $\rllg(\mv, \test) = 0\; \forall \test \in \sob^0(\magd)$ then each term of every dot product in $\rllg(\mv, \testv)$ is zero and so the total residual is zero $\forall \testv \in (\sob^0(\magd))^3$.
-The use of vector test functions makes certain manipulations simpler so, for the remainder of this section, we will work with vector test functions.
+The use of vector test functions makes certain manipulations simpler so, for the remainder of \thisref{sec:weak-form-residuals}, we will work with vector test functions.
 
 We again wish to reduce the order of the required derivatives, this time on $\mv$ in the term
 \begin{equation}
@@ -567,7 +568,7 @@ As described in \cref{sub:Actual-Finite-Elements} we also convert this ``global'
 \section{Time Discretisation}
 \label{sec:time-discretisation-resi}
 
-In this section we discuss how to deal with the time derivative in the LLG residual \cref{eq:llg-res-final}.
+In \thisref{sec:time-discretisation-resi} we discuss how to deal with the time derivative in the LLG residual \cref{eq:llg-res-final}.
 As discussed in \cref{sec:numer-meth-micr}, we will apply standard time integration methods used for ODEs.
 This application of independent spatial and time discretisations is known as semi-discretisation or the method of lines.
 
@@ -640,7 +641,7 @@ Additionally for the solution of the linear systems it is often useful to know a
 
 Note that the ``real'' implementation of the implicit midpoint rule \cref{eq:impl-imr} introduces a factor of $1/2$ in various places due to the substitution $ \yv \rightarrow \frac{\yv_{n+1} + \yv_n}{2}$, the derivations below do not include this ??ds yet?
 
-For this section we must use the scalar test function form of the residuals (since that is the form used in our final implementation).
+For \thisref{sec:llg-jacobian-calculation} we must use the scalar test function form of the residuals (since that is the form used in our final implementation).
 
 We first note that the effect of differentiation by a nodal value on the function $\phim$ is quite simple:
 \begin{equation}
@@ -900,7 +901,7 @@ $\Km_i$ are the skew-symmetric contributions from $B$, $C$ and $D$; and
 \subsection{LLG-magnetostatics coupling Jacobians}
 \label{sec:llg-magn-coupl}
 
-In this section we derive the Jacobian entries corresponding to $\Pm = \pd{\rllgv}{\phim}$ and $\Qm = \pd{\rphi}{\mv}$.
+In \thisref{sec:llg-magn-coupl} we derive the Jacobian entries corresponding to $\Pm = \pd{\rllgv}{\phim}$ and $\Qm = \pd{\rphi}{\mv}$.
 
 First $\Pm_{n,l}$, this is a $3 \times 1$ matrix because we are dealing with a vector of three residuals at once.
 Obviously most of the terms in the llg residual are dropped when differentiated with respect to any $\phim_{l}$ so the calculation is quite simple
@@ -962,7 +963,7 @@ In the micromagnetics literature this is known as reduced integration \cite{Cimr
 However in other finite element literature ``reduced integration'' refers to using a lower order Gaussian quadrature than needed to exactly integrate the solution and test basis functions.
 The term ``Nodal integration'' is more the standard term for schemes where the nodal values are used directly in the quadrature (typically with mesh-free methods \eg \cite{Puso2008}).
 
-In this section we first show why standard quadrature schemes cannot have the required conservation properties.
+In \thisref{sec:nodal-integration} we first show why standard quadrature schemes cannot have the required conservation properties.
 We then show that the introduction of nodal integration schemes reattains the conservation properties.
 Finally we present some numerical experiments.
 

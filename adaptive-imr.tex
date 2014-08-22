@@ -302,7 +302,7 @@ Note that the LLG can be defined explicitly as well as implicitly so this limita
 % ./parameter-sweep.py -p aimr_odes_order_reduction -p aimr_odes --clean
 %  Generate and update plots with commands in the plots dir
 
-In this Section we show the results of some initial testing of the proposed adaptive IMR algorithm for some simple ODE examples.
+In \thisref{sec:aimr-testing} we show the results of some initial testing of the proposed adaptive IMR algorithm for some simple ODE examples.
 Numerical experiments with the LLG equation are detailed in \cref{??ds}.
 
 
@@ -321,7 +321,7 @@ To increase relevance to the general non-linear PDE case (\ie the LLG equation) 
 So we use the Newton-Raphson method with a finite-differenced Jacobian inverted by a linear solver.
 One effect of this is that the baseline ``numerical noise'' as seen by the ODE solver is the Newton tolerance rather than the machine accuracy.
 
-Unless otherwise specified all examples in this section use an absolute Newton tolerance of $\newtontol = 10^{-8}$, an initial time step of $\dtx{0} = 10^{-5}$ and an adaptive integrator tolerance of $\toltt = 10^{-4}$.
+Unless otherwise specified all examples in \thisref{sec:aimr-testing} use an absolute Newton tolerance of $\newtontol = 10^{-8}$, an initial time step of $\dtx{0} = 10^{-5}$ and an adaptive integrator tolerance of $\toltt = 10^{-4}$.
 Any initial conditions required are calculated from the exact solutions.
 
 In all cases the exact solution is visually indistinguishable from the approxmated solutions on the scale of the plots.
@@ -465,7 +465,7 @@ This is because we are not increasing $\lambda$ as we decrease $\toltt$, so we m
 \section{Numerical experiments with the ODE form of the LLG}
 \label{sec:imr-ode-llg-numer-exper}
 
-In this section we present numerical experiments with adaptive IMR on a simple LLG problem.
+In \thisref{sec:imr-ode-llg-numer-exper} we present numerical experiments with adaptive IMR on a simple LLG problem.
 We show that the adaptive midpoint method retains the conservation properties of the fixed step midpoint method and that the adaptivity is effective when applied to the LLG.
 Experiments with more complex examples are shown in \cref{sec:numer-exper,cha:numer-experiments}.
 
