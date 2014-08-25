@@ -33,11 +33,10 @@ It should be noted that not all methods fit into this framework of applying sepa
 
 \subsection{Desirable properties of a numerical method}
 
-Ideally all numerical methods would be extremely accurate and run in no time at all on any machine, unfortunately this is not the case and we are forced to make trade-offs.
+Ideally all numerical methods would run quickly on cheap hardware and with sufficient accuracy, unfortunately this is not the case in general and we are forced to make trade-offs.
 In \thisref{sec:numer-meth-micr} we detail some \emph{ideal} properties of a numerical method (although satisfying all of these properties at once is almost certainly impossible).
 
-
-The accuracy of a simulation is generally proportional to the ``fineness''  of the discretisations used (\ie the number of points used in the approximation), but increasing the fineness also increases the compuational time.
+The accuracy of a simulation is generally proportional to the ``fineness''  of the discretisations used (\ie the number of points used in the approximation), but increasing the fineness also increases the computational time.
 However, careful choice of algorithms can improve the accuracy at no additional cost or improve the speed with no loss of accuracy.
 
 \begin{itemize}
@@ -57,7 +56,7 @@ However, careful choice of algorithms can improve the accuracy at no additional 
 \end{itemize}
 
 Additionally we would like our algorithms to be ``robust'', that is they should reliably give a correct answer (up to any tolerances specified).
-In other words there should be few edge cases or ``interesting'' suprises when applying the method to various physical problems.
+In other words there should be few edge cases or ``interesting'' surprises when applying the method to various physical problems.
 Some important properties which improve robustness are:
 \begin{itemize}
 \item Automatic determination of the required fineness helps here as well: there is less possibility to choose 
@@ -92,7 +91,7 @@ This macrospin approach may be used with any system in which there are a number 
 The obvious downside of a macrospin approach is that it only applies to a fairly specific geometry, although the case of a granular media has been of much interest for magnetic data storage. 
 Additionally, if there are nonuniformities in magnetisation within the regions where it has been assumed constant the model may be inaccurate.
 
-However it is often simpler to construct a macrospin model than to use the more general methods described in \crefs{sec:sd-finite-diff-meth, sec:sd-finite-elem-meth}.
+However it is often simpler to construct a macrospin model than to use the more general methods described in \cref{sec:sd-finite-diff-meth, sec:sd-finite-elem-meth}.
 Also the assumption that each grain has uniform magnetisation will reduce the number of calculations needed.
 
 Closely related to macrospin models are atomistic models \cite{Evans2014}.
