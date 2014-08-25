@@ -920,15 +920,28 @@ Explicit time integration methods sidestep the issue of non-linearity by avoidin
 \subsection{Functional iteration}
 \label{sec:picard}
 
-??ds not quite sure on some of this stuff. More detail? Example?
+\newcommand{\wconv}{w}
 
 Functional iteration is the process of repeatedly applying a function until the result converges to a fixed point.
-To use functional iteration to solve a non-linear system a function is constructed such that it's fixed point solves the system.
+To use functional iteration to solve a non-linear system a function is constructed such that its fixed point solves the system.
 
-The main advantage of functional iteration is that convergence proofs can be easily constructed via the Banach fixed point theorem.
+As an example we can use functional iteration to solve the non-linear system resulting from the IMR discretisation of and ODE which can be written as $\dydt = f(t,y)$.
+We first solve for an auxiliary variable $\wconv$, which can be thought of as the approximation for $y$ used in the evaluation of $f$, \ie $\wconv = (y_{n+1} + y_n)/2$, using the iteration
+\begin{equation}
+  \begin{aligned}
+    \nlit{w}{0} &= y_n, \\
+    \nlit{w}{i+1} &= \frac{\dtn}{2} f(t_n + \frac{\dtn}{2}, \nlit{w}{i}) + y_n.
+  \end{aligned} 
+\end{equation}
+Once the iteration has converged (as determined, for example, by $\abs{\nlit{w}{i+1} - \nlit{w}{i}} < \ntol$) the value of $y_{n+1}$ is calculated as
+\begin{equation}
+  y_{n+1} = y_n + \dtn f(t_n + \frac{\dtn}{2}, \wconv).
+\end{equation}
 
-Additionally the cost of each iteration can be very cheap if the function $\fv(t, \yv)$ can be written explicitly (\ie not implicit in $\dydt$), since it only requires the application of a function rather than a linear solve required by the Newton-Raphson method.
-This is not the case for the LLG, but still the linear systems resulting from functional iteration are simpler than those resulting from other methods, which simplifies the construction of an efficient linear solver.
+The main advantage of functional iteration is that convergence proofs can be easily constructed via the Banach fixed point theorem (under some fairly restrictive assumptions on time step size).
+
+Additionally the cost of each iteration can be very cheap if the function $\fv(t, \yv)$ can be written explicitly (\ie the ODE is not implicit in $\dydt$), since it only requires the application of a function rather than a linear solve required by the Newton-Raphson method.
+This is not the case for the LLG \cite{Bartels2006}, but still the linear systems resulting from functional iteration are simpler than those resulting from other methods, which simplifies the construction of an efficient linear solver.
 
 However functional iteration only converges for time steps of a limited size.
 This limit is related to the fineness of the spatial discretisation, resulting in similar problems to explicit methods.
