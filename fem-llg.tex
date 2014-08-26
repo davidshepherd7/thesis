@@ -4,15 +4,12 @@
 In \thisref{sec:galerk-meth-llg} we first give a general introduction to the finite element method as applied to the magnetostatic potential equation \cref{eq:Hms} in one spatial dimension.
 We then extend this discussion to the full Landau-Lifshitz-Gilbert equation with magnetostatics in three dimensions.
 The linearisation of the LLG equation is handled using the Newton-Raphson method, see \cref{sec:newt-raph} for details.
-For the purposes of \thisref{sec:galerk-meth-llg} we will assume that suitable Dirichlet or Neumann boundary conditions have been determined, the details of the actual boundary conditions are more complex and are discussed in \cref{sec:hybr-finit-elem}.
+For the purposes of \thisref{sec:galerk-meth-llg} we will assume that suitable boundary conditions on the magnetostatic potential have been already been determined, the details of this process are discussed in \cref{sec:hybr-finit-elem}.
 
 \section{Introduction to the finite element method}
 \label{sec:intr-finite-ele-diff}
 
-As discussed in \cref{sec:sd-finite-elem-meth} the finite element method (FEM) is a discretisation method which converts a differential equation into a system of algebraic equations.
-It allows for more complex geometries than the finite difference method, at the cost of increased complexity.
-
-A simple problem is used to illustrate these methods: solving the Poisson equation with Dirichlet boundary conditions in one dimension.
+The following simple problem is used to illustrate the finite element method:
 Find $\phim(x)\in C^{2}(0,1)$ such that
 \begin{equation}
   -\phim''(x) = f(x) \qquad x \in (0,1),
@@ -23,18 +20,18 @@ with boundary conditions
   \phim(0)=\phim_{a},\quad \phim(1)=\phim_{b},\quad f=f(x)\in C(0,1).
 \end{equation}
 A function $g$ is in $C^{k}(\magd)$ if $g$ and it's first $k$ derivatives are continuous in $\magd$.
-
-Setting $f = -\div \mv = -\pd{m_x}{x}$ gives the magnetostatic potential problem \cref{eq:Hms} with Dirichlet boundary conditions.
+Setting $f = -\div \mv = -\pd{m_x}{x}$ results in the magnetostatic potential problem \cref{eq:Hms} with Dirichlet boundary conditions.
 
 
 \subsection{Definitions}
 \label{sec:fem-definitions}
 
-The function space $L^{2}$ is the set of all functions $f(x)$ such that $\int_{-\infty}^{\infty}\abs{f(x)}^{2} \d x$ is finite.
+??ds do I need to cite definitions? Do I even need all this?
+
+The function space $L^{2}$ consists of all functions $f(x)$ such that $\int_{-\infty}^{\infty}\abs{f(x)}^{2} \d x$ is finite.
 The span of a set of functions is the set of all possible linear combinations of the functions. 
 If a set of functions $\set{\phi_i}$ is such that $V=\text{span}(\phi_i)$ then we say that $\set{\phi_i}$ spans $V$ and $\set{\phi_i}$ is a basis for the function space $V$.
 If $V$ has a basis consisting of a finite number of functions then we say that $V$ is finite dimensional, otherwise $V$ is infinite dimensional.
-In a FEM we are interested in approximating an infinite dimensional space (the space of solutions) by a finite dimensional space (the space of approximations).
 
 The $n$-th Sobolev space is the space of all functions such that they and their $n$-th derivatives (in all dimensions) are in $L^2$. For example
 \begin{equation}
@@ -42,80 +39,70 @@ The $n$-th Sobolev space is the space of all functions such that they and their 
   \sob^1(\magd) = \set{ \phim \st \phim, \pd{\phim}{x_i} \in L^2(\magd) \; \forall x_i }
 \end{equation}
 
+
 \subsection{A weak formulation}
 \label{Derivation-of-weighted-residuals}
 
-The method of weighted residuals is a way to convert a differential equation
-into an integral form that can be modelled computationally. As such it is the
-first step in a variety of modelling methods including the finite element method
-and the spectral method.
+The method of weighted residuals is the first step in a variety of modelling methods including the finite element method and the spectral method.
+It involves replacing the initial PDE with an equivalent but more flexible version.
 
-For simplicity we start, as before, with the one-dimensional Poisson equation
-\cref{eq:poisson1}, with homogeneous Dirichlet boundary conditions
-(\ie $\phim_{a}=\phim_{b}=0$).
-
-The formulation used in \cref{eq:poisson1} (called a strong formulation) is too restrictive for our purposes.
-It disallows some useful approximating functions, and in higher dimensional cases restricts the geometries that can be modelled \cite{HowardElmanDavidSilvester2006}. 
-For ``well behaved'' functions the following weak formulation is equivalent but without these restrictions: find $\phim\in V_{s}$ such that
+The formulation of the problem in \cref{eq:poisson1} (called a strong or classical formulation) is too restrictive for our purposes.
+It disallows some useful approximating functions and restricts the geometries that can be modelled \cite[14]{HowardElmanDavidSilvester2006}.
+For ``well behaved'' functions and domains the following weak formulation is equivalent, but without these restrictions: find $\phim\in V_{s}$ such that
 \begin{equation}
-  -\int_{0}^{1}\phim''v\, dx=\int_{0}^{1}fv\, dx \qquad \forall v\in V_{T}.
+  -\intui{\phim'' v} = \intui{f v} \qquad \forall v \in V_{T}.
   \label{eq:26}
 \end{equation}
-
 Here $V_{T}$ is some appropriate space of \emph{test functions}.
 The test functions must satisfy $V_{T}\subseteq \sob^0(0,1)$, in order to ensure that the integrals in \cref{eq:26} are well defined. 
-Additionally \cref{eq:26} should not depend directly on the boundary values since they are fixed, this can be done by forcing the test functions to be zero on the boundaries.
+Additionally, \cref{eq:26} should not depend directly on the boundary values since they are fixed, this can be done by forcing the test functions to be zero on the boundaries. ??ds goes later: we introduce this to remove the boundary term. It's ok because we know what the boundary values are: no need to enforce it by testing.
 So an appropriate test function space is
 \begin{equation}
   \label{eq:28}
   V_{T}=\set{v : [0,1] \rightarrow \real \st v \in \sob^0(0,1),\; v(0) =0,\; v(1)=0}.
 \end{equation}
-
 The space $V_{s}$ is the solution space
 \begin{equation}
   V_{s}=\set{ \phim : [0,1] \rightarrow \mathbb{R} \st \phim \in \sob^2(0,1),\, \phim(0) = \phim_{a},\, \phim(1) = \phim_{b}},
 \end{equation}
 \ie the space of functions that are sufficiently smooth for the integrals to be finite and that satisfy the boundary conditions.
 
-To see that the weak form is equivalent to \cref{eq:poisson1} consider the case when $f(x) + \phim''(x)$ is non-zero at a point $x \in (0,1)$, \ie when the strong form \cref{eq:poisson1} is not satisfied. 
+To see that \cref{eq:26} is equivalent to \cref{eq:poisson1} consider the case when $f(x) + \phim''(x)$ is non-zero at a point $x \in (0,1)$, \ie when the strong form \cref{eq:poisson1} is not satisfied. 
 Since \cref{eq:26} must hold for all functions we can choose a function which is non-zero at $x$ and hence the equality in \cref{eq:26} will fail.
 So $f(x) + \phim''(x) = 0$ must hold at all points $x \in (0,1)$.
-We call this the method of weighted residuals because we use an integral of the residual weighted by a test function to approximate the true equation \cite[210, 214]{Zeinkiewicz1967}.
+We call this approach the method of weighted residuals because we use an integral of the residual weighted by a test function to approximate the true equation \cite[210, 214]{Zeinkiewicz1967}.
 
-The smoothness restrictions on our weak form approximation can be further reduced using the integration by parts formula:
+The smoothness restrictions on our weak form approximation can be further reduced by integrating the left hand side of \cref{eq:26} by parts to obtain
+% using the integration by parts formula:
+% \begin{equation}
+%   \intui{qp'} = \Big[ pq \Big]_{0}^{1} - \intui{p q'},
+% \end{equation}
+% applied to the left hand side of \cref{eq:26}.
+% Let $p=\phim'$ and $q=v$, then
 \begin{equation}
-  \intui{qp'} = \Big[ pq \Big]_{0}^{1} - \intui{p q'},
-\end{equation}
-applied to the left hand side of \cref{eq:26}.
-Let $p=\phim'$ and $q=v$, then
-\begin{equation}
-  -\intui{ \phim''v } = -\Big[ \phim'v \Big]_{0}^{1} + \intui{ \phim'v' }.
+  -\intui{ \phim''v } = -\Big[ \phim'v \Big]_{0}^{1} + \intui{ \phim'v' } = \intui{f v}.
   \label{eq:29}
 \end{equation}
-
-Using the fact that the test functions must be zero at the boundaries the square bracketed term in \cref{eq:29} is zero and we are left with
-\begin{equation}
-  -\intui{ \phim''v } = \intui{ \phim'v' }.
-\end{equation}
- 
-Hence our problem can be reduced to the following: find 
-\begin{equation}
-\phim\in V_{S}'=\set{\phim \st \phim \in \sob^1(0,1),\, \phim(0) = \phim_a, \phim(1) = \phim_b },
-\end{equation}
-such that
+Additionally, the square bracketed term in \cref{eq:29} is zero because the test functions, $v$, must be zero on the boundary.
+Hence we are left with the problem: Find $\phim \in V'_{S}$ such that
 \begin{equation}
   \intui{ \phim'v' } = \intui{ fv } \qquad 
-  \forall v \in V'_{T} = \set{v \st v \in \sob^1(0,1),\, v_a=v_b=0}.
+  \forall v \in V'_{T} = \set{v \st v \in \sob^1(0,1),\, v_a=v_b=0},
   \label{eq:symmetric-weak-poisson}
+\end{equation}
+where
+\begin{equation}
+  V_{S}'=\set{\phim \st \phim \in \sob^1(0,1),\, \phim(0) = \phim_a, \phim(1) = \phim_b }.
 \end{equation}
 
 Note that this rearrangement has removed the second derivative in $\phim$, hence we only require $\phim \in \sob^1(0,1)$ instead of $\phim \in \sob^2(0,1)$.
-This allows a wider range of solution functions to be used but comes at the expense of requiring more smoothness in the test functions.
+This allows a wider range of solution functions to be used, but comes at the expense of requiring more smoothness in the test functions.
 Also note that if $\phim_a = \phim_b = 0$ then $V_{S}'=V_{T}'$, our test and solution spaces are identical.
 
 An alternative class of boundary condition, called Neumann conditions, specify the values of $\phim'$ at the boundary.
 This allows the bracketed term in \cref{eq:29} to be calculated directly.
 In this case we do not force the test functions to be zero on the boundary.
+??ds Milan wants me to change this but his version is unintelligible...
 
 \subsection{A Discretisation}
 
@@ -1315,3 +1302,4 @@ The results are shown in \cref{fig:mean-ml-error-2d-nodal-newton-tests}, there i
 %%% mode: latex
 %%% TeX-master: "main"
 %%% End:
+ 
