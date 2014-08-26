@@ -88,12 +88,13 @@
 % rescaled time
 \newcommand{\that}{\hat{t}}
 
-% d for the end of integrals (e.g. dx) with correct spacing and non-italic
-\renewcommand{\d}{{\; \text{d}}}
+% d for the end of integrals (e.g. dx) with correct spacing and non-italic.
+\renewcommand{\d}{{\; \mathrm{{d}}}}
+
 % standard integrals
-\newcommand{\intd}[2][\magd]{{\int_{#1} #2 \d {#1}}}
-\newcommand{\intdx}[2][\magd]{{\int_{#1} #2 \d \xv}}
-\newcommand{\intds}[2][\magd]{{\int_{#1} #2 \d \sv}}
+\newcommand{\intd}[2][\magd]{{\int_{#1} {#2} \d {#1}}}
+\newcommand{\intdx}[2][\magd]{{\int_{#1} {#2} \d \xv}}
+\newcommand{\intds}[2][\magd]{{\int_{#1} {#2} \d \sv}}
 
 \newcommand{\intb}[1]{\intd[\boundd]{#1}}
 \newcommand{\intui}[2][x]{{\int_0^1 #2 \d{#1}}} % unit interval
@@ -145,9 +146,9 @@
 \newcommand{\Mm}{\mymatrix{M}}
 \newcommand{\Jm}{\mymatrix{J}}
 \newcommand{\Km}{\mymatrix{K}}
-\newcommand{\Jmca}{\mymatrix{J}_\text{ca}}
-\newcommand{\Jmts}{J_\text{ts}}
-\newcommand{\jts}{j_\text{ts}}
+\newcommand{\Jmca}{\mymatrix{J}_\mathrm{ca}}
+\newcommand{\Jmts}{J_\mathrm{ts}}
+\newcommand{\jts}{j_\mathrm{ts}}
 
 % Brackets
 \newcommand{\bigb}[1]{{\left( #1 \right)}}
@@ -169,7 +170,7 @@
 
 
 % Big O notation
-\newcommand{\order}[1]{\text{O}\bigb{#1}}
+\newcommand{\order}[1]{\mathrm{O}\bigb{#1}}
 
 % Differential operators
 \renewcommand{\div}{\nabla \cdot} % \div is normally division
@@ -191,8 +192,8 @@
 \newcommand{\extd}{{\Omega^c}}
 
 % Interior/exterior labels
-\newcommand{\inte}{\text{int}}
-\newcommand{\exte}{\text{ext}}
+\newcommand{\inte}{\mathrm{int}}
+\newcommand{\exte}{\mathrm{ext}}
 
 \newcommand{\real}{\mathbb{R}} % real numbers
 \newcommand{\complex}{\mathbb{C}} % complex numbers
@@ -222,12 +223,12 @@
 
 % Define some common types of H-field.
 % if changing these beware of components of H which are not defined here.
-\newsubcommand{\Heff}{\myvector{H}}{{\text{eff}}} %effective (total)
-\newsubcommand{\Happ}{\myvector{H}}{{\text{ap}}} %applied
-\newsubcommand{\Hms}{\myvector{H}}{\text{ms}} % magnetostatic/demag
-\newsubcommand{\Hex}{\myvector{H}}{\text{ex}} % exchange
-\newsubcommand{\Hca}{\myvector{H}}{\text{ca}} % crystalline ansiotropy
-\newsubcommand{\Hthm}{\myvector{H}}{\text{th}} % thermal
+\newsubcommand{\Heff}{\myvector{H}}{{\mathrm{eff}}} %effective (total)
+\newsubcommand{\Happ}{\myvector{H}}{{\mathrm{ap}}} %applied
+\newsubcommand{\Hms}{\myvector{H}}{\mathrm{ms}} % magnetostatic/demag
+\newsubcommand{\Hex}{\myvector{H}}{\mathrm{ex}} % exchange
+\newsubcommand{\Hca}{\myvector{H}}{\mathrm{ca}} % crystalline ansiotropy
+\newsubcommand{\Hthm}{\myvector{H}}{\mathrm{th}} % thermal
 
 \newcommand{\phim}{\phi} % magnetostatic potential
 \newcommand{\phione}{u} % auxilary potential
@@ -236,24 +237,24 @@
 % Normalised versions of the above fields (and M)
 \newcommand{\mv}{\myvector{m}}
 \newcommand{\hv}{\myvector{h}}
-\newsubcommand{\heff}{\myvector{h}}{{\text{eff}}} %effective (total)
-\newsubcommand{\happ}{\myvector{h}}{{\text{ap}}} %applied
-\newsubcommand{\hms}{\myvector{h}}{\text{ms}} % magnetostatic/demag
-\newsubcommand{\hex}{\myvector{h}}{\text{ex}} % exchange
-\newsubcommand{\hca}{\myvector{h}}{\text{ca}} % crystalline ansiotropy
-\newsubcommand{\hthm}{\myvector{h}}{\text{th}} % thermal
+\newsubcommand{\heff}{\myvector{h}}{{\mathrm{eff}}} %effective (total)
+\newsubcommand{\happ}{\myvector{h}}{{\mathrm{ap}}} %applied
+\newsubcommand{\hms}{\myvector{h}}{\mathrm{ms}} % magnetostatic/demag
+\newsubcommand{\hex}{\myvector{h}}{\mathrm{ex}} % exchange
+\newsubcommand{\hca}{\myvector{h}}{\mathrm{ca}} % crystalline ansiotropy
+\newsubcommand{\hthm}{\myvector{h}}{\mathrm{th}} % thermal
 \newcommand{\nH}{H_{\mathbb{n}}} % A "magnitude" of H for normalisation
 
 % Similarly for energies
-\newsubcommand{\Eapp}{E}{{\text{ap}}} %applied
-\newsubcommand{\Ems}{E}{\text{ms}} % magnetostatic/demag
-\newsubcommand{\Eex}{E}{\text{ex}} % exchange
-\newsubcommand{\Eca}{E}{\text{ca}} % crystalline ansiotropy
+\newsubcommand{\Eapp}{E}{{\mathrm{ap}}} %applied
+\newsubcommand{\Ems}{E}{\mathrm{ms}} % magnetostatic/demag
+\newsubcommand{\Eex}{E}{\mathrm{ex}} % exchange
+\newsubcommand{\Eca}{E}{\mathrm{ca}} % crystalline ansiotropy
 \newcommand{\e}{e} % total energy
-\newsubcommand{\eapp}{e}{{\text{ap}}} %applied
-\newsubcommand{\ems}{e}{\text{ms}} % magnetostatic/demag
-\newsubcommand{\eex}{e}{\text{ex}} % exchange
-\newsubcommand{\eca}{e}{\text{ca}} % crystalline ansiotropy
+\newsubcommand{\eapp}{e}{{\mathrm{ap}}} %applied
+\newsubcommand{\ems}{e}{\mathrm{ms}} % magnetostatic/demag
+\newsubcommand{\eex}{e}{\mathrm{ex}} % exchange
+\newsubcommand{\eca}{e}{\mathrm{ca}} % crystalline ansiotropy
 \newsubcommand{\ehop}{\e}{\hop} % total due to h operator fields
 
 
@@ -266,16 +267,16 @@
 \newcommand{\Kone}{K_1}
 \newcommand{\kone}{\mathcal{K}_1}
 \newcommand{\dampc}{\alpha}
-\newcommand{\dampeff}{\alpha_\text{eff}}
-\newcommand{\gymagc}{{\abs{\gamma_{\text{\tiny{L}}}}}}
+\newcommand{\dampeff}{\alpha_\mathrm{eff}}
+\newcommand{\gymagc}{{\abs{\gamma_{\mathrm{\tiny{L}}}}}}
 
 
 % SI magnetic units (Kronmuller2003)
-\newcommand{\Mu}{{\text{Am}^{-1}}}
-\newcommand{\Hu}{{\text{Am}^{-1}}}
-\newcommand{\phiu}{{\text{A}}} % magnetic potentials
-\newcommand{\Bu}{{\text{T}}}
-\newcommand{\gymagu}{{\text{A}(\text{ms})^{-1}}}
+\newcommand{\Mu}{{\mathrm{Am}^{-1}}}
+\newcommand{\Hu}{{\mathrm{Am}^{-1}}}
+\newcommand{\phiu}{{\mathrm{A}}} % magnetic potentials
+\newcommand{\Bu}{{\mathrm{T}}}
+\newcommand{\gymagu}{{\mathrm{A}(\mathrm{ms})^{-1}}}
 
 % Define the LLG equation (in parts then all together)
 \newcommand{\dMdt}{\pd{\Mv}{t}} % define dM/dt
@@ -338,13 +339,13 @@
 \newcommand{\dyx}[1]{\mbox{\boldmath$\delta$}_{#1}}
 
 % Denote various time steppers
-\newcommand{\AB}{\text{AB}} % Adams-Bashforth 2
-\newcommand{\imr}{\text{IMR}} % Implicit midpoint
-\newcommand{\tr}{\text{TR}}
-\newcommand{\bdf}{\text{BDF2}}
-\newcommand{\bdfo}{\text{BDF1}}
-\newcommand{\FE}{\text{FE}} % Forward Euler (like)
-\newcommand{\ebdf}{\text{eBDF3}}
+\newcommand{\AB}{\mathrm{AB}} % Adams-Bashforth 2
+\newcommand{\imr}{\mathrm{IMR}} % Implicit midpoint
+\newcommand{\tr}{\mathrm{TR}}
+\newcommand{\bdf}{\mathrm{BDF2}}
+\newcommand{\bdfo}{\mathrm{BDF1}}
+\newcommand{\FE}{\mathrm{FE}} % Forward Euler (like)
+\newcommand{\ebdf}{\mathrm{eBDF3}}
 
 % Local truncation errors
 \newcommand{\lte}{T_n}
@@ -356,9 +357,9 @@
 % ============================================================
 
 % tol
-\newcommand{\newtontol}{\epsilon_{\text{N}}}
+\newcommand{\newtontol}{\epsilon_{\mathrm{N}}}
 \newcommand{\ntol}{\newtontol}
-\newcommand{\nrtol}{\epsilon_{\text{Nr}}}
+\newcommand{\nrtol}{\epsilon_{\mathrm{Nr}}}
 
 
 % list of discrete values
@@ -381,7 +382,7 @@
 \usepackage{mathrsfs}
 \newcommand{\myop}[1]{\mathscr{#1}}
 \newcommand{\hop}{\myop{H}}
-\newcommand{\hmsop}{\myop{H}_{\text{ms}}}
+\newcommand{\hmsop}{\myop{H}_{\mathrm{ms}}}
 \newcommand{\aop}{\myop{A}}
 \newcommand{\bop}{\myop{B}}
 \newcommand{\cop}{\myop{C}}
@@ -423,14 +424,14 @@
 
 \newcommand{\intp}[1]{\sum_\ibasisc \sk #1_\ibasisc}
 \newcommand{\intpb}[1]{\left( \intp{#1} \right)}
-\newsubcommand{\hs}{\hv}{\text{s}}
+\newsubcommand{\hs}{\hv}{\mathrm{s}}
 
 \newcommand{\ik}{\ibasisc}
 
 % residuals
-\newsubcommand{\rex}{\myvector{r}}{\text{ex}}
-\newsubcommand{\rexh}{\myvector{r}}{\text{ex,h}}
-\newsubcommand{\rll}{\myvector{r}}{\text{ll}}
+\newsubcommand{\rex}{\myvector{r}}{\mathrm{ex}}
+\newsubcommand{\rexh}{\myvector{r}}{\mathrm{ex,h}}
+\newsubcommand{\rll}{\myvector{r}}{\mathrm{ll}}
 \newcommand{\rllg}{r}
 \newcommand{\rllgv}{\myvector{\rllg}}
 \newcommand{\rphi}{s}
@@ -469,16 +470,16 @@
 \newcommand{\mphapp}{\happ \left(\mpt \right)}
 
 % temp bdf1 values
-\newcommand{\midp}{{\text{mid}}}
+\newcommand{\midp}{{\mathrm{mid}}}
 
 
 
 % Commands from intermag paper 
 % ============================================================
 
-\newcommand{\dash}{\text{-}}
-\newcommand{\dtinitial}{\dtx{\text{init}}}
-\newcommand{\dtmax}{\dtx{\text{max}}}
+\newcommand{\dash}{\mathrm{-}}
+\newcommand{\dtinitial}{\dtx{\mathrm{init}}}
+\newcommand{\dtmax}{\dtx{\mathrm{max}}}
 \newcommand{\zerov}{\mathbf{0}}
 \newcommand{\mvtemp}{\tilde{\mv}}
 

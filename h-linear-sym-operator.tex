@@ -93,8 +93,10 @@ For simplicity write
   \begin{equation}
     \begin{aligned}
       \hmsop [\av](\xv) &= - \grad \phim[\av](\xv), \\
-      &= -\grad \left[-\intd[\magd']{\knl \nabla' \cdot \av(\xv')}
-          + \intd[\boundd']{\knl \av(\xv') \cdot \nv(\xv')} \right].
+      &= -\grad \bigs{
+              -\intd[\magd']{ \knl \nabla' \cdot \av(\xv') }
+              + \intd[\boundd']{\knl \av(\xv') \cdot \nv(\xv') }
+            }.
     \end{aligned}
   \end{equation}
   is symmetrical.
