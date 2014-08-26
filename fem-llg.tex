@@ -104,10 +104,10 @@ This allows the bracketed term in \cref{eq:29} to be calculated directly.
 In this case we do not force the test functions to be zero on the boundary.
 ??ds Milan wants me to change this but his version is unintelligible...
 
-\subsection{A Discretisation}
+\subsection{Discretisation}
 
-\Cref{eq:symmetric-weak-poisson} is still inapplicable as a computational method since the test and solution spaces are infinite dimensional (\ie the problem is still continuous).
-So for the next step we approximate $V_{T}'$ by a finite dimensional function space $V_{T}^{h}\subset V_{T}'$ such that
+\Cref{eq:symmetric-weak-poisson} is still continuous (\ie the test and solution spaces are still infinite dimensional) and so is still not ready to be implemented as a computational method.
+To convert our continuous weak form to a discrete version we approximate $V_{T}'$ by a finite dimensional function space $V_{T}^{h}\subset V_{T}'$ such that
 \begin{equation}
   V_{T}^{h}=\text{span} \set{ \tbf_{\ndi} }_{n=0}^{N}
   = \set{v_h \st v_h = \sum_{n=0}^{N}\alpha_{\ndi} \tbf_{\ndi},\, \alpha_{\ndi} \in \real,\,
@@ -115,7 +115,6 @@ So for the next step we approximate $V_{T}'$ by a finite dimensional function sp
   \label{eq:30}
 \end{equation}
 for some finite set of test basis functions $\tbf_{\ndi}$.
-The distinction between the test functions and the test basis functions is often dropped.
 Similarly, for $V_S$
 \begin{equation}
   \label{eq:34}
@@ -124,8 +123,9 @@ Similarly, for $V_S$
     \phim(0) = \phim_a,\, \phim(1) = \phim_b }.
 \end{equation}
 We call $\sbf_l$ the solution basis functions.
+The distinction between the test functions, $\test$, and the test basis functions, $\tbf$, is often dropped because satisfying the weak form for all test basis functions implies that the weak form is satisfied for all test functions.
 Different choices of $\tbf_{\ndi}$ and $\sbf_l$ lead to different methods, the choice corresponding to the finite element method will be discussed in \cref{sub:Actual-Finite-Elements}.
-For now we continue with the conversion of the problem into a general discrete form.
+For now we continue with a description of the conversion to a general discrete form.
 
 Replacing $v_{h}$ from \cref{eq:poisson1} by $\tbf_{\ndi}$ gives an equivalent set of conditions
 \begin{equation}
@@ -145,8 +145,8 @@ Substituting \cref{eq:y-spans} into \cref{eq:discrete_weak_test_fns_replaced} gi
   \label{eq:31}
 \end{equation}
 
-The functions $f$, $\tbf$ and $\sbf$ are known and so the integrals in \cref{eq:31} are just numbers (which must be calculated at some point, see \cref{sec:numer-eval-integrals}).
-Hence we introduce a matrix $\Am$ and a vector $\mathbf{b}$ containing these numbers:
+The functions $f$, $\tbf$ and $\sbf$ are known and so the integrals in \cref{eq:31} can be evaluated.
+Hence we introduce a matrix $\Am$ and a vector $\mathbf{b}$ containing the results of these integrals:
 \begin{equation}
   \begin{aligned}
     \Am_{l\ndi} &= \intui{ \sbf_{l}'\tbf'_{\ndi} }, \\
@@ -159,7 +159,7 @@ and the problem is reduced to a system of linear equations
   \Am \phimdis = \bv.
   \label{eq:final_galerkin}
 \end{equation}
-This can be solved to find the vector of unknown coefficients, $\phimdis$, which can be substituted into \cref{eq:y-spans} to give an approximation for $\phim(x)$.
+This system can be solved to find the vector of unknown coefficients, $\phimdis$, which can be substituted into \cref{eq:y-spans} to give an approximation for $\phim(x)$.
 
 
 \subsection{Finite Elements in One Dimension}
@@ -174,11 +174,11 @@ A good class of functions to satisfy this requirement is the polynomials: they a
 
 Additionally it is desirable that the final matrix $\Am$ be sparse (to allow efficient linear algebra).
 For this to happen we need $\intui{ \sbf_{l}'\tbf'_{\ndi} } = 0$ for most pairs of $l, \ndi$. 
-An obvious way to achieve this is to have each basis function only overlap (in space) with a few other basis functions, for example by having each basis function non-zero only on a small region.
+An obvious way to achieve this is to have each basis function only overlap (in space) with a few other basis functions, for example by having each basis function non-zero only on a portion of the domain.
 Basis functions with this property are said to have ``local support''.
 
 These two points lead us to the use of a carefully constructed set of \emph{piecewise polynomials} as our basis functions.
-We first split the domain into $N_e$ regions called \emph{elements}, each with a \emph{node} at either end.
+We first split the domain into $N_e$ non-overlapping regions called \emph{elements}, each with a \emph{node} at either end.
 We then define two ``local'' basis functions within each element as
 \begin{equation}
   \tbf^{(e)}_{0}=\dfrac{x-x^{(e)}_{1}}{x^{(e)}_{0}-x^{(e)}_{1}},\qquad
@@ -186,16 +186,17 @@ We then define two ``local'' basis functions within each element as
   \label{eq:simple_lagrange}
 \end{equation}
 where $x^{(e)}_0$ and $x^{(e)}_1$ are the positions of the nodes of element $e$.
-This definition results in a useful property of $\tbf^{(e)}_{\ndi}(x)$:
+This definition results in following useful properties of $\tbf^{(e)}_{\ndi}(x)$:
 \begin{equation}
   \label{eq:35}
   \tbf^{(e)}_{\ndi}(x_{\ndi}) =
   \begin{cases}
     1 & k = \ndi, \\
-    0 & k \neq \ndi,
+    0 & k \neq \ndi.
   \end{cases}
 \end{equation}
-since at $x_{\ndi}$ with $k \neq \ndi$ the numerator is zero and at $x = x_{\ndi}$ the numerator and denominator are equal.
+This means that the coefficient of each test function corresponds directly to the value of the solution at the node where that test function is non-zero, \ie the list of coefficients, $\phimdis$, is just a list of the nodal values of $\phim(x)$.
+
 Next we define the $\ndi$th (global) basis function as:
 \begin{equation}
   \label{eq:33}
@@ -205,8 +206,9 @@ Next we define the $\ndi$th (global) basis function as:
     0 & \text{otherwise.}
   \end{cases}
 \end{equation}
-So each basis function is only non-zero on the elements neighbouring the node where it has a maximum value.
+So each global basis function is only non-zero on the elements neighbouring the node where it has a maximum value.
 We call the set of such polynomial basis functions $\tsbasis$.
+The relationship between the local and global test functions is illustrated in \cref{fig:local_global_functions}.  
 
 \begin{figure}
   \center
@@ -216,26 +218,21 @@ We call the set of such polynomial basis functions $\tsbasis$.
   \label{fig:local_global_functions}
 \end{figure}
 
-
-
-% \begin{figure}
-%   \center
-%   \includegraphics[width=0.8\textwidth]{./images/local_global_numbering}
-%   \caption{The local and global numbering schemes for nodes in a one-dimensional
-%     finite element model.}
-%   \label{fig:local-global-numbering}
-% \end{figure}
-
-The basis functions for are clearly integrable (\ie in $L^2[0,1]$) since they are just a combination of local basis functions, which are obviously integrable.
+The global basis functions are integrable (\ie in $L^2[0,1]$) since they are just a combination of local basis functions.
 So to obtain sets of functions which are subsets of $V_T^h$ and $V_S^h$ we merely need to remove the test functions which are non-zero on Dirichlet boundaries.
+??ds talk to Milan about this
 
 It is advantageous to work with such low order polynomials even for very complex models because evaluation of integrals and interpolated values is simple and cheap to compute.
 Also note that an arbitrary level of accuracy can be achieved when approximating the a smooth function by piecewise polynomials by increasing the number of polynomials used (\ie after sufficient mesh refinement).
 
 The description here generalises to higher dimensions fairly easily: nodes are placed at every corner/vertex of the element and the polynomials used are replaced by higher dimensional ones with equivalent properties \cite[20]{HowardElmanDavidSilvester2006}.
 
+The method can also be generalised to higher order polynomials, although more nodes are required inside each element in order to provide enough values to fully define the polynomials.
+The use of higher order polynomials increases accuracy at the cost of speed: the resulting linear systems are denser due to more test/solution basis functions overlapping. 
+
 To calculate the matrix $\Am$ and the vector $\mathbf{b}$ from equation \cref{eq:Aij_bj} needed for \cref{eq:final_galerkin} we first calculate the local contributions from each element: $\Am^{(e)}$ and $\mathbf{b}^{(e)}$.
-Then we only require a local-to-global mapping tells us which local nodes map to a given global node and the global matrix $\Am$ and vector $\mathbf{b}$ can be assembled by summing the appropriate local contributions.
+We also require a local-to-global mapping which gives a relationship between the local and global nodes. 
+Then the global matrix $\Am$ and vector $\mathbf{b}$ can be assembled by summing the appropriate local contributions.
 
 For our one-dimensional Poisson case the calculation of $\Am^{(e)}$ is quite
 simple, substituting the two local basis functions \cref{eq:simple_lagrange} into
@@ -249,7 +246,7 @@ simple, substituting the two local basis functions \cref{eq:simple_lagrange} int
   \right],
 \end{equation}
 where $h$ is the element size, $h = x_{1}^{(e)}-x_{0}^{(e)}$ (note that $h$ can vary between elements).
-Similarly for $\mathbf{b}^{{e}}$ we obtain
+Similarly for $\mathbf{b}^{(e)}$ we obtain
 \begin{equation}
   \mathbf{b}^{(e)}=\dfrac{1}{h}\left[
     \begin{array}{c}
@@ -257,7 +254,7 @@ Similarly for $\mathbf{b}^{{e}}$ we obtain
       \int_{x_{0}^{(e)}}^{x_{1}^{(e)}}(x-x_{0}^{(e)})\, f(x)\, dx
     \end{array}\right],
 \end{equation}
-which we must compute numerically since the entries depend on $f(x)$ which is not fixed.
+which we compute numerically since the entries depend on $f(x)$ which is not fixed.
 
 
 
@@ -265,7 +262,7 @@ which we must compute numerically since the entries depend on $f(x)$ which is no
 \label{sec:numer-eval-integrals}
 
 In the above example the integrals for $\Am$ were fixed and so could be calculated analytically.
-This is not the case in general (\eg the vector $\bv$, or the matrix for non-linear problems), so we need some method to computational evaluate the integrals.
+This is not always the case in general (\eg the vector $\bv$, or the Jacobian matrix for non-linear problems), so we need some method to evaluate the integrals computationally.
 The most flexible way to evaluate integrals is to do it purely numerically using a quadrature scheme.
 A quadrature scheme is an approximation to an integral of the form
 \begin{equation}
@@ -276,18 +273,21 @@ A quadrature scheme is an approximation to an integral of the form
 where the selection of the ``knots'' $\xv_i$ and the weights $w_i$ depend on the scheme.
 
 There exist many different quadrature schemes suited for different applications.
-However because we only ever need to evaluate integrals of polynomial functions a single simple and extremely accurate class of quadrature is sufficient: Gaussian quadrature \cite[492]{Kincaid2002}.
-Gaussian quadrature is the quadrature scheme derived by choosing the knots such that when $n$ knots are used it is able to exactly evaluate integrals of polynomials up to order $2n + 1$ (this is the highest possible order).
+Since we only need to evaluate integrals of polynomial functions a single simple and accurate class of quadrature is sufficient: Gaussian quadrature \cite[492]{Kincaid2002}.
+Gaussian quadrature is able to exactly evaluate integrals of polynomials up to order $2n + 1$, the highest possible order, because the knots and weights are chosen ??ds
+
+is the quadrature scheme derived by choosing the knots such that when $n$ knots are used it 
 
 In higher dimensions the integration is not quite so simple.
 Quadrature schemes only apply over specifically shaped domains (or at least must be non-trivially modified for alternative geometries).
-To get around this issue we use a coordinate transformation to a reference element \cite[29]{HowardElmanDavidSilvester2006}.
-So \eg any four sided element is mapped to the square $[-1, 1] \times [-1, 1]$, and standard quadrature schemes can be used.
+To get around this issue we use a coordinate transformation to a reference element \cite[29]{HowardElmanDavidSilvester2006}, \eg any four sided element is mapped to the square $[-1, 1] \times [-1, 1]$, and standard quadrature schemes can be used.
 The final difficulty is to calculate the Jacobian of the transformation: if the ``local'' position variable is $\sv$ then the Jacobian is
 \begin{equation}
   J = \abs{ \pd{\sv}{\xv}} = \frac{1}{\abs{\pd{\xv}{\sv}}},
 \end{equation}
 where the elements of the Jacobian matrix $\pd{\xv}{\sv}$ can be calculated by interpolating $x$ using the local solution basis functions and differentiating.
+??ds check this: When using linear polynomial basis functions the Jacobian is constant in 1D and for triangular elements or a bilinear polynomial for quadrilateral elements. 
+Similarly in 3D it is constant for tetrahedral elements or trilinear for ``brick'' elements.
 
 So the final integration scheme is
 \begin{equation}
@@ -302,7 +302,7 @@ where the definition of $f_s(\sv)$ is
 \end{equation}
 
 Gaussian quadratures for square and cube elements can be trivially constructed from the one dimensional quadrature using a tensor product formula.
-Similar ``full integration'' quadratures for triangular and tetrahedral elements exist \eg \cite{oomph-lib-integral.cc}.
+Similar ``full integration'' quadratures for triangular and tetrahedral elements exist \eg \cite{oomph-lib-integral.cc} ??ds cite actual papers.
 
 
 
