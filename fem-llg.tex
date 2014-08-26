@@ -1,8 +1,10 @@
 \chapter{A finite element method for the Landau-Lifshitz-Gilbert Equation}
 \label{sec:galerk-meth-llg}
 
-In \thisref{sec:galerk-meth-llg} we introduce first give a general introduction to the finite element method.
-We then apply the finite element method (with the Newton-Raphson method for linearisation) to the Landau-Lifshitz-Gilbert equation with exchange and a simple magnetostatic field approximation.
+In \thisref{sec:galerk-meth-llg} we first give a general introduction to the finite element method as applied to the magnetostatic potential equation \cref{eq:Hms} in one spatial dimension.
+We then extend this discussion to the full Landau-Lifshitz-Gilbert equation with magnetostatics in three dimensions.
+The linearisation of the LLG equation is handled using the Newton-Raphson method, see \cref{sec:newt-raph} for details.
+For the purposes of \thisref{sec:galerk-meth-llg} we will assume that suitable Dirichlet or Neumann boundary conditions have been determined, the details of the actual boundary conditions are more complex and are discussed in \cref{sec:hybr-finit-elem}.
 
 \section{Introduction to the finite element method}
 \label{sec:intr-finite-ele-diff}
@@ -10,17 +12,19 @@ We then apply the finite element method (with the Newton-Raphson method for line
 As discussed in \cref{sec:sd-finite-elem-meth} the finite element method (FEM) is a discretisation method which converts a differential equation into a system of algebraic equations.
 It allows for more complex geometries than the finite difference method, at the cost of increased complexity.
 
-A simple problem is used to illustrate these methods: solving the Poisson
-equation with Dirichlet boundary conditions in one dimension.
-This is relevant to 
-Find\footnote{A function $g\in C^{k}(0,1)$ if $g$ and it's first $k$ derivatives are continuous on $(0,1)$.} $y(x)\in C^{2}(0,1)$ such that
+A simple problem is used to illustrate these methods: solving the Poisson equation with Dirichlet boundary conditions in one dimension.
+Find $\phim(x)\in C^{2}(0,1)$ such that
 \begin{equation}
-  -y''=f\qquad\text{on }(0,1)
+  -\phim''(x) = f(x) \qquad x \in (0,1),
   \label{eq:poisson1}
 \end{equation}
-\begin{equation*}
-  y(0)=y_{a},\quad y(1)=y_{b},\quad f=f(x)\in C(0,1).
-\end{equation*}
+with boundary conditions
+\begin{equation}
+  \phim(0)=\phim_{a},\quad \phim(1)=\phim_{b},\quad f=f(x)\in C(0,1).
+\end{equation}
+A function $g$ is in $C^{k}(\magd)$ if $g$ and it's first $k$ derivatives are continuous in $\magd$.
+
+Setting $f = -\div \mv = -\pd{m_x}{x}$ gives the magnetostatic potential problem \cref{eq:Hms} with Dirichlet boundary conditions.
 
 
 \subsection{Definitions}
@@ -35,7 +39,7 @@ In a FEM we are interested in approximating an infinite dimensional space (the s
 The $n$-th Sobolev space is the space of all functions such that they and their $n$-th derivatives (in all dimensions) are in $L^2$. For example
 \begin{equation}
   \label{eq:H1}
-  \sob^1(\magd) = \set{ y \st y, \pd{y}{x_i} \in L^2(\magd) \; \forall x_i }
+  \sob^1(\magd) = \set{ \phim \st \phim, \pd{\phim}{x_i} \in L^2(\magd) \; \forall x_i }
 \end{equation}
 
 \subsection{A weak formulation}
@@ -48,13 +52,13 @@ and the spectral method.
 
 For simplicity we start, as before, with the one-dimensional Poisson equation
 \cref{eq:poisson1}, with homogeneous Dirichlet boundary conditions
-(\ie $y_{a}=y_{b}=0$).
+(\ie $\phim_{a}=\phim_{b}=0$).
 
 The formulation used in \cref{eq:poisson1} (called a strong formulation) is too restrictive for our purposes.
 It disallows some useful approximating functions, and in higher dimensional cases restricts the geometries that can be modelled \cite{HowardElmanDavidSilvester2006}. 
-For ``well behaved'' functions the following weak formulation is equivalent but without these restrictions: find $y\in V_{s}$ such that
+For ``well behaved'' functions the following weak formulation is equivalent but without these restrictions: find $\phim\in V_{s}$ such that
 \begin{equation}
-  -\int_{0}^{1}y''v\, dx=\int_{0}^{1}fv\, dx \qquad \forall v\in V_{T}.
+  -\int_{0}^{1}\phim''v\, dx=\int_{0}^{1}fv\, dx \qquad \forall v\in V_{T}.
   \label{eq:26}
 \end{equation}
 
@@ -69,13 +73,13 @@ So an appropriate test function space is
 
 The space $V_{s}$ is the solution space
 \begin{equation}
-  V_{s}=\set{ y : [0,1] \rightarrow \mathbb{R} \st y \in \sob^2(0,1),\, y(0) = y_{a},\, y(1) = y_{b}},
+  V_{s}=\set{ \phim : [0,1] \rightarrow \mathbb{R} \st \phim \in \sob^2(0,1),\, \phim(0) = \phim_{a},\, \phim(1) = \phim_{b}},
 \end{equation}
 \ie the space of functions that are sufficiently smooth for the integrals to be finite and that satisfy the boundary conditions.
 
-To see that the weak form is equivalent to \cref{eq:poisson1} consider the case when $f(x) + y''(x)$ is non-zero at a point $x \in (0,1)$, \ie when the strong form \cref{eq:poisson1} is not satisfied. 
+To see that the weak form is equivalent to \cref{eq:poisson1} consider the case when $f(x) + \phim''(x)$ is non-zero at a point $x \in (0,1)$, \ie when the strong form \cref{eq:poisson1} is not satisfied. 
 Since \cref{eq:26} must hold for all functions we can choose a function which is non-zero at $x$ and hence the equality in \cref{eq:26} will fail.
-So $f(x) + y''(x) = 0$ must hold at all points $x \in (0,1)$.
+So $f(x) + \phim''(x) = 0$ must hold at all points $x \in (0,1)$.
 We call this the method of weighted residuals because we use an integral of the residual weighted by a test function to approximate the true equation \cite[210, 214]{Zeinkiewicz1967}.
 
 The smoothness restrictions on our weak form approximation can be further reduced using the integration by parts formula:
@@ -83,33 +87,33 @@ The smoothness restrictions on our weak form approximation can be further reduce
   \intui{qp'} = \Big[ pq \Big]_{0}^{1} - \intui{p q'},
 \end{equation}
 applied to the left hand side of \cref{eq:26}.
-Let $p=y'$ and $q=v$, then
+Let $p=\phim'$ and $q=v$, then
 \begin{equation}
-  -\intui{ y''v } = -\Big[ y'v \Big]_{0}^{1} + \intui{ y'v' }.
+  -\intui{ \phim''v } = -\Big[ \phim'v \Big]_{0}^{1} + \intui{ \phim'v' }.
   \label{eq:29}
 \end{equation}
 
 Using the fact that the test functions must be zero at the boundaries the square bracketed term in \cref{eq:29} is zero and we are left with
 \begin{equation}
-  -\intui{ y''v } = \intui{ y'v' }.
+  -\intui{ \phim''v } = \intui{ \phim'v' }.
 \end{equation}
  
 Hence our problem can be reduced to the following: find 
 \begin{equation}
-y\in V_{S}'=\set{y \st y \in \sob^1(0,1),\, y(0) = y_a, y(1) = y_b },
+\phim\in V_{S}'=\set{\phim \st \phim \in \sob^1(0,1),\, \phim(0) = \phim_a, \phim(1) = \phim_b },
 \end{equation}
 such that
 \begin{equation}
-  \intui{ y'v' } = \intui{ fv } \qquad 
+  \intui{ \phim'v' } = \intui{ fv } \qquad 
   \forall v \in V'_{T} = \set{v \st v \in \sob^1(0,1),\, v_a=v_b=0}.
   \label{eq:symmetric-weak-poisson}
 \end{equation}
 
-Note that this rearrangement has removed the second derivative in $y$, hence we only require $y \in \sob^1(0,1)$ instead of $y \in \sob^2(0,1)$.
+Note that this rearrangement has removed the second derivative in $\phim$, hence we only require $\phim \in \sob^1(0,1)$ instead of $\phim \in \sob^2(0,1)$.
 This allows a wider range of solution functions to be used but comes at the expense of requiring more smoothness in the test functions.
-Also note that if $y_a = y_b = 0$ then $V_{S}'=V_{T}'$, our test and solution spaces are identical.
+Also note that if $\phim_a = \phim_b = 0$ then $V_{S}'=V_{T}'$, our test and solution spaces are identical.
 
-An alternative class of boundary condition, called Neumann conditions, specify the values of $y'$ at the boundary.
+An alternative class of boundary condition, called Neumann conditions, specify the values of $\phim'$ at the boundary.
 This allows the bracketed term in \cref{eq:29} to be calculated directly.
 In this case we do not force the test functions to be zero on the boundary.
 
@@ -129,8 +133,8 @@ Similarly, for $V_S$
 \begin{equation}
   \label{eq:34}
   V_{S}^{h}=\text{span} \set{ \sbf_{l} }_{l=0}^{N_l}
-  = \set{y_h \st y_h = \sum_{l=0}^{N_l}y_{l} \sbf_{l},\, y_{l} \in \real,\,
-    y(0) = y_a,\, y(1) = y_b }.
+  = \set{\phim_h \st \phim_h = \sum_{l=0}^{N_l}\phim_{l} \sbf_{l},\, \phim_{l} \in \real,\,
+    \phim(0) = \phim_a,\, \phim(1) = \phim_b }.
 \end{equation}
 We call $\sbf_l$ the solution basis functions.
 Different choices of $\tbf_{\ndi}$ and $\sbf_l$ lead to different methods, the choice corresponding to the finite element method will be discussed in \cref{sub:Actual-Finite-Elements}.
@@ -138,18 +142,18 @@ For now we continue with the conversion of the problem into a general discrete f
 
 Replacing $v_{h}$ from \cref{eq:poisson1} by $\tbf_{\ndi}$ gives an equivalent set of conditions
 \begin{equation}
-  \intui{  y'_{h} \tbf_{\ndi}'  }  = \intui{ f\tbf_{\ndi} } \qquad n=0,\ldots,N,
+  \intui{  \phim'_{h} \tbf_{\ndi}'  }  = \intui{ f\tbf_{\ndi} } \qquad n=0,\ldots,N,
   \label{eq:discrete_weak_test_fns_replaced}
 \end{equation}
-Since $y_{h}\in V_{S}^{h}$ we can also replace $y_{h}$ by a linear combination of the basis functions, \ie
+Since $\phim_{h}\in V_{S}^{h}$ we can also replace $\phim_{h}$ by a linear combination of the basis functions, \ie
 \begin{equation}
-  y_{h}=\sum_{l=0}^{N_l} y_{l}\sbf_{l},
+  \phim_{h}=\sum_{l=0}^{N_l} \phim_{l}\sbf_{l},
   \label{eq:y-spans}
 \end{equation}
 where $c_l \in \real$ are (unknown) coefficients.
 Substituting \cref{eq:y-spans} into \cref{eq:discrete_weak_test_fns_replaced} gives
 \begin{equation}
-  \sum_{l=0}^{N_l} y_{l}\intui{ \sbf_{l}'\tbf'_{\ndi} } =\intui{ f\tbf_{\ndi} } 
+  \sum_{l=0}^{N_l} \phim_{l}\intui{ \sbf_{l}'\tbf'_{\ndi} } =\intui{ f\tbf_{\ndi} } 
   \qquad n=0,\ldots,N.
   \label{eq:31}
 \end{equation}
@@ -165,10 +169,10 @@ Hence we introduce a matrix $\Am$ and a vector $\mathbf{b}$ containing these num
 \end{equation}
 and the problem is reduced to a system of linear equations
 \begin{equation}
-  \Am \yv = \bv.
+  \Am \phimdis = \bv.
   \label{eq:final_galerkin}
 \end{equation}
-This can be solved to find the vector of unknown coefficients $\yv$ which can be substituted into \cref{eq:y-spans} to give an approximation for $y(x)$.
+This can be solved to find the vector of unknown coefficients, $\phimdis$, which can be substituted into \cref{eq:y-spans} to give an approximation for $\phim(x)$.
 
 
 \subsection{Finite Elements in One Dimension}
