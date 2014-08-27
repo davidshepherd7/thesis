@@ -1,0 +1,38 @@
+\chapter{Conclusions and future work}
+
+\section{Conclusions}
+
+blah blah
+
+??ds
+
+
+\section{Future work}
+
+Simple optimisations: store linear blocks of Jacobian between solves: $19/25$ of the $N \times N$ blocks are linear or empty, so this should speed up assembly significantly (the 3 diagonal LLG blocks are mass matrices, all magnetostatics blocks are linear or empty).
+Similarly almost all contributions to the 6 non-linear blocks are skew symmetric and so can be reused.
+With these optimisations Jacobian assembly time (which makes up around half of the runtime for time steps where an iterative can be used) could be reduced by around a factor of 10.
+Also using biCGStab or restarted GMRES could reduce computation time when a large number of iterations are needed (although both have reduced convergence guarantees, hence why GMRES was used so far).
+
+
+Integrate the linear solvers with an efficient and robust multigrid based preconditioner for the Newton-Raphson linearised LLG equation. \footnote{The multigrid smoother developed in \cite{Jeong2014} is probably not relevant because it relies on a cancelation only present in finite-difference simulations.}
+Also integrate hierarchical BEM matrix.
+This will allow linear scaling (\ie $\order{N}$) in both space and time independently for most geometries ($\order{N \log N}$ for surface dominated geometries), as discussed in \cref{sec:desir-prop-numer}.
+
+
+With such an enhanced solver the effectiveness of the preconditioner discussed in \cref{sec:solution-strategies} on extremely large problems could be investigated.
+It is possible that neglecting the entire BEM block could cause problems in cases which are beyond the reach of the generic ilu preconditioner used here.
+
+
+Investigate the effects of the various geometric integration properties of IMR on the overall accuracy for a variety of problems.
+In particular: does loss of symplectic properties due to adaptive time integration have a noticeable impact on the accuracy?
+
+
+Investigate the relationship between ``no spurious damping'' and energy conservation with $\dampc = 0$.
+I suspect energy conservation is a result of ``no spurious damping'' and length conservation combined, this could be tested using TR with Lagrange multipliers for length conservation (see \eg \cite{Szambolics2008a}).
+
+
+%%% Local Variables:
+%%% mode: latex
+%%% TeX-master: "main"
+%%% End:
