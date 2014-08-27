@@ -117,13 +117,13 @@ However when the geometry involves curves, diagonals, hexagonal grains, bit patt
 \label{sec:sd-finite-elem-meth}
 
 A more complex method of spatial discretisation is the finite element method \cite{HowardElmanDavidSilvester2006}.
-Here the magnetic body is divided up into a finite number of non-overlapping polygonal \emph{elements}, which can vary in both size and shape.
+Here the magnetic body is divided up into a finite number of non-overlapping \emph{elements}, which can vary in both shape and size.
 Within each of these elements each magnetisation component is approximated by a simple polynomial function of space, typically a linear polynomial.
 Spatial derivatives are calculated by simply differentiating these polynomial functions.
 In contrast to macrospin and finite difference methods the actual equations solved by the finite element method are a \emph{weak} form of the standard PDE (or the \emph{strong} form).
 More details of the weak form and the finite element method are given in \cref{sec:intr-finite-ele-diff}.
 
-The main advantage of the finite element method is that it can cheaply and accurately (compared to the finite difference method) approximate non-trivial geometrical features by an using an appropriate mesh of polygonal elements.
+The main advantage of the finite element method is that it can cheaply and accurately (compared to the finite difference method) approximate non-trivial geometrical features by an using an appropriate mesh of elements.
 An additional advantage is that the size of elements (and thus the accuracy of the approximation) can be varied arbitrarily as needed to give better accuracy in more complex or important regions. 
 The choice of element size can be done automatically using \emph{adaptive mesh refinement}: after each calculation an error estimate is calculated (known as \emph{a posteriori} error estimation).
 If the error is determined to be too high anywhere the mesh is refined near that region and the calculation is repeated.
@@ -514,8 +514,7 @@ A-stability\footnote{The A does not stand for anything, it is just ``A'' \cite[4
 
 The IMR, TR, BDF1 and BDF2 methods are all A-stable \cite[pgs. 43, 251]{HairerWanner}.
 Linear explicit methods are never A-stable \cite{Nevanlinna1974} (``linear'' methods in this reference include all common time integration methods: Runge-Kutta, multistep, predictor-corrector, \ldots)\footnote{These limitations could theoretically be circumvented by using significantly more complex methods, but such questions are far beyond the scope of this thesis.}, which is the main reason for our focus on implicit methods.
-Additionally there are no A-stable linear multistep methods\footnote{A-stable implicit Runge-Kutta methods of higher order do exist, see \eg \cite[73]{HairerWanner}.
-However moving to higher order methods significantly increases the size of the system to be solved at each step. Hence they are prohibitively expensive for the time integration of semi-discretised PDEs.} for discussion.
+Additionally there are no A-stable linear multistep methods of order greater than two\footnote{A-stable implicit Runge-Kutta methods of higher order do exist, see \eg \cite[73]{HairerWanner}, but they require the solution of significantly larger systems of equations.} \cite[261]{GreshoSani}, which is why we have chosen the  methods in \cref{sec:some-implicit-time-integrators} for discussion.
 
 \subsection{Spurious numerical damping}
 \label{sec:numerical-damping}
@@ -575,14 +574,18 @@ The analysis for the second order BDF2 case is more complex due to the fact that
 \label{sec:order-reduction}
 
 It is known that certain implicit Runge-Kutta methods are susceptible to reduced accuracy when used to solve certain extremely stiff problems \cite[156]{Atkinson1994} \cite[225]{HairerWanner}.
-In the case of the implicit midpoint rule this corresponds to cases when term II of the LTE \cref{eq:trunc-mid} is large. 
+In the case of the implicit midpoint rule this corresponds to cases when term II of the LTE \cref{eq:trunc-mid} is large.
 This occurs when $\pd{\fv}{\yv}\evalat{\thf{}}$ is large, \ie when the error in $\ffv{t, \yv}$ due to a small error in $\yv$ is large.
 
 The concept of ``B-convergence'' is used to analyse this effect.
-Roughly speaking, a Runge-Kutta method is B-convergent of order $r$ if the global error is  $\order{\dtx{\text{max}}^r}$ for all sufficiently smooth ODEs without any assumption about the size of $\pd{\fv}{\yv}$.
-The implicit midpoint rule is B-convergent of order 1 \cite[231]{HairerWanner}\footnote{In this reference IMR is referred to as the second order Gauss method, BDF1 is Radau IIA, TR is Lobatto IIIA \cite[72-76]{HairerWanner}.}, which is one order less than its global error on typical ODEs.
+Roughly speaking, a Runge-Kutta method is B-convergent of order $r$ if the global error is $\order{\dtx{\text{max}}^r}$ for ``infinitely stiff'' ODEs.
+The implicit midpoint rule is B-convergent of order 1 \cite[231]{HairerWanner},\footnote{In this reference IMR is referred to as the second order Gauss method, BDF1 is Radau IIA, TR is Lobatto IIIA \cite[72-76]{HairerWanner}.} which is one order less than its global error on typical ODEs.
+We call this effect ``order reduction''.
 In contrast, the TR and BDF methods do not suffer from order reduction \cite[159]{Atkinson1994}.
 This is because all evaluations of $\fv$ are at integer time points (\ie $t_{n+1}, t_{n}, t_{n-1}, \ldots$ rather than $\thf$) and so there is no term in the LTE containing $\pd{\fv}{\yv}$.
+
+This order reduction effect is a potential downside for IMR, but only when applied to specific ODEs (no such effect has been reported in micromagnetics simulations as far as the author is aware).
+Additionally it should be accounted for by a good adaptive time step selection algorithm (see \cref{sec:adaptivity} for details).
 
 A simple test ODE demonstrates this phenomenon \cite[157]{Atkinson2009}:
 \begin{equation}
@@ -759,43 +762,35 @@ This explains why the semi-explicit modification to IMR also conserves the magne
 
 Another geometrical property of the Landau-Lifshitz-Gilbert equation, also discussed in \cref{sec:prop-cont-llg}, is the conservation or monotonic decay of energy depending on the value of the damping constant $\dampc$.
 
-IMR also conserves energy when $\dampc = 0$ and it ensures that the energy is a decreasing function of time when $\dampc > 0$ \cite{DAquino2005}.
+IMR also conserves energy when $\dampc = 0$ and it ensures that the energy is a decreasing function of time when $\dampc > 0$ \cite{DAquino2005}, a proof of this property is given in the next section.
 ??ds mention commutation as well?
 The other geometric integration schemes mentioned in \cref{sec:ensuring-constant-mv}, in particular the semi-explicit modifications of IMR, do not have this property.
 
 
-\subsubsection{Proof of energy property for IMR in a macrospin model}
+\subsubsection{Proof of energy property for the IMR discretised macrospin model}
 \label{sec:proof-energy-prop}
 
 \newcommand{\happerror}{\mathcal{E}_\text{ap}}
 
-Before we can derive the energy decay properties of the IMR discretised LLG equation we need to look at the properties of the effective field when considered as an operator on $\mv$:
+In \thisref{sec:proof-energy-prop} we show that the change in the energy of the magnetic system over time when evolved using the IMR discretised LLG equation obeys certain relationships which are similar to those of the continuous LLG equation. 
+
+Before starting the derivation we introduce some alternative notation for the effective field, $\hv$, when considered as an operator, $\hopb{\mv}$:
 \begin{equation}
   \begin{aligned}
     \label{eq:hop}
-    \hop [\mv(\xv)] &= \lap \mv + \hms[\mv] + \hca[\mv], \\
-    \hv(\xv, t)[\mv(\xv)] &= \hop [\mv(\xv)] + \happ(\xv, t). \\
+    \hopb{\mv(\xv)} &= \lap \mv(\xv) + \hms[\mv(\xv)] + \hca[\mv(\xv)], \\
+    \hv(\xv, t)[\mv(\xv)] &= \hopb{\mv(\xv)} + \happ(\xv, t). \\
   \end{aligned}
 \end{equation}
-Note that the applied field is not an operator on $\mv$ and has to be treated separately.
 
-It can be shown (see \cref{sec:linear-symm-field-operators}) that $\hop[\mv]$ is a linear symmetric operator on $\mv$ provided that there is no surface anisotropy and that the magnetocrystalline anisotropy is uniaxial.\footnote{Extensions are probably possible, in particular I suspect that this can be proven for all effective fields using the fact that they must be variational derivatives of the energy.
-However I have not managed to find such a proof.}
-Additionally the energy can be written using this notation as
-\begin{equation}
-  \label{eq:energy-hop}
-  \e_n = \ehop_{,n} + \eapp_{,n} = - \ip{\mv_n}{\frac{\hop[\mv_n]}{2}} - \ip{\mv_n}{\happ(t_n)},
-\end{equation}
-where the factor of $1/2$ is carried over from the energy expressions \cref{eq:nd-e-app,eq:nd-e-ms,eq:nd-e-ex,eq:nd-e-ca}, see \cref{sec:energy-field-relation} for details.
-
-Also note that we can expand $\mphapp$ into a midpoint-like form
+We also expand the midpoint value of the applied field, $\mphapp$, into
 \begin{equation}
   \begin{aligned}
-  \mphapp &= \frac{\happ(t_{n+1}) + \happ(t_n)}{2} 
-  + \frac{\dtn^2}{4} \evalatb{\spd{\happ}{t}}{\frac{t_{n+1} + t_n}{2}}  + \order{\dtn^4}, \\
-  &= \frac{\happ(t_{n+1}) + \happ(t_n)}{2} + \happerror.\\
-  \label{eq:happ-midpoint}
-\end{aligned}
+    \mphapp &= \frac{\happ(t_{n+1}) + \happ(t_n)}{2} 
+    + \frac{\dtn^2}{4} \evalatb{\spd{\happ}{t}}{\frac{t_{n+1} + t_n}{2}}  + \order{\dtn^4}, \\
+    &= \frac{\happ(t_{n+1}) + \happ(t_n)}{2} + \happerror.\\
+    \label{eq:happ-midpoint}
+  \end{aligned}
 \end{equation}
 where
 \begin{equation}
@@ -803,29 +798,47 @@ where
 \end{equation}
 is the error in this midpoint-like approximation of $\happ$.
 
-In the same manner as the \cref{sec:proof-magn-length-ode-imr-llg} we derive the change in energy of the discrete LLG equation by taking the $\ltwo$ inner product of \cref{eqn:disc-llg} with
+Now we are ready to derive the energy property in the same manner as \cref{sec:proof-magn-length-ode-imr-llg}.
+We begin by taking the $\ltwo$ inner product of the IMR discretised LLG equation, \cref{eqn:disc-llg}, with the sum of the IMR discretised effective field and damping terms:
 \begin{equation}
-  \mphop + \frac{\happ(t_{n+1}) + \happ(t_n)}{2} + \happerror - \dampc \mpdmdt,
+  \begin{aligned}
+    & \mphop + \happ(\mpt) - \dampc \mpdmdt, \\
+    &= \mphop + \frac{\happ(t_{n+1}) + \happ(t_n)}{2} + \happerror - \dampc \mpdmdt.
+  \end{aligned}
 \end{equation}
-resulting in
+The result of this inner product is 
 \begin{equation}
   \begin{aligned}
     &\ltip{\mphop + \frac{\happ(t_{n+1}) + \happ(t_n)}{2} + \happerror}{\mpdmdt} \\
-    & \quad - \dampc \ltip{\mpdmdt}{\mpdmdt} = 0.
+    & \quad - \dampc \ltip{\mpdmdt}{\mpdmdt} = 0,
     \label{eq:54}
   \end{aligned}
 \end{equation}
-The $\hop$ term in \cref{eq:54} can be simplified by using the orthogonality identity~\cref{eqn:imr-linop} and then written as an energy using \cref{eq:energy-hop}
+where the RHS is zero due to the triple product identity.
+
+It can be shown (see \eg \cref{sec:linear-symm-field-operators}) that $\hop$ is a linear symmetric operator on $\mv$.
+So from \cref{eqn:imr-linop} with $\lop = \hop$ we have the property
+\begin{equation}
+  \ltip{\hopb{\frac{\mv_{n+1} + \mv_n}{2}}}{ \frac{\mv_{n+1} - \mv_n}{\dtn} }
+  = \frac{1}{2\dtn} \bigs{ \ltip{\mv_{n+1}}{\hop \mv_{n+1}} - \ltip{\mv_{n}}{\hop \mv_{n}}}.
+  \label{eq:orth-energy}
+\end{equation}
+Additionally the energy at time step $n$ due to the effective field operator $\hop$ can be written as\footnote{For the magnetostatic and magnetocrystalline anisotropy energies this follows from the definitions.
+  For the exchange energy the trick is to use the relationship $\mv \cdot \lap \mv = \frac{1}{2} \lap \abs{\mv}^2 - (\grad \mv)^2 = - (\grad \mv)^2$ (since $\abs{\mv}$ is constant) \cite[179]{Aharoni1996}.}
+\begin{equation}
+  \label{eq:energy-hop}
+  \ehop_{,n} = - \frac{1}{2}\ltip{\mv_n}{\hopb{\mv_n}},
+\end{equation}
+where the factor of $1/2$ is to avoid double counting as discussed in \cref{sec:magnetostatic-field}.
+So using \cref{eq:energy-hop,eq:orth-energy} we can write the $\hop$ term of \cref{eq:54} as
 \begin{equation}
   \begin{aligned}
-    \ltip{\mphop}{\mpdmdt} 
-    &= \frac{1}{2\dtn} \Big[\ip{\mv_{n+1}}{\hop \left[\mv_{n+1} \right]}
-    - \ip{\mv_{n}}{ \hop\left[ \mv_{n} \right]} \Big], \\
-    &= -\frac{\ehop_{,n+1} - \ehop_{,n}}{\dtn}.
+    \ltip{\mphop}{\mpdmdt} &= -\frac{\ehop_{,n+1} - \ehop_{,n}}{\dtn}.
   \end{aligned}
   \label{eq:50}
 \end{equation}
-Next we examine the applied field term.
+
+Next we examine the applied field term of \cref{eq:54}.
 Omitting the $L^2$ from the inner products and temporarily writing $\happ(t_i)$ as $\hv_i$ for brevity we have
 \begin{equation}
   \begin{aligned}
@@ -850,20 +863,21 @@ where
 \end{equation}
 Finally, we insert the results of \cref{eq:50,eq:52} into \cref{eq:54} to find
 \begin{equation}
-  \frac{\e_{n+1} - \e_n}{\dtn}
-  = -\dampc \ltnorm{\mpdmdt}^2
-  - \ltip{\frac{\happ(t_{n+1}) -\happ(t_n)}{\dtn}}{\frac{\mv_{n+1} + \mv_{n}}{2}}
-  + \happerror.
-  \label{eqn:imr-llg-energy}
+  \begin{aligned}
+    \frac{\e_{n+1} - \e_n}{\dtn} = &-\dampc \ltnorm{\mpdmdt}^2
+    - \ltip{\frac{\happ(t_{n+1}) -\happ(t_n)}{\dtn}}{\frac{\mv_{n+1} + \mv_{n}}{2}} \\
+    &\quad+ \ltip{\happerror}{\mpdmdt}.
+    \label{eqn:imr-llg-energy}
+  \end{aligned} 
 \end{equation}
 If the applied field is linear in time (and so $\happerror = 0$) this is exactly the midpoint discretisation of the continuous energy balance \cref{eq:energy-decay}.
 In particular the energy is conserved when $\dampc = 0$ and the applied field is constant.
 This relationship is illustrated in \cref{fig:commutation-imr-energy}.
 
 When $\happ$ is piecewise linear, for example when an applied field is instantaneously switched on, time steps can be selected such that each non-linear change happens exactly at the start/end of a step.
-So again we have $\happerror = 0$.
+So again we have $\happerror = 0$ and the same properties as for linear applied fields.
 
-Also note that none of the above is applicable to the semi-explicit modification of IMR since in that case $\mphop$ is replaced by an expression of the form $a\hop \bigs{\mv_n} + b\hop \bigs{\mv_{n-1}}$.
+Also note that none of the above is applicable to the semi-explicit modification of IMR since in that case $\mphop$ is replaced by an expression of the form $a\hopb{\mv_n} + b\hopb{\mv_{n-1}}$.
 
 \begin{figure}
   \centering
@@ -900,7 +914,8 @@ Therefore the adaptive IMR is not expected to have the almost-symplectic propert
 In the previous sections we have highlighted a number of interesting properties of the implicit midpoint rule.
 We have a number of reasons to believe that the geometric properties will translate into an improvement in the accuracy and robustness of the overall solver:
 \begin{itemize}
-\item Errors in the energy dissipation \cite{Albuquerque2001} and magnetisation length \cite{Chantrell2001} have been successfully used as error estimators for local truncation error and so reduction or removal of these errors may reduce this error.
+\item Errors in the energy dissipation \cite{Albuquerque2001} and magnetisation length \cite{Chantrell2001} have been successfully used as error estimators for local truncation error. 
+Hence the removal of energy or magnetisation length errors should reduce the total local truncation error.
 \item It is well known that geometric integration schemes typically result in much smaller long-timescale error build-up than schemes that do not preserve such quantities \cite[77]{Iserles2009}.
 \item The non-linear modification to the Landau-Lifshitz-Gilbert equation caused by renormalisation of the magnetisation length (as commonly used to maintain correct magnetisation length in non-conservative time integrators) may cause significant changes in the magnetostatic field \cite{Lewis2003}.
 Avoiding renormalisation eliminates the possibility of such errors occurring.
@@ -1178,7 +1193,7 @@ This is the tolerance of the linearisation method used if the problem is non-lin
 
 Additionally the derivations in \cref{sec:proof-magn-length-ode-imr-llg,sec:proof-energy-prop} assume that all fields are calculated at the midpoint without any additional approximations, \ie that we are using a fully implicit method.
 In contrast to this, many existing models use an explicit approximation to the magnetostatic field in order to avoid including a dense contribution due to the long-range magnetostatic interactions\footnote{At least a dense sub-block arises from all accurate magnetostatic calculation methods known to the author, in particular: FEM/BEM, FFT and FMM. See \cref{sec:magn-field-calc} for more details.} in the non-linear solve.
-Unfortunately, in this case the energy properties will be lost due to the replacement of $\hop \left[ \mpm \right]$ by an alternative approximation (in a similar way to the semi-explicit modification of IMR).
+Unfortunately, in this case the energy properties will be lost due to the replacement of $\hopb{\mpm}$ by an alternative approximation (in a similar way to the semi-explicit modification of IMR).
 However, the magnetisation length property will be retained because it only relies on $\mv$ itself being calculated implicitly, and not the effective field.
 
 % ??ds goes in somewhere?
