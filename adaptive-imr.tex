@@ -15,7 +15,7 @@ In \thisref{sec:adaptive-imr} we describe a novel adaptive IMR algorithm based o
 \section{Fixed step size implicit midpoint rule}
 \label{sec:fixed-step-implicit}
 
-Let $\yv(t)$ be a vector function and denote an approxmimation to $\yv(t)$ at $t = t_n$ by $y_n$.
+Let $\yv(t)$ be a vector function and denote an approximation to $\yv(t)$ at $t = t_n$ by $y_n$.
 Let $\dtn = t_{n+1} - t_n$ be the $n$th time step (or just ``step'').
 Then given a system of ordinary differential equations (ODEs) of the form
 \begin{equation}
@@ -47,7 +47,7 @@ The IMR can also be written in the standard form for Runge-Kutta methods as
     \yv_{n+1} &= \yv_n + 1 \cdot \dtn k_1,
   \end{aligned}
 \end{equation}
-or using a Butcher tableu \cite[135]{HairerNorsettWanner} as shown in \cref{tab:butcher-imr}.
+or using a Butcher tableau \cite[135]{HairerNorsettWanner} as shown in \cref{tab:butcher-imr}.
 
 \begin{table}
   \begin{equation*}
@@ -57,7 +57,7 @@ or using a Butcher tableu \cite[135]{HairerNorsettWanner} as shown in \cref{tab:
                    & 1 \\
     \end{array}
   \end{equation*}
-  \caption{The Butcher tableu for the implicit midpoint rule.}
+  \caption{The Butcher tableau for the implicit midpoint rule.}
   \label{tab:butcher-imr}
 \end{table}
 
@@ -88,7 +88,7 @@ With this approach our estimate for the local truncation error is simply
   \label{eq:aimr-lte-est}
   \lte = \yv_{n+1}^{\ebdf} - \yv_{n+1}^\imr + \order{\dtn^4}.
 \end{equation}
-The eBDF3 method is not commonly known because it is not stable, meaning that when it is used for time steppping the error after $n$ steps is not bounded even when $\dtx{} \goesto 0$ \cite[365]{HairerNorsettWanner}.
+The eBDF3 method is not commonly known because it is not stable, meaning that when it is used for time integration the error after $n$ steps is not bounded even when $\dtx{} \goesto 0$ \cite[365]{HairerNorsettWanner}.
 However in a predictor the IMR history values are used and we only ever need a single step at a time of the predictor, hence the stability is irrelevant.
 
 Alternatively a 3rd order Adams-Bashforth scheme (AB3) could be used as a predictor, but this requires three previous derivative values instead of $y$ values which makes the initialisation of the scheme a little more complex and expensive.
@@ -217,7 +217,7 @@ For constant time steps the result is much simpler: $ b = 3\dtn$, $c_n = -3/2$, 
 This matches with the result in \cite[364]{HairerNorsettWanner}.
 
 It should be noted that the calculation of the coefficients in \cref{eqn:ebdf-coeffs} could be comparatively expensive if the number of $y$-values was small ($\sim \order{100}$ operations assuming no compiler optimisation of the multiplications).
-However when used in finite-element or finite-difference calculations the number of $y$-values is at least tens of thousands, so the cost of \cref{eqn:ebdf-coeffs} is trivial by comparision with, for example, the calculation of $\ffv{t_n, \yv_n}$.
+However when used in finite-element or finite-difference calculations the number of $y$-values is at least tens of thousands, so the cost of \cref{eqn:ebdf-coeffs} is trivial by comparison with, for example, the calculation of $\ffv{t_n, \yv_n}$.
 
 
 \subsection{Computing the next step size}
@@ -251,7 +251,7 @@ We limit $\frac{\dtx{n+1}}{\dtn}$ to 4 to help improve stability.
 
 Note that some alternative strategies try to minimise the number of modifications to the time step size \cite[chap. 6]{Iserles2009} \cite[Sec. 2.1]{cvode-manual}.
 The motivation for this is the use of a modified Newton-Raphson method where the Jacobian is not recalculated at each Newton step.
-In the case of ODE solvers this is extremely beneficial because the Jacobian is usually dense and direct solvers are used to solve it--by keeping the Jacobian constant the number of solves and Jacobian assemblys are greatly reduced.
+In the case of ODE solvers this is extremely beneficial because the Jacobian is usually dense and direct solvers are used to solve it--by keeping the Jacobian constant the number of solves and Jacobian assemblies are greatly reduced.
 The downside is a reduction in the convergence speed of the Newton method.
 Keeping the step size constant for as long as possible is required here because modifications to the time step cause modifications to the Jacobian.
 However for PDE solvers, and in particular for PDE solvers using iterative methods to solve the linear systems there is little-to-no benefit in using this technique (the reduction in convergence speed is worse than the gain of not assembling/solving the sparse Jacobian) \cite[128]{Iserles2009}.
@@ -268,7 +268,7 @@ Assuming that we have values for $\yv_n$, $\yv_{n-1}$, $\yv_{n-2}$ (these can be
 \item If $t > t_{\text{max}}$ then stop, otherwise set $n := n+1$ and go to step 1.
 \end{enumerate}
 
-Steps 1 and 2 are interchangable, but in some cases the value $\yv_{n+1}^\ebdf$ may be useful as an initial guess for the calculation of $\yv_{n+1}$.
+Steps 1 and 2 are interchangeable, but in some cases the value $\yv_{n+1}^\ebdf$ may be useful as an initial guess for the calculation of $\yv_{n+1}$.
 
 
 \subsection{Application to Implicit ODEs}
@@ -288,7 +288,7 @@ The obvious equivalent for IMR is
   \ffv{\thf, \frac{\yv_{n+1} + \yv_n}{2}, \frac{\yv_{n+1} - \yv_n}{\dtn}} = 0.
 \end{equation}
 
-However the eBDF3 predictor used in the adaptive scheme requires a function evaluation, which for functions which can \emph{only} be defined implicitpy case means a non-linear solve.
+However the eBDF3 predictor used in the adaptive scheme requires a function evaluation, which for functions which can \emph{only} be defined implicitly case means a non-linear solve.
 This is expensive so for these cases the adaptive method is not efficient.
 Note that the LLG can be defined explicitly as well as implicitly so this limitation does not apply to micromagnetics problems.
 
@@ -302,7 +302,7 @@ Note that the LLG can be defined explicitly as well as implicitly so this limita
 %  Generate and update plots with commands in the plots dir
 
 In \thisref{sec:aimr-testing} we show the results of some initial testing of the proposed adaptive IMR algorithm for some simple ODE examples.
-Numerical experiments with the LLG equation are detailed in \cref{??ds}.
+Numerical experiments with the LLG equation are detailed in \cref{sec:imr-ode-llg-numer-exper}.
 
 
 \subsection{Implementation}
@@ -376,16 +376,16 @@ The adaptive algorithm should oscillate the step size in time with the oscillati
 
 The ODE was solved with parameters $\omega = 2 \pi$ and $\beta = 0.5$, the results are shown in \cref{fig:imr-osc-example}.
 All three methods have similar errors and time step sizes.
-The IMR method choses slighly smaller steps than TR (which probably explains the slightly lower error magnitudes.
+The IMR method chooses slightly smaller steps than TR (which probably explains the slightly lower error magnitudes.
 BDF2 has the worst errors as expected because its error coefficient is the largest.
 
-Note that the plot shows the global error, whereas local trunction error estimates are used for step size selection calculations.
-Hence the fact that the global error increases above the tolerance, $\toltt$, is not suprising.
+Note that the plot shows the global error, whereas local truncation error estimates are used for step size selection calculations.
+Hence the fact that the global error increases above the tolerance, $\toltt$, is not surprising.
 
 Interestingly, there is a slight lag on the time step response of the IMR method as time steps become larger.
 This could be due to the fact that IMR uses data from three previous steps in its LTE estimate, whereas the others only use two previous steps.
 
-In \cref{fig:imr-osc-example-scatter} we show plots of the decrease in global error norm as the tolerence is decreased. 
+In \cref{fig:imr-osc-example-scatter} we show plots of the decrease in global error norm as the tolerance is decreased. 
 The consistent decrease in the error norms indicates that the all of the adaptive methods are able to control the error in the expected manner.
 Plots for the example problems the following Sections are very similar and so are not shown.
 
@@ -458,19 +458,24 @@ This allows it to retain similar accuracies to the TR and BDF2 methods at the co
 
 The convergence of the solution as $\toltt$ is reduced with fixed $\lambda = 100$ is shown in \cref{fig:imr-order-reduction-convergence}.
 Note that IMR still displays second order convergence (albeit with a much larger constant error). 
-This is because we are not increasing $\lambda$ as we decrease $\toltt$, so we measuring the normal convergence not B-convergence.
+This is because we are not increasing $\lambda$ as we decrease $\toltt$, so we are measuring the normal convergence rather than B-convergence.
 
 
-\section{Numerical experiments with the ODE form of the LLG}
+\section{Numerical experiments with an ODE form of the LLG}
 \label{sec:imr-ode-llg-numer-exper}
 
-In \thisref{sec:imr-ode-llg-numer-exper} we present numerical experiments with adaptive IMR on a simple LLG problem.
-We show that the adaptive midpoint method retains the conservation properties of the fixed step midpoint method and that the adaptivity is effective when applied to the LLG.
-Experiments with more complex examples are shown in \cref{sec:numer-exper,cha:numer-experiments}.
+\newsubcommand{\swtimeerr}{\mathcal{E}}{\tau}
+\newsubcommand{\merr}{\mathcal{E}}{\mv}
+
+In \thisref{sec:imr-ode-llg-numer-exper} we present numerical experiments on a simple LLG problem.
+As in \cref{sec:aimr-testing} we compare the performance of the adaptive IMR algorithm developed in \thisref{sec:adaptive-imr} with the adaptive TR and BDF2 algorithms.
+Experiments with more complex LLG problems are shown in \cref{cha:numer-experiments}.
+
+\subsection{Problem definition}
 
 To avoid introducing spatial discretisation issues we choose an example problem that can be modelled using only an ODE: the reversal of a ``small'' spherical particle under spatially-uniform applied field.
 With this geometry and with uniform initial magnetisation the magnetostatic field can be analytically shown to be $\hms = -\mv/3$ throughout the domain \cite[112]{Aharoni1996}.
-This means that the magnetisation remains uniform for sufficiently small spheres such that the increase in exchange energy is larger than the decrease in magnetostatic energy that could be gained by a non-uniform state.
+This means that the magnetisation remains uniform for sufficiently small spheres such that the increase in exchange energy due to any non-uniformity is larger than the decrease in magnetostatic energy that could be gained by a non-uniform state.
 
 In this case the Landau-Lifshitz form of the Landau-Lifshitz-Gilbert equation \cref{eqn:nd-llg-full} reduces to
 \begin{equation}
@@ -482,7 +487,8 @@ In this case the Landau-Lifshitz form of the Landau-Lifshitz-Gilbert equation \c
 \end{equation}
 
 To simplify the problem even further we choose $\kone = 0$ and $\happ(t) = [0, 0, -H]$.
-In this case an exact solution is available for the time taken for $\mv$ to reach a given angle to the $z$-axis, and for the amount of precession that will take place in that time \cite{Mallinson2000}.\footnote{Actually the solution can be easily extended to $\kone \neq 0$ with $\ev = \unitz$ and any $z$-aligned ellipsoid of rotation, but it is harder to obtain $\mv(t)$ in such cases.}
+In this case an exact solution is available for the time taken for $\mv$ to reach a given angle to the $z$-axis, and for the amount of precession that will take place in that time \cite{Mallinson2000}.\footnote{Actually the solution for the switching time can be easily extended to $\kone \neq 0$ with $\ev = \unitz$ and/or to any $z$-aligned ellipsoid of rotation.
+However it is harder to invert the solution to obtain $\theta(t)$ in these cases.}
 The exact solution is best expressed in spherical polar notation:
 \begin{equation}
   \begin{aligned}
@@ -491,132 +497,180 @@ The exact solution is best expressed in spherical polar notation:
   \end{aligned}
 \end{equation}
 so $\theta$ is the angle between $\mv$ and the $+z$-direction.
-The time for a reversal from the initial value $\theta_0$ to $\theta$ is given by
+The time for a reversal, $\tau$, from the initial value $\theta_0$ to $\theta$ is given by
 \begin{equation}
   \tau(\theta) = t_0 + \frac{\dampc^2 +1}{H \dampc}
   \ln \bigb{ \frac{\tan(\theta/2)}{\tan(\theta_0/2)} }.
+  \label{eq:74}
 \end{equation}
-This expression can be inverted to give $\theta$ as a function of time:
+This allows us to calculate a (global temporal) error in the switching time:
+\begin{equation}
+  \swtimeerr_n = \abs{t_n - \tau(\theta_n)}.
+  \label{eq:sw-time-error}
+\end{equation}
+
+Alternatively \cref{eq:74} can be inverted to give $\theta$ as a function of time:
 \begin{equation}
   \theta(t) = 2 \tan^{-1} \bigs{ \tan(\theta_0/2) \exp\bigb{\frac{tH\dampc}{\dampc^2 + 1}}}.
+\label{eq:77}
 \end{equation} 
-The azimuthal angle precessed through during this switching is
+The azimuthal angle at a given $\theta$ is \cite{Mallinson2000}
 \begin{equation}
   \varphi(\theta) = \phi_0 +  \frac{-1}{\dampc} \ln \bigb{ \frac{\tan(\theta/2)}{\tan(\theta_0/2)} }.
+\label{eq:78}
 \end{equation}
-Hence we can calculate the error norms
-\newsubcommand{\swtimeerr}{\mathcal{E}}{\tau}
-\newsubcommand{\merr}{\mathcal{E}}{\mv}
+After substituting \cref{eq:77} into \cref{eq:78} and cancelling terms we obtain
+\begin{equation}
+  \varphi(t) = \phi_0 - \frac{tH}{\dampc^2 + 1}.
+  \label{eq:79}
+\end{equation}
+Hence we can also calculate a (global temporal) error in the magnetisation at time $t_n$
 \begin{equation}
   \merr_n = \abs{\mv_n - \mv(t_n)},
+\label{eq:m-sphere-error}
 \end{equation}
-\ie the absolute error in the magnetisation, and
-\begin{equation}
-  \swtimeerr_n = \abs{t_n - \tau(\theta_n)},
-\end{equation}
-\ie the absolute error in the switching time.
-The most important of these two error norms depends on the aims of the calculation.
-Often we simply want to find the switching time of the system, in this case the time error norm, $\swtimeerr$, is appropriate (and using time steps such that the precessional behaviour is fully resolved may be excessively expensive).
+where $\mv(t_n) = \textrm{Cartesian}\bigb{[r=1, \theta=\theta(t_n), \phi=\phi(t_n)]}$.
+
+Which of the error norms $\swtimeerr$ and $\merr$ is most important depends on the aim of the calculation.
+We may simply want to find the switching time of the system, in this case the time error norm, $\swtimeerr$, is appropriate (and using time steps such that the precessional behaviour is fully resolved may be excessively expensive).
 In other cases an accurate representation of the full behaviour of the system may be needed and $\merr$ is appropriate. 
 
-We choose parameters $H = 1.1$ and $\dampc = 0.01$ (roughly the physically relevant value). 
-The initial magnetisation is just off the $z$-axis in order to avoid a singularity in the reversal time when $\theta_1 = 0$, more precisely $\mv_0 = (0.01, 0.0, 1.0)/\sqrt{1.0001}$. 
-The maximum time is set to 1000 units for all simulations (sufficient time for the magnetisation to fully switch).
+For the main experiment we choose parameters $H = 1.1$ (sufficient to switch the system) and $\dampc = 0.01$ (roughly the physically relevant value).
+We set the initial magnetisation to be just off the $z$-axis in order to avoid a singularity in the reversal time when $\theta_1 = 0$, more precisely $\mv_0 = (0.01, 0.0, 1.0)/\sqrt{1.0001}$. 
+The dynamics are simulated for 1000 time units for all simulations, which is sufficient time for the magnetisation to fully switch.
+
+This experiment allows us to check the $\abs{\mv}$ conservation properties of the adaptive IMR, to compare the accuracy of the solution over different time integrators, and to check again that the time step selection is appropriate.
+
+??ds should I do energy conservation? It's a bit complicated: for this example with 0 damping TR and IMR are the same, both seem to give exactly 0 (not 1e-16, actually 0) energy loss. BDF2 has around 1e-14 energy change with no renorm, but around 1e-3 with re-normalisation.
+
+\subsection{Implementation}
+
+The implementation of the three time integration algorithms is exactly as discussed previously except that the TR and BDF2 methods sometimes includes an additional re-normalisation step after each time step to enforce constant $\abs{\mv}$.
+The re-normalisation is done by simply replacing $\mv$ by $\mv/\abs{\mv}$, it is carried out after the selection of the next time step.
+In the experiments we compare the performance with and without re-normalisation where appropriate.
 
 In the experiments below the LL form \cref{eq:ll-nd-llglike} of the LLG is used for ease of implementation.
-Linearisation is carried out using the Newton-Raphson method, the $3 \times 3$ Jacobian is calculated analytically and inverted using a direct solve.
-Unless otherwise specified the Newton tolerance is $\newtontol = 10^{-12}$, the adaptive integrator tolerance is $\toltt = 10^{-4}$ and the initial time step is $\dtinitial = 10^{-3}$ (sufficiently small to allow the adaptive algorithm to naturally increase $\dtn$ to the required value).
-
-The Newton residual is
+Linearisation is carried out using the Newton-Raphson method.
+Using the skew operator notation from \cref{sec:llg-jacobian} the Newton-Raphson residual is
 \begin{equation}
   \rv = (1 + \dampc^2) \dmdt + \skewm{\mv} \cdot \hv + \dampc \skewm{\mv}\skewm{\mv} \cdot \hv.
 \end{equation}
-The corresponding Jacobian can be easily derived using the methods discussed in \cref{sec:llg-jacobian}, it is:
+The corresponding Jacobian can be easily derived using the methods discussed in \cref{sec:llg-jacobian} (note that here $\hv \neq \hv(\mv)$), it is:
 \begin{equation}
-  J = (1 + \dampc^2) J_{ts} \Idm_3 - \skewm{\hv} - \dampc \skewm{ \mv \times \hv }
+  \Jm = \pd{\rv}{\mv} = (1 + \dampc^2) J_{ts} \Idm_3 - \skewm{\hv} - \dampc \skewm{ \mv \times \hv }
   - \dampc \skewm{\mv} \skewm{\hv}.
 \end{equation}
 
-This experiment allows us to check the conservation properties of IMR, to compare the accuracy of the solution over different time integrators, and to check that the time step selection is appropriate.
+The $3 \times 3$ Jacobian is calculated analytically and inverted using a direct solve.
+Unless otherwise specified the Newton tolerance is $\newtontol = 10^{-12}$ and the adaptive integrator tolerance is $\toltt = 10^{-4}$.
+The initial time step is $\dtinitial = 10^{-3}$ which is sufficiently small to allow the adaptive algorithm to naturally increase $\dtn$ to an appropriate value.
 
-\subsection{Implicit midpoint rule results}
 
-The behaviour of the magnetisation and the time step selection is shown in \cref{fig:imr-llg-ode}.
-The time step selection can be seen to be working as expected: large steps are chosen at the start when very little switching occurs. Then the step size decreases as switching occurs and finally grows again as the switching finishes. 
-The many small peaks in time step are due to the periodic precession.
+\subsection{Numerical results}
 
 \begin{figure}
   \centering
-  \includegraphics[width=0.8\textwidth]{plots/aimr-sphere-relax/imr-meanmxsvs-meanmysvs-meanmzsvs-dtsvstimes.pdf}
+  \includegraphics[width=0.8\textwidth]{plots/aimr-sphere-relax/imr0-meanmxsvs-meanmysvs-meanmzsvs-dtsvstimes.pdf}
   \caption{Plot of $\mv$ and $\dtn$ over time for the relaxing nano-sphere problem solved by adaptive IMR.}
   \label{fig:imr-llg-ode}
 \end{figure}
 
-The conservation of the magnetisation length is shown in \cref{fig:ml-aimr-ode}.
-For comparison the same calculation using BDF2 and TR results in magnetisation length errors of order $10^{-3}$ and $10^{-4}$ respectively.
-To show that this conservation property is not dependent on $\dampc$, $\toltt$ or $\dtn$ we ran the experiment for each damping of $\dampc= 1, 0.1, 0.01$ with fixed steps of $\dtn=0.1, 0.05, 0.01, 0.005$ and adaptive step with $\toltt =10^{-2}, 10^{-3}, 10^{-4}, 10^{-5}, 10^{-6}$. 
-The maximum error in magnetisation length was $1.07\E{-10}$, easily within the range of Newton error build-up.
-% ./parameter-sweep.py -p imr_ode_llg -p aimr_ode_llg --clean && parse.py --print-data max-max-ml -d /mnt/moredata/optoomph/user_drivers/micromagnetics/experiments/parameter_sweeps/aimr_ode_llg -f "('-ts', 'imr')" -d /mnt/moredata/optoomph/user_drivers/micromagnetics/experiments/parameter_sweeps/imr_ode_llg
+The behaviour of the magnetisation and the time step selection using the adaptive IMR algorithm developed in \thisref{sec:adaptive-imr} is shown in \cref{fig:imr-llg-ode}.
+The solutions given by adaptive BDF2 and TR (with $\abs{\mv}$ re-normalised after each time step)  are shown in \cref{fig:bdf2-llg-ode,fig:tr-llg-ode} respectively.
+The overall behaviour of the IMR time step selection algorithm can be seen to be working as expected: large steps are chosen at the start when very little switching occurs, the step size decreases as switching occurs and finally grows again as the switching finishes.
 
-\begin{figure}
-  \centering
-  \includegraphics[width=0.8\textwidth]{plots/aimr-sphere-relax/mlengtherrormaxesvstimes.pdf}
-  \caption{Magnetisation length error, $\abs{\abs{\mv} -1}$, over time for the relaxing nano-sphere problem solved by adaptive IMR.}
-  \label{fig:ml-aimr-ode}
-\end{figure}
+The origin of the many small peaks in the time step is more difficult to understand.
+They have the same period as the precession, but the exact solution for the precession as a function of time, \cref{eq:79}, has no periodic behaviour!
+Results for different values of $\dampc$ and $\toltt$ (not shown) show the same behaviour, as do the results for the adaptive TR (\cref{fig:tr-llg-ode}), BDF2 (\cref{fig:bdf2-llg-ode}) and BDF1 (not shown) algorithms.
+It is likely that the numerical approximations to the time derivative have some periodicity which does not appear in the exact solution (\cf \cref{sec:order-reduct-example} where the exact solution has no $\lambda$ dependence but the numerical behaviour is strongly affected by $\lambda$).
 
-The effective damping ??ds shown in \cref{fig:aimr-llg-ode-energy}.
-
-\begin{figure}
-  \centering
-  \includegraphics[width=0.8\textwidth]{images/placeholder}
-  \caption{??ds plot of energy conservation.}
-  \label{fig:aimr-llg-ode-energy}
-\end{figure}
-
-
-\subsection{Comparison with other methods}
+Note that the accuracy of the switching time given by BDF2 (for the same error tolerances) is terrible.
+This is due to BDF2's spurious numerical damping (see \cref{sec:numerical-damping}) which initially moves the solution towards the unstable fixed point at $\mv=[1, 0, 0]$.
+The accuracy of the TR solution is (qualitatively) good.
+The time steps selected by the three algorithms are qualitatively similar, TR selects slightly larger steps as would be expected due to its lower local truncation error (see \cref{sec:deriv-local-trunc}).
 
 
 \begin{figure}
   \centering
-  \includegraphics[width=0.8\textwidth]{images/placeholder}
-  \caption{convergence plot of accuracy constant against time step size.}
-  \label{fig:imr-llg-ode-accury-step}
-\end{figure}
-
-\begin{figure}
-  \centering
-  \includegraphics[width=0.8\textwidth]{images/placeholder}
-  \caption{convergence plot of accuracy against tol}
-  \label{fig:imr-llg-ode-accury-tol}
-\end{figure}
-
-
-For comparison in \cref{fig:bdf2-llg-ode} we show a plot of the solution calculated using the same parameters but using the BDF2 method.
-The accuracy of the switching time is completely terrible, this is probably due to numerical damping.
-TR accuracy is good, but requires renormalisation.
-
-\begin{figure}
-  \centering
-  \includegraphics[width=0.8\textwidth]{plots/aimr-sphere-relax/bdf2-meanmxsvs-meanmysvs-meanmzsvs-dtsvstimes.pdf}
+  \includegraphics[width=0.8\textwidth]{plots/aimr-sphere-relax/bdf21-meanmxsvs-meanmysvs-meanmzsvs-dtsvstimes.pdf}
   \caption{Plot of $\mv$ and $\dtn$ over time for the relaxing nano-sphere problem solved by adaptive BDF2.}
   \label{fig:bdf2-llg-ode}
 \end{figure}
 
-\subsection{Conclusions}
 
-??ds
+\begin{figure}
+  \centering
+  \includegraphics[width=0.8\textwidth]{plots/aimr-sphere-relax/tr1-meanmxsvs-meanmysvs-meanmzsvs-dtsvstimes.pdf}
+  \caption{Plot of $\mv$ and $\dtn$ over time for the relaxing nano-sphere problem solved by adaptive TR. ??ds do I need this?}
+  \label{fig:tr-llg-ode}
+\end{figure}
+
+The behaviour of the magnetisation length over time is shown in \cref{fig:ml-aimr-ode}.
+The maximum error is $\abs{\abs{\mv} -1} \approx 10^{-12}$, which is consistent with the Newton tolerance.
+This conservation behaviour of IMR does not vary significantly with changes to any parameter other than the Newton tolerance (plots not shown ??ds impossible to show--too many axes... could do a scatter of everything? Too many plots already in this section!).
+% ./parameter-sweep.py -p imr_ode_llg -p aimr_ode_llg --clean && parse.py --print-data max-max-ml -d /mnt/moredata/optoomph/user_drivers/micromagnetics/experiments/parameter_sweeps/aimr_ode_llg -f "('-ts', 'imr')" -d /mnt/moredata/optoomph/user_drivers/micromagnetics/experiments/parameter_sweeps/imr_ode_llg
+
+\begin{figure}
+  \centering
+  \includegraphics[width=0.8\textwidth]{plots/ode_llg_adaptive_ml/mlengtherrormaxesvstimes}
+  \caption{Plot of magnetisation length errors, $\abs{\abs{\mv} -1}$, over time for the relaxing nano-sphere problem solved with each of the three adaptive integrators (without re-normalisation).}
+  \label{fig:ml-aimr-ode}
+\end{figure}
 
 
+\begin{figure}
+  \centering
+  \includegraphics[width=0.8\textwidth]{plots/ode_llg_adaptive_convergence/maxofswitchingtimeerrorvsmeanofdts}
+  \caption{Convergence plots of the switching time error, \cref{eq:sw-time-error}, against average time step for constant step IMR, adaptive IMR, adaptive TR and adaptive BDF2. ??ds zoom in, remove guidelines, Better legend}
+  \label{fig:llg-ode-convergence-swtime}
+\end{figure}
+
+
+Finally we show convergence plots with respect to the two error norms.
+\Cref{fig:llg-ode-convergence-swtime,fig:llg-ode-convergence-m} show the convergence with respect to the switching time error and total error respectively.
+Adaptive TR and BDF2 algorithms both with and without re-normalisation of the magnetisation after
+each step are shown, along with the adaptive IMR algorithm developed in \thisref{sec:adaptive-imr}.
+
+
+In \cref{fig:llg-ode-convergence-swtime} (switching time error) the convergence lines for TR and IMR are flat as would be expected, BDF2 does not attain this asymptotic convergence state until a comparatively small time step.
+The maximum errors are around $1000$ time units, a relative error of $\sim 1$.
+The errors of TR and IMR are extremely similar for a given mean time step size.
+Once the asymptotic convergence regime is reached BDF2 has roughly triple the error of the other methods.
+Note that the re-normalisation of $\mv$ in BDF2 and TR has only a minimal effect on their global error, this indicates that length conservation property of IMR is unlikely to be providing a major benefit to the global error in this simple example.
+
+
+In \cref{fig:llg-ode-convergence-m} (overall error) the convergence lines show a kink around $\mean(\dtn) = 0.1$.
+This is because $\abs{\mv} \approx 1$ and so the error norm $\merr$ cannot be worse than the anti-parallel case.\footnote{A more effective error norm for such large error cases would be to use polar coordinates and track the total azimuthal angle passed through during the simulation. However 1) this is non-trivial to implement in general; 2) some rescaling would be required to prevent the $\varphi$ error contribution from dominating that of $\theta$; and 3) we are not very interested in cases where the solution is highly inaccurate anyway.}
+Above the kink the azimuthal angle is inaccurate and so the error norms are meaningless, below the kink the usual convergence behaviour can be seen.
+The comparing the error norms different methods we see the same relationships as for \cref{fig:llg-ode-convergence-swtime}: BDF2 has triple the error and re-normalisation has little effect.
+
+
+Note that TR consistently chooses large time steps than IMR despite both measures of the global error being very similar.
+This may be due to differing accuracies in the estimation of the LTE.
+Alternatively LTE of IMR may be somewhat larger (as expected), with the geometric integration properties of IMR reducing the build up of global error.
+
+
+Note that there are fewer visible points on \cref{fig:llg-ode-convergence-swtime,fig:llg-ode-convergence-m} for BDF2 than the other two methods, this is because at larger tolerances BDF2 takes overly large time steps (and has large global errors to match).
+Hence some points for BDF2 do not fit on the same scale (for these missing points: $\mean(\dtn) \approx 10\dash 100$, $\swtimeerr \approx 1000 \approx$ \ie a relative error of 1, $\merr \approx 2$).
+This is consistent with the quantitatively wrong results given by BDF2 in \cref{fig:bdf2-llg-ode}.
+
+\begin{figure}
+  \centering
+  \includegraphics[width=0.8\textwidth]{plots/ode_llg_adaptive_convergence/maxoferrornormsvsmeanofdts}
+  \caption{Convergence plots of the error in magnetisation, \cref{eq:m-sphere-error}, against average time step for constant step IMR, adaptive IMR, adaptive TR and adaptive BDF2. ??ds zoom in, remove guidelines, Better legend}
+  \label{fig:llg-ode-convergence-m}
+\end{figure}
 
 \section{Conclusions}
 
-We have implemented an efficent algorithm for adaptive time step selection with the implicit midpoint rule.
+We have implemented an efficient algorithm for adaptive time step selection with the implicit midpoint rule.
 The algorithm has been tested on a number of ODEs and found to choose similar time steps to other second order time integrators.
 It has also been shown to be robust in stiff problems and to control the error effectively even when order reduction phenomena are encountered.
 
-??ds ode llg...
+When applied to an ODE form of the LLG the adaptive IMR algorithm conserves $\abs{\mv}$ as expected.
+It also appears to give slightly smaller global error norms than would be expected from its local truncation error, this may be due to the geometric integration properties.
+Any effects of these geometric integration properties would be expected to be greatly amplified when solving ODE problems with many interacting spins or PDE problems.
+This will be tested in \cref{cha:numer-experiments} where the adaptive IMR algorithm is combined with the PDE methods discussed in other chapters.
 
 
 %%% Local Variables:
