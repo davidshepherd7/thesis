@@ -494,9 +494,9 @@ where $\dfdyhf = \pd{\fv}{\yv}\evalat{t=\thf}$ is the Jacobian of $\fv$ with res
 An additional condition required in the derivation is that ??ds the magnitude of the eigenvalues of $\dtn\dfdyhf$ are less than one, the implications of this are discussed in \cref{sec:order-reduction}.
 
 ??ds for comparison with the other local truncation errors we need to shift to $t_n$. 
-A simple approximation can be given easily: for $\fv$ linear in $yv$, $t$ TR and IMR are the same, hence term I must be the same as TR in this case, a second error term is then added to $\lte^\IMR$ corresponding to II for non-linear $\fv$.
+A simple approximation can be given easily: for $\fv$ linear in $yv$, $t$ TR and IMR are the same, hence term I must be the same as TR in this case, a second error term is then added to $\lte^\imr$ corresponding to II for non-linear $\fv$.
 Hence TR has the smallest LTE of the three methods discussed for most real-world ODEs.
-The relative magnitude of the additional term in $\lte^\IMR$ is highly problem dependent, see \cref{sec:order-reduction} for details, so the comparison of the LTEs of IMR and BDF2 is more complex.
+The relative magnitude of the additional term in $\lte^\imr$ is highly problem dependent, see \cref{sec:order-reduction} for details, so the comparison of the LTEs of IMR and BDF2 is more complex.
 However, in terms of the accuracy of calculations, the accumulated local truncation error is what matters, so these comparisons are not the whole story.
 
 \subsection{A-stability}

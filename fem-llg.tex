@@ -1144,6 +1144,8 @@ This is applicable for all nodes $j$, hence all nodal magnetisation lengths are 
 \subsubsection{Energy loss}
 ??ds add weak exchange residual? is it safe to leave it inside $\hv$? Don't think so because that needs $\sob^2$...
 
+??ds also need to account for the fact that we are sort of summing all the newton tolerances (sum over elements) since we integrate over the domain
+
 The energy loss property can be derived in exactly the same way as in \cref{eq:weak-llg-imr} except that instead of arbitrarily taking an $\ltwo$ inner product we replace the test function with a carefully chosen function.
 The relevant choice of test function is
 \begin{equation}

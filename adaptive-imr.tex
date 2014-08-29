@@ -88,12 +88,12 @@ With this approach our estimate for the local truncation error is simply
   \label{eq:aimr-lte-est}
   \lte = \yv_{n+1}^{\ebdf} - \yv_{n+1}^\imr + \order{\dtn^4}.
 \end{equation}
-The eBDF3 method is not commonly known because it is not stable, meaning that when it is used for time integration the error after $n$ steps is not bounded even when $\dtx{} \goesto 0$ \cite[365]{HairerNorsettWanner}.
+The eBDF3 method is not commonly known because it is not stable, meaning that when it is used for time integration the error after multiple steps is not bounded, even when $\dtn \goesto 0$ \cite[365]{HairerNorsettWanner}.
 However in a predictor the IMR history values are used and we only ever need a single step at a time of the predictor, hence the stability is irrelevant.
 
 Alternatively a 3rd order Adams-Bashforth scheme (AB3) could be used as a predictor, but this requires three previous derivative values instead of $y$ values which makes the initialisation of the scheme a little more complex and expensive.
 Additionally, the calculation of coefficients for the variable step Adams-Bashforth schemes is more complex \cite[400]{HairerNorsettWanner}.
-However, in contrast to eBDF3, AB3 is stable which could simplify the process of testing implementations.
+However, in contrast to eBDF3, AB3 is stable which could simplify the process of testing an implementation.
 
 
 \subsection{The variable step explicit backwards difference 3 method}
@@ -538,10 +538,12 @@ In other cases an accurate representation of the full behaviour of the system ma
 For the main experiment we choose parameters $H = 1.1$ (sufficient to switch the system) and $\dampc = 0.01$ (roughly the physically relevant value).
 We set the initial magnetisation to be just off the $z$-axis in order to avoid a singularity in the reversal time when $\theta_1 = 0$, more precisely $\mv_0 = (0.01, 0.0, 1.0)/\sqrt{1.0001}$. 
 The dynamics are simulated for 1000 time units for all simulations, which is sufficient time for the magnetisation to fully switch.
-
 This experiment allows us to check the $\abs{\mv}$ conservation properties of the adaptive IMR, to compare the accuracy of the solution over different time integrators, and to check again that the time step selection is appropriate.
 
-??ds should I do energy conservation? It's a bit complicated: for this example with 0 damping TR and IMR are the same, both seem to give exactly 0 (not 1e-16, actually 0) energy loss. BDF2 has around 1e-14 energy change with no renorm, but around 1e-3 with re-normalisation.
+We also run the same experiment with $\dampc = 0$.
+This allows us to check the energy conservation properties of adaptive IMR and to observe the effect of re-normalisation on the energy.
+Note that with $\dampc = 0$ \cref{eqn:nd-ode-llg} becomes simply $\dmdt = - \mv \times \happ$, which is linear in $\mv$ and $t$, hence TR and IMR are identical for this example.
+
 
 \subsection{Implementation}
 
@@ -617,11 +619,23 @@ This conservation behaviour of IMR does not vary significantly with changes to a
   \label{fig:ml-aimr-ode}
 \end{figure}
 
+The convergence behaviour of the maximum error in the energy with $\dampc = 0$ is shown in \cref{fig:energy-aimr-ode}.
+The energy error for BDF2 without normalisation is very small, around the Newton tolerance.
+However when re-normalisation is used the error in energy increases drastically, this is due to the injection or removal of energy when the magnetisation length is modified.
+The energy error when using the TR or IMR algorithms is zero to below the minimum floating point that can be calculated.
+This is not surprising as it is the difference of two values of $\order{1}$ (so it cannot be calculated if it is smaller than $\sim 10^{-16}$) and we expect it to be significantly smaller than the energy error of BDF2, which is $\sim 10^{-14}$.
+
+\begin{figure}
+  \centering
+  \includegraphics[width=0.8\textwidth]{plots/ode_llg_adaptive_energy/maxabsofenergychangevsmeanofdts}
+  \caption{Convergence plot of the maximum error in energy for the relaxing nano-sphere problem with $\dampc = 0$. The energy error for the IMR and TR methods is exactly 0 and cannot be shown on this plot.}
+  \label{fig:energy-aimr-ode}
+\end{figure}
 
 \begin{figure}
   \centering
   \includegraphics[width=0.8\textwidth]{plots/ode_llg_adaptive_convergence/maxofswitchingtimeerrorvsmeanofdts}
-  \caption{Convergence plots of the switching time error, \cref{eq:sw-time-error}, against average time step for constant step IMR, adaptive IMR, adaptive TR and adaptive BDF2. ??ds zoom in, remove guidelines, Better legend}
+  \caption{Convergence plot of the switching time error, \cref{eq:sw-time-error}, against average time step for constant step IMR, adaptive IMR, adaptive TR and adaptive BDF2. ??ds zoom in, remove guidelines, Better legend}
   \label{fig:llg-ode-convergence-swtime}
 \end{figure}
 
@@ -671,6 +685,10 @@ When applied to an ODE form of the LLG the adaptive IMR algorithm conserves $\ab
 It also appears to give slightly smaller global error norms than would be expected from its local truncation error, this may be due to the geometric integration properties.
 Any effects of these geometric integration properties would be expected to be greatly amplified when solving ODE problems with many interacting spins or PDE problems.
 This will be tested in \cref{cha:numer-experiments} where the adaptive IMR algorithm is combined with the PDE methods discussed in other chapters.
+
+Finally we have observed some interesting results on the suitability of certain time integration methods to the simulation of the LLG equation.
+We have found that the use of BDF2 results in significantly larger errors in the calculated switching time than the TR or IMR methods, particularly when the full precessional behaviour is not resolved. 
+We have also found that the process of re-normalising the magnetisation length after each time step in TR and BDF2 methods greatly increases the error in the energy.
 
 
 %%% Local Variables:
