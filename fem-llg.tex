@@ -454,13 +454,23 @@ Doing so we obtain
   I = \sum_{i=0}^2 \intb{b_i (\grad m_i \cdot \nv)} - \intd{\grad b_i \cdot \grad m_i}.
 \end{equation}
 
-It turns out that the first term is exactly the weak form of \cref{eq:m-bc}, the boundary condition on $\mv$:
+It turns out that the first term is exactly the weak form of \cref{eq:m-bc}, the Neumann-like boundary condition on $\mv$:
 \begin{equation}
   \begin{aligned}
     \sum_{i=0}^2 \intb{b_i (\grad m_i \cdot \nv)} 
     &= \intb{\bv \cdot \pd{\mv}{\nv}}, \\
     &=  \intb{(\testv \times \mv) \cdot \pd{\mv}{\nv}}, \\
     &=  \intb{(\mv \times \pd{\mv}{\nv}) \cdot \testv} = 0 .
+  \end{aligned}
+\end{equation}
+Alternatively if we have periodic boundary conditions we can write this integral as a sum over opposite boundaries $\boundd_j$ and $\hat{\boundd}_j$.
+On opposite boundaries $\nv \rightarrow -\nv$ but the geometry and $\mv$ values must be identical, so we have
+\begin{equation}
+  \begin{aligned}
+    \intb{(\mv \times \pd{\mv}{\nv}) \cdot \testv}
+    &= \sum_j \intd[\boundd_j]{\mv \times \pd{\mv}{\nv}} 
+    + \intd[\hat{\boundd}_j]{\mv \times \pd{\mv}{(-\nv)}}, \\
+    & = 0.
   \end{aligned}
 \end{equation}
 
