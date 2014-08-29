@@ -15,7 +15,7 @@ With these optimisations Jacobian assembly time (which makes up around half of t
 Also using biCGStab or restarted GMRES could reduce computation time when a large number of iterations are needed (although both have reduced convergence guarantees, hence why GMRES was used so far).
 
 
-Integrate the linear solvers with an efficient and robust multigrid based preconditioner for the Newton-Raphson linearised LLG equation. \footnote{The multigrid smoother developed in \cite{Jeong2014} is probably not relevant because it relies on a cancelation only present in finite-difference simulations.}
+Integrate the linear solvers with an efficient and robust multigrid based preconditioner for the Newton-Raphson linearised LLG equation.\footnote{The multigrid smoother developed in \cite{Jeong2014} is probably not relevant because it relies on a cancelation only present in finite-difference simulations.}
 Also integrate hierarchical BEM matrix.
 This will allow linear scaling (\ie $\order{N}$) in both space and time independently for most geometries ($\order{N \log N}$ for surface dominated geometries), as discussed in \cref{sec:desir-prop-numer}.
 
