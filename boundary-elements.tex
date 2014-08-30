@@ -522,6 +522,15 @@ This would occur, for example, in extremely thin or extremely sharp domains of m
 Such geometries are unlikely to be a problem in practice because sufficiently thin/sharp domains are likely to be outside the scope of micromagnetism in general.
 
 
+\section{The boundary element matrix}
+??ds get rid of this?
+
+Since $\bm$ is a dense matrix the processing and memeory requirements to compute, store and use $\bm$ scales as $\order{N_b^2}$ where $N_b$ is the number of boundary nodes. For some geometries (\eg nearly spherical objects) the overall computational complexity remains $\order{N}$ but for others (especially very thin films) the complexity can approach $\order{N^2}$.
+
+It should be noted that $\bm$ depends only on the geometry of the problem and so typically only needs to be computed once, at the beginning of the simulation. Hence the integral computation time is not too important. Although if spatial adaptivity is used the geometry will change with every adaptation and $\bm$ will need to be recalculated.
+
+One way to reduce the problems associated with the dense nature of $\bm$ is to use hierarchical matrix techniques. In this type of matrix the less important entries (\ie smaller) are lumped into a single entry similarly to multipole approximation methods. The cost of multiplication and storage of $\bm$ is thus reduced to only $\order{N \log(N)}$ \cite{Knittel2009}.
+
 
 %%% Local Variables:
 %%% mode: Latex
