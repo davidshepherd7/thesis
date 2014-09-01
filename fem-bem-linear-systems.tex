@@ -135,8 +135,7 @@ As mentioned in \cref{sec:discretisation} the pair of Poisson equations for the 
 The first difference is that there is no coupling from the auxilary potential $\phione$ to the LLG equations, and hence no corresponding $\Pm$ block.
 The second difference is that there is an additional coupling between the boundary values of the auxiliary potential and the boundary values of the real potential $\phim$.
 
-With the order of blocks as: $\mv$, $\phim$, $\phione$, $\phione$ boundary.
-Then the Jacobian is
+With the order of blocks as: $\mv$, $\phim$, $\phione$ the Jacobian is
 \begin{equation}
   \Jm = 
   \begin{pmatrix}
@@ -144,6 +143,7 @@ Then the Jacobian is
     \Qm'      & \Am' &  \bm'  \\
     \Qm       &         &   \Am
   \end{pmatrix},
+\label{eq:16}
 \end{equation}
 
 %% all in one:
@@ -185,7 +185,7 @@ and
 
 
 It is worth noting that a slightly different Jacobian struture could be obtained by modifying the derivation in \cref{sec:appl-magn-calc}.
-Instead of using $\phim = \phione + \phitwo$ to eliminate $\phitwo$, we could have written $\hms = - \grad \phione - \grad \phitwo$.
+Instead of using $\phim = \phione + \phitwo$ to eliminate $\phitwo$, we use $\hms = - \grad ( \phione + \phitwo)$.
 This would result in both of the potentials having a $\Pm$ block, but only one of them having a $\Qm$ block.
 It would also reduce the diagonal dominance of $\bm$, which is probably a bad thing ??ds check? are we sure?
 
@@ -262,6 +262,8 @@ In order to test our solvers we only need to model a single time step of some pr
 
 Since the vast majority of practical micromagnetics calculations are in three dimensions our test case must be 3D.
 
+The hierarchical matrix library that we are using (\texttt{hlib} with patches from \texttt{nmag}) only supports triangular surface elements for co-location BEM, so we need to use a tetrahedral mesh.
+
 There must be sharp corners in order to test the effect of near singular integrals in the FEM/BEM method.
 
 We choose not to use the \mumag standard problem \#4 because both the FEM/BEM method for magnetostatic calculations and the FEM with linear basis functions are exceptionally unsuited for such thin film problems.
@@ -287,20 +289,25 @@ Since the only difference to the linear systems with different time integration 
 \subsection{Results}
 
 
-iteration counts:
+iteration counts, solve times, Jacobian assembly times for:
 llg alone
-poisson alone
+poisson alone?
 each preconditioner
 
 for each sweep: refinement, dt, damping?, kone?
 
 
-??ds comparative solve times, Jacobian assembly times
-
-
 \section{Further optimisation opportunities}
 
-??ds Jacobian caching
+In the fully implicit method timing results presented here the entire FEM Jacobian was recalculated at each Newton step.
+This is not actually necessary: the Poisson blocks, $\Am$, and LLG-Poisson coupling blocks, $\Qm$ and $\Pm$, (of \cref{eq:16}) are only dependent on the geometry (\ie the corresponding equations are linear).
+Hence these blocks could be precomputed and stored.
+This reduces the Jacobian assembly process for the fully implicit method to exactly as the decoupled method.
+
+Similarly the mass matrix sub-blocks on the diagonal of the LLG-block ($\Mm$ of \cref{eq:llg-jacobian}) are only dependent on the geometry.
+As an additional optimisation the skew symmetric structure of \cref{eq:llg-jacobian} could be exploited so that the calculation of $\Km_x$ is reused for $-\Km_x$, and similarly for $\Km_y$ and $\Km_z$.
+Applying these additional optimisations will reduce the Jacobian calculations to the assembly of three $N \times N$ Jacobian blocks and the magnetocrystalline anisotropy block (which will typically be either $N \times N$ or empty).
+
 
 hlib, if I don't get it in here...
 
