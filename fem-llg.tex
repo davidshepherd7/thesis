@@ -307,17 +307,17 @@ Similar ``full integration'' quadratures for triangular and tetrahedral elements
 
 
 
-\section{Application to spatial discretisation of the LLG}
+\section{Spatial discretisation of the LLG equation}
 \label{sec:llg-initial-equations}
 
-We now apply the finite element method as discussed in \cref{sec:intr-finite-ele-diff} (together with the Newton-Raphson discussed in \cref{sec:newt-raph}) to the Landau-Lifshitz-Gilbert equation.
-We start with the Gilbert form of the LLG \cref{eq:Gilbert} with the various effective fields and the potential method for calculating the magnetostatic field \cref{eq:Hms}.
+We now apply the finite element method as discussed in \cref{sec:intr-finite-ele-diff} (together with the Newton-Raphson discussed in \cref{sec:newt-raph}) to the solution of the Landau-Lifshitz-Gilbert equation.
+We start with the Gilbert form of the LLG \cref{eq:Gilbert} with effective fields described in \cref{sec:energy-magnetic-body} and the potential method for calculating the magnetostatic field \cref{eq:Hms}.
 We use the Gilbert form of the LLG even though it is less intuitive because only contains single cross product terms, reducing the complexity of derivations.
 A side effect of this choice is that explicit time integration schemes cannot be used since the time derivative is only defined implicitly.
 
 \subsection{Initial equations}
 
-After non-dimensionalisation (see \cref{sec:land-lifsh-gilb-normalisation}) the Landau-Lifshitz-Gilbert equation with effective fields is given by
+After non-dimensionalisation (see \cref{sec:land-lifsh-gilb-normalisation}) the Landau-Lifshitz-Gilbert equation with effective field $\hv$ is given by
 \begin{equation}
   \begin{aligned}
     \dmdt &= - \mv \times \hv + \alpha \mv \times \dmdt, \\
@@ -327,10 +327,18 @@ After non-dimensionalisation (see \cref{sec:land-lifsh-gilb-normalisation}) the 
   \end{aligned}
 \end{equation}
 
-For now we consider the magnetostatic potential only within the magnetic domain, $\magd$, with Neumann or Dirichlet boundary conditions on the boundary, $\boundd$. 
-Details of the extension to include the effects of the external region using the FEM/BEM method are given in \cref{sec:hybr-finit-elem}, both Dirichlet and Neumann cases will be required.
-We define $\boundd_D$ and $\boundd_\Neu$ respectively to represent the region of the boundary domain where a Dirichlet condition or Neumann is imposed on the potential.
-So on $\boundd_\Neu$ $\nabla \phim(\xv) \cdot \nv = g_\Neu(\xv)$ and on $\boundd_D$ $\phim(\xv) = g_D(\xv)$.
+For now we consider the magnetostatic potential only within the magnetic domain, $\magd$, with Neumann or Dirichlet boundary conditions on the boundary, $\boundd$.
+Details of the extension to include the effects of the external region using the FEM/BEM method are given in \cref{sec:hybr-finit-elem}, for which both the Dirichlet and Neumann cases will be required.
+We define $\boundd_D$ and $\boundd_\Neu$ respectively to represent the region of the boundary domain where a Dirichlet condition or Neumann is imposed on the potential, \ie 
+\begin{equation}
+  \begin{aligned}
+    \nabla \phim(\xv) \cdot \nv(\xv) &= g_\Neu(\xv) \quad \forall \xv \in \boundd_\Neu, \\
+    \phim(\xv) &= g_D(\xv) \quad \forall \xv \in \boundd_D, \\
+    \boundd_\Neu \cap \boundd_D &= \emptyset, \\
+    \boundd_\Neu \cup \boundd_D &= \boundd, \\
+  \end{aligned}
+\end{equation}
+where $\nv(\xv)$ is the outward unit normal.\footnote{These must obviously be such that $\boundd_\Neu \cap \boundd_D = \emptyset$ and $\boundd_\Neu \cup \boundd_D = \boundd$.}
 We also define the following function spaces for convenience
 \begin{equation}
 \begin{aligned}
@@ -339,18 +347,16 @@ We also define the following function spaces for convenience
   \Dfs_0 &= \set{ v \st v(\xv) = 0 \; \forall \xv \in \boundd_D }.
 \end{aligned}
 \end{equation}
-??ds think this is wrong for solution space: can't we just use the full set and say that the Dirichlet boundary node values are fixed? 
 
 Recall from \cref{sec:magn-bound-cond} that the boundary condition on the magnetisation is
 \begin{equation}
   \label{eq:m-bc}
-  \mv \times \dmdn = \zerov,
+  \mv \times \dmdn = \zerov \quad \forall \xv \in \boundd.
 \end{equation}
 It turns out that this Neumann-like condition is exactly what is needed in the derivation of the residuals.
-No special function space is needed for the solutions and test functions of $\mv$ since only Neumann conditions are used.
+??ds uniqueness? think it comes from $|\mv|$.
 
-
-\subsection{Weak form residuals and relaxed smoothness requirements}
+\subsection{The weak form}
 \label{sec:weak-form-residuals}
 
 We now convert equations \cref{eqn:ndllg-starting} into their residual weak forms as described in \cref{Derivation-of-weighted-residuals}.
@@ -372,9 +378,9 @@ The Newton residual for the magnetostatic potential is given by
 \end{gather}
 where $\phim \in \sob^2(\magd) \cap \Dfs$ and $\mv$ is some sufficiently smooth function.
 
-Recall that problem is to find some $\phim$ such that the residual is zero $\forall \test \in \sob^0(\magd) \cap \Dfs_0$.
-We will find such a $\phim$ using the Newton-Raphson method.
-Note that while the use of a linearisation method is unnecessary for the magnetostatic potential alone (since \cref{eqn:phires1} is linear in $\phim$) it becomes necessary once the LLG itself is included.
+Recall that problem is to find some $\phim$ such that $\rphi(\phim) = 0$ for all test functions $\test \in \sob^0(\magd) \cap \Dfs_0$.
+We will find an approximation to $\phim$ using the Newton-Raphson method.
+Note that while the use of a linearisation method is unnecessary for the magnetostatic potential alone (since \cref{eqn:phires1} is linear in $\phim$) it will be necessary for the overall problem.
 
 The use of \cref{eqn:phires1} for calculating $\rphi$ would require the existence of second order derivatives.
 We prefer to reduce the order of these derivatives as discussed in \cref{Derivation-of-weighted-residuals} to relieve the smoothness requirements on our solution.
@@ -390,7 +396,7 @@ Integrating identity \cref{eq:20} over the domain and applying the divergence th
     \label{eqn:identitygauss}
   \end{aligned} 
 \end{equation}
-Next substituting \cref{eqn:identitygauss} into \cref{eqn:phires1} gives
+Substituting \cref{eqn:identitygauss} into \cref{eqn:phires1} gives
 \begin{equation}
   \rphi(\phim) = \intb{ \test (\nabla \phim \cdot \nv) }
   - \intd{ \nabla \test \cdot \nabla \phim }
@@ -399,9 +405,8 @@ Next substituting \cref{eqn:identitygauss} into \cref{eqn:phires1} gives
 This contains only first order derivatives so the solution space for $\phim$ is relaxed to $\sob^1(\magd) \cap \Dfs$. 
 However all first partial derivatives of the test functions are now required to be integrable, \ie $v \in \sob^1(\magd)$ instead of $v \in \sob^0(\magd)$.
 
-Note that the boundary integral is always zero on the Dirichlet region of the boundary by our definition of the test functions. 
-Hence the boundary integral is only non-zero over $\boundd_{\Neu}$ where we know $\nabla \phim \cdot \nv = g_{\Neu}$.
-So the final residual is
+Note that the boundary integral is always zero on $\boundd_D$ by the definition of the test functions. 
+Hence the boundary integral is only non-zero over $\boundd_{\Neu}$ where $\nabla \phim \cdot \nv = g_{\Neu}$, which gives
 \begin{equation}
   \rphi(\phim) = \int_{\boundd_\Neu} \test g_\Neu \d \boundd
   - \intd{ \nabla \test \cdot \nabla \phim}
@@ -410,28 +415,29 @@ So the final residual is
 \end{equation}
 
 
-Next we apply the same process to the Landau-Lifshitz-Gilbert equation with effective fields, \cref{eqn:ndllg-starting}.
+Next we apply the same procedure to the Landau-Lifshitz-Gilbert equation with effective fields \cref{eqn:ndllg-starting}.
 For now we sidestep the details of time discretisation by assuming $\dmdt$ to be just another function of $\xv$.
 The weak form of the LLG is
 \begin{equation}
-  \rllgv(\mv, \test) = \int_\magd \Big( \dmdt
-  + (\mv \times \hca) + (\mv \times \happ) \\
-  - (\mv \times \nabla \phi) + (\mv \times \lap \mv)
-  - \dampc \left( \mv \times \dmdt \right)
-  \Big) \test \d\magd
-  . \label{res:contllg}
+  \begin{aligned}
+    \rllgv(\mv, \test) = \int_\magd &\Big( \dmdt
+    + (\mv \times \hca) + (\mv \times \happ) \\
+    &- (\mv \times \nabla \phi) + (\mv \times \lap \mv) - \dampc \left( \mv
+      \times \dmdt \right) \Big) \test \d\magd. 
+    \label{res:contllg}
+  \end{aligned}
 \end{equation}
 Similarly to the previous examples the idea is to apply the Newton-Raphson method to find $\mv \in \sob^2(\magd)$ such that $\rllgv(\mv, \test) \approx 0$ $\forall \test \in \sob^0(\magd)$.
 
 Note that in \cref{res:contllg} the residual is a vector.
-However it is equivalent to write
+However, we can also express the requirement for each component of \cref{res:contllg} to be zero as
 \begin{equation}
   \rllg(\mv, \testv) = \int_\magd \Big( \ldots  \Big) \cdot \testv \d\magd,
 \end{equation}
 where $\testv \in (\sob^0(\magd))^3$ and the bracketed term is exactly the same as in \cref{res:contllg}.
 To see that $\rllg(\mv, \testv) = 0\; \forall \testv \in (\sob^0(\magd))^3$ implies $\rllgv(\mv, \test) = 0 \; \forall \test \in \sob^0(\magd)$ consider three vector test functions: $(\test, 0, 0)$, $(0, \test, 0)$ and $(0, 0, \test)$.
-Clearly $\rllg(\mv, (\test, 0, 0)) = \rllg(\mv, \testv)[0]$, and similarly for the other two cases.
-To see the inverse relationship (\ie $\rllgv(\mv, \test) = 0 \ldots$ implies $\rllg(\mv, \testv) = 0 \ldots$) note that if $\rllg(\mv, \test) = 0\; \forall \test \in \sob^0(\magd)$ then each term of every dot product in $\rllg(\mv, \testv)$ is zero and so the total residual is zero $\forall \testv \in (\sob^0(\magd))^3$.
+Clearly $\rllg(\mv, (\test, 0, 0)) = \bigs{\rllg(\mv, \testv)}_x$, and similarly for the $y$ and $z$ cases.
+To see the inverse relationship (\ie $\rllgv(\mv, \test) = 0 \ldots$ implies $\rllg(\mv, \testv) = 0 \ldots$) note that if $\rllg(\mv, \test) = 0\; \forall \test \in \sob^0(\magd)$ then each term of every dot product in $\rllg(\mv, \testv)$ is zero, implying that the total residual is zero $\forall \testv \in (\sob^0(\magd))^3$.
 The use of vector test functions makes certain manipulations simpler so, for the remainder of \thisref{sec:weak-form-residuals}, we will work with vector test functions.
 
 We again wish to reduce the order of the required derivatives, this time on $\mv$ in the term
@@ -439,30 +445,34 @@ We again wish to reduce the order of the required derivatives, this time on $\mv
   I = \intd{ (\mv \times \lap \mv) \cdot \testv }.
   \label{eq:46}
 \end{equation}
-First we reorder the terms to give
+Firstly we reorder the terms to give
 \begin{equation}
   \begin{aligned}
     I &= \intd{\lap \mv \cdot (\testv \times \mv)}, \\
       &= \intd{\lap \mv \cdot \bv}, \\
       &= \sum_{i=0}^2 \intd{ b_i (\lap m_i)},
   \end{aligned}
+\label{eq:73}
 \end{equation}
 where $\bv = (\testv \times \mv)$.
-Note that this is very similar to \cref{eqn:phires1}, and so we can apply the same operations as were used to obtain reduced derivatives in the Poisson case. 
-Doing so we obtain
+Note that \cref{eq:73} is very similar to \cref{eqn:phires1}, and so we follow the same procedure to obtain
 \begin{equation}
-  I = \sum_{i=0}^2 \intb{b_i (\grad m_i \cdot \nv)} - \intd{\grad b_i \cdot \grad m_i}.
+  I = \sum_{i=0}^2 \intb{b_i (\grad m_i \cdot \nv)} - \intd{\grad b_i \cdot \grad m_i}."
+\label{eq:75}
 \end{equation}
 
-It turns out that the first term is exactly the weak form of \cref{eq:m-bc}, the Neumann-like boundary condition on $\mv$:
+Rearranging the first term of \cref{eq:75} we obtain
 \begin{equation}
   \begin{aligned}
     \sum_{i=0}^2 \intb{b_i (\grad m_i \cdot \nv)} 
     &= \intb{\bv \cdot \pd{\mv}{\nv}}, \\
     &=  \intb{(\testv \times \mv) \cdot \pd{\mv}{\nv}}, \\
-    &=  \intb{(\mv \times \pd{\mv}{\nv}) \cdot \testv} = 0 .
+    &=  \intb{(\mv \times \pd{\mv}{\nv}) \cdot \testv},
   \end{aligned}
 \end{equation}
+which exactly the weak form of \cref{eq:m-bc} (the Neumann-like boundary condition on $\mv$).
+Hence the first term of \cref{eq:75} is zero in this case.
+
 Alternatively if we have periodic boundary conditions we can write this integral as a sum over opposite boundaries $\boundd_j$ and $\hat{\boundd}_j$.
 On opposite boundaries $\nv \rightarrow -\nv$ but the geometry and $\mv$ values must be identical, so we have
 \begin{equation}
@@ -475,12 +485,12 @@ On opposite boundaries $\nv \rightarrow -\nv$ but the geometry and $\mv$ values 
 \end{equation}
 
 Next we need an expression for $\grad b_i$.
-To avoid switching to tensor notation it is helpful to define, for any vector $\av$: $\grad \av = (\grad a_0, \grad a_1, \grad a_2)$.
-Then using the product rule we have
+To avoid switching to tensor notation it is helpful to define, for any vector $\av$: $\gradv \av = (\grad a_0, \grad a_1, \grad a_2)$.
+Then using the product rule, we have
 \begin{equation}
   \begin{aligned}
-    \grad \bv &= \grad \bigb{\testv \times \mv}, \\
-    & = (\grad \testv) \times \mv + \testv \times (\grad \mv).
+    \gradv \bv &= \gradv \bigb{\testv \times \mv}, \\
+    & = (\gradv \testv) \times \mv + \testv \times (\gradv \mv).
   \end{aligned}
 \end{equation}
 Hence
@@ -496,24 +506,24 @@ Note that the $:$ operator obeys the usual triple product identity
   \av : (\av \times \bv) = \zerov,
   \label{triple:-identity}
 \end{equation}
-and permutations of \cref{triple:-identity}, because
-\begin{equation}
-  \begin{aligned} 
-    \threevecnum{\av} : \bigb{\threevecnum{\av} \times \bv} &= \av_0 \cdot (\av_0 \times \bv) + \ldots, \\
-    & = 0 + 0 + 0
-  \end{aligned}
-\end{equation}
-Hence the second term of \cref{eq:72} is zero, so after reordering terms we are left with
+and permutations. % \cref{triple:-identity}, because
+% \begin{equation}
+%   \begin{aligned} 
+%     \threevecnum{\av} : \bigb{\threevecnum{\av} \times \bv} &= \av_0 \cdot (\av_0 \times \bv) + \ldots, \\
+%     & = 0 + 0 + 0
+%   \end{aligned}
+% \end{equation}
+Hence the second term of \cref{eq:72} is zero and after reordering terms we are left with
 \begin{equation}
   \label{eq:final-lap-residual}
   I = - \intd{\bigb{\mv \times \grad \mv} : \grad \testv}.
 \end{equation}
 
-So the final residual for the LLG equation, using a vector test function, is
+The final residual for the LLG equation, using a vector test function, is
 \begin{equation}
   \begin{aligned}
     \label{eq:llg-res-final}
-    \rllg(\mv, \testv) &= \int_\magd \dmdt\cdot \testv
+    \rllg(\mv, \testv) = \int_\magd &\dmdt\cdot \testv
     + (\mv \times \hca)\cdot \testv 
     + (\mv \times \happ)\cdot \testv 
     - (\mv \times \nabla \phi)\cdot \testv \\
@@ -523,7 +533,7 @@ So the final residual for the LLG equation, using a vector test function, is
   \end{aligned}
 \end{equation}
 
-The final problem statement is: 
+The final weak formulation is: 
 \begin{equation}
   \eqpar{Find $\mv \in (\tsinf)^3$, $\phim \in \tsinf \cap \Dfs$ such that $\rllg(\mv, \testv) = 0$ for all $\testv \in (\tsinf)^3$ and $\rphi(\phim, \test) = 0$ for all $\test \in \tsinf \cap \Dfs_0$.}
 \label{eq:inf-dim-problem}
@@ -536,22 +546,23 @@ The final problem statement is:
 \label{sec:spat-discr-resi}
 
 The next step is to choose a finite dimensional approximation, $\ts$, for the infinite dimensional test and solution function spaces, $\tsinf$, such that the residuals \cref{res:contphi,eq:llg-res-final} become discrete in space.
-Just as in \cref{sub:Actual-Finite-Elements} we represent the finite dimensional spaces using a set of piecewise linear polynomials, $\tsbasis$, as basis functions.
+Just as in \cref{sub:Actual-Finite-Elements} we choose to represent the finite dimensional spaces using a set of piecewise linear polynomials, $\tsbasis$, as basis functions.
 
 The approximations to the unknown functions $\mv$ and $\phim$ are represented as a sum over the solution basis functions $\sk \in \tsbasis$ (or $\tsbasis \cap \Dfs$ for $\phim$ with Dirichlet conditions) as
 \begin{equation}
   \begin{aligned}
-    \mv &\approx \sum_{k = 0}^{N} \sk \, \mv_k, \\
-    \phim &\approx \sum_{k = 0}^{N} \sk \, \phim_{k}.
+    \mv &\approx \mv_h = \sum_{k = 0}^{N} \sk \, \mv_k, \\
+    \phim &\approx \phim_h = \sum_{k = 0}^{N} \sk \, \phim_{k}.
     \label{eq:unknowns-basis}
   \end{aligned}
 \end{equation}
 Similarly the approximations to the test functions are represented as a sum over the test basis functions, $\tn \in \tsbasis$ (or $\tsbasis \cap \Dfs_0$ as applicable), as
 \begin{equation}
   \label{eq:47}
-  \test \approx \sum_{\ndi = 0}^{N} \tn \, a_\ndi.
+  \test \approx \test_h = \sum_{\ndi = 0}^{N} \tn \, a_\ndi.
 \end{equation}
-Note that in our method $\sbf_k \equiv \tbf_k$ except for Dirichlet boundary $\phim$ basis functions, but we continue to write them differently for generality.
+Note that in our method $\sbf_k \equiv \tbf_k$ except for the basis functions of  $\phim$ at the Dirichlet boundary.
+Despite this we continue to write the test and solution basis functions differently for generality.
 In one dimension the $\sk$ and $\tn$ are as given in \cref{eq:simple_lagrange}.
 The extension to higher dimensions is straightforward: see \eg \cite[25]{HowardElmanDavidSilvester2006}.
 
@@ -559,7 +570,7 @@ So substituting the basis representations, \cref{eq:unknowns-basis,eq:47} into t
 Next we replace the requirement that the residuals be zero for all test functions in the infinite dimensional set $\tsinf$ with the equivalent requirement for all functions in the finite set $\tsbasis$. 
 This results in a finite number of conditions (the residuals) on a finite number of variables (the nodal values) and so the spatial discretisation is complete.
 
-As described in \cref{sub:Actual-Finite-Elements} we also convert this ``global'' representation into a ``local'' representation on each element.
+% As described in \cref{sub:Actual-Finite-Elements} we also convert this ``global'' representation into a ``local'' representation on each element.
 
 % Let $\magd_\eli$ represent the volume of element $e$, let $\boundd_\eli$ represent any part of the boundary of the element which is on $\boundd$ (nothing for most elements).
 % Then the contribution of element $\eli$ to the residuals at node $\ndi$ is exactly as given in equations~\cref{res:tintro}-\cref{res:tllg} except that the integrations are performed over $\magd_\eli$ and $\boundd_\eli$ rather than $\magd$ and $\boundd$.
@@ -570,40 +581,40 @@ As described in \cref{sub:Actual-Finite-Elements} we also convert this ``global'
 \label{sec:time-discretisation-resi}
 
 In \thisref{sec:time-discretisation-resi} we discuss how to deal with the time derivative in the LLG residual \cref{eq:llg-res-final}.
-As discussed in \cref{sec:numer-meth-micr}, we will apply standard time integration methods used for ODEs.
-This application of independent spatial and time discretisations is known as semi-discretisation or the method of lines.
+As discussed in \cref{sec:numer-meth-micr}, we will apply standard integration methods used for ODEs.
+This technique of applying independent spatial and time discretisations is known as semi-discretisation or the method of lines.
 
-We cannot simply apply the time integration methods in the way they are written in \cref{sec:some-implicit-time-integrators} (and in most text books) because our LLG residual \cref{eq:llg-res-final} cannot be written in the required form $\pd{\yv}{t} = \fv(t, \yv)$ since it is an implicit function of the time derivative.\footnote{Actually we could have started with the LL form \cref{eq:LLG} where the derivative can be given explicitly, but as mentioned above this method is simpler.}
-Instead we rearrange the time integration method to give discrete substitutions for the time derivative, $\yv$ values and $t$.
+We cannot simply apply the time integration methods in the way they are written in \cref{sec:some-implicit-time-integrators} (and in most text books) because our LLG residual \cref{eq:llg-res-final} is an implicit function of the time derivative\footnote{Actually we could have started with the LL form \cref{eq:LLG} where the derivative can be given explicitly, but as mentioned above this  is simpler.} and cannot be written in the required form $\pd{\yv}{t} = \fv(t, \yv)$.
+Instead we rearrange the time integration method to give discrete substitutions for the time derivative, the unknown function $\yv$ and $t$.
 
-Let $\dtn$ be the size of the $n$th time step, let $x_n$ denote value of $x$ at the $n$-th time-step.\footnote{This notation has some potential to be confused with the nodal value notation of \cref{sec:spat-discr-resi}, hopefully the meaning will be clear from the context.}
+Let $\dtn$ be the size of the $n$th time step and $x_n$ denote value of $x$ at the $n$-th time-step.\footnote{This notation has some potential to be confused with the nodal value notation of \cref{sec:spat-discr-resi}, hopefully the meaning will be clear from the context.}
 The simplest case is the first order backwards difference method (BDF1), which is defined by the substitution
 \begin{equation}
   \begin{aligned}
-    \pd{\yv}{t} &\rightarrow \frac{\yv_{n+1} - \yv_n}{\dtn}, \\
-    \yv &\rightarrow \yv_{n+1}, \\
+    \pd{\yv}{t} &\rightarrow \frac{\yv_{n+1} - \yv_n}{\dtn}, \quad
+    \yv &\rightarrow \yv_{n+1}, \quad
     t &\rightarrow t_{n+1}.
     \label{eq:impl-bdf1}
   \end{aligned}
 \end{equation}
 This substitution can be obtained by simple algebraic rearrangements of \cref{eq:bdf1-definition}.
-Similarly the second order backwards difference method (BDF2) can be found (with some more complex algebra) to be:
+Similarly, the second order backwards difference method (BDF2) can be found (with some more complex algebra) to be:
 \begin{equation}
   \begin{aligned}
     \pd{\yv}{t} &\rightarrow \yv_{n+1}\bigb{\frac{1}{\dtn} + \frac{1}{\dtn + \dtx{n-1}}}
     - \yv_n \frac{\dtn + \dtx{n-1}}{\dtn\dtx{n-1}}
     + \yv_{n-1} \frac{\dtn}{(\dtn + \dtx{n-1})\dtx{n-1}}, \\
-    \yv &\rightarrow \yv_{n+1}, \\
+    \yv &\rightarrow \yv_{n+1}, \quad
     t &\rightarrow t_{n+1}.
     \label{eq:impl-bdf2}
   \end{aligned}
 \end{equation}
 
-The implicit midpoint rule is defined by the substitutions
+The implicit midpoint rule (IMR) is defined by the substitutions
 \begin{equation}
   \begin{aligned}
-    \pd{\yv}{t} &\rightarrow \frac{\yv_{n+1} - \yv_n}{\dtn}, \\
-    \yv &\rightarrow \frac{\yv_{n+1} + \yv_n}{2}, \\
+    \pd{\yv}{t} &\rightarrow \frac{\yv_{n+1} - \yv_n}{\dtn}, \quad
+    \yv &\rightarrow \frac{\yv_{n+1} + \yv_n}{2}, \quad
     t &\rightarrow \frac{t_{n+1} + t_n}{2}.
     \label{eq:impl-imr}
   \end{aligned}
@@ -620,14 +631,14 @@ The trapezoid rule (TR) is defined (recursively) by
 \begin{equation}
   \begin{aligned}
     \pd{\yv}{t} &\rightarrow \evalatb{\pd{\yv}{t}}{n+1} 
-    = \frac{2(\yv_{n+1} - \yv_n)}{\dtn} - \evalatb{\pd{\yv}{t}}{n}, \\
-    \yv &\rightarrow \yv_{n+1}, \\
+    = \frac{2(\yv_{n+1} - \yv_n)}{\dtn} - \evalatb{\pd{\yv}{t}}{n}, \quad
+    \yv &\rightarrow \yv_{n+1}, \quad
     t &\rightarrow t_{n+1}.
     \label{eq:impl-tr}
   \end{aligned}
 \end{equation}
 
-So by applying one of the substitutions \cref{eq:impl-bdf1}-\cref{eq:impl-tr} to the system of spatially discretised residuals we obtain a fully discrete problem.
+By applying one of the substitutions \cref{eq:impl-bdf1}-\cref{eq:impl-tr} to the system of spatially discretised residuals we obtain a fully discrete problem.
 The properties of these time discretisations are exactly as discussed in \cref{sec:time-discretisation}.
 
 
@@ -635,14 +646,15 @@ The properties of these time discretisations are exactly as discussed in \cref{s
 
 \section{The analytical Jacobian}
 \label{sec:llg-jacobian-calculation}
+??ds Milan doesn't like the term ``analytical Jacobian'', not sure what else to call it...
 
-To solve our fully discrete system by a Newton method we also need to know the Jacobian matrix of each residual differentiated with respect to the $(n+1)$th variable at the time step.
+To solve our fully discrete system by the Newton-Raphson method (see \cref{sec:newt-raph}) we also need to know the Jacobian matrix of each residual differentiated with respect to the $(n+1)$th variable at the time step.
 This can be handled by numerical differentiation (\eg by approximating each derivative using a finite difference method), but analytical Jacobians are typically faster to compute and give better convergence properties than numerical approximations.
-Additionally for the solution of the linear systems it is often useful to know analytically the structure of the system being solved.
+Additionally, for the solution of the linear systems it is often useful to know analytically the block structure of the system being solved.
 
 Note that the ``real'' implementation of the implicit midpoint rule \cref{eq:impl-imr} introduces a factor of $1/2$ in various places due to the substitution $ \yv \rightarrow \frac{\yv_{n+1} + \yv_n}{2}$, the derivations below do not include this ??ds yet?
 
-For \thisref{sec:llg-jacobian-calculation} we must use the scalar test function form of the residuals (since that is the form used in our final implementation).
+For \thisref{sec:llg-jacobian-calculation} we use the scalar test function form of the residuals because it is the suitable for use in a real implementation.
 
 We first note that the effect of differentiation by a nodal value on the function $\phim$ is quite simple:
 \begin{equation}
@@ -658,11 +670,12 @@ and similarly for the interpolated magnetisation, $\mv$:
     &\pd{\mv}{\phim_l} = \pd{}{\phim_l} \bigs{ \sum_k \mv_k \sk } = \zerov, \\
 \end{aligned} 
 \end{equation}
+where $\Im_3$ is the $3\times3$ identity matrix.
 
 \subsection{Poisson Jacobian}
 \label{sec:poisson-jacobian}
 
-Starting from the Poisson residual, \cref{res:contphi}, and dropping terms that obviously contain no dependence on $\phim_k$ we get
+Starting from the Poisson residual, \cref{res:contphi}, and omitting terms that obviously contain no dependence on $\phim_k$ we get
 \begin{equation}
   \begin{aligned}
     \label{eq:poisson-jacobian}
@@ -678,19 +691,19 @@ It corresponds to the well known discrete Laplacian operator \cite{HowardElmanDa
 \label{sec:llg-jacobian}
 
 Unfortunately in most of the Jacobian calculations we have multiple terms depending on $\mv$ joined together by a cross product.
-The process of differentiating these terms can be made much easier by making use of the ``skew operator'' which represents a cross product as a small matrix-vector multiplication.
-The skew operator is given by
+The process of differentiating these terms can be made much easier by making use of the ``skew operator'' which represents a cross product as a matrix-vector multiplication.
+For $\av = [a_0, a_1, a_2]$ the skew operator is given by
 \begin{equation}
   \skewm{\av} = \text{skew}(\av) =
   \begin{pmatrix}
-    0 & -a_3 & a_2 \\
-    a_3 & 0 & -a_1 \\
-    -a_2 & a_1 & 0
+    0 & -a_2 & a_1 \\
+    a_2 & 0 & -a_0 \\
+    -a_1 & a_0 & 0
   \end{pmatrix}.
   \label{eqn:skew}
 \end{equation}
 
-Written using this skew operator the LLG residual is
+Written in terms of the skew operator the LLG residual, \cref{eq:llg-res-final}, becomes
 \begin{equation}
   \begin{aligned}
     \rllgv_n = \int_{\magd}
@@ -707,12 +720,12 @@ Some useful properties of this skew operator are:
   \begin{equation}
     \skewm{\av} \cdot \bv
     = \begin{pmatrix}
-      0 & -a_3 & a_2 \\
-      a_3 & 0 & -a_1 \\
-      -a_2 & a_1 & 0
+      0 & -a_2 & a_1 \\
+      a_2 & 0 & -a_0 \\
+      -a_1 & a_0 & 0
     \end{pmatrix}
-    \cdot \threevec{b_1}{b_2}{b_3}
-    = \threevec{-a_3b_2 + a_2b_3}{a_3b_1 - a_1b_3}{-a_2b_1 + a_1b_2}
+    \cdot \threevec{b_0}{b_1}{b_2}
+    = \threevec{-a_2b_1 + a_1b_2}{a_2b_0 - a_0b_2}{-a_1b_0 + a_0b_1}
     = \av \times \bv.
   \end{equation}
 
@@ -727,20 +740,20 @@ Some useful properties of this skew operator are:
   \end{equation}
 
 \item It is easy to represent the Jacobian of a cross-product using the skew operator.
-  The derivative with respect to $a_1$ is: 
+  The derivative with respect to $a_0$ is: 
   \begin{equation}
-    \pd{}{a_1} \skewm{\av} \cdot \bv = \begin{pmatrix}
+    \pd{}{a_0} \skewm{\av} \cdot \bv = \begin{pmatrix}
       0 & 0 & 0 \\
       0 & 0 & -1 \\
       0 & 1 & 0
-    \end{pmatrix}\bv = \threevec{0}{-b_3}{b_2}.
+    \end{pmatrix}\bv = \threevec{0}{-b_2}{b_1}.
   \end{equation}
   Note that this is the first column of $-\skewm{\bv}$, it turns out that
   \begin{equation}
     \pd{}{\av} \skewm{\av} \cdot \bv = \begin{pmatrix}
-      0 & b_3 & -b_2 \\
-      -b_3 & 0 & b_1 \\
-      b_2 & -b_1 & 0
+      0 & b_2 & -b_1 \\
+      -b_2 & 0 & b_0 \\
+      b_1 & -b_0 & 0
     \end{pmatrix} = -\skewm{\bv}.
     \label{eq:61}
   \end{equation}

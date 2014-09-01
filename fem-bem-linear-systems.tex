@@ -264,7 +264,7 @@ Since the vast majority of practical micromagnetics calculations are in three di
 
 There must be sharp corners in order to test the effect of near singular integrals in the FEM/BEM method.
 
-We choose not to use the \mumag standard problem #4 because both the FEM/BEM method for magnetostatic calculations and the FEM with linear basis functions are exceptionally unsuited for such thin film problems.
+We choose not to use the \mumag standard problem \#4 because both the FEM/BEM method for magnetostatic calculations and the FEM with linear basis functions are exceptionally unsuited for such thin film problems.
 FEM/BEM is bad for thin film problems because every single node is on the boundary, hence the dense block is very large.
 Standard FEM with linear basis functions is bad because it allows the magnetisation to vary through the thickness of the film, meaning that the problem is 3D instead of 2D!
 (It is certainly possible to construct a finite element method which assumes constant magnetisation in one direction, but our purpose here is to test our model not to invent new ones!)
