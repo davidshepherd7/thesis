@@ -45,7 +45,7 @@ Both the nodal quadrature discussed in \cref{sec:local-nodal-integr} and standar
 For time integration the IMR, TR and BDF2 methods are used, adaptive step sizes with a tolerance of $\toltt = 10^{-5}$ are used except for the convergence experiment which requires fixed step sizes. 
 
 Linearisation is handled using the Newton-Raphson method, the newton tolerance is set to $10^{-12}$ unless otherwise specified.
-The linear systems are solved using GMRES with an ILU-1 preconditioner.\footnote{Hypre's Euclid preconditioner \cite{hypre} with no drop tolerance and factorisation level 1.}
+The linear systems are solved using GMRES with an ILU-1 preconditioner.\footnote{\hypre's Euclid preconditioner \cite{hypre} with no drop tolerance and factorisation level 1.}
 
 
 \subsection{General results}

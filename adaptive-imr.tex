@@ -315,7 +315,7 @@ We compare the adaptive IMR developed above with two commonly used adaptive impl
 \item Adaptive BDF2, with the error estimate again constructed using Milne's device and the variable step leapfrog method (\ie explicit BDF2) \cite[715]{GreshoSani}.
 \end{itemize}
 
-All three methods are implemented within the \texttt{oomph-lib} framework.
+All three methods are implemented within the \oomph framework.
 To increase relevance to the general non-linear PDE case (\ie the LLG equation) we use exactly the same methods for the solution of the ODEs as used for semi-discretised PDEs.
 So we use the Newton-Raphson method with a finite-differenced Jacobian inverted by a linear solver.
 One effect of this is that the baseline ``numerical noise'' as seen by the ODE solver is the Newton tolerance rather than the machine accuracy.

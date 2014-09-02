@@ -1188,10 +1188,10 @@ Explicit time integration methods avoid this issue because no system solve is re
 For problems with very simple geometry (\ie thin films, cuboid shapes) the finite difference method with FFT for magnetostatic calculations is sufficient.
 Additionally: for simple geometry there is often no need for well refined meshes, so the problem can be only mildly stiff and explicit time integration methods can be efficient.
 This combination of methods is very simple to implement and so is often used for GPU based code \cite{Vansteenkiste2011}.
-The most well known example of such a model is OOMMF \cite{oommf-website}.
+The most well known example of such a model is \oommf \cite{oommf-website}.
 
 For problems with more complex geometry the finite element method must be used for spatial discretisation to obtain good accuracy. 
-Magnetostatic calculations on the resulting non-uniform mesh are typically carried out using FEM/BEM (nmag \cite{Fischbacher2007}, magpar \cite{Scholz2003}, femme, \ldots) although fastmag uses a non-uniform FFT approach \cite{Chang2011}.
+Magnetostatic calculations on the resulting non-uniform mesh are typically carried out using FEM/BEM (\nmag \cite{Fischbacher2007}, \magpar \cite{Scholz2003}, \femme, \ldots) although fastmag uses a non-uniform FFT approach \cite{Chang2011}.
 The use of refined meshes to fully resolve the geometry can often result in stiff problems, requiring the use of implicit time integration schemes for good efficiency (see \cref{cha:stiffn-llg-equat} or \cite{Shepherd2014}).
 In all ``real world'' models using implicit time integration known to the author the Newton-Raphson method is used for linearisation.
 Typically some form of preconditioned Krylov solver is then used to solve the resulting linear systems.

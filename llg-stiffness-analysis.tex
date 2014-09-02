@@ -38,7 +38,7 @@ When in use magnetostatics are handled using the FEM/BEM discretisation as discu
 \subsection{Implicit time integration}
 For implicit integration we use the implicit midpoint rule (IMR) with constant time steps as discussed in \cref{sec:adaptive-imr}.
 The complete problem (including the magnetostatic potential equations) is then linearised using Newton's method.
-The resulting linear system is solved using GMRES with an incomplete LU decomposition\footnote{Hypre's Euclid preconditioner \cite{hypre} with no drop tolerance and factorisation level 1.} of the sparse parts of the system as a preconditioner, ignoring the dense block in the Jacobian arising from the BEM.
+The resulting linear system is solved using GMRES with an incomplete LU decomposition\footnote{\hypre's Euclid preconditioner \cite{hypre} with no drop tolerance and factorisation level 1.} of the sparse parts of the system as a preconditioner, ignoring the dense block in the Jacobian arising from the BEM.
 
 \subsection{Explicit time integration}
 For the explicit integration we need to use an explicit rearrangement \cite[181]{Aharoni1996} of the LLG equation
@@ -59,7 +59,7 @@ As the time integrator we use a two stage Runge-Kutta method (RK2), also known a
 \end{equation}
 Time derivatives are calculated within the Galerkin method by inverting the finite-element mass matrix using a diagonally preconditioned conjugate gradient solver.
 The magnetostatic potential $\phim$ is recalculated using the FEM/BEM method at appropriate time and magnetisation values during each stage of \cref{eq:heunn}.
-The Poisson solves required for the evaluation of the potentials $\phione$ and $\phim$ use a conjugate gradient solver preconditioned with algebraic multigrid\footnote{One V(1,1) cycle of Hypre's BoomerAMG preconditioner \cite{hypre} with Gauss-Seidel smoothing, CLJP coarsening and a connection strength threshold of 0.7.}.
+The Poisson solves required for the evaluation of the potentials $\phione$ and $\phim$ use a conjugate gradient solver preconditioned with algebraic multigrid\footnote{One V(1,1) cycle of \hypre's BoomerAMG preconditioner \cite{hypre} with Gauss-Seidel smoothing, CLJP coarsening and a connection strength threshold of 0.7.}.
 
 
 \subsection{Semi-implicit time integration}

@@ -30,7 +30,7 @@ We present a novel solver using a preconditioned Krylov method combined with a h
 Efficient solver strategies for the Poisson systems in \cref{sec:poisson-jacobian} are extremely well studied.
 One efficent and robust method for solving Poisson systems on unstructured grids is to use the method of conjugate gradients with algebraic multigrid as a preconditioner \cite[Chap. 2]{HowardElmanDavidSilvester2006}.
 We use \oomph's implementation of right preconditioned CG (??ds check) with a convergence tolerance of $10^{-8}$.
-For preconditioning we use one V(1,1) cycle of Hypre's BoomerAMG preconditioner \cite{hypre} with Gauss-Seidel smoothing, CLJP coarsening and a connection strength threshold of 0.7.
+For preconditioning we use one V(1,1) cycle of \hypre's BoomerAMG preconditioner \cite{hypre} with Gauss-Seidel smoothing, CLJP coarsening and a connection strength threshold of 0.7.
 
 
 There do not appear to be any robust, scalable solvers in the literature for the LLG + exchange system with linearisation by the Newton-Raphson method.
@@ -41,7 +41,7 @@ It would not be expected to work efficiently for larger time steps and large num
 We use two solvers in our model, neither are scalable to large mesh sizes.
 The first method used is a direct solve by LU decomposition (using SuperLU \cite{superlu} with parameters ??ds), as discussed in \cref{sec:direct-methods} this is extremely robust but also extremely slow for large meshes (??ds what size).
 
-The second method is \oomph's GMRES right preconditioned by Hypre's Euclid incomplete LU decomposition preconditioner with one level of fill in and no drop tolerance.
+The second method is \oomph's GMRES right preconditioned by \hypre's Euclid incomplete LU decomposition preconditioner with one level of fill in and no drop tolerance.
 Incomplete LU decomposition with no fill in was also tested but found to be ineffective, especially for larger time steps.
 This method is efficient for medium sized meshes (up to around 100,000 nodes), but for larger meshes the preconditioner is both slow to assemble and ineffective.
 
@@ -262,7 +262,7 @@ In order to test our solvers we only need to model a single time step of some pr
 
 Since the vast majority of practical micromagnetics calculations are in three dimensions our test case must be 3D.
 
-The hierarchical matrix library that we are using (\texttt{hlib} with patches from \texttt{nmag}) only supports triangular surface elements for co-location BEM, so we need to use a tetrahedral mesh.
+The hierarchical matrix library that we are using (\hlib with patches from \nmag) only supports triangular surface elements for co-location BEM, so we need to use a tetrahedral mesh.
 
 There must be sharp corners in order to test the effect of near singular integrals in the FEM/BEM method.
 
@@ -309,7 +309,7 @@ As an additional optimisation the skew symmetric structure of \cref{eq:llg-jacob
 Applying these additional optimisations will reduce the Jacobian calculations to the assembly of three $N \times N$ Jacobian blocks and the magnetocrystalline anisotropy block (which will typically be either $N \times N$ or empty).
 
 
-hlib, if I don't get it in here...
+\hlib, if I don't get it in here...
 
 
 
