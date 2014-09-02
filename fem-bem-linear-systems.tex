@@ -29,7 +29,7 @@ We present a novel solver using a preconditioned Krylov method combined with a h
 
 Efficient solver strategies for the Poisson systems in \cref{sec:poisson-jacobian} are extremely well studied.
 One efficent and robust method for solving Poisson systems on unstructured grids is to use the method of conjugate gradients with algebraic multigrid as a preconditioner \cite[Chap. 2]{HowardElmanDavidSilvester2006}.
-We use \oomph's implementation of right preconditioned CG (??ds check) with a convergence tolerance of $10^{-8}$.
+We use \oomph's implementation of preconditioned CG with a relative convergence tolerance of $10^{-8}$.
 For preconditioning we use one V(1,1) cycle of \hypre's BoomerAMG preconditioner \cite{hypre} with Gauss-Seidel smoothing, CLJP coarsening and a connection strength threshold of 0.7.
 
 
@@ -39,9 +39,9 @@ This should work for sufficiently small time steps, \ie when the mass matrices o
 It would not be expected to work efficiently for larger time steps and large numbers of nodes.
 
 We use two solvers in our model, neither are scalable to large mesh sizes.
-The first method used is a direct solve by LU decomposition (using SuperLU \cite{superlu} with parameters ??ds), as discussed in \cref{sec:direct-methods} this is extremely robust but also extremely slow for large meshes (??ds what size).
+The first method used is a direct solve by LU decomposition (using \superlu \cite{superlu} with parameters ??ds), as discussed in \cref{sec:direct-methods} this is extremely robust but also extremely slow for large meshes (??ds what size).
 
-The second method is \oomph's GMRES right preconditioned by \hypre's Euclid incomplete LU decomposition preconditioner with one level of fill in and no drop tolerance.
+The second method is \oomph's GMRES preconditioned by \hypre's Euclid incomplete LU decomposition preconditioner with one level of fill in and no drop tolerance.
 Incomplete LU decomposition with no fill in was also tested but found to be ineffective, especially for larger time steps.
 This method is efficient for medium sized meshes (up to around 100,000 nodes), but for larger meshes the preconditioner is both slow to assemble and ineffective.
 
