@@ -29,7 +29,7 @@ We can then solve for $\phitwo$ on the boundary using similar techniques to thos
 Finally we apply the finite element method to find $\phitwo$ inside the magnetic domain $\magd$.
 
 By the uniqueness of solution for Poisson's equation with Dirichlet and/or Neumann boundary conditions we know that the field $ \hms = \grad \phim$  constructed by the above steps is \emph{the} magnetostatic field.\footnote{To see this take the difference of two solutions of Poisson's equation: $\phi = \psi_1 - \psi_2$.
-Then using identity \cref{eq:20}, the linearity of Poisson's equation and the divergence theorem we obtain $\int_S \phi \grad \phi \cdot d \mathbf{S} = \int_V (\grad \phi)^2 dV$.
+Then using identity \cref{eq:20}, the linearity of Poisson's equation and the divergence theorem we obtain $\int_S \phi \grad \phi \cdot \nv \d S = \int_V (\grad \phi)^2 \d V$.
 Applying Dirichlet, Neumann or mixed boundary conditions shows that the boundary integral is zero and hence $\grad \phi = 0$.}
 
 \subsection{Problem Description}

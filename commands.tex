@@ -72,6 +72,7 @@
 \newcommand{\eqpar}[1]{\text{\parbox{0.8\textwidth}{#1}}}
 
 \newcommand{\set}[1]{\left\{ {#1} \right\}}
+\newcommand{\setst}[2]{\left\{ {#1} \,\middle|\, {#2} \right\}}
 
 \newcommand{\E}[1]{\times 10^{#1}} % powers of 10
 \newcommand{\st}{\,|\,} % ``such that'' operator in sets (vertical line with spacing)
@@ -217,6 +218,7 @@
 
 \newcommand{\Dfs}{\mathcal{D}} % Set of functions that obey Dirichlet boundaries
 \newcommand{\Neu}{{\scriptscriptstyle{\mathcal{N}}}} % Neumann
+\newcommand{\Dir}{{\scriptscriptstyle{\mathcal{D}}}} % Neumann
 
 \newcommand{\Htest}{\sob^1_0(\magd)}
 \newcommand{\Hsol}{\sob^1_D(\magd)}
@@ -395,6 +397,12 @@
 \newcommand{\yvdis}{\mydiscrete{\yv}}
 \newcommand{\phionedis}{\mydiscrete{\phione}}
 \newcommand{\phimdis}{\mydiscrete{\phim}}
+
+
+% approximation functions (fem)
+\newcommand{\myinterp}[1]{{#1}_h}
+\newcommand{\mvh}{\myinterp{\mv}}
+\newcommand{\phimh}{\myinterp{\phim}}
 
 
 \newcommand{\resi}{\rv}

@@ -1,18 +1,22 @@
 \chapter{A finite element method for the Landau-Lifshitz-Gilbert Equation}
 \label{sec:galerk-meth-llg}
 
-??ds replaced ``interpolated ...'' with proper name..
+??ds replace ``interpolated ...'' with proper name..
 
-In \thisref{sec:galerk-meth-llg} we first give a general introduction to the finite element method as applied to the magnetostatic potential equation \cref{eq:Hms} in one spatial dimension.
-We then extend this discussion to the full Landau-Lifshitz-Gilbert equation with magnetostatics in three dimensions.
-The linearisation of the LLG equation is handled using the Newton-Raphson method, see \cref{sec:newt-raph} for details.
+In \cref{sec:intr-finite-ele-diff} we give a general introduction to the finite element method as applied to the magnetostatic potential equation \cref{eq:Hms} in one spatial dimension.
+Then in \cref{sec:llg-initial-equations,sec:time-discretisation-resi} we extend this discussion to the full (non-linear) Landau-Lifshitz-Gilbert equation with magnetostatics in three spatial dimensions.
+The linearisation of the LLG equation is handled using the Newton-Raphson method (see \cref{sec:newt-raph}), hence we need to derive an analytical expression for the Jacobian matrix.
+This is done in \cref{sec:llg-jacobian-calculation}.
+
+Finally in \cref{sec:nodal-integration} we show how the geometric integration properties of IMR (as discussed in \cref{sec:time-discretisation}) can be extended from the simple ODE case to the semi-discretised FEM.
+
 For the purposes of \thisref{sec:galerk-meth-llg} we will assume that suitable boundary conditions on the magnetostatic potential have been already been determined, the details of this process are discussed in \cref{sec:hybr-finit-elem}.
 
 \section{Introduction to the finite element method}
 \label{sec:intr-finite-ele-diff}
 
 The following simple problem is used to illustrate the finite element method:
-Find $\phim(x)\in C^{2}(0,1)$ such that
+Find $\phim(x)\in C^{2}(0,1)$ \footnote{The set $C^n(\magd)$ is the set of all functions $f$ such that $f$ and it's first $n$ derivatives are continuous on $\magd$.} such that
 \begin{equation}
   -\phim''(x) = f(x) \qquad x \in (0,1),
   \label{eq:poisson1}
@@ -24,21 +28,12 @@ with boundary conditions
 A function $g$ is in $C^{k}(\magd)$ if $g$ and it's first $k$ derivatives are continuous in $\magd$.
 Setting $f = -\div \mv = -\pd{m_x}{x}$ results in the magnetostatic potential problem \cref{eq:Hms} with Dirichlet boundary conditions.
 
-
-\subsection{Definitions}
-\label{sec:fem-definitions}
-
-??ds do I need to cite definitions? Do I even need all this?
-
-The function space $L^{2}$ consists of all functions $f(x)$ such that $\int_{-\infty}^{\infty}\abs{f(x)}^{2} \d x$ is finite.
-The span of a set of functions is the set of all possible linear combinations of the functions. 
-If a set of functions $\set{\phi_i}$ is such that $V=\text{span}(\phi_i)$ then we say that $\set{\phi_i}$ spans $V$ and $\set{\phi_i}$ is a basis for the function space $V$.
-If $V$ has a basis consisting of a finite number of functions then we say that $V$ is finite dimensional, otherwise $V$ is infinite dimensional.
-
-The $n$-th Sobolev space is the space of all functions such that they and their $n$-th derivatives (in all dimensions) are in $L^2$. For example
+Before we can continue we need some definitions:
+The function space $L^{2}$ consists of all functions $f$ such that $\sqrt{\int_{-\infty}^{\infty}\abs{f(x)}^{2} \d x}$ is finite.
+The $n$-th Sobolev space, $\sob^n$, is the space of all functions $f$ such that $f$ and its first $n$ derivatives (with respect to all combinations of directions) are in $L^2$, \eg
 \begin{equation}
   \label{eq:H1}
-  \sob^1(\magd) = \set{ \phim \st \phim, \pd{\phim}{x_i} \in L^2(\magd) \; \forall x_i }
+  \sob^1(\magd) = \setst{ \phim : [0,1] \rightarrow \mathbb{R} }{ \phim, \pd{\phim}{x_i} \in L^2(\magd) \; \forall x_i }
 \end{equation}
 
 
@@ -50,82 +45,71 @@ It involves replacing the initial PDE with an equivalent but more flexible versi
 
 The formulation of the problem in \cref{eq:poisson1} (called a strong or classical formulation) is too restrictive for our purposes.
 It disallows some useful approximating functions and restricts the geometries that can be modelled \cite[14]{HowardElmanDavidSilvester2006}.
-For ``well behaved'' functions and domains the following weak formulation is equivalent, but without these restrictions: find $\phim\in V_{s}$ such that
+For ``well behaved'' functions and domains a \emph{weak formulation} is equivalent but without these restrictions.
+The weak formulation of \cref{eq:poisson1} is: find $\phim\in V_{s}$ such that
 \begin{equation}
-  -\intui{\phim'' v} = \intui{f v} \qquad \forall v \in V_{T}.
+  -\intui{\phim'' v} = \intui{f v} \qquad \forall v \in V_{T},
   \label{eq:26}
 \end{equation}
-Here $V_{T}$ is some appropriate space of \emph{test functions}.
-The test functions must satisfy $V_{T}\subseteq \sob^0(0,1)$, in order to ensure that the integrals in \cref{eq:26} are well defined. 
-Additionally, \cref{eq:26} should not depend directly on the boundary values since they are fixed, this can be done by forcing the test functions to be zero on the boundaries. ??ds goes later: we introduce this to remove the boundary term. It's ok because we know what the boundary values are: no need to enforce it by testing.
+where $V_{T}$ is some appropriate space of \emph{test functions} and $V_{T}\subseteq \sob^0(0,1)$ in order to ensure that the integrals in \cref{eq:26} are well defined.
+Additionally we do not need to enforce the boundary values in this way since they are known, so we can set the test functions to zero on the boundaries (this property is useful later on).
 So an appropriate test function space is
 \begin{equation}
   \label{eq:28}
-  V_{T}=\set{v : [0,1] \rightarrow \real \st v \in \sob^0(0,1),\; v(0) =0,\; v(1)=0}.
+  \begin{aligned}
+    V_{T} &= \sob^0(0,1) \cap \Dfs_0, \\
+    \Dfs_0 &= \setst{v}{v \in L^2(0,1),\; v(0) =0,\; v(1)=0}.
+  \end{aligned} 
 \end{equation}
 The space $V_{s}$ is the solution space
 \begin{equation}
-  V_{s}=\set{ \phim : [0,1] \rightarrow \mathbb{R} \st \phim \in \sob^2(0,1),\, \phim(0) = \phim_{a},\, \phim(1) = \phim_{b}},
+  \begin{aligned}
+    V_{s} &= \sob^2(0,1) \cap \Dfs, \\
+    \Dfs &= \setst{\phim}{\phim \in L^2(0,1),\, \phim(0) = \phim_{a},\, \phim(1) = \phim_{b}},
+  \end{aligned} 
 \end{equation}
 \ie the space of functions that are sufficiently smooth for the integrals to be finite and that satisfy the boundary conditions.
 
 To see that \cref{eq:26} is equivalent to \cref{eq:poisson1} consider the case when $f(x) + \phim''(x)$ is non-zero at a point $x \in (0,1)$, \ie when the strong form \cref{eq:poisson1} is not satisfied. 
-Since \cref{eq:26} must hold for all functions we can choose a function which is non-zero at $x$ and hence the equality in \cref{eq:26} will fail.
-So $f(x) + \phim''(x) = 0$ must hold at all points $x \in (0,1)$.
-We call this approach the method of weighted residuals because we use an integral of the residual weighted by a test function to approximate the true equation \cite[210, 214]{Zeinkiewicz1967}.
+Since \cref{eq:26} must hold for all functions we can choose a function which is non-zero at $x$ and \cref{eq:26} will fail.
+We call this approach the method of weighted residuals \cite[210, 214]{Zeinkiewicz1967}.
 
 The smoothness restrictions on our weak form approximation can be further reduced by integrating the left hand side of \cref{eq:26} by parts to obtain
-% using the integration by parts formula:
-% \begin{equation}
-%   \intui{qp'} = \Big[ pq \Big]_{0}^{1} - \intui{p q'},
-% \end{equation}
-% applied to the left hand side of \cref{eq:26}.
-% Let $p=\phim'$ and $q=v$, then
 \begin{equation}
   -\intui{ \phim''v } = -\Big[ \phim'v \Big]_{0}^{1} + \intui{ \phim'v' } = \intui{f v}.
   \label{eq:29}
 \end{equation}
-Additionally, the square bracketed term in \cref{eq:29} is zero because the test functions, $v$, must be zero on the boundary.
-Hence we are left with the problem: Find $\phim \in V'_{S}$ such that
+Note that the square bracketed term in \cref{eq:29} is zero because the test functions, $v$, are set to zero on the boundary.
+Hence we are left with the problem: Find $\phim \in \sob^1(0,1) \cap \Dfs$ such that
 \begin{equation}
-  \intui{ \phim'v' } = \intui{ fv } \qquad 
-  \forall v \in V'_{T} = \set{v \st v \in \sob^1(0,1),\, v_a=v_b=0},
+  \intui{ \phim'v' } = \intui{ fv } \quad \forall v \in \sob^1(0,1) \cap \Dfs_0.
   \label{eq:symmetric-weak-poisson}
 \end{equation}
-where
-\begin{equation}
-  V_{S}'=\set{\phim \st \phim \in \sob^1(0,1),\, \phim(0) = \phim_a, \phim(1) = \phim_b }.
-\end{equation}
-
-Note that this rearrangement has removed the second derivative in $\phim$, hence we only require $\phim \in \sob^1(0,1)$ instead of $\phim \in \sob^2(0,1)$.
+This rearrangement has removed the second derivative in $\phim$, hence we only require $\phim \in \sob^1(0,1)$ instead of $\phim \in \sob^2(0,1)$.
 This allows a wider range of solution functions to be used, but comes at the expense of requiring more smoothness in the test functions.
-Also note that if $\phim_a = \phim_b = 0$ then $V_{S}'=V_{T}'$, our test and solution spaces are identical.
+It also means that our test and solution spaces are identical apart from the boundary values.
 
 An alternative class of boundary condition, called Neumann conditions, specify the values of $\phim'$ at the boundary.
-This allows the bracketed term in \cref{eq:29} to be calculated directly.
-In this case we do not force the test functions to be zero on the boundary.
-??ds Milan wants me to change this but his version is unintelligible...
+In this case we do not set the test functions to be zero on the boundary since the boundary values must still be determined as usual.
+However knowing the value of $\phim'$ allows the bracketed term in \cref{eq:29} to be calculated directly.
 
 \subsection{Discretisation}
 
-\Cref{eq:symmetric-weak-poisson} is still continuous (\ie the test and solution spaces are still infinite dimensional) and so is still not ready to be implemented as a computational method.
-To convert our continuous weak form to a discrete version we approximate $V_{T}'$ by a finite dimensional function space $V_{T}^{h}\subset V_{T}'$ such that
+\Cref{eq:symmetric-weak-poisson} is still continuous (\ie the test and solution spaces are still infinite dimensional) and so it cannot be implemented as a computational method.
+To convert our continuous weak form to a discrete version we approximate the infinite dimensional test function space by a finite dimensional subset $V_{T}^{h} \subset \sob^1(0,1) \cap \Dfs$ such that
 \begin{equation}
-  V_{T}^{h}=\text{span} \set{ \tbf_{\ndi} }_{n=0}^{N}
-  = \set{v_h \st v_h = \sum_{n=0}^{N}\alpha_{\ndi} \tbf_{\ndi},\, \alpha_{\ndi} \in \real,\,
-    v_a = v_b =0 },
+  V_{T}^{h} = \setst{v_h }{ v_h = \sum_{n=0}^{N}\alpha_{\ndi} \tbf_{\ndi},\, \alpha_{\ndi} \in \real} \cap \Dfs_0,
   \label{eq:30}
 \end{equation}
 for some finite set of test basis functions $\tbf_{\ndi}$.
-Similarly, for $V_S$
+Similarly, for $V_S^h \subset \sob^1(0,1) \cap \Dfs$:
 \begin{equation}
   \label{eq:34}
-  V_{S}^{h}=\text{span} \set{ \sbf_{l} }_{l=0}^{N_l}
-  = \set{\phim_h \st \phim_h = \sum_{l=0}^{N_l}\phim_{l} \sbf_{l},\, \phim_{l} \in \real,\,
-    \phim(0) = \phim_a,\, \phim(1) = \phim_b }.
+  V_{S}^{h} = \setst{\phimh }{ \phimh = \sum_{l=0}^{N_l}\phim_{l} \sbf_{l},\, \phim_{l} \in \real}
+  \cap \Dfs
 \end{equation}
 We call $\sbf_l$ the solution basis functions.
-The distinction between the test functions, $\test$, and the test basis functions, $\tbf$, is often dropped because satisfying the weak form for all test basis functions implies that the weak form is satisfied for all test functions.
+The distinction between the test functions, $\test$, and the test basis functions, $\tbf$, is often dropped because satisfying the weak form for all test basis functions implies that it is satisfied for all test functions.
 Different choices of $\tbf_{\ndi}$ and $\sbf_l$ lead to different methods, the choice corresponding to the finite element method will be discussed in \cref{sub:Actual-Finite-Elements}.
 For now we continue with a description of the conversion to a general discrete form.
 
@@ -134,12 +118,12 @@ Replacing $v_{h}$ from \cref{eq:poisson1} by $\tbf_{\ndi}$ gives an equivalent s
   \intui{  \phim'_{h} \tbf_{\ndi}'  }  = \intui{ f\tbf_{\ndi} } \qquad n=0,\ldots,N,
   \label{eq:discrete_weak_test_fns_replaced}
 \end{equation}
-Since $\phim_{h}\in V_{S}^{h}$ we can also replace $\phim_{h}$ by a linear combination of the basis functions, \ie
+Since $\phim_{h}\in V_{S}^{h}$ we can replace $\phim_{h}$ by a linear combination of the solution basis functions, \ie
 \begin{equation}
   \phim_{h}=\sum_{l=0}^{N_l} \phim_{l}\sbf_{l},
   \label{eq:y-spans}
 \end{equation}
-where $c_l \in \real$ are (unknown) coefficients.
+where $\phim_l \in \real$ are the unknown coefficients which define the approximate solution $\phimh$.
 Substituting \cref{eq:y-spans} into \cref{eq:discrete_weak_test_fns_replaced} gives
 \begin{equation}
   \sum_{l=0}^{N_l} \phim_{l}\intui{ \sbf_{l}'\tbf'_{\ndi} } =\intui{ f\tbf_{\ndi} } 
@@ -148,7 +132,7 @@ Substituting \cref{eq:y-spans} into \cref{eq:discrete_weak_test_fns_replaced} gi
 \end{equation}
 
 The functions $f$, $\tbf$ and $\sbf$ are known and so the integrals in \cref{eq:31} can be evaluated.
-Hence we introduce a matrix $\Am$ and a vector $\mathbf{b}$ containing the results of these integrals:
+Hence we introduce a matrix $\Am$ and a vector $\bv$ containing the results of these integrals:
 \begin{equation}
   \begin{aligned}
     \Am_{l\ndi} &= \intui{ \sbf_{l}'\tbf'_{\ndi} }, \\
@@ -156,30 +140,31 @@ Hence we introduce a matrix $\Am$ and a vector $\mathbf{b}$ containing the resul
     \label{eq:Aij_bj}
   \end{aligned}
 \end{equation}
-and the problem is reduced to a system of linear equations
+and the problem is reduced to a system of linear equations.
+Writing $\phimdis$ for the vector of $\phim_l$ the system is
 \begin{equation}
   \Am \phimdis = \bv.
   \label{eq:final_galerkin}
 \end{equation}
-This system can be solved to find the vector of unknown coefficients, $\phimdis$, which can be substituted into \cref{eq:y-spans} to give an approximation for $\phim(x)$.
+This system can be solved to find $\phimdis$, which can then be substituted into \cref{eq:y-spans} to give an approximation for $\phim(x)$.
 
 
 \subsection{Finite Elements in One Dimension}
 \label{sub:Actual-Finite-Elements}
 
-To create a usable implementation of the methodology derived in \cref{Derivation-of-weighted-residuals} we must first define basis functions for the spaces $V_{T}^{h}$ and $V_S^h$.
-We choose the test and solution basis functions to be the same: $\sbf_l = \tbf_l$.
+To create a usable implementation of the methodology derived in so far in \thisref{sec:galerk-meth-llg} we must need to define basis functions for the spaces $V_{T}^{h}$ and $V_S^h$.
+We choose the test and solution basis functions to be the same (except at the boundaries): $\sbf_l = \tbf_l$.
 This choice defines a Galerkin method (and results in a symmetric matrix $\Am$ if the original equation has the corresponding symmetry) \cite[215]{Zeinkiewicz1967}.
 
-The overall aim is to approximate an arbitrary function by a linear combination of a finite set of easy-to-work-with functions, $\tbf_\ndi$.
-A good class of functions to satisfy this requirement is the polynomials: they are trivial to add, subtract and differentiate; and can be easily numerically integrated (see \cref{sec:numer-eval-integrals}).
+The aim now is to approximate an arbitrary function by a linear combination of a finite set of easy-to-work-with functions, $\tbf_\ndi$.
+A good class of functions to satisfy aim is the polynomials: they are trivial to add, subtract and differentiate; and can be easily numerically integrated (see \cref{sec:numer-eval-integrals}).
 
 Additionally it is desirable that the final matrix $\Am$ be sparse (to allow efficient linear algebra).
 For this to happen we need $\intui{ \sbf_{l}'\tbf'_{\ndi} } = 0$ for most pairs of $l, \ndi$. 
 An obvious way to achieve this is to have each basis function only overlap (in space) with a few other basis functions, for example by having each basis function non-zero only on a portion of the domain.
 Basis functions with this property are said to have ``local support''.
 
-These two points lead us to the use of a carefully constructed set of \emph{piecewise polynomials} as our basis functions.
+These two ideas lead us to the use of a carefully constructed set of \emph{piecewise polynomials} as our basis functions.
 We first split the domain into $N_e$ non-overlapping regions called \emph{elements}, each with a \emph{node} at either end.
 We then define two ``local'' basis functions within each element as
 \begin{equation}
@@ -197,7 +182,8 @@ This definition results in following useful properties of $\tbf^{(e)}_{\ndi}(x)$
     0 & k \neq \ndi.
   \end{cases}
 \end{equation}
-This means that the coefficient of each test function corresponds directly to the value of the solution at the node where that test function is non-zero, \ie the list of coefficients, $\phimdis$, is just a list of the nodal values of $\phim(x)$.
+This means that the coefficient of each basis function in \cref{eq:y-spans} corresponds directly to the value of the solution at the node where that test function is non-zero
+In other words the list of coefficients, $\phimdis$, is just a list of the nodal values of $\phim(x)$.
 
 Next we define the $\ndi$th (global) basis function as:
 \begin{equation}
@@ -215,81 +201,77 @@ The relationship between the local and global test functions is illustrated in \
 \begin{figure}
   \center
   \includegraphics[width=0.8\textwidth]{./images/local_global_functions}
-  \caption{The local and global piecewise polynomial basis functions and numbering schemes for a one-dimensional finite element model.   % ??ds numbering: change e_i to element e, e_{i+1} to e+1, x_i to x_\ndi, x^(i) to x^(e) L_i to \tbf_\ndi
+  \caption{The local and global piecewise polynomial basis functions and numbering schemes for a one-dimensional finite element model.  ??ds numbering: change $e_i$ to element $e$, $e_{i+1}$ to $e+1$, $x_i$ to $x_\ndi$, $x^(i)$ to $x^(e)$ $L_i$ to $\tbf_\ndi$
   }
   \label{fig:local_global_functions}
 \end{figure}
 
-The global basis functions are integrable (\ie in $L^2[0,1]$) since they are just a combination of local basis functions.
-So to obtain sets of functions which are subsets of $V_T^h$ and $V_S^h$ we merely need to remove the test functions which are non-zero on Dirichlet boundaries.
-??ds talk to Milan about this
+The global basis functions are clearly in $\sob^1(0,1)$ since they are just piecewise polynomials.
+So to obtain basis functions which satisfy the requirements on $V_T^h$ and $V_S^h$ we merely need to take the intersection with $\Dfs_0$ or $\Dfs$ respectively (\ie we discard the basis functions which do not obey the conditions on the boundary).
 
-It is advantageous to work with such low order polynomials even for very complex models because evaluation of integrals and interpolated values is simple and cheap to compute.
-Also note that an arbitrary level of accuracy can be achieved when approximating the a smooth function by piecewise polynomials by increasing the number of polynomials used (\ie after sufficient mesh refinement).
+It is advantageous to work with such low order polynomials even for very complex models because the evaluation of integrals and interpolated values is simple and cheap to compute.
+Also note that an arbitrary level of accuracy can be achieved when approximating a smooth function by piecewise polynomials by increasing the number of polynomials used (\ie by adding more nodes and elements to the mesh in appropriate places).
 
-The description here generalises to higher dimensions fairly easily: nodes are placed at every corner/vertex of the element and the polynomials used are replaced by higher dimensional ones with equivalent properties \cite[20]{HowardElmanDavidSilvester2006}.
+The description here generalises to higher dimensions fairly easily \cite[20]{HowardElmanDavidSilvester2006}.
+In 2D square or triangle elements are typically used and nodes are placed at every corner of each element.
+In 3D ``brick'' or tetrahedral elements are used in the same way.
+In both cases the polynomial basis functions are replaced by higher dimensional ones with equivalent properties.
 
 The method can also be generalised to higher order polynomials, although more nodes are required inside each element in order to provide enough values to fully define the polynomials.
-The use of higher order polynomials increases accuracy at the cost of speed: the resulting linear systems are denser due to more test/solution basis functions overlapping. 
+The use of higher order polynomials increases the order of accuracy at the cost of speed: the resulting linear systems become more dense as the order of the polynomials is increased due to more basis functions overlapping with each other.
 
-To calculate the matrix $\Am$ and the vector $\mathbf{b}$ from equation \cref{eq:Aij_bj} needed for \cref{eq:final_galerkin} we first calculate the local contributions from each element: $\Am^{(e)}$ and $\mathbf{b}^{(e)}$.
-We also require a local-to-global mapping which gives a relationship between the local and global nodes. 
-Then the global matrix $\Am$ and vector $\mathbf{b}$ can be assembled by summing the appropriate local contributions.
-
-For our one-dimensional Poisson case the calculation of $\Am^{(e)}$ is quite
-simple, substituting the two local basis functions \cref{eq:simple_lagrange} into
-\cref{eq:Aij_bj} and using $h=x_{1}^{(e)}-x_{0}^{(e)}$ we are left with
+To calculate the matrix $\Am$ and the vector $\bv$ from \cref{eq:Aij_bj} we first calculate the local contributions from each element: $\Am^{(e)}$ and $\bv^{(e)}$.
+We then assemble the global $\Am$ and $\bv$ by summing the appropriate local contributions.
+For our one-dimensional Poisson example the calculation of $\Am^{(e)}$ is quite
+simple: substituting the two local basis functions \cref{eq:simple_lagrange} into
+\cref{eq:Aij_bj} and writing $h=x_{1}^{(e)} - x_{0}^{(e)}$ we are left with
 \begin{equation}
-  \Am^{(e)} = \dfrac{1}{h}
-  \left[
-    \begin{array}{cc}
-      1 & -1 \\ -1 & 1
-    \end{array}
-  \right],
+  \Am^{(e)} = \frac{1}{h}
+    \begin{pmatrix}
+      1 & -1 \\
+      -1 & 1
+    \end{pmatrix},
 \end{equation}
 where $h$ is the element size, $h = x_{1}^{(e)}-x_{0}^{(e)}$ (note that $h$ can vary between elements).
-Similarly for $\mathbf{b}^{(e)}$ we obtain
+Similarly for $\bv^{(e)}$ we obtain
 \begin{equation}
-  \mathbf{b}^{(e)}=\dfrac{1}{h}\left[
-    \begin{array}{c}
+  \bv^{(e)}=\frac{1}{h}
+    \begin{pmatrix}
       -\int_{x_{0}^{(e)}}^{x_{1}^{(e)}}(x-x_{1}^{(e)})\, f(x)\, dx\\
       \int_{x_{0}^{(e)}}^{x_{1}^{(e)}}(x-x_{0}^{(e)})\, f(x)\, dx
-    \end{array}\right],
+    \end{pmatrix}
 \end{equation}
-which we compute numerically since the entries depend on $f(x)$ which is not fixed.
+which we compute numerically since the entries depend on $f(x)$.
 
 
 
 \subsection{Numerical evaluation of integrals}
 \label{sec:numer-eval-integrals}
 
-In the above example the integrals for $\Am$ were fixed and so could be calculated analytically.
-This is not always the case in general (\eg the vector $\bv$, or the Jacobian matrix for non-linear problems), so we need some method to evaluate the integrals computationally.
-The most flexible way to evaluate integrals is to do it purely numerically using a quadrature scheme.
+In the above example the integrals for $\Am$ were fixed and so could be calculated analytically but this is not usually the case (\eg the vector $\bv$, or the Jacobian matrix for non-linear problems), so we need some method to evaluate the integrals computationally.
+The most flexible way to evaluate integrals is numerically using a quadrature scheme.
 A quadrature scheme is an approximation to an integral of the form
 \begin{equation}
   \begin{aligned}
     \intdx{f(\xv)} &\approx  \sum_i w_i f(\xv_i),
   \end{aligned}
 \end{equation}
-where the selection of the ``knots'' $\xv_i$ and the weights $w_i$ depend on the scheme.
+where $\xv_i$ are the \emph{knots} (or evaluation points) and $w_i$ the weights.
+The choice of $\xv_i$ and $w_i$ defines the quadrature scheme.
 
-There exist many different quadrature schemes suited for different applications.
+There exist many quadrature schemes suited for different applications.
 Since we only need to evaluate integrals of polynomial functions a single simple and accurate class of quadrature is sufficient: Gaussian quadrature \cite[492]{Kincaid2002}.
-Gaussian quadrature is able to exactly evaluate integrals of polynomials up to order $2n + 1$, the highest possible order, because the knots and weights are chosen ??ds
-
-is the quadrature scheme derived by choosing the knots such that when $n$ knots are used it 
+Gaussian quadrature is able to exactly evaluate integrals of polynomials up to order $2n + 1$, the highest possible order, because the knots and weights are chosen to minimise the error for polynomial integration.
 
 In higher dimensions the integration is not quite so simple.
-Quadrature schemes only apply over specifically shaped domains (or at least must be non-trivially modified for alternative geometries).
-To get around this issue we use a coordinate transformation to a reference element \cite[29]{HowardElmanDavidSilvester2006}, \eg any four sided element is mapped to the square $[-1, 1] \times [-1, 1]$, and standard quadrature schemes can be used.
-The final difficulty is to calculate the Jacobian of the transformation: if the ``local'' position variable is $\sv$ then the Jacobian is
+Quadrature schemes only apply for integrals over specific shapes (or at they least must be non-trivially modified for alternative geometries).
+To get around this issue we use a coordinate transformation to a reference element \cite[29]{HowardElmanDavidSilvester2006}, \eg any four sided element is mapped to the square $[-1, 1] \times [-1, 1]$, meaning that standard quadrature schemes can be used.
+The final difficulty is then to calculate the Jacobian of this transformation: if the ``local'' position variable (\ie within the reference element) is $\sv$ then the Jacobian is
 \begin{equation}
   J = \abs{ \pd{\sv}{\xv}} = \frac{1}{\abs{\pd{\xv}{\sv}}},
 \end{equation}
 where the elements of the Jacobian matrix $\pd{\xv}{\sv}$ can be calculated by interpolating $x$ using the local solution basis functions and differentiating.
-??ds check this: When using linear polynomial basis functions the Jacobian is constant in 1D and for triangular elements or a bilinear polynomial for quadrilateral elements. 
-Similarly in 3D it is constant for tetrahedral elements or trilinear for ``brick'' elements.
+When using linear polynomial basis functions the Jacobian is constant for 1D line elements, 2D triangular elements and 3D tetrahedral elements.
 
 So the final integration scheme is
 \begin{equation}
@@ -298,9 +280,9 @@ So the final integration scheme is
     &\approx  \sum_{i=0}^N w_i f_s(\sv_i) J_e(\sv_i).
   \end{aligned}
 \end{equation}
-where the definition of $f_s(\sv)$ is
+where $f$ in terms of the local coordinate $\sv$ is
 \begin{equation}
-  f_s(\sv) = f\bigb{\sum_j  \xv_j \sbf_j(\sv)}.
+  f(\sv) = f\bigb{\sum_j \xv_j \sbf_j(\sv)}.
 \end{equation}
 
 Gaussian quadratures for square and cube elements can be trivially constructed from the one dimensional quadrature using a tensor product formula.
@@ -309,12 +291,13 @@ Similar ``full integration'' quadratures for triangular and tetrahedral elements
 
 
 
-\section{Spatial discretisation of the LLG equation}
+\section{The FEM applied to the LLG equation}
 \label{sec:llg-initial-equations}
 
 We now apply the finite element method as discussed in \cref{sec:intr-finite-ele-diff} (together with the Newton-Raphson discussed in \cref{sec:newt-raph}) to the solution of the Landau-Lifshitz-Gilbert equation.
-We start with the Gilbert form of the LLG \cref{eq:Gilbert} with effective fields described in \cref{sec:energy-magnetic-body} and the potential method for calculating the magnetostatic field \cref{eq:Hms}.
-We use the Gilbert form of the LLG even though it is less intuitive because only contains single cross product terms, reducing the complexity of derivations.
+We use the Gilbert form of the LLG, \cref{eq:Gilbert}, with the effective fields described in \cref{sec:energy-magnetic-body} and the using potential method described in \cref{sec:magstat-field-calc-pote} for calculating the magnetostatic field.
+
+We chose the Gilbert form of the LLG even though it is less intuitive because only contains single cross product terms, reducing the complexity of derivations.
 A side effect of this choice is that explicit time integration schemes cannot be used since the time derivative is only defined implicitly.
 
 \subsection{Initial equations}
@@ -331,20 +314,20 @@ After non-dimensionalisation (see \cref{sec:land-lifsh-gilb-normalisation}) the 
 
 For now we consider the magnetostatic potential only within the magnetic domain, $\magd$, with Neumann or Dirichlet boundary conditions on the boundary, $\boundd$.
 Details of the extension to include the effects of the external region using the FEM/BEM method are given in \cref{sec:hybr-finit-elem}, for which both the Dirichlet and Neumann cases will be required.
-We define $\boundd_D$ and $\boundd_\Neu$ respectively to represent the region of the boundary domain where a Dirichlet condition or Neumann is imposed on the potential, \ie 
+We define $\boundd_\Dir$ and $\boundd_\Neu$ respectively to represent the region of the boundary domain where a Dirichlet condition or Neumann is imposed on the potential,\footnote{These must obviously be such that $\boundd_\Neu \cap \boundd_\Dir = \emptyset$ and $\boundd_\Neu \cup \boundd_\Dir = \boundd$.} \ie 
 \begin{equation}
   \begin{aligned}
-    \grad \phim(\xv) \cdot \nv(\xv) &= g_\Neu(\xv) \quad \forall \xv \in \boundd_\Neu, \\
-    \phim(\xv) &= g_D(\xv) \quad \forall \xv \in \boundd_D
+    \phim(\xv) &= g_\Dir(\xv) \quad \forall \xv \in \boundd_\Dir, \\
+    \grad \phim(\xv) \cdot \nv(\xv) &= g_\Neu(\xv) \quad \forall \xv \in \boundd_\Neu,
   \end{aligned}
 \end{equation}
-where $\nv(\xv)$ is the outward unit normal.\footnote{These must obviously be such that $\boundd_\Neu \cap \boundd_D = \emptyset$ and $\boundd_\Neu \cup \boundd_D = \boundd$.}
+where $\nv(\xv)$ is the outward unit normal.
 We also define the following function spaces for convenience
 \begin{equation}
 \begin{aligned}
   \label{eq:037}
-  \Dfs & = \set{ v \st v(\xv) = g_D(\xv) \; \forall \xv \in \boundd_D }, \\
-  \Dfs_0 &= \set{ v \st v(\xv) = 0 \; \forall \xv \in \boundd_D }.
+  \Dfs & = \setst{ v }{ v(\xv) = g_\Dir(\xv) \; \forall \xv \in \boundd_\Dir }, \\
+  \Dfs_0 &= \setst{ v }{ v(\xv) = 0 \; \forall \xv \in \boundd_\Dir }.
 \end{aligned}
 \end{equation}
 
@@ -354,12 +337,12 @@ Recall from \cref{sec:magn-bound-cond} that the boundary condition on the magnet
   \mv \times \dmdn = \zerov \quad \forall \xv \in \boundd.
 \end{equation}
 It turns out that this Neumann-like condition is exactly what is needed in the derivation of the residuals.
-??ds uniqueness? think it comes from $|\mv|$.
+??ds Milan wants to know if we have uniqueness on m? think it comes from $|\mv|$.
 
 \subsection{The weak form}
 \label{sec:weak-form-residuals}
 
-We now convert equations \cref{eqn:ndllg-starting} into their residual weak forms as described in \cref{Derivation-of-weighted-residuals}.
+We now convert \cref{eqn:ndllg-starting} into the residual weak form as described in \cref{Derivation-of-weighted-residuals}.
 In the following we will need the identity\footnote{This can be easily derived by applying the product rule to $\div (v \grad \phim)$.}
 \begin{equation}
   (\lap \phim) \test = \div (v \grad \phim) - \grad \phim \cdot \grad v.
@@ -371,21 +354,18 @@ We will also make use of the divergence theorem
   \label{eq:div-thm}
 \end{equation}
 
-The Newton residual for the magnetostatic potential is given by
+The Newton-Raphson residual for the magnetostatic potential is given by
 \begin{gather}
-  \rphi(\phim) = \intd{ (\lap \phim) \test }
+  \rphi(\phim, \test) = \intd{ (\lap \phim) \test }
   - \intd{ (\div \mv) \test}, \label{eqn:phires1}
 \end{gather}
-where $\phim \in \sob^2(\magd) \cap \Dfs$ and $\mv$ is some sufficiently smooth function.
+where $\phim \in \sob^2(\magd) \cap \Dfs$ and $\mv \in \sob^1(\magd)$.
 
-Recall that problem is to find some $\phim$ such that $\rphi(\phim) = 0$ for all test functions $\test \in \sob^0(\magd) \cap \Dfs_0$.
+Recall that problem is to find some $\phim$ such that $\rphi(\phim, \test) = 0$ for all test functions $\test \in \sob^0(\magd) \cap \Dfs_0$.
 We will find an approximation to $\phim$ using the Newton-Raphson method.
 Note that while the use of a linearisation method is unnecessary for the magnetostatic potential alone (since \cref{eqn:phires1} is linear in $\phim$) it will be necessary for the overall problem.
 
-The use of \cref{eqn:phires1} for calculating $\rphi$ would require the existence of second order derivatives.
-We prefer to reduce the order of these derivatives as discussed in \cref{Derivation-of-weighted-residuals} to relieve the smoothness requirements on our solution.
-As before we do this by ``transferring'' the derivatives onto the test functions \cite{HowardElmanDavidSilvester2006}.
-
+We now reduce the order of the derivatives on $\phim$, as discussed in \cref{Derivation-of-weighted-residuals}, by ``transferring'' the derivatives onto the test functions.
 Integrating identity \cref{eq:20} over the domain and applying the divergence theorem \cref{eq:div-thm} we obtain
 \begin{equation}
   \begin{aligned}
@@ -398,17 +378,16 @@ Integrating identity \cref{eq:20} over the domain and applying the divergence th
 \end{equation}
 Substituting \cref{eqn:identitygauss} into \cref{eqn:phires1} gives
 \begin{equation}
-  \rphi(\phim) = \intb{ \test (\grad \phim \cdot \nv) }
+  \rphi(\phim, \test) = \intb{ \test (\grad \phim \cdot \nv) }
   - \intd{ \grad \test \cdot \grad \phim }
-  - \intd{ (\div \mv) \test }.
+  - \intd{ (\div \mv) \test },
 \end{equation}
-This contains only first order derivatives so the solution space for $\phim$ is relaxed to $\sob^1(\magd) \cap \Dfs$. 
-However all first partial derivatives of the test functions are now required to be integrable, \ie $v \in \sob^1(\magd)$ instead of $v \in \sob^0(\magd)$.
+where the function spaces are now $\phim \in \sob^1(\magd) \cap \Dfs$ and $v \in \sob^1(\magd) \cap \Dfs_0$.
 
-Note that the boundary integral is always zero on $\boundd_D$ by the definition of the test functions. 
-Hence the boundary integral is only non-zero over $\boundd_{\Neu}$ where $\grad \phim \cdot \nv = g_{\Neu}$, which gives
+Note that the boundary integral is always zero on $\boundd_\Dir$ by the definition of the test functions. 
+Hence the boundary integral is only non-zero over $\boundd_{\Neu}$ where $\grad \phim \cdot \nv = g_{\Neu}$ and we have
 \begin{equation}
-  \rphi(\phim) = \int_{\boundd_\Neu} \test g_\Neu \d \boundd
+  \rphi(\phim, \test) = \int_{\boundd_\Neu} \test g_\Neu \d \boundd
   - \intd{ \grad \test \cdot \grad \phim}
   - \intd{ (\div \mv) \test}.
   \label{res:contphi}
@@ -416,7 +395,7 @@ Hence the boundary integral is only non-zero over $\boundd_{\Neu}$ where $\grad 
 
 
 Next we apply the same procedure to the Landau-Lifshitz-Gilbert equation with effective fields \cref{eqn:ndllg-starting}.
-For now we sidestep the details of time discretisation by assuming $\dmdt$ to be just another function of $\xv$.
+For now we sidestep the details of time discretisation by assuming $\dmdt$ to be just another (sufficiently smooth) function of $\xv$.
 The weak form of the LLG is
 \begin{equation}
   \begin{aligned}
@@ -427,25 +406,21 @@ The weak form of the LLG is
     \label{res:contllg}
   \end{aligned}
 \end{equation}
-Similarly to the previous examples the idea is to apply the Newton-Raphson method to find $\mv \in \sob^2(\magd)$ such that $\rllgv(\mv, \test) \approx 0$ $\forall \test \in \sob^0(\magd)$.
+Similarly to the previous examples the idea is to apply the Newton-Raphson method to find $\mv \in \sob^2(\magd)$ such that $\rllgv(\mv, \test) \approx \zerov$ $\forall \test \in \sob^0(\magd)$.
 
 Note that in \cref{res:contllg} the residual is a vector.
 However, we can also express the requirement for each component of \cref{res:contllg} to be zero as
 \begin{equation}
-  \rllg(\mv, \testv) = \int_\magd \Big( \ldots  \Big) \cdot \testv \d\magd,
+  \rllg(\mv, \testv) = \int_\magd \Big( \ldots  \Big) \cdot \testv \d\magd = 0,
 \end{equation}
 where $\testv \in (\sob^0(\magd))^3$ and the bracketed term is exactly the same as in \cref{res:contllg}.
-To see that $\rllg(\mv, \testv) = 0\; \forall \testv \in (\sob^0(\magd))^3$ implies $\rllgv(\mv, \test) = 0 \; \forall \test \in \sob^0(\magd)$ consider three vector test functions: $(\test, 0, 0)$, $(0, \test, 0)$ and $(0, 0, \test)$.
-Clearly $\rllg(\mv, (\test, 0, 0)) = \bigs{\rllg(\mv, \testv)}_x$, and similarly for the $y$ and $z$ cases.
-To see the inverse relationship (\ie $\rllgv(\mv, \test) = 0 \ldots$ implies $\rllg(\mv, \testv) = 0 \ldots$) note that if $\rllg(\mv, \test) = 0\; \forall \test \in \sob^0(\magd)$ then each term of every dot product in $\rllg(\mv, \testv)$ is zero, implying that the total residual is zero $\forall \testv \in (\sob^0(\magd))^3$.
+To see that $\rllg(\mv, \testv) = 0\; \forall \testv \in (\sob^0(\magd))^3$ implies $\rllgv(\mv, \test) = 0 \; \forall \test \in \sob^0(\magd)$ consider the vector test function $(\test, 0, 0)$.
+Clearly $\rllg(\mv, (\test, 0, 0)) = \bigs{\rllgv(\mv, \test)}_x$, and similarly for the $y$ and $z$ cases.
+To see the inverse relationship note that if $\rllg(\mv, \test) = 0\; \forall \test \in \sob^0(\magd)$ then each term of every dot product in $\rllg(\mv, \testv)$ is zero, implying that the total residual is zero $\forall \testv \in (\sob^0(\magd))^3$.
 The use of vector test functions makes certain manipulations simpler so, for the remainder of \thisref{sec:weak-form-residuals}, we will work with vector test functions.
 
-We again wish to reduce the order of the required derivatives, this time on $\mv$ in the term
-\begin{equation}
-  I = \intd{ (\mv \times \lap \mv) \cdot \testv }.
-  \label{eq:46}
-\end{equation}
-Firstly we reorder the terms to give
+We again wish to reduce the order of the required derivatives, this time on $\mv$ in the exchange term.
+First we rearrange to find that
 \begin{equation}
   \begin{aligned}
     I &= \intd{\lap \mv \cdot (\testv \times \mv)}, \\
@@ -455,13 +430,12 @@ Firstly we reorder the terms to give
 \label{eq:73}
 \end{equation}
 where $\bv = (\testv \times \mv)$.
-Note that \cref{eq:73} is very similar to \cref{eqn:phires1}, and so we follow the same procedure to obtain
+Note that each term of the sum in \cref{eq:73} is very similar to \cref{eqn:phires1}, and so we follow the same procedure to obtain
 \begin{equation}
-  I = \sum_{i=0}^2 \intb{b_i (\grad m_i \cdot \nv)} - \intd{\grad b_i \cdot \grad m_i}."
+  I = \sum_{i=0}^2 \bigs{\intb{b_i (\grad m_i \cdot \nv)} - \intd{\grad b_i \cdot \grad m_i}}.
 \label{eq:75}
 \end{equation}
-
-Rearranging the first term of \cref{eq:75} we obtain
+Rearranging the first term of \cref{eq:75} we find that
 \begin{equation}
   \begin{aligned}
     \sum_{i=0}^2 \intb{b_i (\grad m_i \cdot \nv)} 
@@ -474,18 +448,22 @@ which exactly the weak form of \cref{eq:m-bc} (the Neumann-like boundary conditi
 Hence the first term of \cref{eq:75} is zero in this case.
 
 Alternatively if we have periodic boundary conditions we can write this integral as a sum over opposite boundaries $\boundd_j$ and $\hat{\boundd}_j$.
-On opposite boundaries $\nv \rightarrow -\nv$ but the geometry and $\mv$ values must be identical, so we have
+On opposite boundaries $\nv$ becomes $-\nv$ but the geometry and $\mv$ values must be identical, so we have
 \begin{equation}
   \begin{aligned}
     \intb{(\mv \times \pd{\mv}{\nv}) \cdot \testv}
-    &= \sum_j \intd[\boundd_j]{\mv \times \pd{\mv}{\nv}} 
-    + \intd[\hat{\boundd}_j]{\mv \times \pd{\mv}{(-\nv)}}, \\
-    & = 0.
+    &= \sum_j \bigs{\intd[\boundd_j]{\mv \times \pd{\mv}{\nv}} 
+    + \intd[\hat{\boundd}_j]{\mv \times \pd{\mv}{(-\nv)}}}, \\
+    & = \sum_j \quad 0 ,
   \end{aligned}
 \end{equation}
+which is identical to the Neumann condition.
 
 Next we need an expression for $\grad b_i$.
-To avoid switching to tensor notation it is helpful to define, for any vector $\av$: $\gradv \av = (\grad a_0, \grad a_1, \grad a_2)$.
+To avoid the requirement for tensor notation it is helpful to define, for a vector $\av$
+\begin{equation}
+\gradv \av = \threevec{\grad a_0}{\grad a_1}{\grad a_2}.
+\end{equation}
 Then using the product rule, we have
 \begin{equation}
   \begin{aligned}
@@ -493,13 +471,14 @@ Then using the product rule, we have
     & = (\gradv \testv) \times \mv + \testv \times (\gradv \mv).
   \end{aligned}
 \end{equation}
-Hence
+Using this notation we can write
 \begin{equation}
-  I = - \intd{\grad \mv : \bigb{\grad \testv \times \mv}} 
-      - \intd{\grad \mv : \bigb{\testv \times \grad \mv}},
+  I =  \\,
+  - \intd{\gradv \mv : \bigb{\gradv \testv \times \mv}} 
+      - \intd{\gradv \mv : \bigb{\testv \times \gradv \mv}},
       \label{eq:72}
 \end{equation}
-where ``$:$'' is the component-wise scalar product, \eg $\grad \av : \grad \cv = \grad a_0 \cdot \grad b_0 + \grad a_1 \cdot \grad b_1 + \grad a_2 \cdot \grad b_2$.
+where ``$:$'' is the component-wise scalar product, \ie $\gradv \av : \gradv \cv = \grad a_0 \cdot \grad b_0 + \grad a_1 \cdot \grad b_1 + \grad a_2 \cdot \grad b_2$.
 
 Note that the $:$ operator obeys the usual triple product identity
 \begin{equation}
@@ -513,10 +492,10 @@ and permutations. % \cref{triple:-identity}, because
 %     & = 0 + 0 + 0
 %   \end{aligned}
 % \end{equation}
-Hence the second term of \cref{eq:72} is zero and after reordering terms we are left with
+Hence the second term of \cref{eq:72} is zero and after reordering the first term we are left with
 \begin{equation}
   \label{eq:final-lap-residual}
-  I = - \intd{\bigb{\mv \times \grad \mv} : \grad \testv}.
+  \intd{ (\mv \times \lap \mv) \cdot \testv } = - \intd{\bigb{\mv \times \gradv \mv} : \gradv \testv}.
 \end{equation}
 
 The final residual for the LLG equation, using a vector test function, is
@@ -527,7 +506,7 @@ The final residual for the LLG equation, using a vector test function, is
     + (\mv \times \hca)\cdot \testv 
     + (\mv \times \happ)\cdot \testv 
     - (\mv \times \grad \phi)\cdot \testv \\
-    & - \bigb{\mv \times \grad \mv} : \grad \testv
+    & - \bigb{\mv \times \gradv \mv} : \gradv \testv
     - \dampc \left( \mv \times \dmdt \right)\cdot \testv
     \d\magd.
   \end{aligned}
@@ -545,14 +524,14 @@ The final weak formulation is:
 \subsection{Spatial Discretisation}
 \label{sec:spat-discr-resi}
 
-The next step is to choose a finite dimensional approximation, $\ts$, for the infinite dimensional test and solution function spaces, $\tsinf$, such that the residuals \cref{res:contphi,eq:llg-res-final} become discrete in space.
+The next step is to choose a finite dimensional approximation for the infinite dimensional test and solution function spaces such that the residuals \cref{res:contphi,eq:llg-res-final} become discrete in space.
 Just as in \cref{sub:Actual-Finite-Elements} we choose to represent the finite dimensional spaces using a set of piecewise linear polynomials, $\tsbasis$, as basis functions.
 
-The approximations to the unknown functions $\mv$ and $\phim$ are represented as a sum over the solution basis functions $\sk \in \tsbasis$ (or $\tsbasis \cap \Dfs$ for $\phim$ with Dirichlet conditions) as
+The approximations to the unknown functions $\mv$ and $\phim$ are represented as a sum over the solution basis functions $\sk \in \tsbasis$ (or $\sk \in \tsbasis \cap \Dfs$ for $\phim$) as
 \begin{equation}
   \begin{aligned}
-    \mv &\approx \mv_h = \sum_{k = 0}^{N} \sk \, \mv_k, \\
-    \phim &\approx \phim_h = \sum_{k = 0}^{N} \sk \, \phim_{k}.
+    \mv(\xv) &\approx \mv_h = \sum_{k = 0}^{N} \sk \, \mv_k, \\
+    \phim(\xv) &\approx \phimh = \sum_{k = 0}^{N} \sk \, \phim_{k}.
     \label{eq:unknowns-basis}
   \end{aligned}
 \end{equation}
@@ -567,7 +546,7 @@ In one dimension the $\sk$ and $\tn$ are as given in \cref{eq:simple_lagrange}.
 The extension to higher dimensions is straightforward: see \eg \cite[25]{HowardElmanDavidSilvester2006}.
 
 So substituting the basis representations, \cref{eq:unknowns-basis,eq:47} into the continuous residuals we obtain approximations for the residuals in terms of a finite number of nodal values.\footnote{We do not write this form out here as it is long, messy and does not illuminate anything.}
-Next we replace the requirement that the residuals be zero for all test functions in the infinite dimensional set $\tsinf$ with the equivalent requirement for all functions in the finite set $\tsbasis$. 
+Next we replace the requirement that the residuals be zero for all test functions in the infinite dimensional set $\tsinf$ with the equivalent requirement for all the test basis functions in the finite set $\tsbasis$. 
 This results in a finite number of conditions (the residuals) on a finite number of variables (the nodal values) and so the spatial discretisation is complete.
 
 % As described in \cref{sub:Actual-Finite-Elements} we also convert this ``global'' representation into a ``local'' representation on each element.
@@ -581,21 +560,18 @@ This results in a finite number of conditions (the residuals) on a finite number
 \label{sec:time-discretisation-resi}
 
 In \thisref{sec:time-discretisation-resi} we discuss how to deal with the time derivative in the LLG residual \cref{eq:llg-res-final}.
-As discussed in \cref{sec:numer-meth-micr}, we will apply standard integration methods used for ODEs.
-This technique of applying independent spatial and time discretisations is known as semi-discretisation or the method of lines.
+As discussed in \cref{sec:numer-meth-micr}, we will apply standard integration methods widely used for ODEs.
+This technique of applying independent spatial and time discretisations is known as semi-discretisation (or the method of lines).
 
-We cannot simply apply the time integration methods in the way they are written in \cref{sec:some-implicit-time-integrators} (and in most text books) because our LLG residual \cref{eq:llg-res-final} is an implicit function of the time derivative\footnote{Actually we could have started with the LL form \cref{eq:LLG} where the derivative can be given explicitly, but as mentioned above this  is simpler.} and cannot be written in the required form $\pd{\yv}{t} = \fv(t, \yv)$.
+However, we cannot simply apply the time integration methods in the way they are written in \cref{sec:some-implicit-time-integrators} (and in most text books) because our LLG residual \cref{eq:llg-res-final} is an \emph{implicit} function of the time derivative\footnote{Actually we could have started with the LL form \cref{eq:LLG} where the derivative can be given explicitly, but as mentioned above the LLG form is simpler.} and so can not be written in the form $\pd{\yv}{t} = \fv(t, \yv)$.
 Instead we rearrange the time integration method to give discrete substitutions for the time derivative, the unknown function $\yv$ and $t$.
 
 Let $\dtn$ be the size of the $n$th time step and $x_n$ denote value of $x$ at the $n$-th time-step.\footnote{This notation has some potential to be confused with the nodal value notation of \cref{sec:spat-discr-resi}, hopefully the meaning will be clear from the context.}
 The simplest case is the first order backwards difference method (BDF1), which is defined by the substitution
 \begin{equation}
-  \begin{aligned}
-    \pd{\yv}{t} &\rightarrow \frac{\yv_{n+1} - \yv_n}{\dtn}, \quad
-    \yv &\rightarrow \yv_{n+1}, \quad
-    t &\rightarrow t_{n+1}.
+    \pd{\yv}{t} \rightarrow \frac{\yv_{n+1} - \yv_n}{\dtn}, \quad
+    \yv \rightarrow \yv_{n+1}, \quad t \rightarrow t_{n+1}.
     \label{eq:impl-bdf1}
-  \end{aligned}
 \end{equation}
 This substitution can be obtained by simple algebraic rearrangements of \cref{eq:bdf1-definition}.
 Similarly, the second order backwards difference method (BDF2) can be found (with some more complex algebra) to be:
@@ -604,8 +580,7 @@ Similarly, the second order backwards difference method (BDF2) can be found (wit
     \pd{\yv}{t} &\rightarrow \yv_{n+1}\bigb{\frac{1}{\dtn} + \frac{1}{\dtn + \dtx{n-1}}}
     - \yv_n \frac{\dtn + \dtx{n-1}}{\dtn\dtx{n-1}}
     + \yv_{n-1} \frac{\dtn}{(\dtn + \dtx{n-1})\dtx{n-1}}, \\
-    \yv &\rightarrow \yv_{n+1}, \quad
-    t &\rightarrow t_{n+1}.
+    \yv &\rightarrow \yv_{n+1}, \quad t \rightarrow t_{n+1}.
     \label{eq:impl-bdf2}
   \end{aligned}
 \end{equation}
@@ -631,9 +606,8 @@ The trapezoid rule (TR) is defined (recursively) by
 \begin{equation}
   \begin{aligned}
     \pd{\yv}{t} &\rightarrow \evalatb{\pd{\yv}{t}}{n+1} 
-    = \frac{2(\yv_{n+1} - \yv_n)}{\dtn} - \evalatb{\pd{\yv}{t}}{n}, \quad
-    \yv &\rightarrow \yv_{n+1}, \quad
-    t &\rightarrow t_{n+1}.
+    = \frac{2(\yv_{n+1} - \yv_n)}{\dtn} - \evalatb{\pd{\yv}{t}}{n}, \\
+    \yv &\rightarrow \yv_{n+1}, \quad t \rightarrow t_{n+1}.
     \label{eq:impl-tr}
   \end{aligned}
 \end{equation}
@@ -643,39 +617,37 @@ The properties of these time discretisations are exactly as discussed in \cref{s
 
 
 
-
-\section{The analytical Jacobian}
+\section{The Newton-Raphson Jacobian}
 \label{sec:llg-jacobian-calculation}
-??ds Milan doesn't like the term ``analytical Jacobian'', not sure what else to call it...
 
-To solve our fully discrete system by the Newton-Raphson method (see \cref{sec:newt-raph}) we also need to know the Jacobian matrix of each residual differentiated with respect to the $(n+1)$th variable at the time step.
-This can be handled by numerical differentiation (\eg by approximating each derivative using a finite difference method), but analytical Jacobians are typically faster to compute and give better convergence properties than numerical approximations.
-Additionally, for the solution of the linear systems it is often useful to know analytically the block structure of the system being solved.
+To solve our fully discrete system by the Newton-Raphson method (see \cref{sec:newt-raph}) we also need to know the Jacobian matrix of each residual differentiated with respect to each variable at the $(n+1)$th time step.
+This can be handled by numerical differentiation (\eg by approximating each derivative using a finite difference method), but analytical Jacobians are typically faster to compute and give better convergence properties than such numerical approximations.
+Additionally, for the solution of the linear systems, it is often useful to know analytically the block structure of the system being solved.
 
 Note that the ``real'' implementation of the implicit midpoint rule \cref{eq:impl-imr} introduces a factor of $1/2$ in various places due to the substitution $ \yv \rightarrow \frac{\yv_{n+1} + \yv_n}{2}$, the derivations below do not include this ??ds yet?
 
 For \thisref{sec:llg-jacobian-calculation} we use the scalar test function form of the residuals because it is the suitable for use in a real implementation.
 
-We first note that the effect of differentiation by a nodal value on the function $\phim$ is quite simple:
+We first note that the effect of differentiation by a nodal value on the approximation function $\phimh$ is quite simple:
 \begin{equation}
   \begin{aligned}
-    &\pd{\phim}{\phim_l} = \pd{}{\phim_l} \bigs{ \sum_k \phim_k \sk } = \sbf_l, \\
-    &\pd{\phim}{\mv_l} = \pd{}{\mv_l} \bigs{ \sum_k \phim_k \sk } = \zerov^T, \\
+    &\pd{\phimh}{\phim_l} = \pd{}{\phim_l} \bigs{ \sum_k \phim_k \sk } = \sbf_l, \\
+    &\pd{\phimh}{\mv_l} = \pd{}{\mv_l} \bigs{ \sum_k \phim_k \sk } = \zerov^T, \\
   \end{aligned}
 \end{equation}
-and similarly for the interpolated magnetisation, $\mv$:
+and similarly for the interpolated magnetisation, $\mvh$:
 \begin{equation}
   \begin{aligned}
-    &\pd{\mv}{\mv_l} = \pd{}{\mv_l} \bigs{ \sum_k \mv_k \sk } = \sbf_l \text{I}_3, \\
-    &\pd{\mv}{\phim_l} = \pd{}{\phim_l} \bigs{ \sum_k \mv_k \sk } = \zerov, \\
+    &\pd{\mvh}{\mv_l} = \pd{}{\mv_l} \bigs{ \sum_k \mv_k \sk } = \sbf_l \Idm_3, \\
+    &\pd{\mvh}{\phim_l} = \pd{}{\phim_l} \bigs{ \sum_k \mv_k \sk } = \zerov, \\
 \end{aligned} 
 \end{equation}
-where $\Im_3$ is the $3\times3$ identity matrix.
+where $\Idm_3$ is the $3\times3$ identity matrix.
 
 \subsection{Poisson Jacobian}
 \label{sec:poisson-jacobian}
 
-Starting from the Poisson residual, \cref{res:contphi}, and omitting terms that obviously contain no dependence on $\phim_k$ we get
+Starting from the Poisson residual, \cref{res:contphi}, and omitting terms that obviously contain no dependence on $\phim_i$ we get
 \begin{equation}
   \begin{aligned}
     \label{eq:poisson-jacobian}
@@ -690,9 +662,9 @@ It corresponds to the well known discrete Laplacian operator \cite{HowardElmanDa
 \subsection{LLG Jacobian}
 \label{sec:llg-jacobian}
 
-Unfortunately in most of the Jacobian calculations we have multiple terms depending on $\mv$ joined together by a cross product.
+Unfortunately in most of the Jacobian calculations we have multiple terms depending on $\mvh$ joined together by a cross product.
 The process of differentiating these terms can be made much easier by making use of the ``skew operator'' which represents a cross product as a matrix-vector multiplication.
-For $\av = [a_0, a_1, a_2]$ the skew operator is given by
+For $\av = (a_0, a_1, a_2)^T$ the skew operator is given by
 \begin{equation}
   \skewm{\av} = \text{skew}(\av) =
   \begin{pmatrix}
@@ -702,22 +674,21 @@ For $\av = [a_0, a_1, a_2]$ the skew operator is given by
   \end{pmatrix}.
   \label{eqn:skew}
 \end{equation}
+Note that
+\begin{equation}
+  \skewm{\av} \cdot \bv
+  = \begin{pmatrix}
+    0 & -a_2 & a_1 \\
+    a_2 & 0 & -a_0 \\
+    -a_1 & a_0 & 0
+  \end{pmatrix}
+  \cdot \threevec{b_0}{b_1}{b_2}
+  = \threevec{-a_2b_1 + a_1b_2}{a_2b_0 - a_0b_2}{-a_1b_0 + a_0b_1}
+  = \av \times \bv.
+\end{equation}
 
 Some useful properties of this skew operator are:
 \begin{itemize}
-\item The cross product of two vectors can be represented as a matrix-vector multiplication
-  \begin{equation}
-    \skewm{\av} \cdot \bv
-    = \begin{pmatrix}
-      0 & -a_2 & a_1 \\
-      a_2 & 0 & -a_0 \\
-      -a_1 & a_0 & 0
-    \end{pmatrix}
-    \cdot \threevec{b_0}{b_1}{b_2}
-    = \threevec{-a_2b_1 + a_1b_2}{a_2b_0 - a_0b_2}{-a_1b_0 + a_0b_1}
-    = \av \times \bv.
-  \end{equation}
-
 \item The skew operator commutes with differentiation, \ie
   \begin{equation}
     \pd{}{x} \skewm{\av} = \skewm{ \pd{\av}{x} }.
@@ -737,45 +708,46 @@ Some useful properties of this skew operator are:
     \end{pmatrix} = -\skewm{\bv}.
     \label{eq:61}
   \end{equation}
-  To see this we first calculate the derivative with respect to $a_0$:
+  To see this we calculate the derivative with respect to $a_0$:
   \begin{equation}
     \pd{}{a_0} \bigb{ \skewm{\av} \cdot \bv } = \begin{pmatrix}
       0 & 0 & 0 \\
       0 & 0 & -1 \\
       0 & 1 & 0
-    \end{pmatrix}\bv = \threevec{0}{-b_2}{b_1}.
+    \end{pmatrix}\bv = \threevec{0}{-b_2}{b_1},
   \end{equation}
-  Note that this is the first column of $-\skewm{\bv}$, repeating the calculation for the derivatives with respect to $a_1$ and $a_2$ results in \cref{eq:61}. 
-  This simplification is the main reason for preferring to calculate the Jacobian using this notation.
+  this is the first column of $-\skewm{\bv}$. 
+  Repeating the calculation for the derivatives with respect to $a_1$ and $a_2$ results in \cref{eq:61}.
+  This simplification is the main advantage of the skew operator notation in the following Jacobian calculations.
 \end{itemize}
 
-Due to the linearity of the skew operator we can write the Jacobian of a cross product including an interpolated value of $\mv$ as 
+Due to the linearity of the skew operator we can write the Jacobian of a cross product including $\mvh$ as 
 \begin{equation}
   \begin{aligned}
-    \pd{}{\mv_l} \bigb{\skewm{\mv} \bv} &= \pd{}{\mv_l} \skewm{\intp{\mv}} \bv, \\
+    \pd{}{\mv_l} \bigb{\skewm{\mvh} \bv} &= \pd{}{\mv_l} \skewm{\intp{\mv}} \bv, \\
     &= \sum_k \sbf_k \pd{}{\mv_l} \bigb{\skewm{\mv_k} \bv},
   \end{aligned}
 \end{equation}
-then using the fact that the entries of $\pd{\mv_{l}}{\mv_{k}} = \delta_{lk}$ we get
+then using the fact that $\pd{\mv_{l}}{\mv_{k}} = \delta_{lk} \pd{\mv_{l}}{\mv_{l}}$ we get
 \begin{equation}
-  \pd{}{\mv_l} \bigb{\skewm{\mv} \bv}  = \sbf_l \pd{}{\mv_l} \bigb{\skewm{\mv_l} \cdot \bv}.
+  \pd{}{\mv_l} \bigb{\skewm{\mvh} \bv}  = \sbf_l \pd{}{\mv_l} \bigb{\skewm{\mv_l} \cdot \bv}.
 \end{equation}
 Next, by using \cref{eq:61} we obtain
 \begin{equation}
-  \pd{}{\mv_l} \bigb{\skewm{\mv} \bv} = - \sbf_l\skewm{\bv},
+  \pd{}{\mv_l} \bigb{\skewm{\mvh} \bv} = - \sbf_l\skewm{\bv},
   \label{eq:diff-skew-interp}
 \end{equation}
 and finally by combining \cref{eq:diff-skew-interp} with the product rule we obtain the identity
 \begin{equation}
   \begin{aligned}
-    \pd{}{\mv_l} \bigb{\skewm{\mv}\cdot \gv(\mv)} 
-    &= \skewm{\mv}\cdot \pd{\gv(\mv)}{\mv_l} - \sbf_l \skewm{\gv(\mv)}.
+    \pd{}{\mv_l} \bigb{\skewm{\mvh}\cdot \gv(\mvh)} 
+    &= \skewm{\mvh}\cdot \pd{\gv(\mvh)}{\mv_l} - \sbf_l \skewm{\gv(\mvh)}.
     \label{eq:68}
   \end{aligned}
 \end{equation}
 This provides us with a simple representation for almost all of the terms in the LLG Jacobian.
 
-% As a simple example of how this can be used we first examine the differentiation of the $\mv \times (\happ + \hms)$ term of the Landau-Lifshitz equation residual (note that these two fields are not directly dependent on $\mv$).
+% As a simple example of how this can be used we first examine the differentiation of the $\mvh \times (\happ + \hms)$ term of the Landau-Lifshitz equation residual (note that these two fields are not directly dependent on $\mv$).
 % \begin{equation}
 %\begin{aligned}
 %   \circled{c} &= \mv \times (\happ + \hms),\\
@@ -790,14 +762,16 @@ This provides us with a simple representation for almost all of the terms in the
 %\end{equation}
 % since $\pd{\gv(\mv)}{\mv_l} \equiv 0$.
 
+??ds need to write the dmdt term somehow... $\dmdt_h$?
+
 Now we calculate the Jacobian itself.
-Written in terms of the skew operator the LLG residual, \cref{eq:llg-res-final}, becomes
+Written in terms of the skew operator the fully discrete LLG residual becomes
 \begin{equation}
   \begin{aligned}
-    \rllgv_n = \int_{\magd}
-    & \dmdt \tbf_n + \skewm{\mv} \cdot \left( \happ + \hca - \grad \phi - \dampc \dmdt
+    \rllgv_n = \rllgv(\mv_h, \tbf_n) = \int_{\magd}
+    & \dmdt \tbf_n + \skewm{\mvh} \cdot \left( \happ + \hca - \grad \phi - \dampc \dmdt
     \right) \tbf_n \\
-    &- (\skewm{\mv} \grad \mv) : \grad \tbf_n)
+    &- (\skewm{\mvh} \grad \mvh) : \grad \tbf_n)
     \d\magd.
   \end{aligned}
 \end{equation} 
@@ -806,9 +780,9 @@ To simplify the following calculations we write the Jacobian as the sum of the i
   \begin{aligned}
     \Fm_{n,l} &= \pd{\rllgv_n}{\mv_l} = \Am_{n,l} + \Bm_{n,l} + \Cm_{n,l} + \Dm_{n,l}, \\
     \Am_{n,l} &= \pd{}{\mv_l} \intd{\dmdt \tbf_n}, \\
-    \Bm_{n,l} &= \pd{}{\mv_l} \intd{- \skewm{\mv} \cdot (\grad \mv \compdot \grad \tbf_n)}, \\
-    \Cm_{n,l} &= \pd{}{\mv_l} \intd{ \skewm{\mv} \cdot \hca  \tbf_n}, \\
-    \Dm_{n,l} &= \pd{}{\mv_l} \intd{  \skewm{\mv} \cdot \bigb{ \happ - \grad \phi - \dampc \dmdt} \tbf_n}.
+    \Bm_{n,l} &= \pd{}{\mv_l} \intd{- \skewm{\mvh} \cdot (\grad \mvh \compdot \grad \tbf_n)}, \\
+    \Cm_{n,l} &= \pd{}{\mv_l} \intd{ \skewm{\mvh} \cdot \hca  \tbf_n}, \\
+    \Dm_{n,l} &= \pd{}{\mv_l} \intd{  \skewm{\mvh} \cdot \bigb{ \happ - \grad \phi - \dampc \dmdt} \tbf_n}.
   \end{aligned}
 \end{equation}
 
@@ -819,25 +793,25 @@ The first contribution is simple
            &= \jts \Idm_3 \intd{ \sbf_l \tbf_n},
   \end{aligned}
 \end{equation}
-where $\jts$ is the constant that multiplies $\mv_{n+1}$ in the approximation of the time derivative, for example when using the implicit midpoint rule $\cts = 1$.
+where $\jts$ is the constant that multiplies $\yv_{n+1}$ in the approximation of the time derivative, for example when using the implicit midpoint rule $\cts = 1$.
 So $\Am$ is a $3\times3$ block diagonal matrix where each block is a mass matrix multiplied by a constant depending on the time integration scheme.
 
 Next we calculate the contribution from the damping, applied field and magnetostatic field.
-If we write the damping term in the form of \cref{eq:68} we have $\gv(\mv) = \dmdt$, and
+If we write the damping term in the form of \cref{eq:68} we have $\gv(\mvh) = \dmdt$, and
 \begin{equation}
   \label{eq:69}
-  \pd{\gv(\mv)}{\mv_l} = \pd{}{\mv_l} \left(\pd{\mv}{t} \right) = \jts \sbf_l \Idm_3.
+  \pd{\gv(\mvh)}{\mv_l} = \pd{}{\mv_l} \left(\pd{\mvh}{t} \right) = \jts \sbf_l \Idm_3.
 \end{equation}
 Now using \cref{eq:68} with \cref{eq:69} we immediately obtain
 \begin{equation}
   \begin{aligned} 
-    \Dm_{n,l} &= \pd{}{\mv_l} \intd{  \skewm{\mv} \cdot
+    \Dm_{n,l} &= \pd{}{\mv_l} \intd{  \skewm{\mvh} \cdot
       \left( \happ - \grad \phi - \dampc \dmdt
       \right) \tbf_n}, \\
-    &= \int_\magd \tbf_n \big( -\sbf_l\skewm{\happ} + \sbf_l\skewm{\grad \phi} + \dampc\sbf_l \skewm{\dmdt} - \dampc\sbf_l \jts \skewm{\mv} \Idm_3
+    &= \int_\magd \tbf_n \big( -\sbf_l\skewm{\happ} + \sbf_l\skewm{\grad \phi} + \dampc\sbf_l \skewm{\dmdt} - \dampc\sbf_l \jts \skewm{\mvh} \Idm_3
     \big) \d\magd, \\
     &= \intd{ \tbf_n \sbf_l \bigb{ \skewm{-\happ + \grad \phi 
-          + \dampc \dmdt - \dampc \jts \mv}}}.
+          + \dampc \dmdt - \dampc \jts \mvh}}}.
     \label{eq:field-damping-jacobian}
   \end{aligned}
 \end{equation}
@@ -846,15 +820,15 @@ This is a $3\times3$ skew-symmetric matrix where each element is a mass matrix e
 We turn now to the contribution due to magnetocrystalline anisotropy.
 Writing the residual in the form of \cref{eq:68} we have 
 \begin{equation}
-  \gv(\mv) = \hca = \kone (\mv \cdot \ev) \ev,  
+  \gv(\mvh) = \hca = \kone (\mvh \cdot \ev) \ev,  
 \end{equation}
 and thus
 \begin{equation}
   \begin{aligned}
-    \pd{\gv(\mv)}{\mv_l} &= \pd{}{\mv_l} \bigb{ \kone (\mv \cdot \ev) \ev}, \\
-    &= \kone \bigb{ \pd{}{m_{x,l}} (\mv \cdot \ev), 
-      \pd{}{m_{y,l}} (\mv \cdot \ev),
-      \pd{}{m_{z,l}} (\mv \cdot \ev) }  \tensorprod \ev, \\
+    \pd{\gv(\mvh)}{\mv_l} &= \pd{}{\mv_l} \bigb{ \kone (\mvh \cdot \ev) \ev}, \\
+    &= \kone \bigb{ \pd{}{m_{x,l}} (\mvh \cdot \ev), 
+      \pd{}{m_{y,l}} (\mvh \cdot \ev),
+      \pd{}{m_{z,l}} (\mvh \cdot \ev) }  \tensorprod \ev, \\
     &= \kone \sbf_l \; \ev  \tensorprod \ev.
     \label{eq:70}
   \end{aligned}
@@ -862,9 +836,9 @@ and thus
 Then combining \cref{eq:68,eq:70} gives
 \begin{equation}
   \begin{aligned} 
-    \Cm_{n,l} &= \pd{}{\mv_l} \intd{ \skewm{\mv} \cdot \hca  \tbf_n}, \\
+    \Cm_{n,l} &= \pd{}{\mv_l} \intd{ \skewm{\mvh} \cdot \hca  \tbf_n}, \\
     &= \underbrace{\intd{ -\tbf_n \sbf_l\skewm{\hca} }}_{\Cm'_{n,l}}
-    + \underbrace{\kone \intd{ \tbf_n \sbf_l \skewm{\mv} \; (\ev  \tensorprod \ev) }}_{\Jmca_{,n,l}}.
+    + \underbrace{\kone \intd{ \tbf_n \sbf_l \skewm{\mvh} \; (\ev  \tensorprod \ev) }}_{\Jmca_{,n,l}}.
     \label{eq:hca-jacobian}
   \end{aligned}
 \end{equation}
@@ -877,7 +851,7 @@ Finally we calculate the exchange contribution.
 We first need an identity
 \begin{equation}
   \begin{aligned}
-    \pd{}{\mv_l} \left(\gradv \mv \compdot \gradv \tbf\right) 
+    \pd{}{\mv_l} \left(\gradv \mvh \compdot \gradv \tbf\right) 
     &= \pd{}{\mv_l} \threevecdup{\left( \sum_k \mv_k \grad \sbf_k \right) \cdot \grad \tbf}, \\
     &=  \sum_k \pd{\mv_k}{\mv_l} \threevecdup{\grad \sbf_k \cdot \grad \tbf}, \\
     &=  \Idm_3 \bigb{ \grad \sbf_l \cdot \grad \tbf }.
@@ -887,11 +861,11 @@ We first need an identity
 Then using \cref{eq:68,eq:71} we get
 \begin{equation}
   \begin{aligned}
-   \Bm_{n,l} &=  \pd{}{\mv_l} \intd{- \skewm{\mv} \cdot (\gradv \mv \compdot \gradv \tbf_n)} ,\\
-    &= \intd{ \sbf_l \skewm{\gradv \mv \compdot \gradv \tbf_n}
-       - \skewm{\mv} \left( \grad \sbf_l \cdot \grad \tbf_n \right)}, \\
-     &= \intd{\skewm{ \sbf_l \gradv \mv \compdot \gradv \tbf_n
-       - \mv \left( \grad \sbf_l \cdot \grad \tbf_n \right)}},
+   \Bm_{n,l} &=  \pd{}{\mv_l} \intd{- \skewm{\mvh} \cdot (\gradv \mvh \compdot \gradv \tbf_n)} ,\\
+    &= \intd{ \sbf_l \skewm{\gradv \mvh \compdot \gradv \tbf_n}
+       - \skewm{\mvh} \left( \grad \sbf_l \cdot \grad \tbf_n \right)}, \\
+     &= \intd{\skewm{ \sbf_l \gradv \mvh \compdot \gradv \tbf_n
+       - \mvh \left( \grad \sbf_l \cdot \grad \tbf_n \right)}},
    \label{eq:exc-jacobian}
    \end{aligned}
  \end{equation}
@@ -928,9 +902,9 @@ The Jacobian for this non-linear system is
   \end{pmatrix},
   \label{eq:monolithic-jac}
 \end{equation}
-where $\Am$ and $\Fm$ have been derived in \cref{sec:poisson-jacobian} and \cref{sec:llg-magn-coupl} respectively; $\Pm = \pd{\rllgv}{\phim}$ and $\Qm = \pd{\rphi}{\mv}$
+where $\Am$ and $\Fm$ have been derived in \cref{sec:poisson-jacobian} and \cref{sec:llg-magn-coupl} respectively; $\Pm = \pd{\rllgv}{\phim}$ and $\Qm = \pd{\rphi}{\mvh}$
 In \thisref{sec:llg-magn-coupl} we derive expressions for $\Pm$ and $\Qm$.
-Note that it is also possible (and common) to solve this the problem as two separate systems for $\mv$ and $\phim$, more details and the advantages of each approach are discussed in \cref{sec:solution-strategies}.
+Note that it is also possible (and common) to solve this the problem as two separate systems for $\mvh$ and $\phim$, more details and the advantages of each approach are discussed in \cref{sec:solution-strategies}.
 
 First $\Pm_{n,l}$, this is a $3 \times 1$ block matrix because we are dealing with a vector of three residuals differentiated by one variable ($\phim$).
 Obviously, most of the terms in the LLG residual are zero when differentiated with respect to any $\phim_{l}$ so the calculation is quite simple. 
@@ -938,19 +912,19 @@ From \cref{eq:llg-res-final} and dropping the zero terms we have
 \begin{equation}
   \begin{aligned}
     \Pm_{n,l} &= \pd{\rllgv_n}{\phim_l} 
-    = \pd{}{\phim_l} \intd{ -\tbf_n \mv \times \grad \phim}, \\
-    &= -\intd{ \tbf_n \mv \times \grad \sbf_l}, \\
+    = \pd{}{\phim_l} \intd{ -\tbf_n \mvh \times \grad \phimh}, \\
+    &= -\intd{ \tbf_n \mvh \times \grad \sbf_l}, \\
     % &= -\intd{ \tbf_n \threevec{m_y\pd{\sbf_l}{z} - m_z \pd{\sbf_l}{y}}
     %   {-m_x\pd{\sbf_l}{z} + m_z \pd{\sbf_l}{x}}
     %   {m_x\pd{\sbf_l}{y} - m_y \pd{\sbf_l}{x}}}.
   \end{aligned}
 \end{equation}
 
-Next $\Qm_{n,l}$ this is a $1 \times 3$ block matrix because we differentiate by the three components of $\mv$. 
+Next $\Qm_{n,l}$ this is a $1 \times 3$ block matrix because we differentiate by the three components of $\mvh$. 
 From \cref{res:contphi} we have
 \begin{equation}
   \begin{aligned}
-    \Qm_{n,l} &= \pd{\rphi_n}{\mv_l} = \pd{}{\mv_l} \intd{ -\tbf_n \div \mv}, \\
+    \Qm_{n,l} &= \pd{\rphi_n}{\mv_l} = \pd{}{\mv_l} \intd{ -\tbf_n \div \mvh}, \\
     &= \sum_j \pd{}{\mv_l} \intd{ -\tbf_n \left( \pd{\sbf_j}{x} m_{x,j} 
         + \pd{\sbf_j}{y} m_{y,j} + \pd{\sbf_j}{z} m_{z,j} \right) }, \\
     &= -\intd{ \tbf_n \left( \pd{\sbf_l}{x}, 
@@ -978,6 +952,8 @@ where $\Jmca$ is appropriately zero padded.
 
 \section{Geometric integration with the finite element method}
 \label{sec:nodal-integration}
+
+??ds use $\mvh$?
 
 % Midpoint values:
 \newcommand{\midpoint}[1]{\hat{#1}}
@@ -1055,7 +1031,7 @@ Hence the exchange contribution is integrated exactly.
 
 ??ds mention equivalence with mass-lumping
 
-\subsubsection{Conservation of $\abs{\mv}$ at nodes}
+\subsection{Conservation of $\abs{\mv}$}
 \label{sec:weak-cons-absmv}
 
 ??ds do I need new notation for approximations to m?
@@ -1090,14 +1066,14 @@ We know that $\mvm_{,j} \in  (\ts)^3$ because it is simply a multiple of a basis
 So we know that
 \begin{equation}
   \begin{aligned}
-    \Bigg| \sum_l \beta_l \bigg[& \bigb{\dmdtml + \mvm_{,l} \times \hv[\tm, \mvm_{,l}] - \dampc \mvm_{,l} \times \dmdtml} \cdot \mvm_{,j}\tbf_j(\xv_l) \\
+    \Bigg| \sum_l \beta_l \bigg[& \bigb{\dmdtml + \mvm_{,l} \times \hv(\tm, \xv, \mvm_{,l}) - \dampc \mvm_{,l} \times \dmdtml} \cdot \mvm_{,j}\tbf_j(\xv_l) \\
       &+ \bigb{\mvm \times \grad \mvm} : \grad (\mvm_{,j}\tbf_j(\xv_l)) \Big] \Bigg| < \ntol.
   \end{aligned}
 \end{equation}
 Using $\tbf_k(\xv_l) = \delta_{kl}$ we can eliminate the summation, leaving only
 \begin{equation}
   \begin{aligned}
-    \Bigg| \beta_j \bigg[& \bigb{\dmdtmj  + (\mvm_{,j} \times \hv[\tm, \mvm_{,j}])  - \dampc (\mvm_{,j} \times \dmdtmj)} \cdot \mvm_{,j} \\
+    \Bigg| \beta_j \bigg[& \bigb{\dmdtmj  + (\mvm_{,j} \times \hv(\tm, \xv, \mvm_{,j}))  - \dampc (\mvm_{,j} \times \dmdtmj)} \cdot \mvm_{,j} \\
     &+ \bigb{\mvm \times \grad \mvm} : \grad (\mvm_{,j})
     \bigg] \Bigg| < \ntol.
   \end{aligned} 
@@ -1118,7 +1094,7 @@ This is applicable for all nodes $j$, hence all nodal magnetisation lengths are 
 
 
 
-\subsubsection{Energy loss}
+\subsection{Energy properties}
 
 ??ds rewrite...
 
@@ -1135,7 +1111,7 @@ The relevant choice of test function is
 The term $\dampc \dmdtm = \dampc\frac{mv_{n+1} - \mv_n}{\dtn}$ is clearly in the space of test functions since it is a linear combination of two magnetisation functions (which are in the equivalent solution space).
 The term $\hv[\tm, \mvm]$ is more complex... ??ds is it in there?
 
-After making this substitution and applying the triple product identity we have
+After making this substitution and applying the triple product identities $(\av \times \bv) \cdot \av = 0$ and \cref{triple:-identity} we get
 \begin{equation}
   \intd{\dmdtm \cdot \hv[\tm, \mvm]} - \dampc \intd{\dmdtm \cdot \dmdtm} < \ntol,
 \end{equation}
@@ -1199,7 +1175,7 @@ To obtain our result we examine the case where $\testv = \mvm$.
 Note that $\mvm \in (\ts)^3$ because we are using identical test and solution function spaces and each component of $\mvm$ is a linear combination of solution basis functions.
 
 For \thisref{sec:non-cons-gaussian} we assume that the tolerance of the linearisation is exact for simplicity, \ie $\ntol = 0$.
-By substituting $\testv = \mvm$ into \cref{eq:weak-llg-imr} then using the triple product identities $(\av \times \bv) \cdot \av = 0$ and \cref{triple:-identity} we get
+By substituting $\testv = \mvm$ into \cref{eq:weak-llg-imr} and using the triple product identities we obtain
 \begin{equation}
   \label{eq:23}
   \begin{aligned}
@@ -1239,10 +1215,6 @@ A similar expression is obtained if nodal magnetistations are chosen for the tes
 
 Finally, it is interesting to note that if the magnetisation is constant in space at times $t_n$ and $t_{n+1}$ then the integral condition in \cref{eq:23} \emph{is} sufficient to give conservation of the magnetisation length at nodes.
 
-
-\subsection{Conclusions}
-
-??ds
 
 
 %%% Local Variables:

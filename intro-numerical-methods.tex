@@ -1163,7 +1163,7 @@ Based on Krylov subspace (polynomial of $\Am$ multiplied by $\xv$).
 
 The size of the Krylov subspace needed for an effective approximation (\ie the number of iterations needed) is strongly dependent on the properties of the matrix, in particular the eigenvalues and eigenvectors.
 So for optimal performance a ``preconditioner'' is needed, which brings the eigenvalues of the matrix close to 1.
-Essentially the preconditioner needs to be a reasonable but cheap to calculate approximation to the inverse of the matrix (since $\Am^{-1}\Am = \Im$, and the identity matrix is the matrix with all eigenvalues 1).
+Essentially the preconditioner needs to be a reasonable but cheap to calculate approximation to the inverse of the matrix (since $\Am^{-1}\Am = \Idm$, and the identity matrix is the matrix with all eigenvalues 1).
 The construction of a preconditioner which is effective independent of the mesh size is a difficult and problem dependent task. 
 
 % Some work has been done on preconditioning for the LLG by Suess et. al. \cite{Suess2002}.
