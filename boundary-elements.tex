@@ -19,7 +19,7 @@ Note that the derivation for this hybrid method comes from potential theory, rat
 \label{sec:basic-method}
 ??ds merge to next section?
 
-We want to use the boundary element method in the calculation of the magnetostatic scalar potential, $\phim$,\footnote{such that $\hms = - \nabla \phim$} in the infinite domain outside of a magnetic body.
+We want to use the boundary element method in the calculation of the magnetostatic scalar potential, $\phim$,\footnote{such that $\hms = - \grad \phim$} in the infinite domain outside of a magnetic body.
 However using the boundary element method directly would require the solution of dense matrix equations for the entire problem. ??ds why?
 
 We can circumvent this issue by using the linearity of the Poisson problem to split the potential into two parts $\phim = \phione + \phitwo$ in such a way that $\phione$ can be calculated in the magnetic domain using only the finite element method.
@@ -28,9 +28,9 @@ So we choose a charge distribution on the boundary that satisfies all the condit
 We can then solve for $\phitwo$ on the boundary using similar techniques to those used in the boundary element method.
 Finally we apply the finite element method to find $\phitwo$ inside the magnetic domain $\magd$.
 
-By the uniqueness of solution for Poisson's equation with Dirichlet and/or Neumann boundary conditions we know that the field $ \hms = \nabla \phim$  constructed by the above steps is \emph{the} magnetostatic field.\footnote{To see this take the difference of two solutions of Poisson's equation: $\phi = \psi_1 - \psi_2$.
-Then using identity \cref{eq:20}, the linearity of Poisson's equation and the divergence theorem we obtain $\int_S \phi \nabla \phi \cdot d \mathbf{S} = \int_V (\nabla \phi)^2 dV$.
-Applying Dirichlet, Neumann or mixed boundary conditions shows that the boundary integral is zero and hence $\nabla \phi = 0$.}
+By the uniqueness of solution for Poisson's equation with Dirichlet and/or Neumann boundary conditions we know that the field $ \hms = \grad \phim$  constructed by the above steps is \emph{the} magnetostatic field.\footnote{To see this take the difference of two solutions of Poisson's equation: $\phi = \psi_1 - \psi_2$.
+Then using identity \cref{eq:20}, the linearity of Poisson's equation and the divergence theorem we obtain $\int_S \phi \grad \phi \cdot d \mathbf{S} = \int_V (\grad \phi)^2 dV$.
+Applying Dirichlet, Neumann or mixed boundary conditions shows that the boundary integral is zero and hence $\grad \phi = 0$.}
 
 \subsection{Problem Description}
 \label{sec:problem-description}
@@ -39,7 +39,7 @@ More precisely $\phim^\inte(\xv) = \lim_{\xv \rightarrow \boundd} \phim(\xv)$ fr
 
 From \cref{sec:magnetostatic-field} have the following \emph{physical} conditions on the total magnetostatic potential $\phim$:
 \begin{equation}
-  \lap \phim(\xv) = \nabla \cdot \mv(\xv) \qquad \forall \xv \in \magd \cup \extd,
+  \lap \phim(\xv) = \div \mv(\xv) \qquad \forall \xv \in \magd \cup \extd,
   \label{eq:2}
 \end{equation}
 \begin{equation}
@@ -67,7 +67,7 @@ Based on this observation we come up with a new potential $\phione$ which satisf
   \label{eq:21}
 \end{equation}
 \begin{equation}
-  \lap \phione(\xv) = \nabla \cdot \mv(\xv) \qquad \xv \in \magd,
+  \lap \phione(\xv) = \div \mv(\xv) \qquad \xv \in \magd,
   \label{eq:1}
 \end{equation}
 \begin{equation}
@@ -205,7 +205,7 @@ From \cref{sec:double-layer-potent} we can see that conditions \cref{eq:8,eq:5,e
 \end{equation}
 
 By the uniqueness of solution for Poisson's equation this gives us, up to an additive constant, the only solution for $\phitwo(\xv)$ in the external domain.
-This is good enough for a potential since it is only used in $\hms(\xv) = - \nabla \phim(\xv)$ so addition of a constant has no effect.
+This is good enough for a potential since it is only used in $\hms(\xv) = - \grad \phim(\xv)$ so addition of a constant has no effect.
 
 Substituting \cref{eq:24} into \cref{eq:3,eq:22} we have:
 \begin{equation}
@@ -331,7 +331,7 @@ We now convert the normal derivative of the Green's function into a more tangibl
 In 3D
 \begin{equation}
   \label{eq:11}
-  \pd{\Green}{\nv} = \frac{-1}{4 \pi} \pd{}{\nv} \Gthreed = \frac{-1}{4 \pi} \nv \cdot \nabla \Big( \Gthreed \Big).
+  \pd{\Green}{\nv} = \frac{-1}{4 \pi} \pd{}{\nv} \Gthreed = \frac{-1}{4 \pi} \nv \cdot \grad \Big( \Gthreed \Big).
 \end{equation}
 Converting to spherical coordinates with the origin at $\xv$ ($r = \abs{\yv - \xv}$, $\ruv = \frac{\yv - \xv}{r}$) we have\footnote{In spherical polar coordinates $\nabla = \ruv \pd{}{r} +  \phiv \frac{1}{r} \pd{}{\phi} + \thetav \frac{1}{r \sin \theta} \pd{}{\theta}$.
 Obviously $\frac{1}{r}$ has no angular dependence so only the derivative with respect to $r$ is non-zero.}

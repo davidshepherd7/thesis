@@ -91,7 +91,7 @@ This type of field is also known as the demagnetising field as it tends to oppos
 The magnetostatic field, $\Hms$, can be written in two ways: an integral form or a differential (potential) form. 
 % These methods are discussed in \cref{sec:magstat-field-calc-inte} and \ref{sec:magstat-field-calc-pote} respectively.
 
-The integral form of the magnetostatic field at a point $\xv \in \real^3$ due to the magnetic body $\magd$ with boundary $\boundd$ can be given in terms of magnetisation $\Mv$ by an integral over all volume and surface ``magnetic charges'' ($\nabla \cdot \Mv$ and $\Mv \cdot \nv$ respectively) as
+The integral form of the magnetostatic field at a point $\xv \in \real^3$ due to the magnetic body $\magd$ with boundary $\boundd$ can be given in terms of magnetisation $\Mv$ by an integral over all volume and surface ``magnetic charges'' ($\div \Mv$ and $\Mv \cdot \nv$ respectively) as
 \begin{equation}
   \Hms(\xv) = \frac{1}{4 \pi} \bigs{ 
     - \int_\magd \nabla' \cdot \Mv(\xv') \frac{(\xv - \xv')}{\abs{\xv -\xv'}^3} \d^3 \xv'
@@ -115,8 +115,8 @@ When the magnetic field is produced only by magnets and not by electric currents
 \begin{equation}
   \begin{aligned}
     \label{eq:Hms}
-    \Hms &= - \nabla \phim, \\
-    \lap \phim &= \nabla \cdot \Mv.
+    \Hms &= - \grad \phim, \\
+    \lap \phim &= \div \Mv.
   \end{aligned}
 \end{equation}
 The boundary conditions are for \cref{eq:Hms}
@@ -275,9 +275,9 @@ We start from the Landau-Lifshitz-Gilbert equation with the magnetostatic, appli
 \begin{align}
   \pd{\Mv^*}{t^*} &= - \gymagc \Mv^* \times \Hv^* + \frac{\alpha}{M_s} \Mv^* \times \pd{\Mv^*}{t^*}, 
                     \label{eqn:llgnd} \\
-  \Hv^* &= \Happ^* - \nabla^* \phi^* + \frac{2\Exchc^*}{\mu_0 M_s} \nabla^{*2} \mv + \frac{2\Kone^*}{\mu_0 M_s} (\mv \cdot \ev) \ev,
+  \Hv^* &= \Happ^* - \grad^* \phi^* + \frac{2\Exchc^*}{\mu_0 M_s} \nabla^{*2} \mv + \frac{2\Kone^*}{\mu_0 M_s} (\mv \cdot \ev) \ev,
           \label{eqn:effnd} \\
-  \nabla^{*2} \phi^* &= \nabla^* \cdot \Mv^*, 
+  \nabla^{*2} \phi^* &= \grad^* \cdot \Mv^*, 
                        \label{eqn:phind}
 \end{align}
 where we use $^*$ to denote the dimensional variables, operators and constants that will be non-dimensionalised. We assume for simplicity that $M_s$, $\Exchc$ and $\Kone$ are all
@@ -311,21 +311,21 @@ cancelling the various constants results in the non-dimensionalised Landau-Lifsh
 
 Similarly for \cref{eqn:phind} we have
 \begin{align*}
-  \frac{1}{l^2} \Phi \nabla^{2} \phi &= \frac{1}{l} M_s \nabla \cdot \mv, \\
-  \frac{\Phi}{M_s l} \nabla^{2} \phi &= \nabla \cdot \mv.
+  \frac{1}{l^2} \Phi \lap \phi &= \frac{1}{l} M_s \div \mv, \\
+  \frac{\Phi}{M_s l} \lap \phi &= \div \mv.
 \end{align*}
 
 Letting $\Phi = M_s l$ we obtain
 \begin{equation}
   \label{eq:57}
-  \lap \phi = \nabla \cdot \mv.
+  \lap \phi = \div \mv.
 \end{equation}
 
 Repeating the substitutions for \cref{eqn:effnd} gives
 \begin{align*}
-  M_s \hv &= M_s \happ - \frac{\Phi}{l} \nabla \phi + \frac{2 \Exchc }{\mu_0 M_s} \frac{1}{l^2} \lap \mv + \frac{2\kone}{\mu_0 M_s}  \nK (\mv \cdot \ev) \ev, \\
-  \hv &= \frac{M_s}{M_s} \happ - \frac{M_s}{M_s} \nabla \phi + \frac{2 \Exchc}{\mu_0 M_s^2} \frac{1}{l^2} \lap \mv + \frac{2\kone}{\mu_0 M_s^2} \nK (\mv \cdot \ev) \ev, \\
-  \hv &= \happ - \nabla \phi + \frac{2 \Exchc}{\mu_0 M_s^2} \frac{1}{l^2} \lap \mv + \frac{2\kone}{\mu_0 M_s^2} \nK (\mv \cdot \ev) \ev, \\
+  M_s \hv &= M_s \happ - \frac{\Phi}{l} \grad \phi + \frac{2 \Exchc }{\mu_0 M_s} \frac{1}{l^2} \lap \mv + \frac{2\kone}{\mu_0 M_s}  \nK (\mv \cdot \ev) \ev, \\
+  \hv &= \frac{M_s}{M_s} \happ - \frac{M_s}{M_s} \grad \phi + \frac{2 \Exchc}{\mu_0 M_s^2} \frac{1}{l^2} \lap \mv + \frac{2\kone}{\mu_0 M_s^2} \nK (\mv \cdot \ev) \ev, \\
+  \hv &= \happ - \grad \phi + \frac{2 \Exchc}{\mu_0 M_s^2} \frac{1}{l^2} \lap \mv + \frac{2\kone}{\mu_0 M_s^2} \nK (\mv \cdot \ev) \ev, \\
 \end{align*}
 
 This can be further simplified by choosing the exchange length\footnote{There are actually two exchange lengths: one based on the strength of exchange as compared with the magnetostatic field and another by comparison with the magnetocrystalline anisotropy. We use the magnetostatic-field-based exchange length for normalisation to avoid division by zero in the case of zero magnetocrystalline anisotropy.} as the characteristic length scale
@@ -344,8 +344,8 @@ So the final system of equations is
 \begin{equation}
   \begin{aligned}
     \dmdt &= - \mv \times \hv + \alpha \mv \times \dmdt, \\
-    \hv &= \happ - \nabla \phi + \lap \mv + \kone (\mv \cdot \ev) \ev, \\
-    \lap \phi &= \nabla \cdot \mv.
+    \hv &= \happ - \grad \phi + \lap \mv + \kone (\mv \cdot \ev) \ev, \\
+    \lap \phi &= \div \mv.
     \label{eqn:nd-llg-full}
   \end{aligned}
 \end{equation}
@@ -403,7 +403,7 @@ We repeat the process used in \cref{sec:land-lifsh-gilb-normalisation} to get a 
   \Ems^* =  \frac{-\mu_0}{2} \int_{\magd} \Mv^* \cdot \Hms^* \d \magd^*,
 \end{equation}
 \begin{equation}
-  \Eex^* =  \Exchc \int_{\magd} (\nabla^* \mv)^2 \d \magd^*,
+  \Eex^* =  \Exchc \int_{\magd} (\grad^* \mv)^2 \d \magd^*,
 \end{equation}
 \begin{equation}
   \Eca^* =  -\Kone^* \int_\magd (\mv \cdot \ev)^2 \d \magd^*.
@@ -421,8 +421,8 @@ We substitute definitions~\cref{eqn:nddefs,eqn:l-normalisation,k-normalisation} 
   \label{eq:nd-e-ms}
 \end{equation}
 \begin{equation}
-  \eex =  \frac{\mu_0 M_s^2 l^2}{2} \frac{l^d}{l^2} \frac{1}{\nE} \int_{\magd} (\nabla \mv)^2 \d \magd
-  = \frac{1}{2} \int_{\magd} (\nabla \mv)^2 \d \magd,
+  \eex =  \frac{\mu_0 M_s^2 l^2}{2} \frac{l^d}{l^2} \frac{1}{\nE} \int_{\magd} (\grad \mv)^2 \d \magd
+  = \frac{1}{2} \int_{\magd} (\grad \mv)^2 \d \magd,
   \label{eq:nd-e-ex}
 \end{equation}
 \begin{equation}

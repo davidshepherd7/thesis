@@ -34,8 +34,8 @@ Note that by substituting $\fv = \grad \ff$ we can derive
 \begin{equation}
   \begin{aligned}
     \intd{(\lap \ff) \gf}
-    &= \intb{\gf (\nabla \ff \cdot \nv)} - \intd{\nabla \ff \cdot \nabla \gf}, \\
-    &= \intb{\gf \ddn{\ff}} - \intd{\nabla \ff \cdot \nabla \gf}.
+    &= \intb{\gf (\grad \ff \cdot \nv)} - \intd{\grad \ff \cdot \grad \gf}, \\
+    &= \intb{\gf \ddn{\ff}} - \intd{\grad \ff \cdot \grad \gf}.
     \label{eqn:laplace-divergence}
   \end{aligned}
 \end{equation}
@@ -69,7 +69,7 @@ The applied field part of the effective field is \emph{not} linear or symmetrica
   \begin{equation}
     \begin{aligned}
       \ip{\lap a}{b} &= \intd{\left(\lap a \right) b}, \\
-      &= \intb{b \ddn{a}} - \intd{\nabla a \cdot \nabla b}, \\
+      &= \intb{b \ddn{a}} - \intd{\grad a \cdot \grad b}, \\
       &= \intb{b \ddn{a}} + \intd{a (\lap b)} - \intb{a \ddn{b}}, \\
       &= \intd{a (\lap b)}.
     \end{aligned}
@@ -94,7 +94,7 @@ For simplicity write
     \begin{aligned}
       \hmsop [\av](\xv) &= - \grad \phim[\av](\xv), \\
       &= -\grad \bigs{
-              -\intd[\magd']{ \knl \nabla' \cdot \av(\xv') }
+              -\intd[\magd']{ \knl \grad' \cdot \av(\xv') }
               + \intd[\boundd']{\knl \av(\xv') \cdot \nv(\xv') }
             }.
     \end{aligned}

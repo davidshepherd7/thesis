@@ -323,7 +323,7 @@ After non-dimensionalisation (see \cref{sec:land-lifsh-gilb-normalisation}) the 
 \begin{equation}
   \begin{aligned}
     \dmdt &= - \mv \times \hv + \alpha \mv \times \dmdt, \\
-    \hv &= \happ - \nabla \phim + \lap \mv + \kone (\mv \cdot \ev) \ev, \\
+    \hv &= \happ - \grad \phim + \lap \mv + \kone (\mv \cdot \ev) \ev, \\
     \lap \phim &= \div \mv.
     \label{eqn:ndllg-starting}
   \end{aligned}
@@ -334,7 +334,7 @@ Details of the extension to include the effects of the external region using the
 We define $\boundd_D$ and $\boundd_\Neu$ respectively to represent the region of the boundary domain where a Dirichlet condition or Neumann is imposed on the potential, \ie 
 \begin{equation}
   \begin{aligned}
-    \nabla \phim(\xv) \cdot \nv(\xv) &= g_\Neu(\xv) \quad \forall \xv \in \boundd_\Neu, \\
+    \grad \phim(\xv) \cdot \nv(\xv) &= g_\Neu(\xv) \quad \forall \xv \in \boundd_\Neu, \\
     \phim(\xv) &= g_D(\xv) \quad \forall \xv \in \boundd_D
   \end{aligned}
 \end{equation}
@@ -360,9 +360,9 @@ It turns out that this Neumann-like condition is exactly what is needed in the d
 \label{sec:weak-form-residuals}
 
 We now convert equations \cref{eqn:ndllg-starting} into their residual weak forms as described in \cref{Derivation-of-weighted-residuals}.
-In the following we will need the identity\footnote{This can be easily derived by applying the product rule to $\nabla \cdot (v \nabla \phim)$.}
+In the following we will need the identity\footnote{This can be easily derived by applying the product rule to $\div (v \grad \phim)$.}
 \begin{equation}
-  (\lap \phim) \test = \nabla \cdot (v \nabla \phim) - \nabla \phim \cdot \nabla v.
+  (\lap \phim) \test = \div (v \grad \phim) - \grad \phim \cdot \grad v.
   \label{eq:20}
 \end{equation}
 We will also make use of the divergence theorem
@@ -374,7 +374,7 @@ We will also make use of the divergence theorem
 The Newton residual for the magnetostatic potential is given by
 \begin{gather}
   \rphi(\phim) = \intd{ (\lap \phim) \test }
-  - \intd{ (\nabla \cdot \mv) \test}, \label{eqn:phires1}
+  - \intd{ (\div \mv) \test}, \label{eqn:phires1}
 \end{gather}
 where $\phim \in \sob^2(\magd) \cap \Dfs$ and $\mv$ is some sufficiently smooth function.
 
@@ -389,28 +389,28 @@ As before we do this by ``transferring'' the derivatives onto the test functions
 Integrating identity \cref{eq:20} over the domain and applying the divergence theorem \cref{eq:div-thm} we obtain
 \begin{equation}
   \begin{aligned}
-    \intd{ (\lap \phim) \test} &=  \intd{\nabla \cdot (\test \nabla \phim)}
-           - \intd{\nabla \phim \cdot \nabla \test},\\
-    &= \intb{\test (\nabla \phim \cdot \nv)} 
-    - \intd{ \nabla \phim \cdot \nabla \test}.
+    \intd{ (\lap \phim) \test} &=  \intd{\div (\test \grad \phim)}
+           - \intd{\grad \phim \cdot \grad \test},\\
+    &= \intb{\test (\grad \phim \cdot \nv)} 
+    - \intd{ \grad \phim \cdot \grad \test}.
     \label{eqn:identitygauss}
   \end{aligned} 
 \end{equation}
 Substituting \cref{eqn:identitygauss} into \cref{eqn:phires1} gives
 \begin{equation}
-  \rphi(\phim) = \intb{ \test (\nabla \phim \cdot \nv) }
-  - \intd{ \nabla \test \cdot \nabla \phim }
-  - \intd{ (\nabla \cdot \mv) \test }.
+  \rphi(\phim) = \intb{ \test (\grad \phim \cdot \nv) }
+  - \intd{ \grad \test \cdot \grad \phim }
+  - \intd{ (\div \mv) \test }.
 \end{equation}
 This contains only first order derivatives so the solution space for $\phim$ is relaxed to $\sob^1(\magd) \cap \Dfs$. 
 However all first partial derivatives of the test functions are now required to be integrable, \ie $v \in \sob^1(\magd)$ instead of $v \in \sob^0(\magd)$.
 
 Note that the boundary integral is always zero on $\boundd_D$ by the definition of the test functions. 
-Hence the boundary integral is only non-zero over $\boundd_{\Neu}$ where $\nabla \phim \cdot \nv = g_{\Neu}$, which gives
+Hence the boundary integral is only non-zero over $\boundd_{\Neu}$ where $\grad \phim \cdot \nv = g_{\Neu}$, which gives
 \begin{equation}
   \rphi(\phim) = \int_{\boundd_\Neu} \test g_\Neu \d \boundd
-  - \intd{ \nabla \test \cdot \nabla \phim}
-  - \intd{ (\nabla \cdot \mv) \test}.
+  - \intd{ \grad \test \cdot \grad \phim}
+  - \intd{ (\div \mv) \test}.
   \label{res:contphi}
 \end{equation}
 
@@ -422,7 +422,7 @@ The weak form of the LLG is
   \begin{aligned}
     \rllgv(\mv, \test) = \int_\magd &\Big( \dmdt
     + (\mv \times \hca) + (\mv \times \happ) \\
-    &- (\mv \times \nabla \phi) + (\mv \times \lap \mv) - \dampc \left( \mv
+    &- (\mv \times \grad \phi) + (\mv \times \lap \mv) - \dampc \left( \mv
       \times \dmdt \right) \Big) \test \d\magd. 
     \label{res:contllg}
   \end{aligned}
@@ -526,7 +526,7 @@ The final residual for the LLG equation, using a vector test function, is
     \rllg(\mv, \testv) = \int_\magd &\dmdt\cdot \testv
     + (\mv \times \hca)\cdot \testv 
     + (\mv \times \happ)\cdot \testv 
-    - (\mv \times \nabla \phi)\cdot \testv \\
+    - (\mv \times \grad \phi)\cdot \testv \\
     & - \bigb{\mv \times \grad \mv} : \grad \testv
     - \dampc \left( \mv \times \dmdt \right)\cdot \testv
     \d\magd.
@@ -679,7 +679,7 @@ Starting from the Poisson residual, \cref{res:contphi}, and omitting terms that 
 \begin{equation}
   \begin{aligned}
     \label{eq:poisson-jacobian}
-    \Am_{n,l} &= \pd{}{\phim_{l}} \sum_k \intd{ -(\nabla \tbf_n \cdot \nabla \sbf_k) \phim_{k}}, \\
+    \Am_{n,l} &= \pd{}{\phim_{l}} \sum_k \intd{ -(\grad \tbf_n \cdot \grad \sbf_k) \phim_{k}}, \\
     &= -\intd{\grad \tbf_n \cdot \grad \sbf_l}.
   \end{aligned}
 \end{equation}
@@ -795,7 +795,7 @@ Written in terms of the skew operator the LLG residual, \cref{eq:llg-res-final},
 \begin{equation}
   \begin{aligned}
     \rllgv_n = \int_{\magd}
-    & \dmdt \tbf_n + \skewm{\mv} \cdot \left( \happ + \hca - \nabla \phi - \dampc \dmdt
+    & \dmdt \tbf_n + \skewm{\mv} \cdot \left( \happ + \hca - \grad \phi - \dampc \dmdt
     \right) \tbf_n \\
     &- (\skewm{\mv} \grad \mv) : \grad \tbf_n)
     \d\magd.
@@ -808,7 +808,7 @@ To simplify the following calculations we write the Jacobian as the sum of the i
     \Am_{n,l} &= \pd{}{\mv_l} \intd{\dmdt \tbf_n}, \\
     \Bm_{n,l} &= \pd{}{\mv_l} \intd{- \skewm{\mv} \cdot (\grad \mv \compdot \grad \tbf_n)}, \\
     \Cm_{n,l} &= \pd{}{\mv_l} \intd{ \skewm{\mv} \cdot \hca  \tbf_n}, \\
-    \Dm_{n,l} &= \pd{}{\mv_l} \intd{  \skewm{\mv} \cdot \bigb{ \happ - \nabla \phi - \dampc \dmdt} \tbf_n}.
+    \Dm_{n,l} &= \pd{}{\mv_l} \intd{  \skewm{\mv} \cdot \bigb{ \happ - \grad \phi - \dampc \dmdt} \tbf_n}.
   \end{aligned}
 \end{equation}
 
@@ -832,11 +832,11 @@ Now using \cref{eq:68} with \cref{eq:69} we immediately obtain
 \begin{equation}
   \begin{aligned} 
     \Dm_{n,l} &= \pd{}{\mv_l} \intd{  \skewm{\mv} \cdot
-      \left( \happ - \nabla \phi - \dampc \dmdt
+      \left( \happ - \grad \phi - \dampc \dmdt
       \right) \tbf_n}, \\
-    &= \int_\magd \tbf_n \big( -\sbf_l\skewm{\happ} + \sbf_l\skewm{\nabla \phi} + \dampc\sbf_l \skewm{\dmdt} - \dampc\sbf_l \jts \skewm{\mv} \Idm_3
+    &= \int_\magd \tbf_n \big( -\sbf_l\skewm{\happ} + \sbf_l\skewm{\grad \phi} + \dampc\sbf_l \skewm{\dmdt} - \dampc\sbf_l \jts \skewm{\mv} \Idm_3
     \big) \d\magd, \\
-    &= \intd{ \tbf_n \sbf_l \bigb{ \skewm{-\happ + \nabla \phi 
+    &= \intd{ \tbf_n \sbf_l \bigb{ \skewm{-\happ + \grad \phi 
           + \dampc \dmdt - \dampc \jts \mv}}}.
     \label{eq:field-damping-jacobian}
   \end{aligned}
