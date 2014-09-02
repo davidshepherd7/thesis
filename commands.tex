@@ -147,9 +147,17 @@
 \newcommand{\Mm}{\mymatrix{M}}
 \newcommand{\Jm}{\mymatrix{J}}
 \newcommand{\Km}{\mymatrix{K}}
-\newcommand{\Jmca}{\mymatrix{J}_\mathrm{ca}}
+\newsubcommand{\Jmca}{\mymatrix{J}}{\mathrm{ca}}
 \newcommand{\Jmts}{J_\mathrm{ts}}
-\newcommand{\jts}{j_\mathrm{ts}}
+
+\newcommand{\Bm}{\mymatrix{B}}
+\newcommand{\Cm}{\mymatrix{C}}
+\newcommand{\Dm}{\mymatrix{D}}
+
+
+% constants in front of Jacobian
+\newcommand{\cts}{c_\mathrm{ts}}
+\newcommand{\jts}{\frac{\cts}{\dtn}}
 
 % Brackets
 \newcommand{\bigb}[1]{{\left( #1 \right)}}
@@ -331,10 +339,11 @@
 \newcommand{\ibasisb}{{j}}
 \newcommand{\ibasisc}{{k}}
 
-% Write mumag nicely
+% Write some names nicely
 \newcommand{\mumag}{\textmu{}mag\ }
 \newcommand{\oomph}{\texttt{oomph-lib}}
-
+\newcommand{\nmag}{\texttt{nmag}}
+\newcommand{\hypre}{\texttt{hypre}}
 
 %% Time stepping
 %% ------------------------------

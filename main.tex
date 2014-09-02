@@ -30,6 +30,14 @@
 
 \usepackage{xspace} % command for fixing spaces after macros
 
+% Make ams math matrices allow dividing lines
+\makeatletter
+\renewcommand*\env@matrix[1][*\c@MaxMatrixCols c]{%
+  \hskip -\arraycolsep
+  \let\@ifnextchar\new@ifnextchar
+  \array{#1}}
+\makeatother
+
 
 % Language
 % ============================================================
