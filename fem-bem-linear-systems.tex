@@ -1,7 +1,51 @@
 \chapter{Solution of linear systems}
 \label{sec:solution-strategies}
 
-In this \thisref{sec:solution-strategies} we discuss 
+In this \thisref{sec:solution-strategies} we discuss solution strategies for the various linear systems of equations that result from the application of the FEM and BEM techniques discussed in \cref{sec:galerk-meth-llg,sec:hybr-finit-elem}.
+
+We first discuss methods of solving the linear system for the LLG equation assuming the magnetostatic field is known and the magnetostatic field assuming the magnetisation is known.
+
+We then move on to the solution of these combination of these two systems which is non-trivial because of the dense BEM matrix.
+The first technique, which is commonly implemented,\footnote{At least \nmag, probably \magpar and \femme use this method.} is to use an ad-hoc \emph{semi}-implicit time integration scheme in which the magnetostatic calculations are handled explicitly.
+The second technique, which is novel, is to use a preconditioned Krylov solver in combination with hierarchical matrix techniques in order to efficiently solve the monolithic, \ie fully-implicitly-coupled system.
+
+In the final section we present some numerical experiments comparing the approaches.
+
+
+\section{Solution of decoupled systems}
+\label{sec:llg-only-system}
+
+Efficient solver strategies for Poisson systems (\cref{sec:poisson-jacobian}) such as those involved in the magnetostatics solve are extremely well studied.
+One efficent and robust method for solving Poisson systems on unstructured grids is to use the method of conjugate gradients (CG) with algebraic multigrid (AMG) as a preconditioner \cite[Chap. 2]{HowardElmanDavidSilvester2006}.
+We implement such a solver using \oomph's preconditioned CG with a relative convergence tolerance of $10^{-8}$.
+For preconditioning we use one V(1,1) cycle of \hypre's BoomerAMG preconditioner \cite{hypre} with Gauss-Seidel smoothing, CLJP coarsening and a connection strength threshold of 0.7.
+
+
+There do not appear to be any efficient, robust and scalable solvers in the literature for the LLG system with linearisation by the Newton-Raphson method.
+Typically CVODE's GMRES is used with a generic preconditioner based on approximating the Jacobian as a banded matrix \cite{nmag} \cite{Vasslios}.
+This should work for sufficiently small time steps, \ie when the mass matrices of \cref{eq:llg-jacobian} are the dominant term, or when the number of nodes is sufficiently small.
+It would not be expected to work efficiently for larger time steps and large numbers of nodes.
+Try two solvers in our model but neither are expected to be scalable to large mesh sizes.
+
+The first method used is a direct solve by LU decomposition (using \superlu \cite{superlu} with parameters ??ds).
+As discussed in \cref{sec:direct-methods} this method is extremely robust, but also extremely slow for large meshes (??ds what size).
+
+The second method is to use GMRES preconditioned by ILU.
+We \oomph's GMRES with left preconditioning, no restarts and a relative convergence tolerance of $10^{-8}$.
+For the ILU preconditioner we use \hypre's Euclid with one level of fill in and no drop tolerance.
+Incomplete LU decomposition with no fill in was also tested but found to be ineffective, especially for larger time steps.
+This method can be efficient for medium sized meshes (up to around 100,000 nodes), but for larger meshes the preconditioner is both slow to assemble and ineffective.
+It is also not particularly robust: iteration counts can vary widely depending on problem parameters.
+
+Unfortunately we have not had time to research more effective solvers for the LLG system.
+
+
+??ds solver for mass matrix in explicit solve?
+
+
+\section{Solution of the systems from implicit LLG with explicit magnetostatics}
+\label{sec:semi-implicit-bem}
+
 
 When we combine implicit time integration schemes with FEM for the spatial discretisation of the LLG equation, the Newton-Raphson method for linearisation (as discussed in \cref ) and the FEM/BEM for calculation of magnetostatic fields we need to solve a series of systems of linear equations involving the Jacobian matrix.
 
@@ -21,38 +65,6 @@ In particular the energy property of IMR does not carry over (see \cref{??}).
 An alternative is to construct a linear solver which can efficiently handle the dense block.
 We present a novel solver using a preconditioned Krylov method combined with a hierarchical representation of the BEM block.
 
-??ds finally we present some numerical experiments comparing the two approaches.
-
-
-\section{Solution of decoupled systems}
-\label{sec:llg-only-system}
-
-Efficient solver strategies for the Poisson systems in \cref{sec:poisson-jacobian} are extremely well studied.
-One efficent and robust method for solving Poisson systems on unstructured grids is to use the method of conjugate gradients with algebraic multigrid as a preconditioner \cite[Chap. 2]{HowardElmanDavidSilvester2006}.
-We use \oomph's implementation of preconditioned CG with a relative convergence tolerance of $10^{-8}$.
-For preconditioning we use one V(1,1) cycle of \hypre's BoomerAMG preconditioner \cite{hypre} with Gauss-Seidel smoothing, CLJP coarsening and a connection strength threshold of 0.7.
-
-
-There do not appear to be any robust, scalable solvers in the literature for the LLG + exchange system with linearisation by the Newton-Raphson method.
-Typically CVODE's GMRES is used with a generic preconditioner based on approximating the Jacobian as a banded matrix \cite{nmag} \cite{Vasslios}.
-This should work for sufficiently small time steps, \ie when the mass matrices of \cref{eq:llg-jacobian} are the dominant term, or when the number of nodes is sufficiently small.
-It would not be expected to work efficiently for larger time steps and large numbers of nodes.
-
-We use two solvers in our model, neither are scalable to large mesh sizes.
-The first method used is a direct solve by LU decomposition (using \superlu \cite{superlu} with parameters ??ds), as discussed in \cref{sec:direct-methods} this is extremely robust but also extremely slow for large meshes (??ds what size).
-
-The second method is \oomph's GMRES preconditioned by \hypre's Euclid incomplete LU decomposition preconditioner with one level of fill in and no drop tolerance.
-Incomplete LU decomposition with no fill in was also tested but found to be ineffective, especially for larger time steps.
-This method is efficient for medium sized meshes (up to around 100,000 nodes), but for larger meshes the preconditioner is both slow to assemble and ineffective.
-
-Unfortunately we have not had time to research more effective solvers for the LLG system.
-
-
-??ds solver for mass matrix in explicit solve?
-
-
-\section{Solution of the systems from implicit LLG with explicit magnetostatics}
-\label{sec:semi-implicit-bem}
 
 The alternative to a fully implicit solve is to come up with a semi implicit method.
 The idea is to approximate $\phim$ using an explicit time integration method while still using an implicit method for $\mv$.
@@ -226,6 +238,7 @@ So these preconditioners are
     \Qm'       & \Am'&   \\
     \Qm       &           &   \Am
   \end{pmatrix},
+  \label{eq:ms-block-prec-drop-p}
 \end{equation}
 and
 \begin{equation}
@@ -235,8 +248,9 @@ and
     & \Am' &   \\
     \Qm       &           &   \Am
   \end{pmatrix},
+  \label{eq:ms-block-prec-drop-q}
 \end{equation}
-where $\prcd_{2}$ is written as a nested block triangular preconditioner rather than reordering the Jacobian to give a true block triangular matrix.
+where $\prcd_{3}$ can obviously be reordered to give a block triangular preconditioner.
 
 Q is a much simpler block (linear, only one term) so probably best to drop that?
 
@@ -247,7 +261,6 @@ Based on the fact that CG preconditioned with AMG is known to be extremely effec
 We also try ILU-1 for the $\Fm$ block, but we expect similar restrictions to those discussed in \cref{sec:llg-only-system}.
 
 
-% Might be able to use multigrid solver from \cite[B71]{Banas2013} for A? Probably not, only functional iteration there...
 
 
 \section{Numerical experiments}
@@ -286,18 +299,132 @@ Since there are no existing analytical solutions or standard problems which fit 
 Since the only difference to the linear systems with different time integration methods is slight change on constant in front of mass matrix we run all experiments using IMR.
 
 
+All experiments are run on a single core of an intel-i7...
+
+
 \subsection{Results}
 
+First we show the timing results for a direct solve including the dense block. 
+For obvious reasons only very small systems are attempted.
 
-iteration counts, solve times, Jacobian assembly times for:
-llg alone
-poisson alone?
-each preconditioner
+\begin{figure}
+  \centering
+  \includegraphics[width=0.8\textwidth]{images/placeholder}
+  \caption{}
+  \label{fig:times-full-direct-bem-solve}
+\end{figure}
 
-for each sweep: refinement, dt, damping?, kone?
 
 
-\section{Further optimisation opportunities}
+\Cref{fig:its-ilu-decoupled} shows GMRES iterations to solve the LLG-only system using $ilu-1$ preconditioning (with magnetostatics handled by decoupling the systems).
+The plot includes all values of $\dampc$ and $\kone$ used, neither appear to have a major effect on the effectiveness of the preconditioner. 
+As is expected with a generic preconditioner it is effective for low-medium numbers of nodes, but not for large problems.
+In fact for the largest problem size shown here and large time steps the solver does not converge at all.
+The preconditioner setup times for the same example are shown in \cref{fig:times-ilu-decoupled}.
+As with the iteration counts, the setup times are reasonable for smaller problems but become large as the number of nodes grows.
+
+\begin{figure}
+  \centering
+  \includegraphics[width=0.8\textwidth]{plots/linear_solvers/ilu-1decoupleddummy-meanofnsolveritersvsinitialnnode.pdf}
+  \caption{GMRES iterations to reach relerr $10^{-8}$ for the decoupled LLG preconditioned by ilu-1.}
+  \label{fig:its-ilu-decoupled}
+\end{figure}
+
+\begin{figure}
+  \centering
+  \includegraphics[width=0.8\textwidth]{plots/linear_solvers/ilu-1decoupleddummy-meanofpreconditionersetuptimesvsinitialnnode.pdf}
+  \caption{Time to set up an ilu-1 preconditioner for the decoupled LLG block.}
+  \label{fig:times-ilu-decoupled}
+\end{figure}
+
+
+Next we consider the preconditioner $\prcd_1$ from \cref{sec:bem-solver-strategies} inverted using a direct solve (LU decomposition).
+This is essentially an exact solve without the dense block.
+The iteration counts are shown in \cref{fig:its-p1-exact}, they are independent of the number of nodes, time step and all physical parameters.
+However the preconditioner setup times, shown in \cref{fig:times-p1-exact} are not so good.
+As would be expected from a direct solve they grow rapidly for large systems.
+
+\begin{figure}
+  \centering
+  \includegraphics[width=0.8\textwidth]{plots/linear_solvers/som-main-exactimplicitdummy-meanofnsolveritersvsinitialnnode.pdf}
+  \caption{Iterations for the monolithic system solved with $\prcd_1$ inverted by LU decomposition.}
+  \label{fig:its-p1-exact}
+\end{figure}
+
+
+\begin{figure}
+  \centering
+  \includegraphics[width=0.8\textwidth]{plots/linear_solvers/som-main-exactimplicitdummy-meanofpreconditionersetuptimesvsinitialnnode.pdf}
+  \caption{Preconditioner setup times for $\prcd_1$ inverted by LU decomposition.}
+  \label{fig:times-p1-exact}
+\end{figure}
+
+The preconditioners $\prcd_2$ and $\prcd_3$ were designed to reduce the setup time.
+First we show results for these preconditioners with an exact solve for the $\Fm$ block (and AMG preconditioning, as discussed in \cref{??ds} for the Poisson blocks $\Am$).
+The iteration counts are shown in \cref{fig:its-p23-exact}, as with $\prcd_1$ we see that the number of iterations is flat over increasing numbers of nodes, time step size and physical parameters.
+The preconditioner setup times are shown in \cref{fig:times-p23-exact}, they are smaller than those in \cref{fig:times-p1-exact} but still grow unacceptably large due to the direct solve of the $\Fm$ block. 
+
+\begin{figure}
+  \centering
+  \includegraphics[width=0.8\textwidth]{plots/linear_solvers_p2p3/implicitexact-meanofnsolveritersvsinitialnnode.pdf}
+  \caption{Iterations for the monolithic system with $\dtn=0.1$ solved with $\prcd_2$ and $\prcd_3$ with $\Fm$ block inverted by LU decomposition and $\Am$ blocks approximated using AMG.}
+  \label{fig:its-p23-exact}
+\end{figure}
+
+\begin{figure}
+  \centering
+  \includegraphics[width=0.8\textwidth]{plots/linear_solvers_p2p3/implicitexact-meanofpreconditionersetuptimesvsinitialnnode.pdf}
+  \caption{Preconditioner setup times with $\dtn=0.1$ for $\prcd_2$ and $\prcd_3$ with $\Fm$ block inverted by LU decomposition and $\Am$ blocks approximated using AMG.}
+  \label{fig:times-p23-exact}
+\end{figure}
+
+
+Finally we show iteration counts for preconditioners $\prcd_2$ and $\prcd_3$ with the $\Fm$ block solved using the ilu-1 preconditioner.
+We cannot expect mesh independent results here, since even the simpler case of the $\Fm$ block alone does not display such behaviour.
+The iteration counts shown in \cref{fig:its-p23-ilu1}, are as expected: good at first but ineffective for large meshes.
+However the preconditioner set up times, as shown in \cref{fig:times-p23-ilu1} are much better than when using the LU decomposition of the $\Fm$ block. 
+
+\begin{figure}
+  \centering
+  \includegraphics[width=0.8\textwidth]{plots/linear_solvers_p2p3/implicitilu-1-meanofnsolveritersvsinitialnnode.pdf}
+  \caption{Iterations for the monolithic system with $\dtn=0.1$ solved with $\prcd_2$ and $\prcd_3$ with $\Fm$ block approximated by ilu-1 and $\Am$ blocks approximated using AMG.}
+  \label{fig:its-p23-ilu1}
+\end{figure}
+
+\begin{figure}
+  \centering
+  \includegraphics[width=0.8\textwidth]{plots/linear_solvers_p2p3/implicitilu-1-meanofpreconditionersetuptimesvsinitialnnode.pdf}
+  \caption{Preconditioner setup times with $\dtn=0.1$ for $\prcd_2$ and $\prcd_3$ with $\Fm$ block approximated by ilu-1 and $\Am$ blocks approximated using AMG.}
+  \label{fig:times-p23-ilu1}
+\end{figure}
+
+Effect of HLib?
+
+Compare the total solve time for the semi-implicit method (with GMRES and ilu-1 preconditioning) and fully implicit method (with $\prcd_2$, ilu-1 for the $\Fm$ block), both using HLib.
+Results are shown in \cref{fig:times-semi-vs-fully-implicit}.
+??ds fully implicit a bit slower but not horrible..
+Note that in our current implementation the Jacobian assembly time for the fully implicit method is longer than that of the semi-implicit one, however this does not need to be the case with some simple optimisations discussed in \cref{sec:furth-optim-opport}.
+
+\begin{figure}
+  \centering
+  \includegraphics[width=0.8\textwidth]{images/placeholder}
+  \caption{}
+  \label{fig:times-semi-vs-fully-implicit}
+\end{figure}
+
+
+Jacobian assembly times?
+
+Complete solve times?
+
+Poisson? probably no need - known to work extremely well
+
+
+
+\section{Outlook}
+\label{sec:furth-optim-opport}
+
+In this \thisref{sec:furth-optim-opport} we compare the expected performance of the fully implicit and decoupled approaches with the assumption that a ``sufficiently good'' preconditioner for the $\Fm$ block can be found and discuss further improvements that could be made.
 
 In the fully implicit method timing results presented here the entire FEM Jacobian was recalculated at each Newton step.
 This is not actually necessary: the Poisson blocks, $\Am$, and LLG-Poisson coupling blocks, $\Qm$ and $\Pm$, (of \cref{eq:16}) are only dependent on the geometry (\ie the corresponding equations are linear).
@@ -309,21 +436,23 @@ As an additional optimisation the skew symmetric structure of \cref{eq:llg-jacob
 Applying these additional optimisations will reduce the Jacobian calculations to the assembly of three $N \times N$ Jacobian blocks and the magnetocrystalline anisotropy block (which will typically be either $N \times N$ or empty).
 
 
-\hlib, if I don't get it in here...
+Newton residual assembly time is extremely small compared to solve + Jacobian assembly times, so it will be ignored.
+
+So the solve time difference is all that is left: both using Krylov solvers, but fully coupled has extra non-zeros (P, Q, G blocks), approx $4N$ extra elements (base is $11N$), hence approximately half as much time again needed for each Krylov step.
+Also fully coupled must use GMRES for all blocks, rather than only for $\Fm$: potentially more expensive orthogonalisation process, could possibly be removed by switching to BiCGStab.
+Finally: possible additional iterations, depends on preconditioner used.
 
 
 
 \section{Conclusions}
 
-Semi-implicit causes problems with TR stability, IMR energy conservation. ??ds do this in last section? No time stepping here probably
-
 We have demonstrated a fully implicit solver using preconditioned GMRES which is close in terms of cost per linear solve.
 
 For small meshes and/or time steps ILU-1 is a good preconditioner for the LLG block.
 
-Better preconditioners are needed.
+Effective mesh independent preconditioners for the $\Fm$ block are badly needed.
 
-AMG is an excellent preconditioner for the Poisson blocks, no increase in number of iterations compared to exact!
+AMG and dropping either P or Q is an excellent preconditioner for the Poisson blocks: almost no increase in number of iterations compared to exact!
 
 
 

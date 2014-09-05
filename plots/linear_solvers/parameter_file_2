@@ -1,0 +1,57 @@
+({
+# Problem specification
+'-driver' : ['llg'],
+'-mesh' : ['st_cube'],
+'-initial-m' : 'smoothly_varying_50',
+'-h-app' : 'zero',
+'-damping' : [0.01],
+'-k1' : [0],
+
+'-max-steps' : 1,
+
+# Integration/calculation details
+'-ts' : ["imr"],
+'-ref' : [3],
+'-dt' : [1, 0.5, 0.1, 0.01],
+
+'-newton-tol' : 1e-12,
+'-quadrature' : ['lnodal', 'gauss'],
+
+# Allow lots of iterations (want to see when it goes bad), crash if it fails so
+# that we don't get misleading results.
+'-krylov-max-iter' : 400,
+'-krylov-throw-on-fail' : 1,
+
+# Outputs
+# '-doc-interval' : 0.01,
+},
+[
+ # for decoupled: test with exact and w/ gmres + ilu1
+ {'-ms-method' : 'decoupled',
+  '-matrix-type' : 'cr',
+  '-solver' : ['superlu', 'gmres'],
+  '-prec': 'ilu-1',
+  '-llg-prec' : 'dummy',
+  '-hlib-bem' : [0, 1],
+  },
+
+  # for block prec test with exact and ilu for llg block
+ {'-ms-method' : 'implicit',
+  '-matrix-type' : 'som',
+  '-solver' : 'gmres',
+  '-prec' : ['som-main-block', 'som-main-block-drop-p'],
+  '-llg-prec' : ['ilu-1', 'exact'],
+  '-hlib-bem' : [0, 1],
+ },
+
+ # for full prec test with only exact
+ {
+  '-ms-method' : 'implicit',
+  '-matrix-type' : 'som',
+  '-solver' : 'gmres',
+  '-prec' : 'som-main-exact',
+  '-llg-prec' : 'dummy',
+  '-hlib-bem' : [0, 1],
+ },
+]
+)
