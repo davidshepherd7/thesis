@@ -187,6 +187,8 @@
 \newcommand{\grad}{\nabla}
 \newcommand{\curl}{\nabla \times}
 \newcommand{\lap}{\nabla^2}
+\newcommand{\disclap}{\widetilde{\Delta}}
+
 
 % grad of a vector
 \newcommand{\gradv}{\widetilde{\grad}}
@@ -318,6 +320,8 @@
 \newcommand{\test}{v}
 \newcommand{\testv}{\myvector{\test}}
 
+\newcommand{\sumbasiscoeff}{a}
+
 \newcommand{\sbf}{\psi}
 \newcommand{\ts}{{\sob^1_h(\magd)}} % my test/shape fn space
 \newcommand{\tsinf}{{\sob^1(\magd)}} % my infinite test/shape fn space
@@ -401,8 +405,9 @@
 
 % approximation functions (fem)
 \newcommand{\myinterp}[1]{{#1}_h}
-\newcommand{\mvh}{\myinterp{\mv}}
+\newsubcommand{\mvh}{\mv}{h}
 \newcommand{\phimh}{\myinterp{\phim}}
+\newcommand{\dmdth}{\pd{\mvh}{t}}
 
 
 \newcommand{\resi}{\rv}
@@ -410,7 +415,7 @@
 \newcommand{\nlit}[2]{{#1}^{(#2)}}
 \newcommand{\nowy}{\nlit{\yvdis}{0}}
 \newcommand{\nexty}{\yvdis^E}
-\newcommand{\corr}{\boldsymbol{\delta}}
+\newcommand{\corr}{\myvector{\delta}}
 
 % Operators
 % ============================================================
