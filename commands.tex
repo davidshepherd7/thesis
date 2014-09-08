@@ -155,6 +155,14 @@
 \newcommand{\Cm}{\mymatrix{C}}
 \newcommand{\Dm}{\mymatrix{D}}
 
+% Make ams math matrices allow dividing lines
+\makeatletter
+\renewcommand*\env@matrix[1][*\c@MaxMatrixCols c]{%
+  \hskip -\arraycolsep
+  \let\@ifnextchar\new@ifnextchar
+  \array{#1}}
+\makeatother
+
 
 % constants in front of Jacobian
 \newcommand{\cts}{c_\mathrm{ts}}
