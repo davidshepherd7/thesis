@@ -22,11 +22,18 @@
 
 \usepackage{url}                %Support for urls
 
+% Allow hyperlinks to break over lines and turn off warning about it
+\usepackage{silence}
+\WarningFilter{hyperref}{You have enabled option `breaklinks'.}
+\usepackage[hyphenbreaks]{breakurl}
+
+
 \usepackage[colorlinks=true, % colour all links black (just using
             linkcolor=black, % colorlinks=false results in boxes around
             citecolor=black, % links)
             filecolor=black,
-            urlcolor=black]{hyperref}
+            urlcolor=black,
+            breaklinks]{hyperref}
 
 \usepackage{xspace} % command for fixing spaces after macros
 
