@@ -123,6 +123,11 @@
   {}% no "else" operation
 }
 
+% Get rid of "In:" for journal articles
+\renewbibmacro{in:}{%
+  \ifentrytype{article}{}{\printtext{\bibstring{in}\intitlepunct}}}
+
+
 
 % Add bibtex files
 \addbibresource{mendeley_library.bib}
