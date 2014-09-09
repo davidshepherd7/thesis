@@ -1172,12 +1172,13 @@ The construction of a preconditioner which is effective independent of the mesh 
 % Some work has been done on preconditioning for the LLG by Suess et. al. \cite{Suess2002}.
 % Also Banas et. al. \cite{Banas2008} \cite{Banas2010} created a multigrid preconditioner for the Maxwell-LLG equation with a fixed point linearisation method (and their time step sizes are a factor of 20 smaller than a similar algorithm using a Newton-Raphson linearisation on the same problem).
 
-Difference between CG and GMRES:
+Difference between CG, GMRES, BiCGStab:
 
 For symmetrical matrices, $\Am$, the construction of orthogonal Krylov subspace basis vectors (??ds) can be done using a only the last 3 ??ds values of $\Am \bv_i$, this results in CG ??ds also choice of minimisation direction?
 For non-symmetrical matrices ALL of the previous values must be stored: GMRES ??ds different direction too.
 This means that the cost per iteration of GMRES grows with the number of iterations, can avoid this by using restarted GMRES (throw away history after x steps) at the cost of convergence guarantees.
 
+Other way to avoid this cost is to use BiCGStab ??ds
 
 \section{Compatibility of methods}
 \label{sec:comp-meth}
