@@ -21,7 +21,7 @@ The ??ds-th problem we tackle is the \mumag standard problem 4 \cite{mumag-websi
 
 \subsection{Problem definition}
 
-We solve the LLG without magnetostatics on a two dimensional square domain $\magd = [0,1] \times [0,1]$ with periodic boundary conditions. 
+We solve the LLG without magnetostatics on a two dimensional square domain $\magd = [0,1] \times [0,1]$ with periodic boundary conditions.
 In time we simulate the solution in $[0, 2]$.
 
 In the following experiments we use the wave exact solution in 2D (see \cref{sec:wave-like-solution}) for simplicity and because an exact solution is known.
@@ -32,7 +32,7 @@ For energy conservation experiments $\dampc = 0$ is used.
 This problem allows us to examine the convergence and conservation properties of IMR with the FEM and nodal quadrature.
 In particular the existence of an exact solution for the LLG with exchange allows us to measure the convergence rate.
 Unfortunately we do not know of any non-trivial (\ie with $\mv$ varying in both space and time) exact solution for the LLG with exchange and magnetostatics.
-  
+
 
 \subsection{Implementation}
 
@@ -42,7 +42,7 @@ unless otherwise specified we use a mesh with $5 \times 2^4$ elements along each
 
 Both the nodal quadrature discussed in \cref{sec:local-nodal-integr} and standard Gaussian quadrature are used in order to compare the two.
 
-For time integration the IMR, TR and BDF2 methods are used, adaptive step sizes with a tolerance of $\toltt = 10^{-5}$ are used except for the convergence experiment which requires fixed step sizes. 
+For time integration the IMR, TR and BDF2 methods are used, adaptive step sizes with a tolerance of $\toltt = 10^{-5}$ are used except for the convergence experiment which requires fixed step sizes.
 
 Linearisation is handled using the Newton-Raphson method, the newton tolerance is set to $10^{-12}$ unless otherwise specified.
 The linear systems are solved using GMRES with an ILU-1 preconditioner.\footnote{\hypre's Euclid preconditioner \cite{hypre} with no drop tolerance and factorisation level 1.}

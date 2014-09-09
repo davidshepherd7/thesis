@@ -48,7 +48,7 @@ Also important is the external applied field due to magnetic bodies or electrica
 We begin by providing a description of each of these energies.
 Other effects which are sometimes important include temperature (thermal effects) and magnetostriction (the change in magnetic behaviour due to stretching or compressing the magnet).
 
-The energy due to an external applied field (sometimes called the Zeeman energy) is 
+The energy due to an external applied field (sometimes called the Zeeman energy) is
 \begin{equation}
   \label{eq:42}
   \Eapp = - \mu_0 \int_{\magd} \Mv \cdot \Happ \d \magd.
@@ -67,7 +67,7 @@ This effective field acts exactly like a real field in calculations of the magne
 
 \subsection{Exchange energy}
 
-In a ferromagnetic material neighbouring magnetic moments prefer to align parallel to each other due to quantum mechanical effects. 
+In a ferromagnetic material neighbouring magnetic moments prefer to align parallel to each other due to quantum mechanical effects.
 This can be approximated by a classical expression for exchange energy \cite{Aharoni1996} as
 \begin{equation}
   \label{eq:39}
@@ -75,7 +75,7 @@ This can be approximated by a classical expression for exchange energy \cite{Aha
 \end{equation}
 where $\Exchc$ is the material dependent exchange constant representing the strength of the exchange coupling.
 
-We write the vector Laplacian as $\lap \Mv = (\lap M_x,\lap M_y, \lap M_z )$. 
+We write the vector Laplacian as $\lap \Mv = (\lap M_x,\lap M_y, \lap M_z )$.
 Then the exchange effective field is given by
 \begin{equation}
   \label{eq:Hex}
@@ -86,14 +86,14 @@ Then the exchange effective field is given by
 \subsection{Magnetostatic energy}
 \label{sec:magnetostatic-field}
 
-Magnetic materials generate a magnetic field, which in turn affects the magnetic material emitting the field. 
-This type of field is also known as the demagnetising field as it tends to oppose the magnetisation of the body. 
-The magnetostatic field, $\Hms$, can be written in two ways: an integral form or a differential (potential) form. 
+Magnetic materials generate a magnetic field, which in turn affects the magnetic material emitting the field.
+This type of field is also known as the demagnetising field as it tends to oppose the magnetisation of the body.
+The magnetostatic field, $\Hms$, can be written in two ways: an integral form or a differential (potential) form.
 % These methods are discussed in \cref{sec:magstat-field-calc-inte} and \ref{sec:magstat-field-calc-pote} respectively.
 
 The integral form of the magnetostatic field at a point $\xv \in \real^3$ due to the magnetic body $\magd$ with boundary $\boundd$ can be given in terms of magnetisation $\Mv$ by an integral over all volume and surface ``magnetic charges'' ($\div \Mv$ and $\Mv \cdot \nv$ respectively) as
 \begin{equation}
-  \Hms(\xv) = \frac{1}{4 \pi} \bigs{ 
+  \Hms(\xv) = \frac{1}{4 \pi} \bigs{
     - \int_\magd \nabla' \cdot \Mv(\xv') \frac{(\xv - \xv')}{\abs{\xv -\xv'}^3} \d^3 \xv'
     + \int_\boundd \Mv(\xv') \cdot \nv(\xv') \frac{(\xv - \xv')}{\abs{\xv - \xv'}^3} \d^2 \xv' },
   \label{eq:Hmsint}
@@ -179,7 +179,7 @@ In this thesis we are concerned only with dynamic models.
 % Dynamic models are advantageous even when a magnetic system typically has multiple local energy minima and (standard) energy models cannot distinguish which of these minima will be the final state of the system. ??ds Jim wants this, sounds wrong
 Such dynamic models calculate the time evolution of the magnetisation using a differential equation.
 
-Given some effective field, $\Heff$, this can be written as a differential equation. 
+Given some effective field, $\Heff$, this can be written as a differential equation.
 Starting with the quantum mechanical angular momentum of an electron, and converting from a single spin to a continuous magnetisation gives the differential equation \cite{Kronmuller2003}
 \begin{equation}
   \label{eq:38}
@@ -241,7 +241,7 @@ By far the most commonly used boundary conditions on the magnetisation $\Mv$ (in
 
 This condition can be arranged into a simpler form: we first note that for \cref{eq:llg-bc} to hold either $\Mv = \zerov$, $\dMdn = \zerov$, or $\Mv$ is parallel to $\dMdn$.
 Clearly $\Mv$ is not the zero vector inside the ferromagnet.
-Also we know that the magnetisation length does not change,\footnote{Physically this is part of the definition of the problem. The proof that this fact is embodied in the LLG equation is given in \cref{sec:prop-cont-llg}.} therefore $\pd{\Mv}{\av} \cdot \Mv = 0$ for any direction $\av$ (since the change in magnetisation projected onto the magnetisation direction is the change in magnetisation length). 
+Also we know that the magnetisation length does not change,\footnote{Physically this is part of the definition of the problem. The proof that this fact is embodied in the LLG equation is given in \cref{sec:prop-cont-llg}.} therefore $\pd{\Mv}{\av} \cdot \Mv = 0$ for any direction $\av$ (since the change in magnetisation projected onto the magnetisation direction is the change in magnetisation length).
 Hence $\Mv$ and $\dMdn$ cannot be parallel.
 So the final boundary condition is simply
 \begin{equation}
@@ -266,18 +266,18 @@ Such models are beyond the scope of this thesis.
 
 In general it is useful to remove all unnecessary parameters from a differential equation before attempting so solve it.
 The main advantage of this is that we simplify the problem and greatly reduce the number of numerical experiments needed to cover all possible situations.
-Also for all problems the appropriate discretisation parameters (time step size and mesh size) will be roughly the same. 
+Also for all problems the appropriate discretisation parameters (time step size and mesh size) will be roughly the same.
 
 \subsection{Non-dimensionalisation of the Landau-Lifshitz-Gilbert equation}
 \label{sec:land-lifsh-gilb-normalisation}
 
-We start from the Landau-Lifshitz-Gilbert equation with the magnetostatic, applied, exchange and magnetocrystalline (effective) fields. 
+We start from the Landau-Lifshitz-Gilbert equation with the magnetostatic, applied, exchange and magnetocrystalline (effective) fields.
 \begin{align}
-  \pd{\Mv^*}{t^*} &= - \gymagc \Mv^* \times \Hv^* + \frac{\alpha}{M_s} \Mv^* \times \pd{\Mv^*}{t^*}, 
+  \pd{\Mv^*}{t^*} &= - \gymagc \Mv^* \times \Hv^* + \frac{\alpha}{M_s} \Mv^* \times \pd{\Mv^*}{t^*},
                     \label{eqn:llgnd} \\
   \Hv^* &= \Happ^* - \grad^* \phi^* + \frac{2\Exchc^*}{\mu_0 M_s} \nabla^{*2} \mv + \frac{2\Kone^*}{\mu_0 M_s} (\mv \cdot \ev) \ev,
           \label{eqn:effnd} \\
-  \nabla^{*2} \phi^* &= \grad^* \cdot \Mv^*, 
+  \nabla^{*2} \phi^* &= \grad^* \cdot \Mv^*,
                        \label{eqn:phind}
 \end{align}
 where we use $^*$ to denote the dimensional variables, operators and constants that will be non-dimensionalised. We assume for simplicity that $M_s$, $\Exchc$ and $\Kone$ are all
@@ -292,7 +292,7 @@ Let
     \Hv^* &= M_s \hv,  \\
     \Kone^* &= \nK \kone,  \\
     t^* &= \frac{1}{\gymagc M_s} t,  \\
-    x_i^* &= l x_i. 
+    x_i^* &= l x_i.
   \end{aligned}
 \end{equation}
 Note that $\Mv$ and $\Hv$ have the same units so we use the same normalisation factor. For dimensional purposes derivatives are equivalent to division by the variable differentiated with respect to, so $\nabla^* = \frac{1}{l} \nabla$, $\pd{a}{t^*} = \gymagc M_s \pd{a}{t}$ etc.
@@ -491,7 +491,7 @@ Finally, substituting \cref{eq:64} into \cref{eq:58} leaves
 For non-constant applied fields the change in the Zeeman energy can increase or decrease the energy depending on how the field is changed. % field moves towards m - decrease, away -> increase. For non-spatially constant this is averaged over space in some sense by the inner product.
 In fact, the first term of \cref{eq:energy-decay} can be easily derived from the Rayleigh dissipation functional used as the basis for the derivation of the Gilbert form of the LLG \cite{Gilbert2004}.
 
-Note that length conservation is a \emph{point-wise} property, \ie $\abs{\mv} = 1$ at every point in space. 
+Note that length conservation is a \emph{point-wise} property, \ie $\abs{\mv} = 1$ at every point in space.
 In contrast the energy decay/conservation is a \emph{global} property, \ie an integral over all space is conserved.
 This is related to the use of the dot product and the $\ltwo$ inner product respectively in the derivations above.
 

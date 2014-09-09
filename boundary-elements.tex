@@ -96,7 +96,7 @@ Substituting \cref{eq:21} into \cref{eqn:dphibound} and using \cref{eqn:dphioneb
 \begin{equation}
   \begin{aligned}
     \pd{\phitwo^\inte(\xv)}{\nv} - \pd{\phitwo^\exte(\xv)}{\nv} &=
-    \pd{\phione^\exte(\xv)}{\nv} - \pd{\phione^\inte(\xv)}{\nv} 
+    \pd{\phione^\exte(\xv)}{\nv} - \pd{\phione^\inte(\xv)}{\nv}
     + \mv \cdot \nv, & \\
      &= 0 &\qquad \xv \in \boundd.
     \label{eq:5}
@@ -248,7 +248,7 @@ with boundary conditions
 \end{equation}
 where the operator $\bmop$ is defined as
 \begin{equation}
-  \bmop \bigs{\phione(\xv)} = \gamma(\xv) \phione(\xv) 
+  \bmop \bigs{\phione(\xv)} = \gamma(\xv) \phione(\xv)
         - \int_{\boundd} \phione(\yv) \pd{\Green}{\nv(\yv)} \d \yv.
 \end{equation}
 
@@ -383,7 +383,7 @@ In the case of flat elements if $\xv_\ibasisb$ is within the element being integ
 for all points $\yv$ in the element by the definition of $\nv$.
 So the integral is zero and the singularity is avoided.
 
-Unfortunately for the case when $\xv_i$ is in a nearby element this is not necessarily true. 
+Unfortunately for the case when $\xv_i$ is in a nearby element this is not necessarily true.
 In particular elements near sharp corners of a domain may be very close to a node outside the element, resulting in a near-singular integral.
 
 % For curvilinear elements we no longer have the nice property that any potentially singular elements are automatically zero.
@@ -424,28 +424,28 @@ Ignoring sharp corners we have that
   \begin{aligned}
     \phim(\xv) = G[\phione](\xv) &= -L[\phione](\xv), \\
     %
-    \sum_{n} \phim_n \tbf_n(\xv) 
-    &= - \sum_{\tri=1}^{N_\tri} \sum_{i=1}^{3} L_{\tri,i}(\xv) \phione_{\tri,i}, 
+    \sum_{n} \phim_n \tbf_n(\xv)
+    &= - \sum_{\tri=1}^{N_\tri} \sum_{i=1}^{3} L_{\tri,i}(\xv) \phione_{\tri,i},
     \quad\quad&\text{expand}\\
-    % 
-    \sum_{n} \phim_n \tbf_n(\xv) 
-    &= - \sum_{\tri=1}^{N_\tri} \sum_n L_{\tri,n}(\xv) \phione_n, 
+    %
+    \sum_{n} \phim_n \tbf_n(\xv)
+    &= - \sum_{\tri=1}^{N_\tri} \sum_n L_{\tri,n}(\xv) \phione_n,
     &\text{equivalent to sum over all nodes--local support}\\
-    % 
-    \phim_k &= - \sum_{\tri=1}^{N_\tri} \sum_n L_{\tri,n}(\xv_k) \phione_n, 
+    %
+    \phim_k &= - \sum_{\tri=1}^{N_\tri} \sum_n L_{\tri,n}(\xv_k) \phione_n,
     &\text{use $\tbf_n(\xv_k) = \delta_{nk}$}\\
-    % 
-    \phim_k &= \sum_n \bigs{\sum_{\tri=1}^{N_\tri} -L_{\tri,n}(\xv_k)} \phione_n, 
+    %
+    \phim_k &= \sum_n \bigs{\sum_{\tri=1}^{N_\tri} -L_{\tri,n}(\xv_k)} \phione_n,
     &\text{reorder}\\
     %
     \phim_k &= \sum_n \bigs{\sum_{\tri \in \text{around}(n)} -L_{\tri,n}(\xv_k)} \phione_n,
     &\text{reduce elements to sum over--local support again}\\
     %
-    &= \sum_n G_{k,n} \phione_n. 
+    &= \sum_n G_{k,n} \phione_n.
     &\text{equation~\cref{eq:10}}
   \end{aligned}
 \end{equation}
-Therefore 
+Therefore
 \begin{equation}
   IG_{i,j} = \sum_{\tri \in \text{around}(j)} L_{\tri,k}(\xv_i),
 \end{equation}
@@ -464,11 +464,11 @@ Hence using the third (un-numbered) equation in appendix B of \cite{Lindholm1984
   \begin{aligned}
     \label{eq:analytic-bem-integral}
     I_{G,i,j} &= \sum_{\tri \in \text{around}(j)} \frac{\abs{\sv_{k+1}}}{8 \pi A_\tri} \bigb{
-      \bigb{(\nv_\tri \times \hat{\sv}_{k+1}) \cdot \rv_{k+1}(\xv_i)} \Omega_\tri(\xv_i) 
+      \bigb{(\nv_\tri \times \hat{\sv}_{k+1}) \cdot \rv_{k+1}(\xv_i)} \Omega_\tri(\xv_i)
       - \nv_\tri \cdot \rv_1(\xv_i) \sum_{l=1}^{3} (\hat{\sv}_{k+1} \cdot \hat{\sv}_l) P_l(\xv_i)
     }, \\
   \end{aligned}
-\end{equation} 
+\end{equation}
 where $A_\tri$ is the area of the triangle, $\zv_i$ denote the nodes of triangle $\tri$ (mod 3), and $\nv_\tri$ is the unit normal to the triangle.
 
 The quantity $P_l(\xv)$ is given by

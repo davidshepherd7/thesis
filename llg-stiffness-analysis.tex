@@ -10,7 +10,7 @@ In this paper we focus on continuum mechanics models of micromagnetics, where th
 For such models stiffness (the restriction of time step size by stability rather than by the desired accuracy) has long been recognised as an issue, at least for some problems
 \cite{Nakatani1989}.
 
-Stiffness in PDEs has at least two possible sources: 
+Stiffness in PDEs has at least two possible sources:
 firstly a problem may be physically stiff due to large differences in the characteristic time scales of different (physical) components of the solution \cite[Chap. 4]{Iserles2009};
 secondly the choice of spatial discretisation method may cause stiffness.
 In particular a fine spatial discretisation often results in a stiff system of ODEs.
@@ -20,7 +20,7 @@ These modes interact with the solution, and the large variation in time scales c
 For a rigorous discussion of this effect in terms of the eigenvalues of the time integration operator see e.g. \cite[Sec 8.2]{Atkinson2009}.
 
 As discussed in \cref{sec:time-discretisation} time integration methods can be roughly divided into two classes: those which are not good at solving stiff problems and those which are.
-These two classes correspond to \emph{explicit} methods that calculate the value at the next time exclusively in terms of previous values and \emph{implicit} methods in which a system of equations must be solved. 
+These two classes correspond to \emph{explicit} methods that calculate the value at the next time exclusively in terms of previous values and \emph{implicit} methods in which a system of equations must be solved.
 Typically one step of an implicit method requires more computational effort than a step of an explicit method because of this solve.
 However good implicit methods are unconditionally stable, allowing them to take much larger time steps when applied to stiff problems \cite[Chap. 4]{Iserles2009}.
 Hence there is a trade-off between time step size and the computational effort per step.
@@ -55,7 +55,7 @@ As the time integrator we use a two stage Runge-Kutta method (RK2), also known a
     \mvtemp &= \mv_n + \dtn f(t_n, \mv_n), \\
     \mv_{n+1} &= \mv_n + \frac{\dtn}{2} \left( f(t_n, \mv_n) + f(t_{n+1},
       \mvtemp) \right).
-  \end{aligned} 
+  \end{aligned}
 \end{equation}
 Time derivatives are calculated within the Galerkin method by inverting the finite-element mass matrix using a diagonally preconditioned conjugate gradient solver.
 The magnetostatic potential $\phim$ is recalculated using the FEM/BEM method at appropriate time and magnetisation values during each stage of \cref{eq:heunn}.
@@ -69,7 +69,7 @@ The semi-implicit time integration method (SIMR) used is the implicit midpoint r
 \section{The Test Case}
 
 As our example problem we chose a sphere with a radius of one exchange length.
-The initial magnetisation is $\mv = [0.2, 0, 1.0]/|\mv|$, the applied field is $\happ =[0, 0, -1.1]$. 
+The initial magnetisation is $\mv = [0.2, 0, 1.0]/|\mv|$, the applied field is $\happ =[0, 0, -1.1]$.
 We considered three values for the Gilbert damping constant: $\alpha = 1, 0.1$ and $0.01$.
 With this geometry and uniform magnetisation the magnetostatic field can be analytically shown to be $\hms = -\mv/3$ throughout the domain \cite[112]{Aharoni1996}, and so, due to energy considerations, the magnetisation remains uniform for spheres of radius $R < 2.082 \sqrt{3} \sim 3.606$ exchange lengths \cite[211]{HubertSchafer}.
 ??ds repeated from \cref{sec:imr-ode-llg-numer-exper}
@@ -124,7 +124,7 @@ Additionally, since no stability issues were seen for any value of $\alpha$, we 
 
 
 The results of the experiments with $\hms = \zerov$ are shown in \cref{fig:no-hms-stability}.
-Results with full FEM/BEM magnetostatics and results with the analytical formula for magnetostatics are shown in \cref{fig:hms-stability} and \ref{fig:analytic-hms-stability} respectively. 
+Results with full FEM/BEM magnetostatics and results with the analytical formula for magnetostatics are shown in \cref{fig:hms-stability} and \ref{fig:analytic-hms-stability} respectively.
 
 In all cases we find that as the damping constant is reduced by an order of magnitude, stable explicit time step sizes are reduced by approximately a factor of two (due to an increase in the stiffness).
 

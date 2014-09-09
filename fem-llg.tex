@@ -57,18 +57,18 @@ So an appropriate test function space is
   \begin{aligned}
     V_{T} &= \sob^0(0,1) \cap \Dfs_0, \\
     \Dfs_0 &= \setst{v}{v \in L^2(0,1),\; v(0) =0,\; v(1)=0}.
-  \end{aligned} 
+  \end{aligned}
 \end{equation}
 The space $V_{s}$ is the solution space
 \begin{equation}
   \begin{aligned}
     V_{s} &= \sob^2(0,1) \cap \Dfs, \\
     \Dfs &= \setst{\phim}{\phim \in L^2(0,1),\, \phim(0) = \phim_{a},\, \phim(1) = \phim_{b}},
-  \end{aligned} 
+  \end{aligned}
 \end{equation}
 \ie the space of functions that are sufficiently smooth for the integrals to be finite and that satisfy the boundary conditions.
 
-To see that \cref{eq:26} is equivalent to \cref{eq:poisson1} consider the case when $f(x) + \phim''(x)$ is non-zero at a point $x \in (0,1)$, \ie when the strong form \cref{eq:poisson1} is not satisfied. 
+To see that \cref{eq:26} is equivalent to \cref{eq:poisson1} consider the case when $f(x) + \phim''(x)$ is non-zero at a point $x \in (0,1)$, \ie when the strong form \cref{eq:poisson1} is not satisfied.
 Since \cref{eq:26} must hold for all functions we can choose a function which is non-zero at $x$ and \cref{eq:26} will fail.
 We call this approach the method of weighted residuals \cite[210, 214]{Zeinkiewicz1967}.
 
@@ -124,7 +124,7 @@ Since $\phim_{h}\in V_{S}^{h}$ we can replace $\phim_{h}$ by a linear combinatio
 where $\phim_l \in \real$ are the unknown coefficients which define the approximate solution $\phimh$.
 Substituting \cref{eq:y-spans} into \cref{eq:discrete_weak_test_fns_replaced} gives
 \begin{equation}
-  \sum_{l=0}^{N_l} \phim_{l}\intui{ \sbf_{l}'\tbf'_{\ndi} } =\intui{ f\tbf_{\ndi} } 
+  \sum_{l=0}^{N_l} \phim_{l}\intui{ \sbf_{l}'\tbf'_{\ndi} } =\intui{ f\tbf_{\ndi} }
   \qquad n=0,\ldots,N.
   \label{eq:31}
 \end{equation}
@@ -158,7 +158,7 @@ The aim now is to approximate an arbitrary function by a linear combination of a
 A good class of functions to satisfy aim is the polynomials: they are trivial to add, subtract and differentiate; and can be easily numerically integrated (see \cref{sec:numer-eval-integrals}).
 
 Additionally it is desirable that the final matrix $\Am$ be sparse (to allow efficient linear algebra).
-For this to happen we need $\intui{ \sbf_{l}'\tbf'_{\ndi} } = 0$ for most pairs of $l, \ndi$. 
+For this to happen we need $\intui{ \sbf_{l}'\tbf'_{\ndi} } = 0$ for most pairs of $l, \ndi$.
 An obvious way to achieve this is to have each basis function only overlap (in space) with a few other basis functions, for example by having each basis function non-zero only on a portion of the domain.
 Basis functions with this property are said to have ``local support''.
 
@@ -194,7 +194,7 @@ Next we define the $\ndi$th (global) basis function as:
 \end{equation}
 So each global basis function is only non-zero on the elements neighbouring the node where it has a maximum value.
 We call the set of such polynomial basis functions $\tsbasis$.
-The relationship between the local and global test functions is illustrated in \cref{fig:local_global_functions}.  
+The relationship between the local and global test functions is illustrated in \cref{fig:local_global_functions}.
 
 \begin{figure}
   \center
@@ -312,7 +312,7 @@ After non-dimensionalisation (see \cref{sec:land-lifsh-gilb-normalisation}) the 
 
 For now we consider the magnetostatic potential only within the magnetic domain, $\magd$, with Neumann or Dirichlet boundary conditions on the boundary, $\boundd$.
 Details of the extension to include the effects of the external region using the FEM/BEM method are given in \cref{sec:hybr-finit-elem}, for which both the Dirichlet and Neumann cases will be required.
-We define $\boundd_\Dir$ and $\boundd_\Neu$ respectively to represent the region of the boundary domain where a Dirichlet condition or Neumann is imposed on the potential,\footnote{These must obviously be such that $\boundd_\Neu \cap \boundd_\Dir = \emptyset$ and $\boundd_\Neu \cup \boundd_\Dir = \boundd$.} \ie 
+We define $\boundd_\Dir$ and $\boundd_\Neu$ respectively to represent the region of the boundary domain where a Dirichlet condition or Neumann is imposed on the potential,\footnote{These must obviously be such that $\boundd_\Neu \cap \boundd_\Dir = \emptyset$ and $\boundd_\Neu \cup \boundd_\Dir = \boundd$.} \ie
 \begin{equation}
   \begin{aligned}
     \phim(\xv) &= g_\Dir(\xv) \quad \forall \xv \in \boundd_\Dir, \\
@@ -369,10 +369,10 @@ Integrating identity \cref{eq:20} over the domain and applying the divergence th
   \begin{aligned}
     \intd{ (\lap \phim) \test} &=  \intd{\div (\test \grad \phim)}
            - \intd{\grad \phim \cdot \grad \test},\\
-    &= \intb{\test (\grad \phim \cdot \nv)} 
+    &= \intb{\test (\grad \phim \cdot \nv)}
     - \intd{ \grad \phim \cdot \grad \test}.
     \label{eqn:identitygauss}
-  \end{aligned} 
+  \end{aligned}
 \end{equation}
 Substituting \cref{eqn:identitygauss} into \cref{eqn:phires1} gives
 \begin{equation}
@@ -382,7 +382,7 @@ Substituting \cref{eqn:identitygauss} into \cref{eqn:phires1} gives
 \end{equation}
 where the function spaces are now $\phim \in \sob^1(\magd) \cap \Dfs$ and $v \in \sob^1(\magd) \cap \Dfs_0$.
 
-Note that the boundary integral is always zero on $\boundd_\Dir$ by the definition of the test functions. 
+Note that the boundary integral is always zero on $\boundd_\Dir$ by the definition of the test functions.
 Hence the boundary integral is only non-zero over $\boundd_{\Neu}$ where $\grad \phim \cdot \nv = g_{\Neu}$ and we have
 \begin{equation}
   \rphi(\phim, \test) = \int_{\boundd_\Neu} \test g_\Neu \d \boundd
@@ -400,7 +400,7 @@ The weak form of the LLG is
     \rllgv(\mv, \test) = \int_\magd &\Big( \dmdt
     + (\mv \times \hca) + (\mv \times \happ) \\
     &- (\mv \times \grad \phi) + (\mv \times \lap \mv) - \dampc \left( \mv
-      \times \dmdt \right) \Big) \test \d\magd. 
+      \times \dmdt \right) \Big) \test \d\magd.
     \label{res:contllg}
   \end{aligned}
 \end{equation}
@@ -436,7 +436,7 @@ Note that each term of the sum in \cref{eq:73} is very similar to \cref{eqn:phir
 Rearranging the first term of \cref{eq:75} we find that
 \begin{equation}
   \begin{aligned}
-    \sum_{i=0}^2 \intb{b_i (\grad m_i \cdot \nv)} 
+    \sum_{i=0}^2 \intb{b_i (\grad m_i \cdot \nv)}
     &= \intb{\bv \cdot \pd{\mv}{\nv}}, \\
     &=  \intb{(\testv \times \mv) \cdot \pd{\mv}{\nv}}, \\
     &=  \intb{(\mv \times \pd{\mv}{\nv}) \cdot \testv},
@@ -450,7 +450,7 @@ On opposite boundaries $\nv$ becomes $-\nv$ but the geometry and $\mv$ values mu
 \begin{equation}
   \begin{aligned}
     \intb{(\mv \times \pd{\mv}{\nv}) \cdot \testv}
-    &= \sum_j \bigs{\intd[\boundd_j]{\mv \times \pd{\mv}{\nv}} 
+    &= \sum_j \bigs{\intd[\boundd_j]{\mv \times \pd{\mv}{\nv}}
     + \intd[\hat{\boundd}_j]{\mv \times \pd{\mv}{(-\nv)}}}, \\
     & = \sum_j \quad 0 ,
   \end{aligned}
@@ -472,7 +472,7 @@ Then using the product rule, we have
 Using this notation we can write
 \begin{equation}
   I =  \\,
-  - \intd{\gradv \mv : \bigb{\gradv \testv \times \mv}} 
+  - \intd{\gradv \mv : \bigb{\gradv \testv \times \mv}}
       - \intd{\gradv \mv : \bigb{\testv \times \gradv \mv}},
       \label{eq:72}
 \end{equation}
@@ -485,7 +485,7 @@ Note that the $:$ operator obeys the usual triple product identity
 \end{equation}
 and permutations. % \cref{triple:-identity}, because
 % \begin{equation}
-%   \begin{aligned} 
+%   \begin{aligned}
 %     \threevecnum{\av} : \bigb{\threevecnum{\av} \times \bv} &= \av_0 \cdot (\av_0 \times \bv) + \ldots, \\
 %     & = 0 + 0 + 0
 %   \end{aligned}
@@ -501,8 +501,8 @@ The final residual for the LLG equation, using a vector test function, is
   \begin{aligned}
     \label{eq:llg-res-final}
     \rllg(\mv, \testv) = \int_\magd &\dmdt\cdot \testv
-    + (\mv \times \hca)\cdot \testv 
-    + (\mv \times \happ)\cdot \testv 
+    + (\mv \times \hca)\cdot \testv
+    + (\mv \times \happ)\cdot \testv
     - (\mv \times \grad \phi)\cdot \testv \\
     & - \bigb{\mv \times \gradv \mv} : \gradv \testv
     - \dampc \left( \mv \times \dmdt \right)\cdot \testv
@@ -510,7 +510,7 @@ The final residual for the LLG equation, using a vector test function, is
   \end{aligned}
 \end{equation}
 
-The final weak formulation is: 
+The final weak formulation is:
 \begin{equation}
   \eqpar{Find $\mv \in (\tsinf)^3$, $\phim \in \tsinf \cap \Dfs$ such that $\rllg(\mv, \testv) = 0$ for all $\testv \in (\tsinf)^3$ and $\rphi(\phim, \test) = 0$ for all $\test \in \tsinf \cap \Dfs_0$.}
 \label{eq:inf-dim-problem}
@@ -544,7 +544,7 @@ In one dimension the $\sk$ and $\tn$ are as given in \cref{eq:simple_lagrange}.
 The extension to higher dimensions is straightforward: see \eg \cite[25]{HowardElmanDavidSilvester2006}.
 
 So substituting the basis representations, \cref{eq:unknowns-basis,eq:47} into the continuous residuals we obtain approximations for the residuals in terms of a finite number of nodal values.
-Next we replace the requirement that the residuals be zero for all test functions in the infinite dimensional set $\tsinf$ with the equivalent requirement for all the test basis functions in the finite set $\tsbasis$. 
+Next we replace the requirement that the residuals be zero for all test functions in the infinite dimensional set $\tsinf$ with the equivalent requirement for all the test basis functions in the finite set $\tsbasis$.
 This results in a finite number of conditions (the residuals) on a finite number of variables (the nodal values) and so the spatial discretisation is complete.
 
 % As described in \cref{sub:Actual-Finite-Elements} we also convert this ``global'' representation into a ``local'' representation on each element.
@@ -603,7 +603,7 @@ Alternatively, as mentioned in \cref{sec:some-implicit-time-integrators}, we can
 The trapezoid rule (TR) is defined (recursively) by
 \begin{equation}
   \begin{aligned}
-    \pd{\yv}{t} &\rightarrow \evalatb{\pd{\yv}{t}}{n+1} 
+    \pd{\yv}{t} &\rightarrow \evalatb{\pd{\yv}{t}}{n+1}
     = \frac{2(\yv_{n+1} - \yv_n)}{\dtn} - \evalatb{\pd{\yv}{t}}{n}, \\
     \yv &\rightarrow \yv_{n+1}, \quad t \rightarrow t_{n+1}.
     \label{eq:impl-tr}
@@ -662,7 +662,7 @@ and similarly for the interpolated magnetisation, $\mvh$:
   \begin{aligned}
     &\pd{\mvh}{\mv_l} = \pd{}{\mv_l} \bigs{ \sum_k \mv_k \sk } = \sbf_l \Idm_3, \\
     &\pd{\mvh}{\phim_l} = \pd{}{\phim_l} \bigs{ \sum_k \mv_k \sk } = \zerov, \\
-\end{aligned} 
+\end{aligned}
 \end{equation}
 where $\Idm_3$ is the $3\times3$ identity matrix.
 
@@ -677,7 +677,7 @@ Starting from the Poisson residual, \cref{res:contphi}, and omitting terms that 
     &= -\intd{\grad \tbf_n \cdot \grad \sbf_l}.
   \end{aligned}
 \end{equation}
-This block of the Jacobian is comparatively simple because the Poisson equation is linear. 
+This block of the Jacobian is comparatively simple because the Poisson equation is linear.
 It corresponds to the well known discrete Laplacian operator \cite{HowardElmanDavidSilvester2006}.
 
 
@@ -738,12 +738,12 @@ Some useful properties of this skew operator are:
       0 & 1 & 0
     \end{pmatrix}\bv = \threevec{0}{-b_2}{b_1},
   \end{equation}
-  this is the first column of $-\skewm{\bv}$. 
+  this is the first column of $-\skewm{\bv}$.
   Repeating the calculation for the derivatives with respect to $a_1$ and $a_2$ results in \cref{eq:61}.
   This simplification is the main advantage of the skew operator notation in the following Jacobian calculations.
 \end{itemize}
 
-Due to the linearity of the skew operator we can write the Jacobian of a cross product including $\mvh$ as 
+Due to the linearity of the skew operator we can write the Jacobian of a cross product including $\mvh$ as
 \begin{equation}
   \begin{aligned}
     \pd{}{\mv_l} \bigb{\skewm{\mvh} \bv} &= \pd{}{\mv_l} \skewm{\intp{\mv}} \bv, \\
@@ -762,7 +762,7 @@ Next, by using \cref{eq:61} we obtain
 and finally by combining \cref{eq:diff-skew-interp} with the product rule we obtain the identity
 \begin{equation}
   \begin{aligned}
-    \pd{}{\mv_l} \bigb{\skewm{\mvh}\cdot \gv(\mvh)} 
+    \pd{}{\mv_l} \bigb{\skewm{\mvh}\cdot \gv(\mvh)}
     &= \skewm{\mvh}\cdot \pd{\gv(\mvh)}{\mv_l} - \sbf_l \skewm{\gv(\mvh)}.
     \label{eq:68}
   \end{aligned}
@@ -825,13 +825,13 @@ If we write the damping term in the form of \cref{eq:68} we have $\gv(\mvh) = \d
 \end{equation}
 Now using \cref{eq:68} with \cref{eq:69} we immediately obtain
 \begin{equation}
-  \begin{aligned} 
+  \begin{aligned}
     \Dm_{n,l} &= \pd{}{\mv_l} \intd{  \skewm{\mvh} \cdot
       \left( \happ - \grad \phi - \dampc \dmdth
       \right) \tbf_n}, \\
     &= \int_\magd \tbf_n \big( -\sbf_l\skewm{\happ} + \sbf_l\skewm{\grad \phi} + \dampc\sbf_l \skewm{\dmdth} - \dampc\sbf_l \jts \skewm{\mvh} \Idm_3
     \big) \d\magd, \\
-    &= \intd{ \tbf_n \sbf_l \bigb{ \skewm{-\happ + \grad \phi 
+    &= \intd{ \tbf_n \sbf_l \bigb{ \skewm{-\happ + \grad \phi
           + \dampc \dmdth - \dampc \jts \mvh}}}.
     \label{eq:field-damping-jacobian}
   \end{aligned}
@@ -839,15 +839,15 @@ Now using \cref{eq:68} with \cref{eq:69} we immediately obtain
 This is a $3\times3$ skew-symmetric matrix where each element is a mass matrix element multiplied by a collection of field/magnetisation components.
 
 We turn now to the contribution due to magnetocrystalline anisotropy.
-Writing the residual in the form of \cref{eq:68} we have 
+Writing the residual in the form of \cref{eq:68} we have
 \begin{equation}
-  \gv(\mvh) = \hca = \kone (\mvh \cdot \ev) \ev,  
+  \gv(\mvh) = \hca = \kone (\mvh \cdot \ev) \ev,
 \end{equation}
 and thus
 \begin{equation}
   \begin{aligned}
     \pd{\gv(\mvh)}{\mv_l} &= \pd{}{\mv_l} \bigb{ \kone (\mvh \cdot \ev) \ev}, \\
-    &= \kone \bigb{ \pd{}{m_{x,l}} (\mvh \cdot \ev), 
+    &= \kone \bigb{ \pd{}{m_{x,l}} (\mvh \cdot \ev),
       \pd{}{m_{y,l}} (\mvh \cdot \ev),
       \pd{}{m_{z,l}} (\mvh \cdot \ev) }  \tensorprod \ev, \\
     &= \kone \sbf_l \; \ev  \tensorprod \ev.
@@ -856,7 +856,7 @@ and thus
 \end{equation}
 Then combining \cref{eq:68,eq:70} gives
 \begin{equation}
-  \begin{aligned} 
+  \begin{aligned}
     \Cm_{n,l} &= \pd{}{\mv_l} \intd{ \skewm{\mvh} \cdot \hca  \tbf_n}, \\
     &= \underbrace{\intd{ -\tbf_n \sbf_l\skewm{\hca} }}_{\Cm'_{n,l}}
     + \underbrace{\kone \intd{ \tbf_n \sbf_l \skewm{\mvh} \; (\ev  \tensorprod \ev) }}_{\Jmca_{,n,l}}.
@@ -870,7 +870,7 @@ Finally we calculate the exchange contribution.
 We first derive the identity
 \begin{equation}
   \begin{aligned}
-    \pd{}{\mv_l} \left(\gradv \mvh \compdot \gradv \tbf\right) 
+    \pd{}{\mv_l} \left(\gradv \mvh \compdot \gradv \tbf\right)
     &= \pd{}{\mv_l} \threevecdup{\left( \sum_k \mv_k \grad \sbf_k \right) \cdot \grad \tbf}, \\
     &=  \sum_k \pd{\mv_k}{\mv_l} \threevecdup{\grad \sbf_k \cdot \grad \tbf}, \\
     &=  \Idm_3 \bigb{ \grad \sbf_l \cdot \grad \tbf }.
@@ -923,16 +923,16 @@ The Jacobian for this complete non-linear system is
 \end{equation}
 where $\Am$ and $\Fm$ have been derived in \cref{sec:poisson-jacobian} and \cref{sec:llg-magn-coupl} respectively; $\Pm = \pd{\rllgv}{\phim}$ and $\Qm = \pd{\rphi}{\mvh}$.
 In \thisref{sec:llg-magn-coupl} we derive expressions for $\Pm$ and $\Qm$.
-Note that it is also possible (and common) to solve the non-linear problem \cref{eq:inf-dim-problem} as two separate systems: one for $\mvh$ then one for $\phim$. 
+Note that it is also possible (and common) to solve the non-linear problem \cref{eq:inf-dim-problem} as two separate systems: one for $\mvh$ then one for $\phim$.
 More details and the advantages of each approach are discussed in \cref{sec:solution-strategies}.
 
 Now we derive $\Pm_{n,l}$.
 It is a $3 \times 1$ block matrix because we are dealing with a vector of three residuals differentiated by one variable ($\phim$).
-Most of the terms in the LLG residual are zero when differentiated with respect to any $\phim_{l}$ so the calculation is quite simple. 
+Most of the terms in the LLG residual are zero when differentiated with respect to any $\phim_{l}$ so the calculation is quite simple.
 From \cref{res:llg-discrete}, using discrete approximations and dropping the zero terms we have
 \begin{equation}
   \begin{aligned}
-    \Pm_{n,l} &= \pd{\rllgv_n}{\phim_l} 
+    \Pm_{n,l} &= \pd{\rllgv_n}{\phim_l}
     = \pd{}{\phim_l} \intd{ -\tbf_n \mvh \times \grad \phimh}, \\
     &= -\intd{ \tbf_n \mvh \times \grad \sbf_l}, \\
     % &= -\intd{ \tbf_n \threevec{m_y\pd{\sbf_l}{z} - m_z \pd{\sbf_l}{y}}
@@ -946,9 +946,9 @@ From \cref{res:phi-discrete} we have
 \begin{equation}
   \begin{aligned}
     \Qm_{n,l} &= \pd{\rphi_n}{\mv_l} = \pd{}{\mv_l} \intd{ -\tbf_n \div \mvh}, \\
-    &= \sum_j \pd{}{\mv_l} \intd{ -\tbf_n \left( \pd{\sbf_j}{x} m_{h,x,j} 
+    &= \sum_j \pd{}{\mv_l} \intd{ -\tbf_n \left( \pd{\sbf_j}{x} m_{h,x,j}
         + \pd{\sbf_j}{y} m_{h,y,j} + \pd{\sbf_j}{z} m_{h,z,j} \right) }, \\
-    &= -\intd{ \tbf_n \left( \pd{\sbf_l}{x}, 
+    &= -\intd{ \tbf_n \left( \pd{\sbf_l}{x},
         \pd{\sbf_l}{y}, \pd{\sbf_l}{z} \right) }, \\
     &= -\intd{\tbf_n (\grad \sbf_l)^T}.
   \end{aligned}
@@ -1012,26 +1012,26 @@ So using these we have:
     \int_{\magd_e} f(\xv) \d \xv &= \int_{\magd_e} f(\sv) J(\sv) \d \sv, \\
     &\approx \int_{\magd_e} \bigb{\sum_l f(\sv_l) \tbf_l(\sv)} J(\sv) \d \sv, \\
     &\approx \sum_l f(\sv_l) \int_{\magd_e} \tbf_l(\sv) J(\sv) \d \sv,
-  \end{aligned} 
+  \end{aligned}
 \end{equation}
 where $J =  \pd{\sv}{\xv}$ is the Jacobian of the transformation from local to global coordinates.
 Comparing \cref{eq:nodal-integration} with \cref{eq:nodal-quad-weights} we see that
 \begin{equation}
   \begin{aligned}
     \beta_l &= \int_{\magd_e} \tbf_l(\sv) J(\sv) \d \sv \bigb{= \int_{\magd_e} \tbf_l \d\xv}.
-  \end{aligned} 
+  \end{aligned}
 \end{equation}
 
 If $f(\sv)$ is a first order polynomial then our nodal quadrature scheme is exact.
 This is worse than the Gaussian quadrature with the same number of quadrature points, where polynomials of up to 3rd order are integrated exactly.
 As such most terms of the LLG residual are not integrated exactly.
-However the exchange residual contribution is only a first order polynomial, for example the $x$ component is 
+However the exchange residual contribution is only a first order polynomial, for example the $x$ component is
 \begin{equation}
   \begin{aligned}
     r_{\text{exch},x} = - \intd{ m_y \bigb{\grad \tbf \cdot \grad m_z}} + \intd{ m_z \bigb{\grad \tbf_n \cdot \grad m_y}},
   \end{aligned}
 \end{equation}
-where the gradient terms are constants ($m_i$ and $\tbf_n$ are linear polynomials so their first derivatives are constant). 
+where the gradient terms are constants ($m_i$ and $\tbf_n$ are linear polynomials so their first derivatives are constant).
 Hence the exchange contribution is integrated exactly.
 
 
@@ -1070,10 +1070,10 @@ So using the new notation and this test function we have that
 Using $\tbf_k(\xv_l) = \delta_{kl}$ we can eliminate the summation, leaving only
 \begin{equation}
   \begin{aligned}
-    \norm{\beta_j \bigg[ \bigb{\dmdt_j  + (\mv_{j} \times \hv_{j})  - \dampc \bigb{\mv_{j} \times \dmdt_j}} \cdot \mv_{j} 
+    \norm{\beta_j \bigg[ \bigb{\dmdt_j  + (\mv_{j} \times \hv_{j})  - \dampc \bigb{\mv_{j} \times \dmdt_j}} \cdot \mv_{j}
     + \bigb{\mv_j \times \grad \mv_j} : \grad (\mv_{j})
     \bigg] } < \ntol \sumbasiscoeff.
-  \end{aligned} 
+  \end{aligned}
 \end{equation}
 Now, by the properties of the triple product, the precession and damping terms vanish leaving
 \begin{equation}
@@ -1088,7 +1088,7 @@ Substituting in the IMR from \cref{eq:impl-imr} gives the desired conservation r
 \end{equation}
 
 This is applicable for all nodes $j$.
-Hence all nodal magnetisation lengths are conserved up to an error which can be controlled by decreasing the tolerance of the Newton-Raphson method. 
+Hence all nodal magnetisation lengths are conserved up to an error which can be controlled by decreasing the tolerance of the Newton-Raphson method.
 
 
 \subsection{Energy properties}
@@ -1156,7 +1156,7 @@ Finally, by using the triangle inequality, we have
 \begin{equation}
   \begin{aligned}
     &\norm{ \frac{\e_{n+1} - \e_n}{\dtn} + \dampc \ltnorm{\frac{\mvh_{n+1} - \mvh_n}{\dtn}}^2 } \\
-    &< \norm{\ltip{\frac{\happ(t_{n+1}) + \happ(t_n)}{\dtn}}{\frac{\mvh_{,n+1} + \mvh_{,n}}{2}} - \ltip{\happerror}{\frac{\mvh_{n+1} - \mvh_n}{\dtn}} } 
+    &< \norm{\ltip{\frac{\happ(t_{n+1}) + \happ(t_n)}{\dtn}}{\frac{\mvh_{,n+1} + \mvh_{,n}}{2}} - \ltip{\happerror}{\frac{\mvh_{n+1} - \mvh_n}{\dtn}} }
   + \ntol \sumbasiscoeff.
   \label{eq:86}
   \end{aligned}
@@ -1166,7 +1166,7 @@ As in \cref{sec:proof-energy-prop}: if $\dampc = 0$ and $\happ$ constant we have
 Note that the integration of the energies and $\ltwo$ norms in \cref{eq:86} are not necessarily exact because we are using nodal quadrature.
 The exchange energy is exact for the same reasons as discussed in \cref{sec:local-nodal-integr}, but also the energy due to magnetostatic field is exactly evaluated for the same reason.
 The magnetocrystalline anisotropy energy and $\dmdt$ norm integrals are not exact.
-The Zeeman energy depends on the spatial variation of the applied field. 
+The Zeeman energy depends on the spatial variation of the applied field.
 
 The restriction of $\testv \in \sob_h^2(\magd)$ can be relaxed by considering an implicitly defined discrete Laplacian operator such that for $\av \in \sob^1(\magd)$, $\bv \in \ts$
 \begin{equation}
@@ -1212,11 +1212,11 @@ However it is an \emph{integral} relationship, meaning that the values of the in
 We can see this in more detail by writing out the Gaussian quadrature.
 Dropping the constant factor of $2\dtn$ and assuming that $\abs{\mvh_{,n}} = 1$ everywhere this gives
 \begin{equation}
-  \begin{aligned} 
+  \begin{aligned}
     1 &= \intd{\abs{\sum_k \mv_{k, n+1} \tbf_k(\xv)}^2}, \\
     &= \sum_l w_l \abs{\sum_k \mv_{k, n+1} \tbf_k(\xv_l)}^2.
     \label{eq:83}
-  \end{aligned} 
+  \end{aligned}
 \end{equation}
 \Cref{eq:83} can be satisfied without the requirement that all $\abs{\mv_{k, n+1}} = 1 \forall k$.
 For example if we set the number of nodes to two (\ie a 1D problem with linear basis functions) and assume magnetisation only along the $z$-axis (\ie  $\mvh_{,n+1} = (0, 0, m)$) then condition \cref{eq:83} becomes (dropping the subscript $n+1$):
@@ -1240,4 +1240,4 @@ Finally, it is interesting to note that if the magnetisation is constant in spac
 %%% mode: latex
 %%% TeX-master: "main"
 %%% End:
- 
+

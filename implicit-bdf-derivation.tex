@@ -7,7 +7,7 @@ Starting from \cref{eq:59} and setting $\pv_k(t_{n+1}) = \ffv{t_{n+1}, \yv_{n+1}
   \begin{aligned}
     \fv(t_{n+1}, \yv_{n+1}) &= \sum_{j=1}^k \yv[t_{n+1}, \ldots, t_{n+1-j}] \sum_{l=0}^{j-1} \prod_{i=0, i \neq l}^{j-1} (t_{n+1} - t_{n+1-i}).
   \end{aligned}
-\end{equation} 
+\end{equation}
 This can be greatly simplified by noticing that the product $ \prod_{i=0, i \neq l}^{j-1} (t_{n+1} - t_{n+1-i})$ is zero whenever it contains $i=0$, \ie all terms in the sum with $l \neq 0$.
 This leaves us with
 \begin{equation}
@@ -38,7 +38,7 @@ After some algebra this becomes
 \begin{equation}
   \label{eqn:bdf2-derivation-rearranged}
   \begin{aligned}
-    \frac{\yv_{n+1} - \yv_n}{\dtn} = \frac{\dtn}{2\dtn + \dtx{n-1}} \frac{\yv_n - \yv_{n-1}}{\dtx{n-1}} 
+    \frac{\yv_{n+1} - \yv_n}{\dtn} = \frac{\dtn}{2\dtn + \dtx{n-1}} \frac{\yv_n - \yv_{n-1}}{\dtx{n-1}}
     + \frac{\dtn + \dtx{n-1}}{2\dtn + \dtx{n-1}} \fv(t_{n+1}, \yv_{n+1}),
   \end{aligned}
 \end{equation}

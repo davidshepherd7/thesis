@@ -115,7 +115,7 @@ The Newton divided differences are defined recursively by
     \yv[t_{n+1}, t_n, t_{n-1}] &= \frac{\yv[t_{n+1}, t_n] - \yv[t_n, t_{n-1}]}{t_{n+1} - t_{n-1}}, \\
     \vdots
   \end{aligned}
-\end{equation} 
+\end{equation}
 The $k$-th Lagrange interpolation polynomial \cite[124]{BurdenFaires}, \cite[400]{HairerNorsettWanner} can be expressed in terms of divided differences as
 \begin{equation}
   \label{eqn:divided-diff-intp}
@@ -136,13 +136,13 @@ Differentiating \cref{eqn:divided-diff-intp} with respect to $t$, recalling that
     &= \sum_{j=1}^k \yv[t_{n+1}, \ldots, t_{n+1-j}] \sum_{l=0}^{j-1} \prod_{i=0, i \neq l}^{j-1} (t - t_{n+1-i}).
     \label{eq:59}
   \end{aligned}
-\end{equation} 
+\end{equation}
 Setting $\ffv{t_n, \yv_n} = \pv_k'(t_n)$ results in
 \begin{equation}
   \begin{aligned}
     \ffv{t_n, \yv_n} &= \sum_{j=1}^k \yv[t_{n+1}, \ldots, t_{n+1-j}] \sum_{l=0}^{j-1} \prod_{i=0, i \neq l}^{j-1} (t_n - t_{n+1-i}).
   \end{aligned}
-\end{equation} 
+\end{equation}
 This can be greatly simplified by noticing that the product $ \prod_{i=0, i \neq l}^{j-1} (t_n - t_{n+1-i})$ is zero whenever it contains $i=1$, \ie whenever $j \geq 2$ and $l \neq 1$.
 When $j=1$ the only non-zero terms in the sum of products are for $l=0$ and $i=0$, so we only need to consider the case of $l=1$.
 This gives
@@ -162,14 +162,14 @@ For $k=1$ equation \cref{eq:ebdf-general} reduces to
     &= \frac{\yv_{n+1} - \yv_n}{\dtn}, \\
     \yv_{n+1} &= \yv_n + \dtn f(t_n, \yv_n), \\
   \end{aligned}
-\end{equation} 
+\end{equation}
 which is forward Euler.
 
 For $k=2$ we have
 \begin{equation}
   \begin{aligned}
     \fv(t_n, \yv_n) &= \yv[t_{n+1}, t_n] - \dtn \yv[t_{n+1}, t_n, t_{n-1}] , \\
-    &=  \frac{\yv_{n+1} - \yv_n}{\dtn} 
+    &=  \frac{\yv_{n+1} - \yv_n}{\dtn}
     - \frac{\dtn}{\dtn + \dtx{n-1}} \bigb{ \frac{\yv_{n+1} - \yv_n}{\dtn} - \frac{\yv_n - \yv_{n-1}}{\dtx{n-1}}}.
   \end{aligned}
 \end{equation}
@@ -186,7 +186,7 @@ Unfortunately we are interested in the case $k=3$ which is:
 \begin{equation}
   \begin{aligned}
     f(t_n, \yv_n) &= \yv[t_{n+1}, t_n] - \dtn \yv[t_{n+1}, t_n, t_{n-1}] -\dtn \yv[t_{n+1}, t_n, t_{n-1}, t_{n-2}], \\
-    &=  \frac{\yv_{n+1} - \yv_n}{\dtn} 
+    &=  \frac{\yv_{n+1} - \yv_n}{\dtn}
     - \frac{\dtn}{\dtn + \dtx{n-1}} \bigb{ \frac{\yv_{n+1} - \yv_n}{\dtn} - \frac{\yv_n - \yv_{n-1}}{\dtx{n-1}}} \\
     &\quad - \frac{\dtn}{\dtn + \dtx{n-1} + \dtx{n-2}}
          \bigs{
@@ -310,7 +310,7 @@ Numerical experiments with the LLG equation are detailed in \cref{sec:imr-ode-ll
 
 We compare the adaptive IMR developed above with two commonly used adaptive implicit time integrators:
 \begin{itemize}
-\item Standard adaptive trapezoid rule. 
+\item Standard adaptive trapezoid rule.
   The error estimate is construted using Milne's device with the second order Adams-Bashforth method (AB2) \cite[707]{GreshoSani}.
 \item Adaptive BDF2, with the error estimate again constructed using Milne's device and the variable step leapfrog method (\ie explicit BDF2) \cite[715]{GreshoSani}.
 \end{itemize}
@@ -341,7 +341,7 @@ The first example used is an ODE with a 2nd order polynomial as the exact soluti
 This problem should be integrated exactly by all of the methods since $\lte \propto y'''(t) \equiv 0$.
 So the adaptivity should detect this and increase the time step at the maximum allowed rate.
 
-The results of this experiment are shown in Figure~\ref{fig:imr-poly2-example}. 
+The results of this experiment are shown in Figure~\ref{fig:imr-poly2-example}.
 As expected, all three methods keep the error extremely small (at a level commensurate Newton tolerance, $\newtontol$) even for extremely large time steps.
 The step size increases rapidly for all methods, again as would be expected.
 The computed solution does not look much like a polynomial because the distance between output points is so large (due to large time steps).
@@ -363,7 +363,7 @@ The next test features a damped oscillatory solution
   \begin{aligned}
     y(t) &= e^{-\beta t} \sin(\omega t), \\
     f(t,y) &= - \beta e^{-\beta t} \sin(\omega t) + \omega e^{-\beta t} \cos(\omega t).  \end{aligned}
-\end{equation} 
+\end{equation}
 The adaptive algorithm should oscillate the step size in time with the oscillating truncation error ($\pd{}{t^3} \sin(t) = -\cos(t)$), while at the same time gradually increasing the step size as the term $e^{-\beta t}$ goes to zero.
 
 ??ds write out full lte calculations?
@@ -385,7 +385,7 @@ Hence the fact that the global error increases above the tolerance, $\toltt$, is
 Interestingly, there is a slight lag on the time step response of the IMR method as time steps become larger.
 This could be due to the fact that IMR uses data from three previous steps in its LTE estimate, whereas the others only use two previous steps.
 
-In \cref{fig:imr-osc-example-scatter} we show plots of the decrease in global error norm as the tolerance is decreased. 
+In \cref{fig:imr-osc-example-scatter} we show plots of the decrease in global error norm as the tolerance is decreased.
 The consistent decrease in the error norms indicates that the all of the adaptive methods are able to control the error in the expected manner.
 Plots for the example problems the following Sections are very similar and so are not shown.
 
@@ -409,7 +409,7 @@ with the exact solution
 \begin{equation}
   \label{eqn:imr-test-stiff-exact}
   \yv(t) = e^{-\lambda t} \yv_0. \\
-\end{equation} 
+\end{equation}
 This example will test that the single step of the eBDF method provides reliable LTE estimates even in cases of extreme stiffness.
 The time steps should start small but rapidly increase as the initial transient decays.
 
@@ -452,12 +452,12 @@ Note that for TR and BDF2 $\lte \propto \dtn^3 \cos(t)$, while for BDF1 $\lte \p
 Hence we expect to see the adaptive IMR perform similarly to BDF1, and to select much smaller time steps than TR and BDF2 in order to control the larger errors.
 To test this we also run the experiment with an adaptive BDF1 (backwards Euler) method using Milne's method for adaptivity.
 
-The results are shown in \cref{fig:imr-order-reduction-example}. 
+The results are shown in \cref{fig:imr-order-reduction-example}.
 As expected the implicit midpoint rule selects time step sizes similarly to the first order BDF1 method due to order reduction.
 This allows it to retain similar accuracies to the TR and BDF2 methods at the cost of requiring many more time steps.
 
 The convergence of the solution as $\toltt$ is reduced with fixed $\lambda = 100$ is shown in \cref{fig:imr-order-reduction-convergence}.
-Note that IMR still displays second order convergence (albeit with a much larger constant error). 
+Note that IMR still displays second order convergence (albeit with a much larger constant error).
 This is because we are not increasing $\lambda$ as we decrease $\toltt$, so we are measuring the normal convergence rather than B-convergence.
 
 
@@ -512,7 +512,7 @@ Alternatively \cref{eq:74} can be inverted to give $\theta$ as a function of tim
 \begin{equation}
   \theta(t) = 2 \tan^{-1} \bigs{ \tan(\theta_0/2) \exp\bigb{\frac{tH\dampc}{\dampc^2 + 1}}}.
 \label{eq:77}
-\end{equation} 
+\end{equation}
 The azimuthal angle at a given $\theta$ is \cite{Mallinson2000}
 \begin{equation}
   \varphi(\theta) = \phi_0 +  \frac{-1}{\dampc} \ln \bigb{ \frac{\tan(\theta/2)}{\tan(\theta_0/2)} }.
@@ -532,10 +532,10 @@ where $\mv(t_n) = \textrm{Cartesian}\bigb{[r=1, \theta=\theta(t_n), \phi=\phi(t_
 
 Which of the error norms $\swtimeerr$ and $\merr$ is most important depends on the aim of the calculation.
 We may simply want to find the switching time of the system, in this case the time error norm, $\swtimeerr$, is appropriate (and using time steps such that the precessional behaviour is fully resolved may be excessively expensive).
-In other cases an accurate representation of the full behaviour of the system may be needed and $\merr$ is appropriate. 
+In other cases an accurate representation of the full behaviour of the system may be needed and $\merr$ is appropriate.
 
 For the main experiment we choose parameters $H = 1.1$ (sufficient to switch the system) and $\dampc = 0.01$ (roughly the physically relevant value).
-We set the initial magnetisation to be just off the $z$-axis in order to avoid a singularity in the reversal time when $\theta_1 = 0$, more precisely $\mv_0 = (0.01, 0.0, 1.0)/\sqrt{1.0001}$. 
+We set the initial magnetisation to be just off the $z$-axis in order to avoid a singularity in the reversal time when $\theta_1 = 0$, more precisely $\mv_0 = (0.01, 0.0, 1.0)/\sqrt{1.0001}$.
 The dynamics are simulated for 1000 time units for all simulations, which is sufficient time for the magnetisation to fully switch.
 This experiment allows us to check the $\abs{\mv}$ conservation properties of the adaptive IMR, to compare the accuracy of the solution over different time integrators, and to check again that the time step selection is appropriate.
 
@@ -687,7 +687,7 @@ Any effects of these geometric integration properties would be expected to be gr
 This will be tested in \cref{cha:numer-experiments} where the adaptive IMR algorithm is combined with the PDE methods discussed in other chapters.
 
 Finally we have observed some interesting results on the suitability of certain time integration methods to the simulation of the LLG equation.
-We have found that the use of BDF2 results in significantly larger errors in the calculated switching time than the TR or IMR methods, particularly when the full precessional behaviour is not resolved. 
+We have found that the use of BDF2 results in significantly larger errors in the calculated switching time than the TR or IMR methods, particularly when the full precessional behaviour is not resolved.
 We have also found that the process of re-normalising the magnetisation length after each time step in TR and BDF2 methods greatly increases the error in the energy.
 
 
