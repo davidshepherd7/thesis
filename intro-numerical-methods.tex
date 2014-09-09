@@ -1106,6 +1106,8 @@ Main example is LU decomposition.
 The main advantage of direct methods is their robustness: given a well-scaled, non-singular linear system a well designed direct solver will be able provide an answer.
 As such direct solvers are usually the first approach tried when solving a new system of equations.
 
+??ds talk about 3d vs 2d: in 3d there is much more coupling (more overlap of test functions): so larger bandwidth and much slower direct solves
+
 However as matrix sizes become large direct solvers become increasingly demanding in both time and memory.
 The problem is that the factors of a typical sparse matrix are significantly more dense than the starting matrix, \ie there is some amount of fill-in.
 This means that the time and memory requirements for the solution can never scale as $\order{n}$.
