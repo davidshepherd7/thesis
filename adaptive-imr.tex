@@ -1,11 +1,15 @@
 
 % In the plots:
 % consistent colours?
+% max(m-1) -> m-1
 
 % Check with Matthias:
-% * IVP vs ODE, is it ok to use ODE for consistency? Mention that we always solve IVP ODEs?
 % * c.f. = compare with (like ie, eg) is that ok to use?
 % * periodic behaviour of dtn in LLG case: why does it matter that we are using cartesian coordinates?
+
+
+% Check with Milan:
+% why is TR dt growing slower in stiff example? ringing? citation?
 
 
 % Fixup ebdf3 code and include in oomph-lib
@@ -15,7 +19,7 @@
 \label{sec:adaptive-imr}
 
 
-The implicit midpoint rule (IMR) is a well known integration scheme for ordinary differential equations (ODEs) with favourable stability and accuracy properties (see \cref{sec:time-discretisation} or \cite[204]{HairerNorsettWanner}).
+The implicit midpoint rule (IMR) is a well known integration scheme for initial value ordinary differential equations (ODEs) with favourable stability and accuracy properties (see \cref{sec:time-discretisation} or \cite[204]{HairerNorsettWanner}).
 It also has beneficial ``geometric integration'' properties when applied to the time integration of the Landau-Lifshitz-Gilbert equation (discussed in
 \cref{sec:ensuring-constant-mv,sec:energy-cons}) and energy conservation properties when applied to the semi-discretised Navier-Stokes equations \cite{Sanderse2013}.
 However it is a non-trivial task to create an efficient adaptive time step selection algorithm for the IMR using typical approaches.
@@ -75,14 +79,16 @@ which is equivalent to the Butcher tableau \cite[135]{HairerNorsettWanner} shown
   \label{tab:butcher-imr}
 \end{table}
 
-Note that, unlike multistep methods, such as the second order backwards difference (BDF2), \cref{eq:basic-midpoint} is valid for both constant and variable step sizes, because there is no dependence on previous steps.
+Note that, unlike for multistep methods, \cref{eq:basic-midpoint} is valid for both constant and variable step sizes, because there is no dependence on previous steps.
 
 
 \section{Adaptive implicit midpoint rule}
 \label{sec:adapt-impl-midp}
 
-In \thisref{sec:adapt-impl-midp} we first discuss why the standard approaches used to estimate the local truncation error (LTE) fail, and the approach we will use.
-We next derive the formulae required and discuss how a complete adaptive time step selection algorithm can be implemented using these estimates.
+Adaptive time step selection algorithms are typically based on approximating the local truncation error (LTE), the error due to a single step of the integration scheme (see \cref{sec:deriv-local-trunc}).
+These estimates can be used to select appropriate time steps such that the LTE remains close to a specified value.
+In \thisref{sec:adapt-impl-midp} we first discuss why the standard approaches used to estimate the LTE fail for the IMR, and the approach that we will use.
+We next derive the formulae required and discuss how a complete adaptive time step selection algorithm can be implemented using the LTE estimates.
 Finally we mention a limitation of the scheme when applied to certain problems.
 
 \subsection{Construction of an LTE estimate}
@@ -108,7 +114,7 @@ With this approach our estimate for the local truncation error is simply
   \label{eq:aimr-lte-est}
   \lte = \yv_{n+1}^{\ebdf} - \yv_{n+1}^\imr + \order{\dtn^4}.
 \end{equation}
-The eBDF3 method is not widely known because it does not have the basic property essential for time integration \cite[365]{HairerNorsettWanner}:
+The eBDF3 method is not widely used because it does not have the basic property essential for time integration \cite[365]{HairerNorsettWanner}:
 \begin{equation}
   \lim_{\dtn \rightarrow 0} \bigb{ \max_n \norm{\yv_{n} - \yv(t_n)}} = 0
 \end{equation}
@@ -128,7 +134,7 @@ The explicit BDF methods are explicit time integration methods derived using the
 The idea is to write down a divided difference representation of an interpolating polynomial, $\pv(t)$, through $\yv_i$, $i=n-k+1, \ldots, n+1$ at the appropriate times (simple backward differences can be used for constant time steps, hence the name).
 The derivative of the polynomial is then set equal to the derivative function $\ffv{t, \yv}$ at one of the discrete time steps \cite[400]{HairerNorsettWanner}.
 Setting $\pv'(t_{n+1}) = \ffv{t_{n+1}, \yv_{n+1}}$ gives the familiar implicit BDF methods.
-If we instead set $\pv'(t_{n}) = \ffv{t_{n}, \yv_{n}}$ we obtain the explicit BDF methods \cite[364]{HairerNorsettWanner}.
+If we instead set $\pv'(t_{n}) = \ffv{t_{n}, \yv_{n}}$ we obtain the explicit BDF methods (eBDF) \cite[364]{HairerNorsettWanner}.
 We now derive the first three eBDF methods.
 % The derivation of the implicit BDF methods is shown in \cref{cha:deriv-impl-backw} and may be useful for comparison.
 
@@ -206,7 +212,7 @@ After some algebra this gives
 \end{equation}
 which is the variable step equivalent of the leapfrog method (explicit midpoint rule) \cite[715]{GreshoSani}.
 
-For larger values of $k$ the complexity of the algebra grows explosively.
+For larger values of $k$ the complexity of the algebra grows enormously.
 Unfortunately we are interested in the case $k=3$ which is:
 \begin{equation}
   \begin{aligned}
@@ -237,9 +243,9 @@ The resulting time integration scheme is:
     c_{n-2} &= - \frac{\dtx{n+1}^{2} (\dtx{n+1} + \dtn)}{\dtx{n-1} (\dtn + \dtx{n-1})^{2}}.
   \end{aligned}
 \end{equation}
-For constant time steps the result is much simpler: $ b = 3\dtn$, $c_n = -3/2$, $c_{n-1} = 3$ and  $c_{n-2} = -1/2$ which matches the scheme given in \cite[364]{HairerNorsettWanner}.
+For constant time steps the result reduces to: $ b = 3\dtn$, $c_n = -3/2$, $c_{n-1} = 3$ and  $c_{n-2} = -1/2$ which matches the scheme given in \cite[364]{HairerNorsettWanner}.
 
-It should be noted that the calculation of the coefficients in \cref{eqn:ebdf-coeffs} could be comparatively expensive if the number of $y$-values is small ($\sim 100$ operations assuming no compiler optimisation of the multiplications).
+It should be noted that the calculation of the coefficients in \cref{eqn:ebdf-coeffs} could be disproportionately expensive if the number of $y$-values is small ($\sim 100$ operations assuming no compiler optimisation of the multiplications).
 However when used in finite-element or finite-difference calculations the number of $y$-values is at least tens of thousands, so the cost of \cref{eqn:ebdf-coeffs} is trivial by comparison with, for example, the calculation of $\ffv{t_n, \yv_n}$.
 
 
@@ -256,21 +262,8 @@ For the implicit midpoint rule this is
 \end{equation}
 
 We also impose some additional constraints to handle extreme cases.
-If the ratio $\frac{\dtx{n+1}}{\dtn}$ is too small, \ie if the step just taken was much too large to attain the desired accuracy, then we reduce the step size by a factor of 2 and repeat the step.
+If the ratio $\frac{\dtx{n+1}}{\dtn}$ is too small, \ie if the step just taken was much too large to attain the desired accuracy, then we reduce the step size by a factor of 2 and repeat the $n$-th step.
 We limit $\frac{\dtx{n+1}}{\dtn}$ to 4 to help improve stability.
-
-% Actually we (should) include a slight safety factor, $a \sim 1/2$ to reduce the number of step rejections:
-% ??ds but actually oomph-lib doesn't...
-% ??ds check what CVODE, Iserles use as safety factor
-
-
-% ??ds this is still flakey, test things? Use reltol? Ask Matthias?
-
-% A final modification is to include limitations on the step size that prevent issues with numerical accuracy.
-% We assume that the equations being modelled are non-dimensionalised so that the initial Newton residual (see \cref{sec:newt-raph}) is $\sim \order{\dtn}$ (The initial guess is the value at the previous step, the change in the solution value in one step should be $\sim\order{\dtn}$).
-% In this case the minimum time step we can take is approximately the Newton tolerance (otherwise the Newton method will converge ``early'' because the residual is small to begin with).
-% Similarly the maximum time step we can take is $\sim \order{\frac{\texttt{newtontol}}{10^{-16}} = 10^{8}}$ before the Newton method will have difficulty converging due to numerical errors.
-
 
 Note that some alternative strategies try to minimise the number of modifications to the time step size \cite[Chap. 6]{Iserles2009} \cite[Sec. 2.1]{cvode-manual}.
 The motivation for this is the use of a modified Newton-Raphson method where the Jacobian is not recalculated at each Newton step.
@@ -303,7 +296,7 @@ We sometimes wish to solve an ODE where $\yv'(t)$ is only given implicitly as
 \end{equation}
 for example in the Gilbert form of the Landau-Lifshitz-Gilbert equation.\footnote{This use of ``implicit'' is unrelated to the notion of implicitness in the time integration scheme.}
 
-However the eBDF3 predictor used in the adaptive scheme requires a derivative evaluation, which for derivatives which can \emph{only} be defined implicitly case requires a non-linear solve.
+However the eBDF3 predictor used in the adaptive scheme requires a derivative evaluation, which for derivatives which can \emph{only} be defined implicitly requires a non-linear solve.
 This is expensive, so for such cases the adaptive method described here is not efficient.
 Note that the LLG can be defined explicitly as well as implicitly, so this limitation does not apply to micromagnetics problems (we can simply use the Landau-Lifshitz form for the required derivative evaluation).
 
@@ -317,6 +310,7 @@ Note that the LLG can be defined explicitly as well as implicitly, so this limit
 %  Generate and update plots with commands in the plots dir
 
 In \thisref{sec:aimr-testing} we show the results of some initial testing of the proposed adaptive IMR algorithm for some simple ODE examples.
+These experiments will allow us to check that the adaptive algorithm selects sensible time steps and that the errors are commensurate with similar schemes.
 Numerical experiments with the LLG equation are detailed in \cref{sec:imr-ode-llg-numer-exper}.
 
 
@@ -431,7 +425,8 @@ This example will test that the single step of the eBDF method provides reliable
 The time steps should start small but rapidly increase as the exponential decays to zero.
 
 The results of the applying the three methods to problem~\cref{eqn:imr-test-stiff} with $\lambda = 100$ (fairly stiff) and $\yv_0 = 1$ are shown in \cref{fig:imr-stiff-example}.
-The behaviour of the three time integrators is essentially the same, indicating that our adaptivity algorithm is effective for stiff problems.
+The behaviour of the IMR and BDF2 time integrators is essentially the same, indicating that our adaptivity algorithm is effective for stiff problems.
+The time steps selected by the TR algorithm do not grow as fast as those selected for the other schemes at large $t$, ??ds this is probably due to the ``ringing'' phenomenon \cite{??ds}.
 
 \begin{figure}
   \centering
@@ -607,7 +602,7 @@ The initial time step is $\dtinitial = 10^{-3}$ which is sufficiently small to a
 \begin{figure}
   \centering
   \includegraphics[width=0.8\textwidth]{plots/aimr-sphere-relax/imr0-meanmxsvs-meanmysvs-meanmzsvs-dtsvstimes.pdf}
-  \caption{Plot of $\mv$ and $\dtn$ over time for the relaxing nano-sphere problem solved by adaptive IMR. ??ds show zoom of dtn oscillations}
+  \caption{Plot of $\mv$ and $\dtn$ over time for the relaxing nano-sphere problem solved by adaptive IMR.}
   \label{fig:imr-llg-ode}
 \end{figure}
 
@@ -615,10 +610,8 @@ The behaviour of the magnetisation and the time step selection using the adaptiv
 The solutions given by adaptive BDF2 and TR (with $\abs{\mv}$ re-normalised after each time step)  are shown in \cref{fig:bdf2-llg-ode,fig:tr-llg-ode} respectively.
 The overall behaviour of the IMR time step selection algorithm is seen to be working as expected: large steps are chosen at the start when very little switching occurs, the step size decreases as switching occurs and finally grows again as the switching finishes.
 
-The origin of the many small peaks in the time step is more difficult to understand.
-They have the same period as the precession, but the exact solution for the precession as a function of time, \cref{eq:79}, has no periodic behaviour!
-Results for different values of $\dampc$ and $\toltt$ (not shown) show the same behaviour, as do the results for the adaptive TR (\cref{fig:tr-llg-ode}), BDF2 (\cref{fig:bdf2-llg-ode}) and BDF1 (not shown) algorithms.
-It is likely that the numerical approximations to the time derivative have some periodicity which does not appear in the exact solution (\cf \cref{sec:order-reduct-example} where the exact solution has no $\lambda$ dependence but the numerical behaviour is strongly affected by $\lambda$).
+The small periodic peaks in the time step size are due to the precession: in Cartesian form (but not in the spherical polar coordinate form \cref{eq:79}) the precessional part of the solution is written as a sin/cosine term.
+This causes periodic oscillations in the LTE.
 
 Note, from \cref{fig:bdf2-llg-ode}, that the switching time obtained by BDF2 with the same error tolerances is very different to that given by IMR or TR, .
 This is due to BDF2's spurious numerical damping (see \cref{sec:numerical-damping}), which initially moves the solution towards the unstable fixed point at $\mv=[1, 0, 0]$.
@@ -662,7 +655,6 @@ We see that the magnetisation length conservation behaviour of IMR is well contr
   \caption{Plot of magnetisation length errors, $\abs{\abs{\mv} -1}$, against the maximum (over time) converged Newton residual norm a wide range of $\dampc$, $\ntol$ and $\toltt$ parameters.}
   \label{fig:ml-aimr-newton}
 \end{figure}
-
 
 The behaviour of the maximum error in the energy when $\dampc = 0$ as the adaptive step tolerance is reduced is shown in \cref{fig:energy-aimr-ode}.
 The energy error for BDF2 without normalisation is very small (around the Newton tolerance), but when re-normalisation is used the error in energy increases drastically.
@@ -727,7 +719,7 @@ We have implemented an efficient algorithm for adaptive time step selection with
 The algorithm has been tested on a number of ODEs and found to choose similar time steps to other second order time integrators.
 We have also demonstrated robustness in stiff problems and correct behaviour even when order reduction phenomena are encountered.
 
-When applied to an ODE form of the LLG the adaptive IMR algorithm conserves $\abs{\mv}$ as expected.
+When applied to an ODE form of the LLG the adaptive IMR algorithm conserves $\abs{\mv}$ as expected for a wide variety of parameters, but the example used here is to be too simple for the energy property to be studied.
 It also appears to give smaller global error norms than would be expected from its local truncation error, this may be due to the geometric integration properties.
 Any effects of these geometric integration properties would be expected to be greatly amplified when solving ODE problems with many interacting spins or PDE problems.
 This scenario will be tested in \cref{cha:numer-experiments} where the adaptive IMR algorithm is combined with the PDE methods discussed in other chapters.

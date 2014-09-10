@@ -669,18 +669,18 @@ A simple method of dealing with the constraint is to re-normalise each $\mv$ aft
 However this approach fundamentally changes the system of equations being solved in a non-linear and unpredictable manner \cite{Lewis2003}.
 
 ??ds Not sure these downsides are true, seems like Mansuripur88 managed to derive all the fields in polars with no conversion to cartesians, only for macrospins though... ask Jim.
-If we have a system with only a single macrospin (\ie a single value of $\mv$ represents the magnetisation of the entire system) then it is easy to avoid this problem by using a spherical polar coordinate system $(r,\theta,\phi)$.
+If we have a system with only a single macrospin (\ie a single value of $\mv$ represents the magnetisation of the entire system)
+
+One way to avoid this problem is to use a spherical polar coordinate system $(r,\theta,\phi)$.
 In these coordinates \cref{eq:LLG} can be expressed in terms of only the angles $(\theta,\phi)$ representing the direction of $\mv$ and the length constraint is automatically enforced since
 \begin{equation}
   \label{eq:40}
   \pd{\abs{\mv}}{t} = \pd{r}{t} \equiv 0.
 \end{equation}
-However, to extend this to systems where $\mv$ varies in space we have to use a separate spherical polar coordinate system at each point where $\dMdt$ is calculated.
-In addition magnetostatic interactions between discretise points still need to be computed using a Cartesian global coordinate system.
-Hence we have to convert between coordinate systems repeatedly during the simulation.
-However problems occur with this approach as the polar angle, $\theta$, approaches zero because $\pd{\mv}{t} \propto \frac{1}{\sin(\theta)}$ \cite{Fukushima2005} and so the derivative becomes singular.
+However problems occur with this approach when the polar angle, $\theta$, approaches zero because $\pd{m_{\phi}}{t} \propto \frac{1}{\sin(\theta)}$ \cite{Fukushima2005} and so the derivative becomes singular.
+Also calculating the sum of the effective field vectors is much more complex in spherical polar coordinates (involving trigonometric identities) and this will result in more complex non-linear/linear systems when using implicit time integration schemes.
 
-Geometric time integration schemes aim to solve this problem by constructing a scheme that naturally preserves the value of $\abs{\mv}$.
+Geometric time integration schemes aim to solve the issue of length conservation by constructing a scheme that naturally preserves the value of $\abs{\mv}$.
 Some examples of such schemes are based on IMR \cite{DAquino2005}, or a semi-explicit extension of IMR using explicit extrapolations of the effective field \cite{Spargo2003} \cite{Serpico2001}.
 Alternatively, geometric integration methods based on Cayley transforms can be used \cite{Lewis2003} \cite{Bottauscio2011}.
 
@@ -759,7 +759,7 @@ For example, in the case of BDF1 we have
 \end{equation}
 \ie orthogonality properties from the continuous form do not carry over to the discrete form in general.
 
-Notice that the only requirement in the derivation of \cref{eq:63} is to use the midpoint approximation of magnetisation the LLG itself.
+Notice that the only requirement in the derivation of \cref{eq:63} is to use the midpoint approximation of magnetisation in the LLG itself.
 The derivation does not make any assumption about how the effective field is approximated.
 This explains why the semi-explicit modification to IMR also conserves the magnetisation length.
 
@@ -795,7 +795,7 @@ We also expand the midpoint value of the applied field, $\mphapp$, into
   \begin{aligned}
     \mphapp &= \frac{\happ(t_{n+1}) + \happ(t_n)}{2}
     + \frac{\dtn^2}{4} \evalatb{\spd{\happ}{t}}{\frac{t_{n+1} + t_n}{2}}  + \order{\dtn^4}, \\
-    &= \frac{\happ(t_{n+1}) + \happ(t_n)}{2} + \happerror.\\
+    &= \frac{\happ(t_{n+1}) + \happ(t_n)}{2} + \happerror,
     \label{eq:happ-midpoint}
   \end{aligned}
 \end{equation}
@@ -916,6 +916,7 @@ The implicit midpoint rule with fixed step size is ``almost symplectic'' for the
 It is well known that most adaptive schemes are not symplectic \cite[91]{Iserles2009} because they constantly change the ``nearby Hamiltonian'' that is followed by the symplectic integrator.
 Therefore the adaptive IMR is not expected to have the almost-symplectic property discussed in \cref{??ds}.
 
+??ds short discussion, future work?
 
 \subsection{Conclusions}
 
@@ -925,7 +926,7 @@ We have a number of reasons to believe that the geometric properties will transl
 \item Errors in the energy dissipation \cite{Albuquerque2001} and magnetisation length \cite{Chantrell2001} have been successfully used as error estimators for local truncation error.
 Hence the removal of energy or magnetisation length errors should reduce the total local truncation error.
 \item It is well known that geometric integration schemes typically result in much smaller long-timescale error build-up than schemes that do not preserve such quantities \cite[77]{Iserles2009}.
-\item The non-linear modification to the Landau-Lifshitz-Gilbert equation caused by renormalisation of the magnetisation length (as commonly used to maintain correct magnetisation length in non-conservative time integrators) may cause significant changes in the magnetostatic field \cite{Lewis2003}.
+\item The non-linear modification to the Landau-Lifshitz-Gilbert equation caused by renormalisation of the magnetisation length (as commonly used to maintain correct magnetisation length in non-conservative time integrators) may cause significant step changes in the magnetostatic field \cite{Lewis2003}.
 Avoiding renormalisation eliminates the possibility of such errors occurring.
 \item Renormalisation of the magnetisation modifies the balance between the various energy terms.
 This is similar to the methods that lead to the ``flying ice cube'' problem \cite{Harvey1998} in molecular dynamics.\footnote{In such problems the rescaling of particle velocities (to maintain constant temperature despite numerical error accumulation) can result in large amounts of kinetic energy being transferred from the motion of internal degrees of freedom to motion of the centre of mass.}
