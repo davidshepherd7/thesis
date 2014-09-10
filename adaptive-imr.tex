@@ -1,7 +1,5 @@
 
 % In the plots:
-% fix legends: locations and contents
-% colourful scatters
 % consistent colours?
 
 % Check with Matthias:
@@ -448,14 +446,13 @@ The behaviour of the three time integrators is essentially the same, indicating 
 
 \begin{figure}
   \centering  \includegraphics[width=1\textwidth]{plots/aimr_odes_traces/strong_order_reduction-errornormsvs-dtsvs-tracevaluesvstimes}
-  \caption{Absolute error, step size and computed solutions for the stiff order reduction example ODE given in \cref{eqn:imr-test-order-reduction}
-    .}
+  \caption{Absolute error, step size and computed solutions for the stiff order reduction example ODE given in \cref{eqn:imr-test-order-reduction}.}
   \label{fig:imr-order-reduction-example}
 \end{figure}
 
 \begin{figure}
   \centering  \includegraphics[width=1\textwidth]{plots/aimr_odes/order_reduction-maxoferrornormsvsmeanofdts.pdf}
-  \caption{Behaviour of the global error norm with varying tolerance vs mean step size for the order reduction example. ??ds y-axis: $\max_t$ | ..|, legend: use $\dtn^2$ etc?}
+  \caption{Behaviour of the global error norm with varying tolerance vs mean step size for the order reduction example.}
   \label{fig:imr-order-reduction-convergence}
 \end{figure}
 
@@ -658,7 +655,7 @@ The conservation behaviour as a function of the ??ds is shown in \cref{fig:ml-ai
 \begin{figure}
   \centering
   \includegraphics[width=0.8\textwidth]{plots/ode_llg_adaptive_ml/mlengtherrormaxesvstimes}
-  \caption{Plot of magnetisation length errors, $\abs{\abs{\mv} -1}$, over time for the relaxing nano-sphere problem solved with each of the three adaptive integrators (without re-normalisation of $\mv$). ??ds fix for no colour, remove tol in legend}
+  \caption{Plot of magnetisation length errors, $\abs{\abs{\mv} -1}$, over time for the relaxing nano-sphere problem solved with each of the three adaptive integrators (without re-normalisation of $\mv$).}
   \label{fig:ml-aimr-ode}
 \end{figure}
 
@@ -679,15 +676,14 @@ This is not surprising as we expect it to be significantly smaller than the ener
 \begin{figure}
   \centering
   \includegraphics[width=0.8\textwidth]{plots/ode_llg_adaptive_energy/maxabsofenergychangevsmeanofdts}
-  \caption{Convergence plot of the maximum error in energy for the relaxing nano-sphere problem with $\dampc = 0$ solved using BDF2 with and without re-normalisation of $\mv$. The energy error with other time integration methods is too small to be calculated. ??ds fix legend}
+  \caption{Convergence plot of the maximum error in the energy for the relaxing nano-sphere problem with $\dampc = 0$ solved using BDF2 with and without re-normalisation of $\mv$ (indicated in the legend by the digit 1 or 0 respectively). The energy error when using IMR is too small to be calculated.}
   \label{fig:energy-aimr-ode}
 \end{figure}
 
 \begin{figure}
   \centering
   \includegraphics[width=0.8\textwidth]{plots/ode_llg_adaptive_convergence/maxofswitchingtimeerrorvsmeanofdts}
-  \caption{Convergence plot of the switching time error, \cref{eq:sw-time-error}, against average time step for each method. In the legend 1/0 indicates re-normalisation/no re-normalisation.
- constant step IMR, adaptive IMR, adaptive TR and adaptive BDF2. ??ds zoom in, remove guidelines, Better legend}
+  \caption{Convergence plot of the switching time error, \cref{eq:sw-time-error}, against average time step for each method. The digit 1 or 0 indicates re-normalisation or no re-normalisation respectively.}
   \label{fig:llg-ode-convergence-swtime}
 \end{figure}
 
@@ -717,15 +713,14 @@ This may indicate that the LTE of IMR is indeed larger than that of TR (as is ex
 Alternatively it may be due to differing accuracies in the LTE estimate.
 
 
-
-Note that there are fewer visible points on \cref{fig:llg-ode-convergence-swtime,fig:llg-ode-convergence-m} for BDF2 than the other two methods, this is because at larger tolerances BDF2 takes overly large time steps (and has large global errors to match).
-Hence some points for BDF2 do not fit on the same scale (for these missing points: $\mean(\dtn) \approx 10\dash 100$, $\swtimeerr \approx 1000$ \ie a relative error of $100\%$, $\merr \approx 2$).
-This is consistent with the qualitatively wrong results given by BDF2 in \cref{fig:bdf2-llg-ode}.
+% Note that there are fewer visible points on \cref{fig:llg-ode-convergence-swtime,fig:llg-ode-convergence-m} for BDF2 than the other two methods, this is because at larger tolerances BDF2 takes overly large time steps (and has large global errors to match).
+% Hence some points for BDF2 do not fit on the same scale (for these missing points: $\mean(\dtn) \approx 10\dash 100$, $\swtimeerr \approx 1000$ \ie a relative error of $100\%$, $\merr \approx 2$).
+% This is consistent with the qualitatively wrong results given by BDF2 in \cref{fig:bdf2-llg-ode}.
 
 \begin{figure}
   \centering
   \includegraphics[width=0.8\textwidth]{plots/ode_llg_adaptive_convergence/maxoferrornormsvsmeanofdts}
-  \caption{Convergence plots of the error in magnetisation, \cref{eq:m-sphere-error}, against average time step for each method. In the legend 1/0 indicates re-normalisation/no re-normalisation. ??ds zoom in, remove guidelines, Better legend position + text}
+  \caption{Convergence plots of the error in magnetisation, \cref{eq:m-sphere-error}, against average time step for each method. The digit 1 or 0 indicates re-normalisation or no re-normalisation respectively.}
   \label{fig:llg-ode-convergence-m}
 \end{figure}
 

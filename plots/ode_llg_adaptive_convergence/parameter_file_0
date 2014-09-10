@@ -5,7 +5,7 @@
 '-dt-initial' : 1e-3,
 '-tmax' : 1000,
 
-'-damping' : 0.01,
+'-damping' : [0.01],
 '-renormalise' : [0, 1],
 
 '-newton-tol' : 1e-12,
