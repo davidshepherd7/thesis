@@ -1,7 +1,8 @@
 
 % In the plots:
-% add points?
 % fix legends: locations and contents
+% colourful scatters
+% consistent colours?
 
 % Check with Matthias:
 % * IVP vs ODE, is it ok to use ODE for consistency? Mention that we always solve IVP ODEs?
@@ -363,7 +364,7 @@ The computed solution does not look much like a polynomial because the distance 
 
 \begin{figure}
   \centering
-  \includegraphics[width=1\textwidth]{plots/aimr_odes/poly2-errornormsvs-dtsvs-tracevaluesvstimes}
+  \includegraphics[width=1\textwidth]{plots/aimr_odes_traces/poly2-errornormsvs-dtsvs-tracevaluesvstimes}
   \caption{Absolute error, time step size and computed solutions for the example ODE with exact solution $y(t) = t^2 + 0.5$.}
   \label{fig:imr-poly2-example}
 \end{figure}
@@ -387,7 +388,7 @@ with the solution
 The adaptive algorithm should produce time steps that oscillate in time with the truncation error, while at the same time gradually increase as the term $e^{-\beta t}$ goes to zero.
 
 \begin{figure}
-  \centering \includegraphics[width=1\textwidth]{plots/aimr_odes/damped_oscillation-errornormsvs-dtsvs-tracevaluesvstimes}
+  \centering \includegraphics[width=1\textwidth]{plots/aimr_odes_traces/damped_oscillation-errornormsvs-dtsvs-tracevaluesvstimes}
   \caption{Absolute error, time step size and computed solutions for the oscillatory, damped example ODE with exact solution $y(t) = e^{-0.5t} \sin(2\pi t)$.}
   \label{fig:imr-osc-example}
 \end{figure}
@@ -405,7 +406,6 @@ This could be due to the fact that IMR uses data from three previous steps in it
 
 In \cref{fig:imr-osc-example-scatter} we show plots of the decrease in global error norm as the tolerance is decreased.
 The consistent decrease in the error norms indicates that the all of the adaptive methods are able to control the error in the expected manner.
-Equivalent plots for the other example problems presented here are very similar and so are not shown.
 
 \begin{figure}
   \centering \includegraphics[width=1\textwidth]{plots/aimr_odes/damped_oscillation-maxoferrornormsvs-tol}
@@ -437,7 +437,7 @@ The behaviour of the three time integrators is essentially the same, indicating 
 
 \begin{figure}
   \centering
-  \includegraphics[width=1\textwidth]{plots/aimr_odes/simple_stiff-errornormsvs-dtsvs-tracevaluesvstimes}
+  \includegraphics[width=1\textwidth]{plots/aimr_odes_traces/simple_stiff-errornormsvs-dtsvs-tracevaluesvstimes}
   \caption{Absolute error, step size and computed solutions for the stiff example ODE.}
   \label{fig:imr-stiff-example}
 \end{figure}
@@ -447,7 +447,7 @@ The behaviour of the three time integrators is essentially the same, indicating 
 \label{sec:order-reduct-example}
 
 \begin{figure}
-  \centering  \includegraphics[width=1\textwidth]{plots/aimr_odes/strong_order_reduction-errornormsvs-dtsvs-tracevaluesvstimes}
+  \centering  \includegraphics[width=1\textwidth]{plots/aimr_odes_traces/strong_order_reduction-errornormsvs-dtsvs-tracevaluesvstimes}
   \caption{Absolute error, step size and computed solutions for the stiff order reduction example ODE given in \cref{eqn:imr-test-order-reduction}
     .}
   \label{fig:imr-order-reduction-example}
@@ -686,7 +686,8 @@ This is not surprising as we expect it to be significantly smaller than the ener
 \begin{figure}
   \centering
   \includegraphics[width=0.8\textwidth]{plots/ode_llg_adaptive_convergence/maxofswitchingtimeerrorvsmeanofdts}
-  \caption{Convergence plot of the switching time error, \cref{eq:sw-time-error}, against average time step for constant step IMR, adaptive IMR, adaptive TR and adaptive BDF2. ??ds zoom in, remove guidelines, Better legend}
+  \caption{Convergence plot of the switching time error, \cref{eq:sw-time-error}, against average time step for each method. In the legend 1/0 indicates re-normalisation/no re-normalisation.
+ constant step IMR, adaptive IMR, adaptive TR and adaptive BDF2. ??ds zoom in, remove guidelines, Better legend}
   \label{fig:llg-ode-convergence-swtime}
 \end{figure}
 
@@ -724,7 +725,7 @@ This is consistent with the qualitatively wrong results given by BDF2 in \cref{f
 \begin{figure}
   \centering
   \includegraphics[width=0.8\textwidth]{plots/ode_llg_adaptive_convergence/maxoferrornormsvsmeanofdts}
-  \caption{Convergence plots of the error in magnetisation, \cref{eq:m-sphere-error}, against average time step for constant step IMR, adaptive IMR, adaptive TR and adaptive BDF2. ??ds zoom in, remove guidelines, Better legend position + text}
+  \caption{Convergence plots of the error in magnetisation, \cref{eq:m-sphere-error}, against average time step for each method. In the legend 1/0 indicates re-normalisation/no re-normalisation. ??ds zoom in, remove guidelines, Better legend position + text}
   \label{fig:llg-ode-convergence-m}
 \end{figure}
 
