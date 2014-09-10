@@ -1,0 +1,20 @@
+{
+'-driver' : ['llgode'],
+
+# problem spec
+'-exact' : ['ll'],
+'-tmax' : [1000],
+'-damping' : [1, 0.1, 0.01],
+
+# time integration
+'-ts' : ["bdf2", "imr", "tr"],
+'-tol' : [5e-3, 1e-3, 5e-4, 1e-4, 5e-5, 1e-5],
+'-dt-initial' : 1e-3,
+'-renormalise' : 0,
+
+
+
+# other numerical settings
+"-disable-mm-opt" : [True],
+'-newton-tol' : [1e-12, 1e-10, 1e-8, 1e-6],
+}

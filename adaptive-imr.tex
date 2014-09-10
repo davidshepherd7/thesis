@@ -645,12 +645,9 @@ The behaviour of the magnetisation length over time is shown in \cref{fig:ml-aim
 The maximum error when IMR is used is $\abs{\abs{\mv} -1} \approx 10^{-12}$, which is consistent with the Newton tolerance.
 In contrast the error in the magnetisation length with the TR and BDF2 schemes reaches $\sim 10^{-2}$.
 
-??ds plot scatter of this for lots of damping, fixed step, adaptive tol, .. ?  + mention in experiments section
-The conservation behaviour as a function of the ??ds is shown in \cref{fig:ml-aimr-newton} for ??ds.
- conservation behaviour of IMR does not vary significantly with changes to any parameter other than the final Newton residual.
-
-%(plots not shown ??ds impossible to show--too many axes... could do a scatter of everything? Too many plots already in this section!).
-% ./parameter-sweep.py -p imr_ode_llg -p aimr_ode_llg --clean && parse.py --print-data max-max-ml -d /mnt/moredata/optoomph/user_drivers/micromagnetics/experiments/parameter_sweeps/aimr_ode_llg -f "('-ts', 'imr')" -d /mnt/moredata/optoomph/user_drivers/micromagnetics/experiments/parameter_sweeps/imr_ode_llg
+To investigate the effects of parameters on the magnetisation length conservation the experiment was run with varying $\dampc=1, 0.1, 0.01$, $\toltt = 5\times 10^{-3}, 10^{-3}, 5\times10^{-4}, 10^{-4}, 5\times10^{-5}, 10^{-5}$ and $\ntol=10^{-12}, 10^{-10}, 10^{-8}, 10^{-6}$.
+A scatter plot showing the error in the length against the maximum (over time) converged Newton residual norm is shown in \cref{fig:ml-aimr-newton}.
+We see that the magnetisation length conservation behaviour of IMR is well controlled by setting the Newton tolerance even with large variations in the time integration tolerance and damping parameter.
 
 \begin{figure}
   \centering
@@ -661,8 +658,8 @@ The conservation behaviour as a function of the ??ds is shown in \cref{fig:ml-ai
 
 \begin{figure}
   \centering
-  \includegraphics[width=0.8\textwidth]{images/placeholder}
-  \caption{Plot of magnetisation length errors, $\abs{\abs{\mv} -1}$, against ??ds ``Newton residual reached'' using IMR with a wide variety of $\dampc$, $\ntol$ and $\toltt$ parameters.}
+  \includegraphics[width=0.8\textwidth]{plots/aimr_ode_llg_ml_sweep/maxofmlengtherrormaxesvsmaxminofnewtonresiduals.pdf}
+  \caption{Plot of magnetisation length errors, $\abs{\abs{\mv} -1}$, against the maximum (over time) converged Newton residual norm a wide range of $\dampc$, $\ntol$ and $\toltt$ parameters.}
   \label{fig:ml-aimr-newton}
 \end{figure}
 
