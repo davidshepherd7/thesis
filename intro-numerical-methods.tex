@@ -299,6 +299,11 @@ As an example: singular integrals occur in the boundary element method so more a
 
 The details of the FEM/BEM method and its implementation are discussed in \cref{sec:hybr-finit-elem}.
 
+??ds incorporate this: ?
+FEM/BEM is bad for thin film problems because every single node is on the boundary, hence the dense block is very large.
+Standard FEM with linear basis functions is significantly slower than finite difference approaches because it allows the magnetisation to vary through the thickness of the film, meaning that the problem is 3D instead of 2D.
+(It is certainly possible to construct a finite element method which assumes constant magnetisation in one direction, but our purpose here is to test our model not to invent new ones!)
+
 
 \section{Time Integration}
 \label{sec:time-discretisation}
@@ -1181,6 +1186,25 @@ For non-symmetrical matrices ALL of the previous values must be stored: GMRES ??
 This means that the cost per iteration of GMRES grows with the number of iterations, can avoid this by using restarted GMRES (throw away history after x steps) at the cost of convergence guarantees.
 
 Other way to avoid this cost is to use BiCGStab ??ds
+
+
+\subsection{Preconditioners}
+\label{sec:preconditioners}
+
+??ds make sure you mention that preconditioner must be same operation at each step
+
+
+\subsection{Linear solvers in micromagnetics}
+\label{sec:linear-solv-micr}
+
+
+??ds discuss linear solvers used: GMRES from CVODE mostly,
+
+mention BEM block?
+Aquino: unpreconditioned GMRES.
+Suess: ILU preconditioned BiCGstab, used as prec for GMRES solve with BEM block, most people cite this paper.
+
+
 
 \section{Compatibility of methods}
 \label{sec:comp-meth}
