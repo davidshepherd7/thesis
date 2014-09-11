@@ -31,16 +31,16 @@ and where $f(x)\in C^0([0,1])$.
 Setting $f = -\div \mv = -\pd{m_x}{x}$ results in the magnetostatic potential problem \cref{eq:Hms} with Dirichlet boundary conditions.
 
 Before we can continue we need some definitions:
-The function space $L^{2}(\magd)$ consists of all functions $f$ such that the norm $\norm{f}_\ltwo = \sqrt{\intd{\abs{f(x)}^{2}}$ is finite.
+The function space $L^{2}(\magd)$ consists of all functions $g$ such that the norm $\norm{g}_\ltwo = \sqrt{\intd{\abs{g(x)}^{2}}$ is finite.
 This can be thought of as the set of functions such that their squares are integrable.
 
-The $n$-th Sobolev space, $\sob^n(\magd)$, is the space of all functions $f$ such that $f$ and all its first $n$ derivatives are in $L^2(\magd)$, \eg for real valued functions on the interval the second Sobolev space is
+The $n$-th Sobolev space, $\sob^n(\magd)$, is the space of all functions $g$ such that $g$ and all its first $n$ derivatives are in $L^2(\magd)$, \eg for real valued functions on the interval the second Sobolev space is
 \begin{equation}
   \label{eq:H1}
-  \sob^2([0,1]) = \setst{ \phim : [0,1] \rightarrow \mathbb{R} }{ \phim, \pd{\phim}{x}, \pd{^2\phim}{x^2} \in L^2([0,1])}.
+  \sob^2([0,1]) = \setst{ g : [0,1] \rightarrow \mathbb{R} }{ g, \pd{g}{x}, \pd{^2g}{x^2} \in L^2([0,1])}.
 \end{equation}
 Note that in higher dimensions \emph{all combinations} of derivatives in all directions (\eg $\pd{^2\phim}{x\partial y}$) must be integrable.
-Another notation sometimes used for Sobolev spaces is $W^{n,p}(\magd)$, which denotes the set of functions $f$ such that $f$ and its first $n$ derivatives are in $L^p(\magd)$, \ie the extension of $\sob^n(\magd)$ to other $L^p(\magd)$ norms.
+Another notation sometimes used for Sobolev spaces is $W^{n,p}(\magd)$, which denotes the set of functions $g$ such that $g$ and its first $n$ derivatives are in $L^p(\magd)$, \ie the extension of $\sob^n(\magd)$ to other $L^p(\magd)$ norms.
 
 
 \subsection{A weak formulation}
@@ -101,18 +101,18 @@ However, since we are given the value of $\phim'$, we can calculate the term $\b
 
 \subsection{Discretisation}
 
-??MH specify that as N goes to inf need V^h goes to V.
+??MH specify that as N goes to inf need Vh goes to V.
 \Cref{eq:symmetric-weak-poisson} is still continuous (\ie the test and solution spaces are still infinite dimensional) and so it cannot be implemented as a computational method.
 To convert our continuous weak form to a discrete version we approximate the infinite dimensional test function space by a finite dimensional subset $V_{T}^{h} \subset \sob^1([0,1]) \cap \Dfs$ such that
 \begin{equation}
-  V_{T}^{h} = \setst{v_h }{ v_h = \sum_{n=0}^{N}\alpha_{\ndi} \tbf_{\ndi},\, \alpha_{\ndi} \in \real} \cap \Dfs_0,
+  V_{T}^{h} = \setst{\testh }{ \testh = \sum_{n=0}^{N}\alpha_{\ndi} \tbf_{\ndi},\, \alpha_{\ndi} \in \real} \cap \Dfs_0,
   \label{eq:30}
 \end{equation}
 for some finite set of test basis functions $\tbf_{\ndi}$.
 Similarly, for $V_S^h \subset \sob^1([0,1]) \cap \Dfs$:
 \begin{equation}
   \label{eq:34}
-  V_{S}^{h} = \setst{\phimh }{ \phimh = \sum_{l=0}^{N_l}\phim_{l} \sbf_{l},\, \phim_{l} \in \real}
+  V_{S}^{h} = \setst{\phimh }{ \phimh = \sum_{l=0}^{N_l}\phim_l \sbf_l,\, \phim_l \in \real}
   \cap \Dfs
 \end{equation}
 We call $\sbf_l$ the solution basis functions but they are often known as the shape functions.
@@ -120,20 +120,20 @@ Different choices of $\tbf_{\ndi}$ and $\sbf_l$ lead to different methods, the c
 For now we continue with a description of the conversion to a general discrete form.
 
 
-Replacing $v_{h}$ from \cref{eq:poisson1} by $\tbf_{\ndi}$ gives an equivalent set of conditions
+Replacing $\testh$ from \cref{eq:poisson1} by $\tbf_{\ndi}$ gives an equivalent set of conditions
 \begin{equation}
-  \intui{  \phim'_{h} \tbf_{\ndi}'  }  = \intui{ f\tbf_{\ndi} } \qquad n=0,\ldots,N,
+  \intui{  \phim'_h \tbf_{\ndi}'  }  = \intui{ f\tbf_{\ndi} } \qquad n=0,\ldots,N,
   \label{eq:discrete_weak_test_fns_replaced}
 \end{equation}
-Since $\phim_{h}\in V_{S}^{h}$ we can replace $\phim_{h}$ by a linear combination of the solution basis functions, \ie
+Since $\phimh\in V_{S}^{h}$ we can replace $\phimh$ by a linear combination of the solution basis functions, \ie
 \begin{equation}
-  \phim_{h}=\sum_{l=0}^{N_l} \phim_{l}\sbf_{l},
+  \phimh = \sum_{l=0}^{N_l} \phim_l\sbf_l,
   \label{eq:y-spans}
 \end{equation}
 where $\phim_l \in \real$ are the unknown coefficients which define the approximate solution $\phimh$.
 Substituting \cref{eq:y-spans} into \cref{eq:discrete_weak_test_fns_replaced} gives
 \begin{equation}
-  \sum_{l=0}^{N_l} \phim_{l}\intui{ \sbf_{l}'\tbf'_{\ndi} } =\intui{ f\tbf_{\ndi} }
+  \sum_{l=0}^{N_l} \phim_l\intui{ \sbf_l'\tbf'_{\ndi} } =\intui{ f\tbf_{\ndi} }
   \qquad n=0,\ldots,N.
   \label{eq:31}
 \end{equation}
@@ -142,7 +142,7 @@ The functions $f$, $\tbf$ and $\sbf$ are known and so the integrals in \cref{eq:
 Hence we introduce a matrix $\Am$ and a vector $\bv$ containing the results of these integrals:
 \begin{equation}
   \begin{aligned}
-    \Am_{l\ndi} &= \intui{ \sbf_{l}'\tbf'_{\ndi} }, \\
+    \Am_{l\ndi} &= \intui{ \sbf_l'\tbf'_{\ndi} }, \\
     b_{j} &= \intui{ f\tbf_{\ndi} }, \\
     \label{eq:Aij_bj}
   \end{aligned}
@@ -167,7 +167,7 @@ The aim now is to approximate an arbitrary function by a linear combination of a
 A good class of functions to satisfy aim is the polynomials: they are trivial to add, subtract and differentiate; and can be easily numerically integrated (see \cref{sec:numer-eval-integrals}).
 
 Additionally it is desirable that the final matrix $\Am$ be sparse (to allow efficient linear algebra).
-For this to happen we need $\intui{ \sbf_{l}'\tbf'_{\ndi} } = 0$ for most pairs of $l, \ndi$.
+For this to happen we need $\intui{ \sbf_l'\tbf'_{\ndi} } = 0$ for most pairs of $l, \ndi$.
 An obvious way to achieve this is to have each basis function only overlap (in space) with a few other basis functions, for example by having each basis function non-zero only on a portion of the domain.
 Basis functions with this property are said to have ``finite support''.
 
@@ -541,7 +541,7 @@ Just as in \cref{sub:Actual-Finite-Elements} we choose to represent the finite d
 The approximations to the unknown functions $\mv$ and $\phim$ are represented as a sum over the solution basis functions $\sk \in \tsbasis$ (or $\sk \in \tsbasis \cap \Dfs$ for $\phim$) as
 \begin{equation}
   \begin{aligned}
-    \mv(\xv) &\approx \mv_h = \sum_{k = 0}^{N} \sk \, \mv_k, \\
+    \mv(\xv) &\approx \mvh = \sum_{k = 0}^{N} \sk \, \mv_k, \\
     \phim(\xv) &\approx \phimh = \sum_{k = 0}^{N} \sk \, \phim_{k}.
     \label{eq:unknowns-basis}
   \end{aligned}
@@ -549,7 +549,7 @@ The approximations to the unknown functions $\mv$ and $\phim$ are represented as
 Similarly the approximations to the test functions are represented as a sum over the test basis functions, $\tn \in \tsbasis$ (or $\tsbasis \cap \Dfs_0$ as applicable), as
 \begin{equation}
   \label{eq:47}
-  \test \approx \test_h = \sum_{\ndi = 0}^{N} \tn \, a_\ndi.
+  \test \approx \testh = \sum_{\ndi = 0}^{N} \tn \, a_\ndi.
 \end{equation}
 Note that in our method $\sbf_k \equiv \tbf_k$ except for the basis functions of  $\phim$ at the Dirichlet boundary.
 Despite this we continue to write the test and solution basis functions differently for generality.
@@ -636,7 +636,7 @@ Then the fully discrete residuals are
   \label{res:llg-discrete}
   \begin{aligned}
     \rllgv_n = \int_{\magd}
-    & \dmdth \tbf_n + \mvh \times \left( \happ + \hca - \grad \phi - \dampc \dmdth
+    & \dmdth \tbf_n + \mvh \times \left( \happ + \hca - \grad \phim - \dampc \dmdth
     \right) \tbf_n \\
     &- (\mvh \times \gradv \mvh) : \gradv \tbf_n)
     \d\magd,
@@ -685,7 +685,7 @@ Starting from the Poisson residual, \cref{res:contphi}, and omitting terms that 
 \begin{equation}
   \begin{aligned}
     \label{eq:poisson-jacobian}
-    \Am_{n,l} &= \pd{}{\phim_{l}} \sum_k \intd{ -(\grad \tbf_n \cdot \grad \sbf_k) \phim_{k}}, \\
+    \Am_{n,l} &= \pd{}{\phim_l} \sum_k \intd{ -(\grad \tbf_n \cdot \grad \sbf_k) \phim_{k}}, \\
     &= -\intd{\grad \tbf_n \cdot \grad \sbf_l}.
   \end{aligned}
 \end{equation}
@@ -762,7 +762,7 @@ Due to the linearity of the skew operator we can write the Jacobian of a cross p
     &= \sum_k \sbf_k \pd{}{\mv_l} \bigb{\skewm{\mv_k} \bv},
   \end{aligned}
 \end{equation}
-then using the fact that $\pd{\mv_{l}}{\mv_{k}} = \delta_{lk} \pd{\mv_{l}}{\mv_{l}}$ we get
+then using the fact that $\pd{\mv_l}{\mv_{k}} = \delta_{lk} \pd{\mv_l}{\mv_l}$ we get
 \begin{equation}
   \pd{}{\mv_l} \bigb{\skewm{\mvh} \bv}  = \sbf_l \pd{}{\mv_l} \bigb{\skewm{\mv_l} \cdot \bv}.
 \end{equation}
@@ -800,8 +800,8 @@ Now we calculate the Jacobian itself.
 Written in terms of the skew operator the fully discrete LLG residual, \cref{res:llg-discrete}, becomes
 \begin{equation}
   \begin{aligned}
-    \rllgv_n = \rllgv(\mv_h, \tbf_n) = \int_{\magd}
-    & \dmdth \tbf_n + \skewm{\mvh} \cdot \left( \happ + \hca - \grad \phi - \dampc \dmdth
+    \rllgv_n = \rllgv(\mvh, \tbf_n) = \int_{\magd}
+    & \dmdth \tbf_n + \skewm{\mvh} \cdot \left( \happ + \hca - \grad \phim - \dampc \dmdth
     \right) \tbf_n \\
     &- (\skewm{\mvh} \grad \mvh) : \grad \tbf_n)
     \d\magd.
@@ -815,7 +815,7 @@ To simplify the following calculations we write the Jacobian as the sum of the i
     \Am_{n,l} &= \pd{}{\mv_l} \intd{\dmdth \tbf_n}, \\
     \Bm_{n,l} &= \pd{}{\mv_l} \intd{- \skewm{\mvh} \cdot (\grad \mvh \compdot \grad \tbf_n)}, \\
     \Cm_{n,l} &= \pd{}{\mv_l} \intd{ \skewm{\mvh} \cdot \hca  \tbf_n}, \\
-    \Dm_{n,l} &= \pd{}{\mv_l} \intd{  \skewm{\mvh} \cdot \bigb{ \happ - \grad \phi - \dampc \dmdth} \tbf_n}.
+    \Dm_{n,l} &= \pd{}{\mv_l} \intd{  \skewm{\mvh} \cdot \bigb{ \happ - \grad \phim - \dampc \dmdth} \tbf_n}.
   \end{aligned}
 \end{equation}
 
@@ -839,7 +839,7 @@ Now using \cref{eq:68} with \cref{eq:69} we immediately obtain
 \begin{equation}
   \begin{aligned}
     \Dm_{n,l} &= \pd{}{\mv_l} \intd{  \skewm{\mvh} \cdot
-      \left( \happ - \grad \phi - \dampc \dmdth
+      \left( \happ - \grad \phim - \dampc \dmdth
       \right) \tbf_n}, \\
     &= \int_\magd \tbf_n \big( -\sbf_l\skewm{\happ} + \sbf_l\skewm{\grad \phi} + \dampc\sbf_l \skewm{\dmdth} - \dampc\sbf_l \jts \skewm{\mvh} \Idm_3
     \big) \d\magd, \\
@@ -940,7 +940,7 @@ More details and the advantages of each approach are discussed in \cref{sec:solu
 
 Now we derive $\Pm_{n,l}$.
 It is a $3 \times 1$ block matrix because we are dealing with a vector of three residuals differentiated by one variable ($\phim$).
-Most of the terms in the LLG residual are zero when differentiated with respect to any $\phim_{l}$ so the calculation is quite simple.
+Most of the terms in the LLG residual are zero when differentiated with respect to any $\phim_l$ so the calculation is quite simple.
 From \cref{res:llg-discrete}, using discrete approximations and dropping the zero terms we have
 \begin{equation}
   \begin{aligned}
@@ -1075,7 +1075,7 @@ For this test function $a \sim \order{1}$ assuming that the solver has not gone 
 So using the new notation and this test function we have that
 \begin{equation}
   \begin{aligned}
-    \Bigg|\Bigg| \sum_l \beta_l \bigg[& \bigb{\dmdt_l + \mv_{l} \times \hv_l - \dampc \mv_{l} \times \dmdt_l} \cdot \mv_{j}\tbf_j(\xv_l) \\
+    \Bigg|\Bigg| \sum_l \beta_l \bigg[& \bigb{\dmdt_l + \mv_l \times \hv_l - \dampc \mv_l \times \dmdt_l} \cdot \mv_{j}\tbf_j(\xv_l) \\
     &+ \bigb{\mvh \times \grad \mvh} : \grad (\mv_{j}\tbf_j(\xv_l)) \Big] \Bigg|\Bigg| < \ntol \sumbasiscoeff.
   \end{aligned}
 \end{equation}
@@ -1206,15 +1206,15 @@ This means that we can replace the Laplacian operator everywhere in the derivati
 %   \intd{\av \cdot \bv} = \ipg{\av}{\bv}.
 % \end{equation}
 We now show (by a counterexample) that the conservation result does not hold with a standard quadrature scheme.
-To obtain our result we examine the case where $\testv = \mv_h$.
-Note that $\mv_h \in (\ts)^3$ because we are using identical test and solution function spaces and each component of $\mv_h$ is a linear combination of solution basis functions.
+To obtain our result we examine the case where $\testv = \mvh$.
+Note that $\mvh \in (\ts)^3$ because we are using identical test and solution function spaces and each component of $\mvh$ is a linear combination of solution basis functions.
 
 For \thisref{sec:non-cons-gaussian} we assume that the non-linear solver has converged to a tolerance of exactly zero for simplicity, \ie $\ntol = 0$.
-By substituting $\testv = \mv_h$ and $\ntol = 0$ into \cref{eq:82} then using the triple product identities we obtain
+By substituting $\testv = \mvh$ and $\ntol = 0$ into \cref{eq:82} then using the triple product identities we obtain
 \begin{equation}
   \label{eq:23}
   \begin{aligned}
-    0 &= \ipg{\dmdth}{\mv_h}, \\
+    0 &= \ipg{\dmdth}{\mvh}, \\
     &= \frac{1}{2\dtn} \intd{(\mvh_{,n+1} + \mvh_{,n}) \cdot (\mvh_{,n+1} - \mvh_{,n})}, \\
     &= \frac{1}{2\dtn} \intd{\abs{\mvh_{,n+1}}^2 - \abs{\mvh_{,n}}^2}.
   \end{aligned}
