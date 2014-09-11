@@ -112,7 +112,7 @@ for some finite set of test basis functions $\tbf_{\ndi}$.
 Similarly, for $V_S^h \subset \sob^1([0,1]) \cap \Dfs$:
 \begin{equation}
   \label{eq:34}
-  V_{S}^{h} = \setst{\phimh }{ \phimh = \sum_{l=0}^{N_l}\phim_l \sbf_l,\, \phim_l \in \real}
+  V_{S}^{h} = \setst{\phimh }{ \phimh = \sum_{l=0}^{N_l}\phimdis_l \sbf_l,\, \phimdis_l \in \real}
   \cap \Dfs
 \end{equation}
 We call $\sbf_l$ the solution basis functions but they are often known as the shape functions.
@@ -127,13 +127,13 @@ Replacing $\testh$ from \cref{eq:poisson1} by $\tbf_{\ndi}$ gives an equivalent 
 \end{equation}
 Since $\phimh\in V_{S}^{h}$ we can replace $\phimh$ by a linear combination of the solution basis functions, \ie
 \begin{equation}
-  \phimh = \sum_{l=0}^{N_l} \phim_l\sbf_l,
+  \phimh = \sum_{l=0}^{N_l} \phimdis_l\sbf_l,
   \label{eq:y-spans}
 \end{equation}
-where $\phim_l \in \real$ are the unknown coefficients which define the approximate solution $\phimh$.
+where $\phimdis_l \in \real$ are the unknown coefficients which define the approximate solution $\phimh$.
 Substituting \cref{eq:y-spans} into \cref{eq:discrete_weak_test_fns_replaced} gives
 \begin{equation}
-  \sum_{l=0}^{N_l} \phim_l\intui{ \sbf_l'\tbf'_{\ndi} } =\intui{ f\tbf_{\ndi} }
+  \sum_{l=0}^{N_l} \phimdis_l\intui{ \sbf_l'\tbf'_{\ndi} } =\intui{ f\tbf_{\ndi} }
   \qquad n=0,\ldots,N.
   \label{eq:31}
 \end{equation}
@@ -148,7 +148,7 @@ Hence we introduce a matrix $\Am$ and a vector $\bv$ containing the results of t
   \end{aligned}
 \end{equation}
 and the problem is reduced to a system of linear equations.
-Writing $\phimdis$ for the vector of $\phim_l$ the system is
+Writing $\phimdis$ for the vector of $\phimdis_l$ the system is
 \begin{equation}
   \Am \phimdis = \bv.
   \label{eq:final_galerkin}
@@ -541,7 +541,7 @@ Just as in \cref{sub:Actual-Finite-Elements} we choose to represent the finite d
 The approximations to the unknown functions $\mv$ and $\phim$ are represented as a sum over the solution basis functions $\sk \in \tsbasis$ (or $\sk \in \tsbasis \cap \Dfs$ for $\phim$) as
 \begin{equation}
   \begin{aligned}
-    \mv(\xv) &\approx \mvh = \sum_{k = 0}^{N} \sk \, \mv_k, \\
+    \mv(\xv) &\approx \mvh = \sum_{k = 0}^{N} \sk \, \mvdis_k, \\
     \phim(\xv) &\approx \phimh = \sum_{k = 0}^{N} \sk \, \phim_{k}.
     \label{eq:unknowns-basis}
   \end{aligned}
@@ -665,15 +665,15 @@ Note that the ``real'' implementation of the implicit midpoint rule \cref{eq:imp
 We first note that the effect of differentiation by a nodal value on the approximation function $\phimh$ is quite simple:
 \begin{equation}
   \begin{aligned}
-    &\pd{\phimh}{\phim_l} = \pd{}{\phim_l} \bigs{ \sum_k \phim_k \sk } = \sbf_l, \\
-    &\pd{\phimh}{\mv_l} = \pd{}{\mv_l} \bigs{ \sum_k \phim_k \sk } = \zerov^T, \\
+    &\pd{\phimh}{\phimdis_l} = \pd{}{\phimdis_l} \bigs{ \sum_k \phimdis_k \sk } = \sbf_l, \\
+    &\pd{\phimh}{\mvdis_l} = \pd{}{\mvdis_l} \bigs{ \sum_k \phimdis_k \sk } = \zerov^T, \\
   \end{aligned}
 \end{equation}
 and similarly for the interpolated magnetisation, $\mvh$:
 \begin{equation}
   \begin{aligned}
-    &\pd{\mvh}{\mv_l} = \pd{}{\mv_l} \bigs{ \sum_k \mv_k \sk } = \sbf_l \Idm_3, \\
-    &\pd{\mvh}{\phim_l} = \pd{}{\phim_l} \bigs{ \sum_k \mv_k \sk } = \zerov, \\
+    &\pd{\mvh}{\mvdis_l} = \pd{}{\mvdis_l} \bigs{ \sum_k \mvdis_k \sk } = \sbf_l \Idm_3, \\
+    &\pd{\mvh}{\phimdis_l} = \pd{}{\phimdis_l} \bigs{ \sum_k \mvdis_k \sk } = \zerov, \\
 \end{aligned}
 \end{equation}
 where $\Idm_3$ is the $3\times3$ identity matrix.
@@ -685,7 +685,7 @@ Starting from the Poisson residual, \cref{res:contphi}, and omitting terms that 
 \begin{equation}
   \begin{aligned}
     \label{eq:poisson-jacobian}
-    \Am_{n,l} &= \pd{}{\phim_l} \sum_k \intd{ -(\grad \tbf_n \cdot \grad \sbf_k) \phim_{k}}, \\
+    \Am_{n,l} &= \pd{}{\phimdis_l} \sum_k \intd{ -(\grad \tbf_n \cdot \grad \sbf_k) \phim_{k}}, \\
     &= -\intd{\grad \tbf_n \cdot \grad \sbf_l}.
   \end{aligned}
 \end{equation}
@@ -758,24 +758,24 @@ Some useful properties of this skew operator are:
 Due to the linearity of the skew operator we can write the Jacobian of a cross product including $\mvh$ as
 \begin{equation}
   \begin{aligned}
-    \pd{}{\mv_l} \bigb{\skewm{\mvh} \bv} &= \pd{}{\mv_l} \skewm{\intp{\mv}} \bv, \\
-    &= \sum_k \sbf_k \pd{}{\mv_l} \bigb{\skewm{\mv_k} \bv},
+    \pd{}{\mvdis_l} \bigb{\skewm{\mvh} \bv} &= \pd{}{\mvdis_l} \skewm{\intp{\mv}} \bv, \\
+    &= \sum_k \sbf_k \pd{}{\mvdis_l} \bigb{\skewm{\mvdis_k} \bv},
   \end{aligned}
 \end{equation}
-then using the fact that $\pd{\mv_l}{\mv_{k}} = \delta_{lk} \pd{\mv_l}{\mv_l}$ we get
+then using the fact that $\pd{\mvdis_l}{\mv_{k}} = \delta_{lk} \pd{\mvdis_l}{\mvdis_l}$ we get
 \begin{equation}
-  \pd{}{\mv_l} \bigb{\skewm{\mvh} \bv}  = \sbf_l \pd{}{\mv_l} \bigb{\skewm{\mv_l} \cdot \bv}.
+  \pd{}{\mvdis_l} \bigb{\skewm{\mvh} \bv}  = \sbf_l \pd{}{\mvdis_l} \bigb{\skewm{\mvdis_l} \cdot \bv}.
 \end{equation}
 Next, by using \cref{eq:61} we obtain
 \begin{equation}
-  \pd{}{\mv_l} \bigb{\skewm{\mvh} \bv} = - \sbf_l\skewm{\bv},
+  \pd{}{\mvdis_l} \bigb{\skewm{\mvh} \bv} = - \sbf_l\skewm{\bv},
   \label{eq:diff-skew-interp}
 \end{equation}
 and finally by combining \cref{eq:diff-skew-interp} with the product rule we obtain the identity
 \begin{equation}
   \begin{aligned}
-    \pd{}{\mv_l} \bigb{\skewm{\mvh}\cdot \gv(\mvh)}
-    &= \skewm{\mvh}\cdot \pd{\gv(\mvh)}{\mv_l} - \sbf_l \skewm{\gv(\mvh)}.
+    \pd{}{\mvdis_l} \bigb{\skewm{\mvh}\cdot \gv(\mvh)}
+    &= \skewm{\mvh}\cdot \pd{\gv(\mvh)}{\mvdis_l} - \sbf_l \skewm{\gv(\mvh)}.
     \label{eq:68}
   \end{aligned}
 \end{equation}
@@ -791,10 +791,10 @@ This provides us with a simple representation for almost all of the terms in the
 % Now it is easy to see that applying \cref{eq:68} with $\gv = \happ + \hms$ gives us the Jacobian contribution
 % \begin{equation}
 %\begin{aligned}
-%   \pd{}{\mv_l} \circled{c} = - \sbf_l \skewm{\happ + \hms},
+%   \pd{}{\mvdis_l} \circled{c} = - \sbf_l \skewm{\happ + \hms},
 % \end{aligned}
 %\end{equation}
-% since $\pd{\gv(\mv)}{\mv_l} \equiv 0$.
+% since $\pd{\gv(\mv)}{\mvdis_l} \equiv 0$.
 
 Now we calculate the Jacobian itself.
 Written in terms of the skew operator the fully discrete LLG residual, \cref{res:llg-discrete}, becomes
@@ -811,18 +811,18 @@ Written in terms of the skew operator the fully discrete LLG residual, \cref{res
 To simplify the following calculations we write the Jacobian as the sum of the individual contributions:
 \begin{equation}
   \begin{aligned}
-    \Fm_{n,l} &= \pd{\rllgv_n}{\mv_l} = \Am_{n,l} + \Bm_{n,l} + \Cm_{n,l} + \Dm_{n,l}, \\
-    \Am_{n,l} &= \pd{}{\mv_l} \intd{\dmdth \tbf_n}, \\
-    \Bm_{n,l} &= \pd{}{\mv_l} \intd{- \skewm{\mvh} \cdot (\grad \mvh \compdot \grad \tbf_n)}, \\
-    \Cm_{n,l} &= \pd{}{\mv_l} \intd{ \skewm{\mvh} \cdot \hca  \tbf_n}, \\
-    \Dm_{n,l} &= \pd{}{\mv_l} \intd{  \skewm{\mvh} \cdot \bigb{ \happ - \grad \phim - \dampc \dmdth} \tbf_n}.
+    \Fm_{n,l} &= \pd{\rllgv_n}{\mvdis_l} = \Am_{n,l} + \Bm_{n,l} + \Cm_{n,l} + \Dm_{n,l}, \\
+    \Am_{n,l} &= \pd{}{\mvdis_l} \intd{\dmdth \tbf_n}, \\
+    \Bm_{n,l} &= \pd{}{\mvdis_l} \intd{- \skewm{\mvh} \cdot (\grad \mvh \compdot \grad \tbf_n)}, \\
+    \Cm_{n,l} &= \pd{}{\mvdis_l} \intd{ \skewm{\mvh} \cdot \hca  \tbf_n}, \\
+    \Dm_{n,l} &= \pd{}{\mvdis_l} \intd{  \skewm{\mvh} \cdot \bigb{ \happ - \grad \phim - \dampc \dmdth} \tbf_n}.
   \end{aligned}
 \end{equation}
 
 The first contribution is simple
 \begin{equation}
   \begin{aligned}
-    \Am_{n,l} &= \pd{}{\mv_l} \intd{ \dmdth \tbf_n } \\
+    \Am_{n,l} &= \pd{}{\mvdis_l} \intd{ \dmdth \tbf_n } \\
            &= \jts \Idm_3 \intd{ \sbf_l \tbf_n},
   \end{aligned}
 \end{equation}
@@ -833,12 +833,12 @@ Next we calculate the contribution from the damping, applied field and magnetost
 If we write the damping term in the form of \cref{eq:68} we have $\gv(\mvh) = \dmdth$, and
 \begin{equation}
   \label{eq:69}
-  \pd{\gv(\mvh)}{\mv_l} = \pd{}{\mv_l} \left(\pd{\mvh}{t} \right) = \jts \sbf_l \Idm_3.
+  \pd{\gv(\mvh)}{\mvdis_l} = \pd{}{\mvdis_l} \left(\pd{\mvh}{t} \right) = \jts \sbf_l \Idm_3.
 \end{equation}
 Now using \cref{eq:68} with \cref{eq:69} we immediately obtain
 \begin{equation}
   \begin{aligned}
-    \Dm_{n,l} &= \pd{}{\mv_l} \intd{  \skewm{\mvh} \cdot
+    \Dm_{n,l} &= \pd{}{\mvdis_l} \intd{  \skewm{\mvh} \cdot
       \left( \happ - \grad \phim - \dampc \dmdth
       \right) \tbf_n}, \\
     &= \int_\magd \tbf_n \big( -\sbf_l\skewm{\happ} + \sbf_l\skewm{\grad \phi} + \dampc\sbf_l \skewm{\dmdth} - \dampc\sbf_l \jts \skewm{\mvh} \Idm_3
@@ -858,7 +858,7 @@ Writing the residual in the form of \cref{eq:68} we have
 and thus
 \begin{equation}
   \begin{aligned}
-    \pd{\gv(\mvh)}{\mv_l} &= \pd{}{\mv_l} \bigb{ \kone (\mvh \cdot \ev) \ev}, \\
+    \pd{\gv(\mvh)}{\mvdis_l} &= \pd{}{\mvdis_l} \bigb{ \kone (\mvh \cdot \ev) \ev}, \\
     &= \kone \bigb{ \pd{}{m_{x,l}} (\mvh \cdot \ev),
       \pd{}{m_{y,l}} (\mvh \cdot \ev),
       \pd{}{m_{z,l}} (\mvh \cdot \ev) }  \tensorprod \ev, \\
@@ -869,7 +869,7 @@ and thus
 Then combining \cref{eq:68,eq:70} gives
 \begin{equation}
   \begin{aligned}
-    \Cm_{n,l} &= \pd{}{\mv_l} \intd{ \skewm{\mvh} \cdot \hca  \tbf_n}, \\
+    \Cm_{n,l} &= \pd{}{\mvdis_l} \intd{ \skewm{\mvh} \cdot \hca  \tbf_n}, \\
     &= \underbrace{\intd{ -\tbf_n \sbf_l\skewm{\hca} }}_{\Cm'_{n,l}}
     + \underbrace{\kone \intd{ \tbf_n \sbf_l \skewm{\mvh} \; (\ev  \tensorprod \ev) }}_{\Jmca_{,n,l}}.
     \label{eq:hca-jacobian}
@@ -882,9 +882,9 @@ Finally we calculate the exchange contribution.
 We first derive the identity
 \begin{equation}
   \begin{aligned}
-    \pd{}{\mv_l} \left(\gradv \mvh \compdot \gradv \tbf\right)
-    &= \pd{}{\mv_l} \threevecdup{\left( \sum_k \mv_k \grad \sbf_k \right) \cdot \grad \tbf}, \\
-    &=  \sum_k \pd{\mv_k}{\mv_l} \threevecdup{\grad \sbf_k \cdot \grad \tbf}, \\
+    \pd{}{\mvdis_l} \left(\gradv \mvh \compdot \gradv \tbf\right)
+    &= \pd{}{\mvdis_l} \threevecdup{\left( \sum_k \mvdis_k \grad \sbf_k \right) \cdot \grad \tbf}, \\
+    &=  \sum_k \pd{\mvdis_k}{\mvdis_l} \threevecdup{\grad \sbf_k \cdot \grad \tbf}, \\
     &=  \Idm_3 \bigb{ \grad \sbf_l \cdot \grad \tbf }.
     \label{eq:71}
   \end{aligned}
@@ -892,7 +892,7 @@ We first derive the identity
 Then using \cref{eq:68,eq:71} we get
 \begin{equation}
   \begin{aligned}
-   \Bm_{n,l} &=  \pd{}{\mv_l} \intd{- \skewm{\mvh} \cdot (\gradv \mvh \compdot \gradv \tbf_n)} ,\\
+   \Bm_{n,l} &=  \pd{}{\mvdis_l} \intd{- \skewm{\mvh} \cdot (\gradv \mvh \compdot \gradv \tbf_n)} ,\\
     &= \intd{ \sbf_l \skewm{\gradv \mvh \compdot \gradv \tbf_n}
        - \skewm{\mvh} \left( \grad \sbf_l \cdot \grad \tbf_n \right)}, \\
      &= \intd{\skewm{ \sbf_l \gradv \mvh \compdot \gradv \tbf_n
@@ -939,13 +939,13 @@ Note that it is also possible (and common) to solve the non-linear problem \cref
 More details and the advantages of each approach are discussed in \cref{sec:solution-strategies}.
 
 Now we derive $\Pm_{n,l}$.
-It is a $3 \times 1$ block matrix because we are dealing with a vector of three residuals differentiated by one variable ($\phim$).
-Most of the terms in the LLG residual are zero when differentiated with respect to any $\phim_l$ so the calculation is quite simple.
+It is a $3 \times 1$ block matrix because we are dealing with a vector of three residuals differentiated by one variable ($\phimdis_l$).
+Most of the terms in the LLG residual are zero when differentiated with respect to any $\phimdis_l$ so the calculation is quite simple.
 From \cref{res:llg-discrete}, using discrete approximations and dropping the zero terms we have
 \begin{equation}
   \begin{aligned}
-    \Pm_{n,l} &= \pd{\rllgv_n}{\phim_l}
-    = \pd{}{\phim_l} \intd{ -\tbf_n \mvh \times \grad \phimh}, \\
+    \Pm_{n,l} &= \pd{\rllgv_n}{\phimdis_l}
+    = \pd{}{\phimdis_l} \intd{ -\tbf_n \mvh \times \grad \phimh}, \\
     &= -\intd{ \tbf_n \mvh \times \grad \sbf_l}, \\
     % &= -\intd{ \tbf_n \threevec{m_y\pd{\sbf_l}{z} - m_z \pd{\sbf_l}{y}}
     %   {-m_x\pd{\sbf_l}{z} + m_z \pd{\sbf_l}{x}}
@@ -957,8 +957,8 @@ Next we derive $\Qm_{n,l}$, which is a $1 \times 3$ block matrix because we diff
 From \cref{res:phi-discrete} we have
 \begin{equation}
   \begin{aligned}
-    \Qm_{n,l} &= \pd{\rphi_n}{\mv_l} = \pd{}{\mv_l} \intd{ -\tbf_n \div \mvh}, \\
-    &= \sum_j \pd{}{\mv_l} \intd{ -\tbf_n \left( \pd{\sbf_j}{x} m_{h,x,j}
+    \Qm_{n,l} &= \pd{\rphi_n}{\mvdis_l} = \pd{}{\mvdis_l} \intd{ -\tbf_n \div \mvh}, \\
+    &= \sum_j \pd{}{\mvdis_l} \intd{ -\tbf_n \left( \pd{\sbf_j}{x} m_{h,x,j}
         + \pd{\sbf_j}{y} m_{h,y,j} + \pd{\sbf_j}{z} m_{h,z,j} \right) }, \\
     &= -\intd{ \tbf_n \left( \pd{\sbf_l}{x},
         \pd{\sbf_l}{y}, \pd{\sbf_l}{z} \right) }, \\
@@ -1075,7 +1075,7 @@ For this test function $a \sim \order{1}$ assuming that the solver has not gone 
 So using the new notation and this test function we have that
 \begin{equation}
   \begin{aligned}
-    \Bigg|\Bigg| \sum_l \beta_l \bigg[& \bigb{\dmdt_l + \mv_l \times \hv_l - \dampc \mv_l \times \dmdt_l} \cdot \mv_{j}\tbf_j(\xv_l) \\
+    \Bigg|\Bigg| \sum_l \beta_l \bigg[& \bigb{\dmdt_l + \mvdis_l \times \hv_l - \dampc \mvdis_l \times \dmdt_l} \cdot \mv_{j}\tbf_j(\xv_l) \\
     &+ \bigb{\mvh \times \grad \mvh} : \grad (\mv_{j}\tbf_j(\xv_l)) \Big] \Bigg|\Bigg| < \ntol \sumbasiscoeff.
   \end{aligned}
 \end{equation}
