@@ -3,7 +3,6 @@
 \label{sec:galerk-meth-llg}
 
 % ??ds use stupid normal function space notation with a million subscripts?
-% ??ds switch to \mdisc for nodal values
 
 In \cref{sec:intr-finite-ele-diff} we give a general introduction to the finite element method as applied to the magnetostatic potential equation \cref{eq:Hms} in one spatial dimension.
 Then in \cref{sec:llg-initial-equations,sec:time-discretisation-resi} we extend this discussion to the full (non-linear) Landau-Lifshitz-Gilbert equation with magnetostatics in three spatial dimensions.
@@ -47,7 +46,7 @@ Another notation sometimes used for Sobolev spaces is $W^{n,p}(\magd)$, which de
 \label{Derivation-of-weighted-residuals}
 
 The method of weighted residuals is the first step in a variety of numerical methods including the finite element method and the spectral method.
-It involves replacing the initial PDE with an equivalent but more flexible version. ??MH
+It involves replacing the initial PDE with an equivalent but more flexible version. ??MH matthias doesn't like this sentence
 
 The formulation of the problem in \cref{eq:poisson1} (called a strong or classical formulation) is too restrictive for our purposes.
 It disallows some useful approximating functions and restricts the geometries that can be modelled \cite[14]{HowardElmanDavidSilvester2006}.
@@ -79,7 +78,7 @@ Since the boundary conditions are automatically enforced by the choice of $V_s$ 
 
 To see roughly why \cref{eq:26} is equivalent to \cref{eq:poisson1} consider the case when $f(x) + \phim''(x)$ is non-zero for some interval $X \subset (0,1)$, \ie when the strong form \cref{eq:poisson1} is not satisfied on the interval.
 Since \cref{eq:26} must hold for all functions we can choose a function which is only non-zero on $X$ and \cref{eq:26} will fail.
-The rigorous extension of this argument must consider the case when $f(x) + \phim''(x)$ is non-zero on a set of measure zero (\eg at a finite set of points). ??ds roughly why is it ok?
+The rigorous extension of this argument must consider the case when $f(x) + \phim''(x)$ is non-zero on a set of measure zero (\eg at a finite set of points). ??ds fill in: roughly why is it ok?
 We call this approach the method of weighted residuals \cite[210, 214]{Zeinkiewicz1967}.
 
 The smoothness restrictions on the solutions of our weak form approximation can be further reduced by integrating the left hand side of \cref{eq:26} by parts to obtain
@@ -101,20 +100,22 @@ However, since we are given the value of $\phim'$, we can calculate the term $\b
 
 \subsection{Discretisation}
 
-??MH specify that as N goes to inf need Vh goes to V.
 \Cref{eq:symmetric-weak-poisson} is still continuous (\ie the test and solution spaces are still infinite dimensional) and so it cannot be implemented as a computational method.
-To convert our continuous weak form to a discrete version we approximate the infinite dimensional test function space by a finite dimensional subset $V_{T}^{h} \subset \sob^1([0,1]) \cap \Dfs$ such that
+To convert our continuous weak form to a discrete version we approximate the infinite dimensional test function space by an $N$ dimensional subset $V_{T}^{h} \subset \sob^1([0,1]) \cap \Dfs$ such that as $N \rightarrow \infty$ we have $V_{T}^{h} \rightarrow \sob^1([0,1]) \cap \Dfs$.
+Since $V_{T}^{h}$ is finite dimensional we can write
 \begin{equation}
   V_{T}^{h} = \setst{\testh }{ \testh = \sum_{n=0}^{N}\alpha_{\ndi} \tbf_{\ndi},\, \alpha_{\ndi} \in \real} \cap \Dfs_0,
   \label{eq:30}
 \end{equation}
 for some finite set of test basis functions $\tbf_{\ndi}$.
+Note that
 Similarly, for $V_S^h \subset \sob^1([0,1]) \cap \Dfs$:
 \begin{equation}
   \label{eq:34}
   V_{S}^{h} = \setst{\phimh }{ \phimh = \sum_{l=0}^{N_l}\phimdis_l \sbf_l,\, \phimdis_l \in \real}
-  \cap \Dfs
+  \cap \Dfs,
 \end{equation}
+with the equivalent requirement when $N \rightarrow \infty$.
 We call $\sbf_l$ the solution basis functions but they are often known as the shape functions.
 Different choices of $\tbf_{\ndi}$ and $\sbf_l$ lead to different methods, the choice corresponding to the finite element method will be discussed in \cref{sub:Actual-Finite-Elements}.
 For now we continue with a description of the conversion to a general discrete form.
@@ -316,12 +317,23 @@ A side effect of this choice is that explicit time integration schemes cannot be
 After non-dimensionalisation (see \cref{sec:land-lifsh-gilb-normalisation}) the strong form of our system of equations is given by
 \begin{equation}
   \begin{aligned}
-    \dmdt &= - \mv \times \hv + \alpha \mv \times \dmdt, \\
+    \dmdt &= - \mv \times \hv + \dampc \mv \times \dmdt, \\
     \hv &= \happ - \grad \phim + \lap \mv + \kone (\mv \cdot \ev) \ev, \\
     \lap \phim &= \div \mv.
     \label{eqn:ndllg-starting}
   \end{aligned}
 \end{equation}
+
+Recall that we are using the Newton-Raphson method to find a solution to the non-linear problem.
+Hence we need to rearrange \cref{eqn:ndllg-starting} into the residual form
+\begin{equation}
+  \begin{align}
+    \Rllg(\mv, \phim) &= \dmdt + \mv \times \hv - \dampc \mv \times \dmdt, \label{eq:llgR} \\
+    \Rphi(\mv, \phim) &= \lap \phim - \div \mv, \label{eq:phiR}
+  \end{align}
+\end{equation}
+where $\hv$ is as given in \cref{eqn:ndllg-starting}.
+A pair of functions $\mv \in (C^2(\magd))^3$, $\phim \in C^2(\magd)$ is a solution to this strong form of the equations if $\Rllg(\mv, \phim)=0$ and $\Rphi(\mv, \phim)=0$ for all $\xv \in \magd$.
 
 For now we consider the magnetostatic potential only within the magnetic domain, $\magd$, with Neumann or Dirichlet boundary conditions on the boundary, $\boundd$.
 Details of the extension to include the effects of the external region using the FEM/BEM method are given in \cref{sec:hybr-finit-elem}, for which both the Dirichlet and Neumann cases will be required.
@@ -342,7 +354,7 @@ We also define the following function spaces for convenience
 \end{aligned}
 \end{equation}
 
-Recall from \cref{sec:magn-bound-cond} that the boundary condition on the magnetisation is
+From \cref{sec:magn-bound-cond} we have that the boundary condition on the magnetisation is
 \begin{equation}
   \label{eq:m-bc}
   \mv \times \dmdn = \zerov \quad \xv \in \boundd.
@@ -352,7 +364,7 @@ Recall from \cref{sec:magn-bound-cond} that the boundary condition on the magnet
 \subsection{The weak form}
 \label{sec:weak-form-residuals}
 
-We now convert \cref{eqn:ndllg-starting} into the residual weak form as described in \cref{Derivation-of-weighted-residuals}.
+We now convert \cref{eq:llgR,eq:phiR} into the residual weak form as described in \cref{Derivation-of-weighted-residuals}.
 In the following we will need the identity\footnote{This can be easily derived by applying the product rule to $\div (v \grad \phim)$.}
 \begin{equation}
   (\lap \phim) \test = \div (v \grad \phim) - \grad \phim \cdot \grad v.
@@ -364,17 +376,14 @@ We will also make use of the divergence theorem
   \label{eq:div-thm}
 \end{equation}
 
-??MH explain again briefly what NR is...
-The Newton-Raphson residual for the magnetostatic potential is given by
+Multiplying \cref{eq:phiR} by a test function and integrating over the magnetic domain we obtain the weak form residual for the magnetostatic potential
 \begin{gather}
   \rphi(\phim, \test) = \intd{ (\lap \phim) \test }
   - \intd{ (\div \mv) \test}, \label{eqn:phires1}
 \end{gather}
 where $\phim \in \sob^2(\magd) \cap \Dfs$ and $\mv \in \sob^1(\magd)$.
-
-Recall that problem is to find some $\phim$ such that $\rphi(\phim, \test) = 0$ for all test functions $\test \in \sob^0(\magd) \cap \Dfs_0$.
-We will find an approximation to $\phim$ using the Newton-Raphson method.
-Note that while the use of a linearisation method is unnecessary for the magnetostatic potential alone (since \cref{eqn:phires1} is linear in $\phim$) it will be necessary for the overall problem.
+Recall that aim is to find some $\phim$ such that $\rphi(\phim, \test) = 0$ for all test functions $\test \in \sob^0(\magd) \cap \Dfs_0$.
+Note that while the use of the Newton-Raphson method is unnecessary for the magnetostatic potential alone (since \cref{eqn:phires1} is linear in $\phim$) it will be necessary later for the coupled problem.
 
 We now reduce the order of the derivatives on $\phim$, as discussed in \cref{Derivation-of-weighted-residuals}, by ``transferring'' the derivatives onto the test functions.
 Integrating \cref{eq:20} over the domain and applying the divergence theorem \cref{eq:div-thm} we obtain
@@ -404,10 +413,9 @@ Hence the boundary integral is only non-zero over $\boundd_{\Neu}$ where $\grad 
   \label{res:contphi}
 \end{equation}
 
-??MH matthias hates the next two paragraphs, no idea why...
-Next we apply the same procedure to the Landau-Lifshitz-Gilbert equation with effective fields \cref{eqn:ndllg-starting}.
+Next we apply the same procedure to the Landau-Lifshitz-Gilbert residual \cref{eq:llgR}.
 For now we sidestep the details of time discretisation by assuming $\dmdt$ to be just another (sufficiently smooth) function of $\xv$.
-The weak form of the LLG is
+The weak form of the LLG residual is
 \begin{equation}
   \begin{aligned}
     \rllgv(\mv, \test) = \int_\magd &\Big( \dmdt
@@ -417,7 +425,7 @@ The weak form of the LLG is
     \label{res:contllg}
   \end{aligned}
 \end{equation}
-Similarly to the previous examples the idea is to apply the Newton-Raphson method to find $\mv \in \sob^2(\magd)$ such that $\rllgv(\mv, \test) \approx \zerov$ $\forall \test \in \sob^0(\magd)$.
+The problem is solved by $\mv \in \sob^2(\magd)$ such that $\rllgv(\mv, \test) = \zerov$ $\forall \test \in \sob^0(\magd)$.
 
 Note that in \cref{res:contllg} the residual is a vector.
 However, we can also express the requirement for each component of \cref{res:contllg} to be zero as
@@ -660,7 +668,7 @@ To solve our fully discrete system by the Newton-Raphson method (see \cref{sec:n
 This can be handled by numerical differentiation (\eg by approximating each derivative using a finite difference method), but analytical Jacobians are typically faster to compute and give better convergence properties than such numerical approximations.
 Additionally, for the solution of the linear systems, it is often useful to know analytically the block structure of the system being solved.
 
-Note that the ``real'' implementation of the implicit midpoint rule \cref{eq:impl-imr} introduces a factor of $1/2$ in various places due to the substitution $ \yv \rightarrow \frac{\yv_{n+1} + \yv_n}{2}$, the derivations below do not include this ??ds yet?
+Note that the ``real'' implementation of the implicit midpoint rule \cref{eq:impl-imr} introduces a factor of $1/2$ in various places due to the substitution $ \yv \rightarrow \frac{\yv_{n+1} + \yv_n}{2}$, the derivations below do not include this ??ds yet, fix it!
 
 We first note that the effect of differentiation by a nodal value on the approximation function $\phimh$ is quite simple:
 \begin{equation}
@@ -1052,7 +1060,7 @@ Hence the exchange contribution is integrated exactly.
 \subsection{Conservation of $\abs{\mv}$}
 \label{sec:weak-cons-absmv}
 
-??ds Need better notation for midpoint values...
+??ds Need better and consistent notation for midpoint values...
 
 After minimising the norm of the discrete LLG residual with vector test functions by using the Newton-Raphson method (to tolerance $\ntol$) we have, for each $j$:
 \begin{equation}
