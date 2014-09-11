@@ -661,6 +661,7 @@ The energy error for BDF2 without normalisation is very small (around the Newton
 This is due to the injection/removal of energy when the magnetisation length is modified.
 The energy error when using the TR/IMR algorithm (recall that, in this example TR and IMR are identical) is below the minimum value that can be calculated using floating point arithmetic.
 This is not surprising as we expect it to be significantly smaller than the energy error of BDF2, which is $\sim 10^{-14}$ and it is calculated as the difference of two values of $\order{1}$ (so it cannot be calculated if it is smaller than $\sim 10^{-16}$).
+% I also tried it with larger precession (ie m further from z) and nothing changes, leave it like this for simplicity.
 
 \begin{figure}
   \centering
