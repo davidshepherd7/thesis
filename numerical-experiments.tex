@@ -5,19 +5,21 @@
 
 ??ds I've never explained how to solve eBDF3 system: pin magnetostatics, mass matrix inversion, use ll equation, with nodal quadrature we have a lumped mass matrix, no inversion needed!
 
-In this section we apply the complete FEM/BEM scheme with adaptive IMR and nodal integration, as developed in \crefs{sec:galerk-meth-llg, sec:hybr-finit-elem, sec:adaptive-imr}, to ``real-world'' micromagnetics problems.
 
-The ??ds-th problem solved is a case where an exact solution exists.
+In this section we apply the various numerical methods constructed throughout this thesis to some more realistic micromagnetics problems.
 
-The ??ds-th problem we tackle is the \mumag standard problem 4 \cite{mumag-website}, which is widely used to test dynamic micromagnetic codes.
+The first problem is a wave-like case without magnetostatics where there is a known analytical solution.
+This allows us to test the convergence of the various methods when applied to the full LLG with spatial variations, as well as the conservation behaviour of the IMR.
+
+We then show results from the \mumag standard problem \#4 \cite{mumag-website}, which is widely used to test dynamic micromagnetic codes.
+This allows us to verify the complete model and to examine the performance of the various numerical methods when magnetostatic fields are included.
 
 
 
-\section{Wave solution}
+\section{Wave-like solution}
 \label{sec:numer-exper}
 
-
-??ds sweep dt?
+The first problem is
 
 \subsection{Problem definition}
 
@@ -74,12 +76,6 @@ This is as expected, in particular note that there is no oscillation of the step
 ??ds TR catastrophic failure?
 
 
-\subsection{Accuracy of nodal quadrature}
-
-??ds do this?
-
-
-
 \subsection{Convergence}
 
 Since we have an exact solution for this example we can calculate the total error and plot the convergence as $\dtn \goesto 0$ and $h \goesto 0$.
@@ -91,6 +87,10 @@ The error norm used is $\errmpde = \norm{m(\xv_j, t_n) - \mv_j,n}$. ??ds this is
 We plot two figures: the error after a single step and the error after some time.
 
 ??ds
+
+??ds also look at nodal quadrature
+
+
 
 
 \subsection{Conservation properties}
@@ -164,6 +164,10 @@ A similar result is seen in \cref{} for the energy conservation property when $\
 \end{figure}
 
 
+\subsection{Triangular meshes}
+
+??ds sort this out?
+
 
 \subsection{Conclusions}
 
@@ -172,16 +176,15 @@ We have shown that the conservation properties of IMR persist in a weak form FEM
 
 
 
-\section{The \mumag standard problem 4}
 
-Widely used to test micromagnetic codes
+\section{The \mumag standard problem \#4}
 
-Reversal of a thin film of permalloy under two different fields
+The \mumag standard problem \#4 is the problem most commonly used to test implementations of dynamic micromagnetic models.
+It involves modelling the reversal of an extremely thin cuboid film of permalloy-like material under two different applied fields.
 
-Unfortunately FEM/BEM magnetostatic calcultations are extremely unsuited to thin film problems (the dense BEM matrix size is proportional to the size of the boundary, in thin films the entire problem is on the boundary. The additional geometric flexibility is not needed for simple cubeoid shapes.)
-But we will do it anyway in order to test our results.
-
-??ds mention that LL form of LLG is used for explicit step in IMR, mention CG + ... solver, diagonal mass matrix with nodal integration, .... Or move elsewhere?
+Unfortunately FEM/BEM magnetostatic calcultations are extremely unsuited to thin film problems: the dense BEM matrix size is proportional to the number of nodes on the boundary and in a thin film every single node is on the boundary.
+Additionally the key benefit of FEM/BEM (accurate resolution of complex geometries) is not required since the film is a simple cuboid.
+However, since there are no other widely studied test problems and there are no problems with both magnetostatics and exchange for which an analytical solution is known, we use the standard problem to verify the model.
 
 
 \subsection{Problem specification}
@@ -213,70 +216,171 @@ The magnetic parameters result in a magnetostatic exchange length (and simulatio
 \begin{equation}
   l_{\text{ex}} = \sqrt{\frac{2A}{\mu_0 M_s^2}} = 5.6858\text{nm},
 \end{equation}
-hence the normalised dimensions are $500 \times 125 \times 3 / 5.6858$.
+hence the normalised dimensions are approximately $87.94 \times 21.98 \times 0.53$.
 The unit time is
 \begin{equation}
   t_{\text{unit}} = \frac{1}{\gymagc M_s} = 5.653\text{ps}.
 \end{equation}
 The normalised applied fields are simply the fields given in \cref{eq:mumag-h-app} divided by $M_s = 8.0\E{5}$.
 
-\subsection{Numerical methods and parameters}
+\subsection{Implementation details}
 
-Mesh
+We use the FEM to spatially discretise the LLG equation and the Newton-Raphson method to solve the resulting non-linear systems as described in \cref{cha:numer-experiments}.
+The hybrid FEM/BEM method, described in \cref{sec:hybr-finit-elem}, is used for magnetostatic calculations.
 
-Newton tol
+The coupling of LLG equation with the magnetostatic calculations is done using both the monolithic and semi-implicit methods discussed in \cref{sec:solution-strategies}.
+The solution of the monolithic linear system is done using the fully iterative preconditioner $\inexact{\precc}$, it turns out that for thin film problems the ILU-1 approximation to the LLG block, $\Fm$, is effective.
+The decoupled systems are solved using the methods described in \cref{sec:llg-only-system}.
 
-quadrature(s)
+Both Gaussian quadrature and the nodal quadrature described in \cref{sec:local-nodal-integr} are used.
+The TR, BDF2 and IMR adaptive time integration schemes (see \cref{sec:adapt-impl-midp,sec:aimr-implementation}) are tested.
+Re-normalisation of the magnetisation is also tested for the BDF2 and TR schemes.
 
-time integrator(s)
 
-solvers
+A structured mesh is used consisting of cuboid elements is used due to the simple geometry of the problem.
+In the $z$ direction (out of the thin film plane) a single layer of elements is used at all refinements.
+This is the standard approach, and is expected to give acceptable resolution because the exchange length of the material (the length scale over which the magnetisation can vary) is around twice the thickness.
+The number of elements along the $x$ and $y$ axes, denoted $n_x$ and $n_y$, is varied but the ratio is fixed as $n_x = (500/125) n_y$ so that the element edge lengths in each direction are identical.
+We use $n_x=75,100,125$, which gives edge lengths of 1.17, 0.89 and 0.70 exchange lengths respectively.
 
-etc.
+The Newton tolerance is fixed at $\ntol = 10^{-11}$, the adaptive integrator tolerance is $\toltt = 10^{-5}$, the initial time step is $\dtn_0 = 10^{-4}$ which is small enough to allow the adaptive integrator to naturally increase to an appropriate step size.
+We cap the time step at $\dtx{\text{max}} = 4.5$ to avoid issues with linear and solver converge at extremely large time steps.
+
+
+To generate the initial S-state we run the simulation starting from the state $\m=[1,1,1]$ with the applied field
+\begin{equation}
+  \hap(t) =
+  \begin{cases}
+    10 (1- \frac{t}{100}) & t < 100, \\
+    0 & t \geq 100,
+  \end{cases}
+\end{equation}
+and with $\dampc = 1.0$ for 300 time units.
+The time integrator history data is then set such that it ``has been in this state forever'', and the time step size is reset to the initial value.
+The relevant applied field as specified in the problem is then set and the simulation is continued.
+The initial condition is always generated using the same numerical methods as are used in the simulation.
+
+
+??ds mention that LL form of LLG is used for explicit step in IMR, mention CG + ... solver, diagonal mass matrix with nodal integration, .... Or move elsewhere?
+
+
 
 
 \subsection{Results}
 
-Plot dynamics with some other peoples.
 
-Conservation properties of IMR.
+??ds turns out that non-conserving, non-renormalising causes major problems: error estimates are v. large and sticks at low step sizes or fails utterly
+??ds do proper analysis of this if time?
+
+\begin{figure}
+  \centering
+  \includegraphics[width=0.8\textwidth]{images/placeholder}
+  \caption{Initial S-state as generated by... ??ds}
+  \label{fig:intial-mumag4}
+\end{figure}
+
+
+\begin{figure}
+  \centering
+  \includegraphics[width=0.8\textwidth]{plots/mumag4_convergence/mumag4_field1-meanmxsvs-meanmysvs-meanmzsvs-dtsvstimes.pdf}
+  \caption{Mean magnetisation vs time for field 1 using monolithic IMR with nodal quadrature, the legend shows the number of nodes in the problem.
+    ??ds with the results given by nmag and some FD results?}
+  \label{fig:nmag-comparison-mumag4-field1}
+\end{figure}
+
+\begin{figure}
+  \centering
+  \includegraphics[width=0.8\textwidth]{plots/mumag4_convergence/mumag4_field2-meanmxsvs-meanmysvs-meanmzsvs-dtsvstimes.pdf}
+  \caption{Mean magnetisation vs time for field 2 using monolithic IMR with nodal quadrature, the legend shows the number of nodes in the problem.
+    ??ds with the results given by nmag and some FD results?
+  }
+  \label{fig:nmag-comparison-mumag4-field2}
+\end{figure}
+
+??ds blow up of $m_y$ at time where it is dodgy?
+
+
+\begin{figure}
+  \centering
+  \includegraphics[width=0.8\textwidth]{images/placeholder}
+  \caption{The state of the system at the time when $m_x$ crosses zero}
+  \label{fig:mumag4-spatial-x-crossing-0}
+\end{figure}
+
+
+
+Since the second field gives a more challenging test, for the rest of the results we only show that field.
+
+First we plot a comparison of the magnetisation generated using IMR, nodal integration and monolithic or decoupled approach.
+\Cref{fig:mumag4-spatial-x-crossing-0} shows the results, kind of different?
+\begin{figure}
+  \centering
+  \includegraphics[width=0.8\textwidth]{images/placeholder}
+  \caption{Mean magnetisation vs time for field 2 as computed by the monolithic and decoupled methods with IMR, nodal quadrature and the highest mesh resolution.}
+  \label{fig:mumag4-implicit-decoupled}
+\end{figure}
+
+
+The maximum (over space) error in the magnetisation length vs time for decoupled and implicit methods are shown in \cref{fig:mumag4-implicit-decoupled}.
+As expected both coupling approaches and all numbers of nodes conserve $\abs{\mv}$ to around the Newton tolerance.
+The increase in error with more nodes is likely to be due to the increase in error accumulation because of larger numbers of calculations ??ds.
+\begin{figure}
+  \centering
+  \includegraphics[width=0.8\textwidth]{plots/mumag4_ml/mlengtherrormaxesvstimes.pdf}
+  \caption{Magnetisation length errors when using IMR with nodal integration for field 2, legend shows the number of nodes.}
+  \label{fig:imr-conservation}
+\end{figure}
+
+
+
+\begin{figure}
+  \centering
+  \includegraphics[width=0.8\textwidth]{images/placeholder}
+  \caption{Energy errors for the 0 damping case, vs time or max?}
+  \label{fig:energy-conservation}
+\end{figure}
+
+
+
+
+Finally we examine the effectiveness of the linear solver for the monolithic method.
+The iterations needed for convergence are shown in \cref{fig:mumag4-solver-iterations}, note that while they are growing with $\Nn$ they remain reasonable for the sizes required here.
+The time taken to set up the preconditioner is displayed in \cref{fig:mumag4-solver-time}, again it grows with the number of nodes but remains reasonable for all cases shown here.
+Also note that with nodal quadrature the preconditioner is cheaper to set up but also less effective, to counteract this a higher level of fill-in could be used with nodal quadrature.
+
+\begin{figure}
+  \centering
+  \includegraphics[width=0.8\textwidth]{plots/mumag4_monolithic_its/meanofnsolveritersvsinitialnnode.pdf}
+  \caption{Mean iterations to converge over all time and all newton steps all time steppers and fields, using monolithic solver with GMRES and preconditioner $\inexact{\precc}$.}
+  \label{fig:mumag4-solver-iterations}
+\end{figure}
+
+
+\begin{figure}
+  \centering
+  \includegraphics[width=0.8\textwidth]{plots/mumag4_monolithic_its/meanofpreconditionersetuptimesvsinitialnnode.pdf}
+  \caption{Mean time (over all newton steps and all time) to set up the preconditioner $\inexact{\precc}$ vs the number of nodes.}
+  \label{fig:mumag4-solver-time}
+\end{figure}
+
+
+??ds characterise number of newton steps?
+
+
+??ds total solve time? will be dominated by BEM multiplication... meaningless
+
+
 
 
 \subsection{Conclusions}
 
+Our method works, blah blah
+
+FD gives different results to FEM?
+
 Semi-implicit causes problems with TR stability, IMR energy conservation.
 
 
-\section{Reversal of a magnetic nanotube?}
-
-More relevant problem for FEM/BEM methods--non-trivial geometry.
-
-More relevant for conservation properties: complex, long time dynamics.
-
-
-\subsection{Problem specification}
-
-??ds
-
-
-\subsection{Numerical methods and parameters}
-
-??ds mesh generation
-
-
-
-\subsection{Results}
-
-??ds convergence: space and time
-
-
-??ds conservation: m and energy
-
-
-??ds adaptivity
-
-
-??ds comparison to other methods?
 
 
 %%% Local Variables:
