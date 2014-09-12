@@ -41,6 +41,17 @@ The $n$-th Sobolev space, $\sob^n(\magd)$, is the space of all functions $g$ suc
 Note that in higher dimensions \emph{all combinations} of derivatives in all directions (\eg $\pd{^2\phim}{x\partial y}$) must be integrable.
 Another notation sometimes used for Sobolev spaces is $W^{n,p}(\magd)$, which denotes the set of functions $g$ such that $g$ and its first $n$ derivatives are in $L^p(\magd)$, \ie the extension of $\sob^n(\magd)$ to other $L^p(\magd)$ norms.
 
+We write the Jacobian of a vector function $\av$ (with $n$ values) with respect to the vector $\bv$ (with $m$ values) as
+\begin{equation}
+  \pd{\av(\bv, \ldots)}{\bv} = \begin{pmatrix}
+    \pd{a_0}{b_0} & \pd{a_0}{b_1} & \cdots & \pd{a_0}{b_m} \\
+    \pd{a_1}{b_0} & \ddots & & \vdots \\
+    \vdots &  & \ddots & \vdots \\
+    \pd{a_n}{b_0} & \cdots & \cdots & \pd{a_n}{b_m}
+  \end{pmatrix}.
+  \label{eq:jac-def}
+\end{equation}
+
 
 \subsection{A weak formulation}
 \label{Derivation-of-weighted-residuals}
@@ -281,7 +292,8 @@ The final difficulty is to calculate the Jacobian of this transformation:
 \begin{equation}
   J = \abs{ \pd{\sv}{\xv}} = \frac{1}{\abs{\pd{\xv}{\sv}}},
 \end{equation}
-note that the elements of the Jacobian matrix $\pd{\xv}{\sv}$ can be calculated by simply differentiating \cref{eq:88}.
+using the notation defined in \cref{eq:jac-def} for the Jacobian of derivatives of a function.
+Note that the elements of the Jacobian matrix $\pd{\xv}{\sv}$ can be calculated by simply differentiating \cref{eq:88}.
 When using linear polynomial basis functions the Jacobian is constant for 1D line elements, 2D triangular elements and 3D tetrahedral elements.
 
 So the final integration scheme is
@@ -664,6 +676,8 @@ This can be handled by numerical differentiation (\eg by approximating each deri
 Additionally, for the solution of the linear systems, it is often useful to know analytically the block structure of the system being solved.
 
 Note that the ``real'' implementation of the implicit midpoint rule \cref{eq:impl-imr} introduces a factor of $1/2$ in various places due to the substitution $ \yv \rightarrow \frac{\yv_{n+1} + \yv_n}{2}$, the derivations below do not include this ??ds yet, fix it!
+
+Throughout \thisref{sec:llg-jacobian-calculation} we use the notation of $\pd{\av(\bv, \ldots)}{\bv}$ for the Jacobian of derivatives of $\av$ with respect to $\bv$ as shown in \cref{eq:jac-def}.
 
 We first note that the effect of differentiation by a nodal value on the approximation function $\phimh$ is quite simple:
 \begin{equation}

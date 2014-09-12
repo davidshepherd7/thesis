@@ -496,7 +496,7 @@ The final result shows that IMR is of second order:
   + \order{\dtn^4},
   \label{eq:trunc-final}
 \end{equation}
-where $\dfdyhf = \pd{\fv}{\yv}\evalat{t=\thf}$ is the Jacobian of $\fv$ with respect to $\yv$ evaluated at $t=\thf$.
+where $\dfdyhf$ is the Jacobian matrix of $\fv$ with respect to $\yv$ evaluated at $t=\thf$.
 An additional condition required in the derivation is that ??ds the magnitude of the eigenvalues of $\dtn\dfdyhf$ are less than one, the implications of this are discussed in \cref{sec:order-reduction}.
 
 ??ds for comparison with the other local truncation errors we need to shift to $t_n$.
@@ -587,7 +587,7 @@ The analysis for the second order BDF2 case is more complex due to the fact that
 
 It is known that certain implicit Runge-Kutta methods are susceptible to reduced accuracy when used to solve certain extremely stiff problems \cite[156]{Atkinson1994} \cite[225]{HairerWanner}.
 In the case of the implicit midpoint rule this corresponds to cases when term II of the LTE \cref{eq:trunc-mid} is large.
-This occurs when $\pd{\fv}{\yv}\evalat{\thf{}}$ is large, \ie when the error in $\ffv{t, \yv}$ due to a small error in $\yv$ is large.
+??ds what do I mean by large for a matrix? This occurs when $\pd{\fv}{\yv}\evalat{\thf{}}$ is large, \ie when the error in $\ffv{t, \yv}$ due to a small error in $\yv$ is large.
 
 The concept of ``B-convergence'' is used to analyse this effect.
 Roughly speaking, a Runge-Kutta method is B-convergent of order $r$ if the global error is $\order{\dtx{\text{max}}^r}$ for ``infinitely stiff'' ODEs.
@@ -1019,7 +1019,7 @@ If the exact root of the residual is $\nexty$ and we have an initial guess for t
     &= \resi(\nlit{\yvdis}{0}) + \jac(\nlit{\yvdis}{0}) \cdot \corr + \order{\corr^2},
   \end{aligned}
 \end{equation}
-where $\jac(\nlit{\yvdis}{0}) = \evalatb{\pd{\resi}{\yvdis}}{\nlit{\yvdis}{0}}$ is the Jacobian matrix for the residual.
+where $\jac(\nlit{\yvdis}{0})$ is the Jacobian matrix of the residual with respect to $\yvdisc$ evaluated at $\nlit{\yvdis}{0}$.
 So
 \begin{equation}
   \begin{aligned}

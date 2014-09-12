@@ -92,11 +92,11 @@ where $\mydiscrete{x}_b$ denotes the vector of values of $x$ at the boundary nod
 This residual is included as normal in the non-linear solve and simply enforces the condition $\phimdis_b = \bm \phionedis_b$ from \cref{eq:10}.
 Note that we cannot enforce the condition in the standard way (by setting the boundary values of the solution basis functions) because the condition to be enforced is determined as part of the solve.
 
-A natural consequence of \cref{eq:89} is that
+A natural consequence of \cref{eq:89} is that the BEM matrix is a block of the Jacobian:
 \begin{equation}
   \pd{\rphimb}{\phionedis_b} = \bm,
 \end{equation}
-\ie the BEM matrix is a block of the Jacobian.
+where we have again used the notation that $\pd{\av}{\bv}$ is the Jacobian of the derivatives of $\av$ with respect to $\bv$, as in \cref{eq:jac-def}.
 Also note that the diagonal Jacobian block for the boundary values of $\phim$ is
 \begin{equation}
   \pd{\rphimb}{\phimdis_b} = -\Idm.
