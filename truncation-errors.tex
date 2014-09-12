@@ -1,45 +1,45 @@
-\chapter{Truncation errors for some ODE methods}
-\label{cha:trunc-errors}
-
-\begin{table}[h]
-  \centering
-  \begin{tabular}{c|c}
-    TR & $\frac{1}{12} \approx 0.0833$ \\
-    BDF2 & $\frac{2}{9} \approx 0.2222$ \\
-    IMR & complex, as TR for linear problems
-  \end{tabular}
-  \caption{Magnitude of the constant in front of leading order term of truncation errors for constant time step size.}
-  \label{tab:truncation-errors}
-\end{table}
-
-\section{Trapezoid Rule}
-
-Expression from \cite[261]{GreshoSani}
-\begin{equation}
-  \label{eq:tr-lte-conststep}
-  \lte = \yv_{n+1} - \yv(t_{n+1}) = -\frac{\dtn^3 \yv_n'''}{12}
-  + \order{\dtn^4}.
-\end{equation}
-
-\section{BDF2}
-
-Expression from \cite[715]{GreshoSani} or \cite[eq. (2.43)]{Prinja2010}
-\begin{equation}
-  \label{eq:bdf2-lte-appendix}
-  \lte = \yv_{n+1} - \yv(t_{n+1}) = \frac{(\dtn + \dtx{n-1})^2}{\dtn(2\dtn + \dtx{n-1})}
-  \frac{\dtn^3 \yv_n'''}{6}
-  + \order{\dtn^4}.
-\end{equation}
-
-With constant time steps this reduces to
-\begin{equation}
-  \label{eq:bdf2-lte}
-  \lte = \yv_{n+1} - \yv(t_{n+1}) =  \frac{2\dtn^3 \yv_n'''}{9}
-  + \order{\dtn^4}.
-\end{equation}
-
-\section{IMR}
+\chapter{Truncation error derivation for IMR}
 \label{sec:full-imr-lte-calculation}
+
+% \begin{table}[h]
+%   \centering
+%   \begin{tabular}{c|c}
+%     TR & $\frac{1}{12} \approx 0.0833$ \\
+%     BDF2 & $\frac{2}{9} \approx 0.2222$ \\
+%     IMR & complex, as TR for linear problems
+%   \end{tabular}
+%   \caption{Magnitude of the constant in front of leading order term of truncation errors for constant time step size.}
+%   \label{tab:truncation-errors}
+% \end{table}
+
+% \section{Trapezoid Rule}
+
+% Expression from \cite[261]{GreshoSani}
+% \begin{equation}
+%   \label{eq:tr-lte-conststep}
+%   \lte = \yv_{n+1} - \yv(t_{n+1}) = -\frac{\dtn^3 \yv_n'''}{12}
+%   + \order{\dtn^4}.
+% \end{equation}
+
+% \section{BDF2}
+
+% Expression from \cite[715]{GreshoSani} or \cite[eq. (2.43)]{Prinja2010}
+% \begin{equation}
+%   \label{eq:bdf2-lte-appendix}
+%   \lte = \yv_{n+1} - \yv(t_{n+1}) = \frac{(\dtn + \dtx{n-1})^2}{\dtn(2\dtn + \dtx{n-1})}
+%   \frac{\dtn^3 \yv_n'''}{6}
+%   + \order{\dtn^4}.
+% \end{equation}
+
+% With constant time steps this reduces to
+% \begin{equation}
+%   \label{eq:bdf2-lte}
+%   \lte = \yv_{n+1} - \yv(t_{n+1}) =  \frac{2\dtn^3 \yv_n'''}{9}
+%   + \order{\dtn^4}.
+% \end{equation}
+
+% \section{IMR}
+% \label{sec:full-imr-lte-calculation}
 
 Continuing from \cref{eq:trunc-mid} at the end of \cref{sec:deriv-local-trunc}.
 
