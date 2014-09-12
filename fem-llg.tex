@@ -30,7 +30,7 @@ and where $f(x)\in C^0([0,1])$.
 Setting $f = -\div \mv = -\pd{m_x}{x}$ results in the magnetostatic potential problem \cref{eq:Hms} with Dirichlet boundary conditions.
 
 Before we can continue we need some definitions:
-The function space $L^{2}(\magd)$ consists of all functions $g$ such that the norm $\norm{g}_\ltwo = \sqrt{\intd{\abs{g(x)}^{2}}$ is finite.
+The function space $L^{2}(\magd)$ consists of all functions $g$ such that the norm $\norm{g}_\ltwo = \sqrt{\intd{\abs{g(x)}^{2}}}$ is finite.
 This can be thought of as the set of functions such that their squares are integrable.
 
 The $n$-th Sobolev space, $\sob^n(\magd)$, is the space of all functions $g$ such that $g$ and all its first $n$ derivatives are in $L^2(\magd)$, \eg for real valued functions on the interval the second Sobolev space is
@@ -44,9 +44,6 @@ Another notation sometimes used for Sobolev spaces is $W^{n,p}(\magd)$, which de
 
 \subsection{A weak formulation}
 \label{Derivation-of-weighted-residuals}
-
-The method of weighted residuals is the first step in a variety of numerical methods including the finite element method and the spectral method.
-It involves replacing the initial PDE with an equivalent but more flexible version. ??MH matthias doesn't like this sentence
 
 The formulation of the problem in \cref{eq:poisson1} (called a strong or classical formulation) is too restrictive for our purposes.
 It disallows some useful approximating functions and restricts the geometries that can be modelled \cite[14]{HowardElmanDavidSilvester2006}.
@@ -66,20 +63,18 @@ So we as the solution space we choose
   \end{aligned}
 \end{equation}
 \ie the space of functions that are sufficiently smooth for the integrals to be finite and that satisfy the boundary conditions.
-Since the boundary conditions are automatically enforced by the choice of $V_s$ an appropriate test function space is
+Since the boundary conditions are automatically enforced by the choice of $V_s$ we choose test functions that are zero on the boundary, then an appropriate test function space is:
 \begin{equation}
   \label{eq:28}
   \begin{aligned}
     V_{T} &= \sob^0([0,1]) \cap \Dfs_0, \\
-    \Dfs_0 &= \setst{v}{v \in L^2([0,1]),\; v(0) =0,\; v(1)=0},
+    \Dfs_0 &= \setst{v}{v \in L^2([0,1]),\; v(0) =0,\; v(1)=0}.
   \end{aligned}
 \end{equation}
-\ie the space of functions that are sufficiently smooth and that are zero on the boundary.
 
-To see roughly why \cref{eq:26} is equivalent to \cref{eq:poisson1} consider the case when $f(x) + \phim''(x)$ is non-zero for some interval $X \subset (0,1)$, \ie when the strong form \cref{eq:poisson1} is not satisfied on the interval.
-Since \cref{eq:26} must hold for all functions we can choose a function which is only non-zero on $X$ and \cref{eq:26} will fail.
-The rigorous extension of this argument must consider the case when $f(x) + \phim''(x)$ is non-zero on a set of measure zero (\eg at a finite set of points). ??ds fill in: roughly why is it ok?
-We call this approach the method of weighted residuals \cite[210, 214]{Zeinkiewicz1967}.
+To see (in an intuitive sense) why \cref{eq:26} is equivalent to \cref{eq:poisson1} consider the case when $f(x) + \phim''(x) > 0$ for some interval $X \subset (0,1)$, \ie when the strong form \cref{eq:poisson1} is not satisfied on $X$.
+Since \cref{eq:26} must hold for all (sufficiently smooth) functions in we can choose a function which is non-zero only on $X$ and \cref{eq:26} will fail.
+The rigorous extension of this argument also covers the case when $f(x) + \phim''(x)$ is non-zero on a set of measure zero (\eg at a finite set of points). ??ds fill in: roughly why is it ok?
 
 The smoothness restrictions on the solutions of our weak form approximation can be further reduced by integrating the left hand side of \cref{eq:26} by parts to obtain
 \begin{equation}
@@ -107,7 +102,7 @@ Since $V_{T}^{h}$ is finite dimensional we can write
   V_{T}^{h} = \setst{\testh }{ \testh = \sum_{n=0}^{N}\alpha_{\ndi} \tbf_{\ndi},\, \alpha_{\ndi} \in \real} \cap \Dfs_0,
   \label{eq:30}
 \end{equation}
-for some finite set of test basis functions $\tbf_{\ndi}$.
+for some finite set of linearly independent test basis functions $\tbf_{\ndi}$.
 Note that
 Similarly, for $V_S^h \subset \sob^1([0,1]) \cap \Dfs$:
 \begin{equation}
@@ -324,15 +319,15 @@ After non-dimensionalisation (see \cref{sec:land-lifsh-gilb-normalisation}) the 
   \end{aligned}
 \end{equation}
 
+
 Recall that we are using the Newton-Raphson method to find a solution to the non-linear problem.
 Hence we need to rearrange \cref{eqn:ndllg-starting} into the residual form
-\begin{equation}
-  \begin{align}
-    \Rllg(\mv, \phim) &= \dmdt + \mv \times \hv - \dampc \mv \times \dmdt, \label{eq:llgR} \\
-    \Rphi(\mv, \phim) &= \lap \phim - \div \mv, \label{eq:phiR}
-  \end{align}
-\end{equation}
-where $\hv$ is as given in \cref{eqn:ndllg-starting}.
+\begin{align}
+  \label{eq:llgR}
+  \Rllg(\mv, \phim) &= \dmdt + \mv \times \hv - \dampc \mv \times \dmdt,  \\
+  \Rphi(\mv, \phim) &= \lap \phim - \div \mv, \label{eq:phiR}
+\end{align}
+where $\hv$ is as in \cref{eqn:ndllg-starting}.
 A pair of functions $\mv \in (C^2(\magd))^3$, $\phim \in C^2(\magd)$ is a solution to this strong form of the equations if $\Rllg(\mv, \phim)=0$ and $\Rphi(\mv, \phim)=0$ for all $\xv \in \magd$.
 
 For now we consider the magnetostatic potential only within the magnetic domain, $\magd$, with Neumann or Dirichlet boundary conditions on the boundary, $\boundd$.
