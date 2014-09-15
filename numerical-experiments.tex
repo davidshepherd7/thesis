@@ -243,13 +243,13 @@ This is the standard approach, and is expected to give acceptable resolution bec
 The number of elements along the $x$ and $y$ axes, denoted $n_x$ and $n_y$, is varied but the ratio is fixed as $n_x = (500/125) n_y$ so that the element edge lengths in each direction are identical.
 We use $n_x=75,100,125$, which gives edge lengths of 1.17, 0.89 and 0.70 exchange lengths respectively.
 
-The Newton tolerance is fixed at $\ntol = 10^{-11}$, the adaptive integrator tolerance is $\toltt = 10^{-5}$, the initial time step is $\dtn_0 = 10^{-4}$ which is small enough to allow the adaptive integrator to naturally increase to an appropriate step size.
+The Newton tolerance is fixed at $\ntol = 10^{-11}$, the adaptive integrator tolerance is $\toltt = 10^{-5}$, the initial time step is $\dtx{0} = 10^{-4}$ which is small enough to allow the adaptive integrator to naturally increase to an appropriate step size.
 We cap the time step at $\dtx{\text{max}} = 4.5$ to avoid issues with linear and solver converge at extremely large time steps.
 
 
-To generate the initial S-state we run the simulation starting from the state $\m=[1,1,1]$ with the applied field
+To generate the initial S-state we run the simulation starting from the state $\mv=[1,1,1]$ with the applied field
 \begin{equation}
-  \hap(t) =
+  \happ(t) =
   \begin{cases}
     10 (1- \frac{t}{100}) & t < 100, \\
     0 & t \geq 100,
