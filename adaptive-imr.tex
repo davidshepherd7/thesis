@@ -400,7 +400,7 @@ In \cref{fig:imr-osc-example-scatter} we show plots of the decrease in global er
 The consistent decrease in the error norms indicates that the all of the adaptive methods are able to control the error in the expected manner.
 
 \begin{figure}
-  \centering \includegraphics[width=1\textwidth]{plots/aimr_odes/damped_oscillation-maxoferrornormsvs-tol}
+  \centering \includegraphics[width=0.8\textwidth]{plots/aimr_odes/damped_oscillation-maxoferrornormsvs-tol}
   \caption{Behaviour of the global error norm with varying tolerance for the oscillatory, damped example ODE with exact solution $y(t) = e^{-\beta t} \sin(\omega t)$.}
   \label{fig:imr-osc-example-scatter}
 \end{figure}
@@ -440,7 +440,7 @@ The time steps selected by the TR algorithm do not grow as fast as those selecte
 \label{sec:order-reduct-example}
 
 \begin{figure}
-  \centering  \includegraphics[width=1\textwidth]{plots/aimr_odes_traces/strong_order_reduction-errornormsvs-dtsvs-tracevaluesvstimes}
+  \centering  \includegraphics[width=0.8\textwidth]{plots/aimr_odes_traces/strong_order_reduction-errornormsvs-dtsvs-tracevaluesvstimes}
   \caption{Absolute error, step size and computed solutions for the stiff order reduction example ODE given in \cref{eqn:imr-test-order-reduction}.}
   \label{fig:imr-order-reduction-example}
 \end{figure}
@@ -482,6 +482,7 @@ The convergence of the solution as the adaptive integrator tolerance, $\toltt$, 
 Note that IMR still displays second order convergence (albeit with much larger errors than TR or BDF2).
 This is because we are not increasing $\lambda$ as we decrease $\toltt$, so we are measuring the normal convergence rather than B-convergence.
 
+\FloatBarrier % Don't allow floats from last section into this one
 
 \section{Numerical experiments with an ODE form of the LLG}
 \label{sec:imr-ode-llg-numer-exper}
