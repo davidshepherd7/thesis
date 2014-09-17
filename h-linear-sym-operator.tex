@@ -9,6 +9,9 @@
 \chaptermark{Effective field operator}
 \label{sec:properties-of-field-operators}
 
+In \thisref{sec:properties-of-field-operators} we show some properties of the effective field operator that are used elsewhere in this thesis.
+It seems likely that these properties could be proven for a general effective field using only the definition \cref{eq:62}, but we have not managed to find such a proof.
+
 \section{Linear Symmetrical operator}
 \label{sec:linear-symm-field-operators}
 
@@ -69,6 +72,7 @@ The applied field part of the effective field is \emph{not} linear or symmetrica
   Apply equation~\cref{eqn:laplace-divergence} twice: first with $\ff = a$, $\gf = b$, then the other way around.
   \begin{equation}
     \begin{aligned}
+      \label{eq:93}
       \ip{\lap a}{b} &= \intd{\left(\lap a \right) b}, \\
       &= \intb{b \ddn{a}} - \intd{\grad a \cdot \grad b}, \\
       &= \intb{b \ddn{a}} + \intd{a (\lap b)} - \intb{a \ddn{b}}, \\
@@ -180,14 +184,20 @@ For a uniaxial magnetocrystalline anisotropy effective field the derivation is v
   \frac{-1}{2} \intd{\bigb{\kone (\mv \cdot \ev) \ev} \cdot \mv} =  \frac{-\kone}{2}\intd{(\mv \cdot \ev)^2} = \eca.
 \end{equation}
 
-For the exchange effective field we use a trick (from \cite[179]{Aharoni1996}):
+For the exchange effective field we use, from \cref{eq:93}, that
 \begin{equation}
-  \mv \cdot \lap \mv = \frac{1}{2} \lap \abs{\mv}^2 - (\grad \mv)^2.
+  \intd{a \lap  b} = \intb{b \ddn{a}} - \intd{\grad a \cdot \grad b},
 \end{equation}
-Then since $\abs{\mv}^2$ is constant we have that
+and so
+\begin{equation}
+  \frac{-1}{2} \intd{\mv \cdot \lap  \mv} = \frac{-1}{2} \intb{\mv \cdot \ddn{\mv}} + \frac{1}{2}  \intd{\grad \mv : \grad \mv}.
+\end{equation}
+Then using the Neumann boundary condition on $\mv$, \cref{eq:94}, gives the result
 \begin{equation}
   \frac{-1}{2} \intd{\mv \cdot \lap \mv} = \frac{1}{2} \intd{(\grad \mv)^2} = \eex.
 \end{equation}
+Alternatively, with periodic boundary conditions, the boundary integral is zero due to opposite sides of the boundary having equal $\mv$ and $\dmdn$ except for the opposite sign of $\nv$ (as in \cref{eq:95}).
+
 
 
 %%% Local Variables:
