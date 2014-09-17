@@ -148,7 +148,7 @@ We use $N$ to denote the number of such charges.
 
 % More recently models have been developed which extend the magnetic field calculations to include all of Maxwells equations (the electric field and its effects on the magnetic field as well).
 % Such models greatly increase the number of degrees of freedom in the problem: 3 magnetisation components, 3 magnetic field components and 3 electrical field components are needed, whereas for magnetostatic calculations only the magnetisation and possibly up to 2 potentials are needed.
-% Since, for not seem to have a substantial effect on the results for many problems of interest \cite{??ds} we will not consider these full Maxwell models further.
+% Since, for not seem to have a substantial effect on the results for many problems of interest \cite{} we will not consider these full Maxwell models further.
 
 \subsection{Integral Methods}
 \label{sec:magstat-field-calc-inte}
@@ -188,8 +188,6 @@ Instead, more advanced techniques are used which treat the large number of integ
 
 
 \subsubsection{Fast Fourier transform methods}
-
-??ds clarify about convolution?
 
 The fast Fourier transform method (FFT) is a simple and efficient method for calculating the magnetostatic field when the discrete magnetisations are positioned on a regular lattice.
 
@@ -290,7 +288,7 @@ The speed of calculation of the boundary values in the method is limited by the 
 Similarly, the additional memory usage is $\order{N_b^2}$, which can limit the size of problems.
 
 The use of hierarchical matrix techniques can reduce both the speed and the memory usage of FEM/BEM to $\order{N_b \log(N_b)}$ \cite{Knittel2009}.
-In 3D structures which are roughly spherical $N_b = \order{N^{2/3}}$ and so the use of a hierarchical matrix gives optimal computation speed\footnote{With hierarchical matrix techniques the speed is $\order{N^{2/3}\log(N^{2/3})}$ but $\log(x) \ll x^{1/2}$ for large $x$, hence $\order{N^{2/3}\log(N^{2/3})} \ll \order{N}$, \ie optimal computation speed scaling.} but for extremely flat structures the number of boundary nodes can be as large as $N_b = \order{N}$.
+In 3D structures which are roughly spherical $N_b = \order{N^{2/3}}$ and so the use of a hierarchical matrix gives optimal computation speed\footnote{With hierarchical matrix techniques the speed is $\order{N^{2/3}\log(N^{2/3})}$ but $\log(x) \ll x^{1/2}$ for large $x$, hence $\order{N^{2/3}\log(N^{2/3})} \ll \order{N}$, \ie optimal computation speed scaling.} but for extremely flat structures such as thin films the number of boundary nodes can be as large as $N_b = N$.
 Hence the speed of the FEM/BEM method depends on the geometry.
 
 Another downside of FEM/BEM is the increase in the complexity of the model: some components of the FEM/BEM method are fundamentally different to FEM.
@@ -298,11 +296,6 @@ As such substantial additional code and mathematical knowledge may be needed for
 As an example: singular integrals occur in the boundary element method so more advanced integration methods are needed than for FEM alone.
 
 The details of the FEM/BEM method and its implementation are discussed in \cref{sec:hybr-finit-elem}.
-
-??ds incorporate this: ?
-FEM/BEM is bad for thin film problems because every single node is on the boundary, hence the dense block is very large.
-Standard FEM with linear basis functions is significantly slower than finite difference approaches because it allows the magnetisation to vary through the thickness of the film, meaning that the problem is 3D instead of 2D.
-(It is certainly possible to construct a finite element method which assumes constant magnetisation in one direction, but our purpose here is to test our model not to invent new ones!)
 
 
 \section{Time Integration}
@@ -499,11 +492,11 @@ The final result shows that IMR is of second order:
 where $\dfdyhf$ is the Jacobian matrix of $\fv$ with respect to $\yv$ evaluated at $t=\thf$.
 An additional condition required in the derivation is that ??ds the magnitude of the eigenvalues of $\dtn\dfdyhf$ are less than one, the implications of this are discussed in \cref{sec:order-reduction}.
 
-??ds for comparison with the other local truncation errors we need to shift to $t_n$.
-A simple approximation can be given easily: for $\fv$ linear in $yv$, $t$ TR and IMR are the same, hence term I must be the same as TR in this case, a second error term is then added to $\lte^\imr$ corresponding to II for non-linear $\fv$.
+For a true comparison with the other local truncation errors we would need to shift this approximation to $t_n$.
+However a simple approximation can be given easily: for $\fv$ linear in $yv$, $t$ TR and IMR are the same, hence term I must be the same as TR in this case, a second error term is then added to $\lte^\imr$ corresponding to II for non-linear $\fv$.
 Hence TR has the smallest LTE of the three methods discussed for most real-world ODEs.
 The relative magnitude of the additional term in $\lte^\imr$ is highly problem dependent, see \cref{sec:order-reduction} for details, so the comparison of the LTEs of IMR and BDF2 is more complex.
-However, in terms of the accuracy of calculations, the accumulated local truncation error is what matters, so these comparisons are not the whole story.
+However in terms of the accuracy of calculations the \emph{accumulated} local truncation error is what matters, so these comparisons are not the whole story.
 
 \subsection{A-stability}
 \label{sec:A-stability}
@@ -587,7 +580,7 @@ The analysis for the second order BDF2 case is more complex due to the fact that
 
 It is known that certain implicit Runge-Kutta methods are susceptible to reduced accuracy when used to solve certain extremely stiff problems \cite[156]{Atkinson1994} \cite[225]{HairerWanner}.
 In the case of the implicit midpoint rule this corresponds to cases when term II of the LTE \cref{eq:trunc-mid} is large.
-??ds what do I mean by large for a matrix? This occurs when $\pd{\fv}{\yv}\evalat{\thf{}}$ is large, \ie when the error in $\ffv{t, \yv}$ due to a small error in $\yv$ is large.
+This occurs when the error in $\ffv{t, \yv}$ due to a small error in $\yv$ is large.
 
 The concept of ``B-convergence'' is used to analyse this effect.
 Roughly speaking, a Runge-Kutta method is B-convergent of order $r$ if the global error is $\order{\dtx{\text{max}}^r}$ for ``infinitely stiff'' ODEs.
@@ -775,7 +768,6 @@ This explains why the semi-explicit modification to IMR also conserves the magne
 Another geometrical property of the Landau-Lifshitz-Gilbert equation, also discussed in \cref{sec:prop-cont-llg}, is the conservation or monotonic decay of energy depending on the value of the damping constant $\dampc$.
 
 IMR also conserves energy when $\dampc = 0$ and it ensures that the energy is a decreasing function of time when $\dampc > 0$ \cite{DAquino2005}, a proof of this property is given in the next section.
-??ds mention commutation as well?
 The other geometric integration schemes mentioned in \cref{sec:ensuring-constant-mv}, in particular the semi-explicit modifications of IMR, do not have this property.
 
 
@@ -1059,31 +1051,30 @@ Another potential downside is that the iteration is only guaranteed to converge 
 However for non-linear systems resulting from time stepping we always have a very good initial guess, so this is not often a problem.
 
 
-\subsection{Advanced LLG-specific linearisation methods}
-\label{sec:advanced-lin}
+% \subsection{Advanced LLG-specific linearisation methods}
+% \label{sec:advanced-lin}
 
-??ds clean up or remove?
 
-Linearisation based on choice of test functions of much interest in recent times, initially for only exchange effective field \cite{Alouges2008}.
-Has recently been extended to handle general effective field contributions \cite{Banas2012}.
+% Linearisation based on choice of test functions of much interest in recent times, initially for only exchange effective field \cite{Alouges2008}.
+% Has recently been extended to handle general effective field contributions \cite{Banas2012}.
 
-Advantages:
-\begin{itemize}
-\item Only need to solve one linear system per step (rather than $\sim 2$ for Newton's method).
-\item Jacobian matrix is constant.
-\end{itemize}
+% Advantages:
+% \begin{itemize}
+% \item Only need to solve one linear system per step (rather than $\sim 2$ for Newton's method).
+% \item Jacobian matrix is constant.
+% \end{itemize}
 
-Disadvantages:
-\begin{itemize}
-\item Method is limited to first order: so need step sizes orders of magnitude smaller.
-\item Have to use specialised time integration scheme (no geometric, adaptive, ... schemes).
-\item Specific to the LLG equation: standard code libraries may not work, not as widely understood as standard FEM, extension to related equations (stochastic LLG, LLGS, LLB) is non-trivial.
-\end{itemize}
+% Disadvantages:
+% \begin{itemize}
+% \item Method is limited to first order: so need step sizes orders of magnitude smaller.
+% \item Have to use specialised time integration scheme (no geometric, adaptive, ... schemes).
+% \item Specific to the LLG equation: standard code libraries may not work, not as widely understood as standard FEM, extension to related equations (stochastic LLG, LLGS, LLB) is non-trivial.
+% \end{itemize}
 
-The limitation to first order has been worked around recently, however the higher order schemes lose either stability or linearity \cite{Kritsikis2014}.
-Since the advantage of the scheme over standard methods was this unique combination of properties, this appears (to me at least) to not be very useful.
+% The limitation to first order has been worked around recently, however the higher order schemes lose either stability or linearity \cite{Kritsikis2014}.
+% Since the advantage of the scheme over standard methods was this unique combination of properties, this appears (to me at least) to not be very useful.
 
-Still a promising line of research though!
+% Still a promising line of research though!
 
 
 
@@ -1266,7 +1257,7 @@ This leaves TR and IMR: IMR has superior geometric integration properties and ca
 In our research we have addressed this shortcoming, the details are given in \cref{sec:adaptive-imr}, and so IMR is now the superior choice.
 
 For the non-linear solver the (full) Newton-Raphson method is generally superior because it does not limit the time step size like picard iteration and it has significantly faster convergence than a quasi-Newton method.
-However the convergence proofs attainable with a fixed point iteration may be useful in some extreme cases, such as when the solution undergoes ``blow-up'' \cite{something by numerical analyst guys}.
+However the convergence proofs attainable with a fixed point iteration may be useful in some extreme cases, such as when the solution undergoes ``blow-up'' \cite{Bartels2006}.
 Additionally a fixed point iteration may be useful if the geometric integration properties of IMR are required for a non-stiff LL problem.
 
 For the linear solver we aim to use a preconditioned Krylov method using a multigrid based preconditioner for $\order{N}$ scaling.

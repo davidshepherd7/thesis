@@ -305,7 +305,7 @@ So the final integration scheme is
 \end{equation}
 
 Gaussian quadratures for square and cube elements can be constructed from the one dimensional quadrature using a tensor product formula.
-Similar quadratures for triangular and tetrahedral elements exist \eg ??ds cite papers.
+Similar quadratures for triangular and tetrahedral elements exist \eg \cite{Dunavant1985} \cite{Rathod2006}.
 
 
 
@@ -1064,8 +1064,13 @@ However the exchange residual contribution is only a first order polynomial, for
 where the gradient terms are constants ($m_i$ and $\tbf_n$ are linear polynomials so their first derivatives are constant).
 Hence the exchange contribution is integrated exactly.
 
+Note that with this quadrature scheme integrals of the form
+\begin{equation}
+  \inte{\sbf_k \tbf_n} = c \delta_{kn},
+\end{equation}
+meaning that the mass matrix, \cref{eq:mass-matrix}, is diagonal.
+This makes the nodal quadrature scheme a form of \emph{mass-lumping} which is often used in the FEM in combination with explicit time integration to remove the requirement for a linear solve.
 
-??ds need to mention equivalence with mass-lumping (referred to from linear systems section)
 
 \subsection{Conservation of $\abs{\mv}$}
 \label{sec:weak-cons-absmv}
