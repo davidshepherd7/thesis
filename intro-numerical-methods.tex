@@ -490,7 +490,8 @@ The final result shows that IMR is of second order:
   \label{eq:trunc-final}
 \end{equation}
 where $\dfdyhf$ is the Jacobian matrix of $\fv$ with respect to $\yv$ evaluated at $t=\thf$.
-An additional condition required in the derivation is that ??ds the magnitude of the eigenvalues of $\dtn\dfdyhf$ are less than one, the implications of this are discussed in \cref{sec:order-reduction}.
+An additional condition required in the derivation is that the magnitude of the eigenvalues of $\frac{\dtn}{2}\dfdyhf$ are less than one.
+This condition is easily satisfied in the asymptotic case for most $\fv$, the case where it does not hold is discussed in more detail in \cref{sec:order-reduction}.
 
 For a true comparison with the other local truncation errors we would need to shift this approximation to $t_n$.
 However a simple approximation can be given easily: for $\fv$ linear in $yv$, $t$ TR and IMR are the same, hence term I must be the same as TR in this case, a second error term is then added to $\lte^\imr$ corresponding to II for non-linear $\fv$.
@@ -666,17 +667,14 @@ Note that this is not related to the spurious damping discussed in \cref{sec:num
 A simple method of dealing with the constraint is to re-normalise each $\mv$ after some number of time steps or when the error in $\abs{\mv}$ exceeds some tolerance \cite{Fidler2000}.
 However this approach fundamentally changes the system of equations being solved in a non-linear and unpredictable manner \cite{Lewis2003}.
 
-??ds Not sure these downsides are true, seems like Mansuripur88 managed to derive all the fields in polars with no conversion to cartesians, only for macrospins though... ask Jim.
-If we have a system with only a single macrospin (\ie a single value of $\mv$ represents the magnetisation of the entire system)
-
-One way to avoid this problem is to use a spherical polar coordinate system $(r,\theta,\phi)$.
+Another way to avoid this problem is to use a spherical polar coordinate system $(r,\theta,\phi)$ for the magnetisation.
 In these coordinates \cref{eq:LLG} can be expressed in terms of only the angles $(\theta,\phi)$ representing the direction of $\mv$ and the length constraint is automatically enforced since
 \begin{equation}
   \label{eq:40}
   \pd{\abs{\mv}}{t} = \pd{r}{t} \equiv 0.
 \end{equation}
 However problems occur with this approach when the polar angle, $\theta$, approaches zero because $\pd{m_{\phi}}{t} \propto \frac{1}{\sin(\theta)}$ \cite{Fukushima2005} and so the derivative becomes singular.
-Also calculating the sum of the effective field vectors is much more complex in spherical polar coordinates (involving trigonometric identities) and this will result in more complex non-linear/linear systems when using implicit time integration schemes.
+Also the calculation of the sum of the effective field vectors is much more complex in spherical polar coordinates (involving trigonometric identities), resulting in more complex non-linear/linear systems when using implicit time integration schemes.
 
 Geometric time integration schemes aim to solve the issue of length conservation by constructing a scheme that naturally preserves the value of $\abs{\mv}$.
 Some examples of such schemes are based on IMR \cite{DAquino2005}, or a semi-explicit extension of IMR using explicit extrapolations of the effective field \cite{Spargo2003} \cite{Serpico2001}.
@@ -708,9 +706,7 @@ So the IMR-discretised version of the LLG is
   \label{eqn:disc-llg}
 \end{equation}
 
-??ds Check that I introduce inner products, linear operators, symmetry somewhere
-
-Intuitively the conservation properties of the IMR discretisation can be seen to come from the cancellation of cross terms in $\ip{\lop[\mv]}{\dmdt}$ for any symmetrical linear operator $\lop$.
+Intuitively the conservation properties of the IMR discretisation can be seen to come from the cancellation of cross terms in the inner product $\ip{\lop[\mv]}{\dmdt}$ for any symmetrical linear operator $\lop$.
 More precisely:
 \begin{equation}
   \begin{aligned}
@@ -734,7 +730,7 @@ We can now examine the change in magnetisation length using the same technique a
   \label{eq:63}
   \frac{\mv_{n+1} + \mv_n}{2} \cdot \frac{\mv_{n+1} - \mv_n}{\dtn} = 0.
 \end{equation}
-Now using~\cref{eqn:imr-linop} with $\lop$ as the identity operator gives us
+Now using~\cref{eqn:imr-linop} with $\lop$ as the identity operator and the dot product as the inner product gives us
 \begin{equation}
   \frac{\ip{\mv_{n+1}}{\mv_{n+1}} - \ip{\mv_n}{\mv_n} }{2 \dtn} = 0.
 \end{equation}
@@ -827,8 +823,7 @@ So from \cref{eqn:imr-linop} with $\lop = \hop$ we have the property
   = \frac{1}{2\dtn} \bigs{ \ltip{\mv_{n+1}}{\hop \mv_{n+1}} - \ltip{\mv_{n}}{\hop \mv_{n}}}.
   \label{eq:orth-energy}
 \end{equation}
-Additionally the energy at time step $n$ due to the effective field operator $\hop$ can be written as\footnote{For the magnetostatic and magnetocrystalline anisotropy energies this follows from the definitions.
-  For the exchange energy the trick is to use the relationship $\mv \cdot \lap \mv = \frac{1}{2} \lap \abs{\mv}^2 - (\grad \mv)^2 = - (\grad \mv)^2$ (since $\abs{\mv}$ is constant) \cite[179]{Aharoni1996}.}
+Additionally the energy at time step $n$ due to the effective field operator $\hop$ can be written as\footnote{This essentially follows from the definitions of the (non-dimensionalised) energies and the effective fields given in \cref{sec:land-lifsh-gilb-normalisation}, details are given in \cref{sec:energy-field-relation}.}
 \begin{equation}
   \label{eq:energy-hop}
   \ehop_{,n} = - \frac{1}{2}\ltip{\mv_n}{\hopb{\mv_n}},
