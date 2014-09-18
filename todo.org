@@ -1,2 +1,69 @@
 
-* Replace "computational complexity" by computation time consistently
+* Write first drafts 
+** Implementation of eBDF3 step
+LL, mass matrix solve, using BEM from m_n step, nodal quadrature => solve is trivial
+** Linear solvers intro
+** Newton-Raphson intro
+** Numerical experiments chapter
+
+** Introduction
+
+*** Motivation
+Magnetic materials have had an enormous impact on technology
+In particular the hard disk drive 
+Also promising for future areas such as microwave oscllators and long term RAM
+
+Considering all these applications it is clear that accurate and efficent models of the behaviour of magnetic materials are essential.
+The size of technologically important devices is nanometers to micrometers, quantum mechanical models on such scales are out of the reach of all but the most powerful supercomputers.
+Instead a semi-classical continuum mechanics model of magnetism is widely used, called micromagnetics, was first introduced by Brown \cite{brown-first-micromagnetics}
+The application of micromagnetics to study the dynamics of a magnetic material resuts in a differential equation, the LLG, depending on the physics it can either be a system of ODEs or a PDE.
+
+In this thesis we study numerical methods for the solution of the LLG in both PDE and ODE form.
+We particularly focus on implicit time intgration methods with spatial discretisation with the finite element method, such methods are well suited to the study of nano-structured materials.
+Another focus is the use of ``Geometric integration'' methods: time integration schemes that conserve properties of the physical model such as the energy.
+The hope is that such methods will greatly reduce the /overall/ numerical error, allowing either faster or more accurate computations.
+
+*** Overview of thesis
+
+
+
+*** Novel results
+
+
+** Conclusion
+** Abstract
+
+** Acknowledgements
+*** Supervisors
+*** Ray
+*** Family
+*** open source micromagnetics code: magpar + nmag
+
+* To read for Milan: 
+** Appendices
+
+* To read for Jim + Matthias: 
+** Linear systems
+** FEM/BEM
+
+* Generate pretty images
+** Cube
+** wave solution
+** mumag4 initial state
+** mumag4 as required by specification
+** Update illustation in FEM section
+
+* Run computations
+** Wave solution over long time for convergence
+** mumag4 with 0 damping for energy conservation
+but first experiment with energy conservation: can it work?
+** wave solution on triangle mesh: non-conservation
+
+
+* Write code
+** Very simple scipy script for nodal quadrature on triangles
+show that |m| conseravation fails for a very simple case
+
+code should go in an appendix + results in thesis
+
+
