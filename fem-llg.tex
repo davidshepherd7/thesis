@@ -1066,9 +1066,9 @@ However the exchange residual contribution is only a first order polynomial, for
 where the gradient terms are constants ($m_i$ and $\tbf_n$ are linear polynomials so their first derivatives are constant).
 Hence the exchange contribution is integrated exactly.
 
-Note that with this quadrature scheme integrals of the form
+Note that with this quadrature scheme we have that
 \begin{equation}
-  \inte{\sbf_k \tbf_n} = c \delta_{kn},
+  \intd{\sbf_k \tbf_n} = c \delta_{kn},
 \end{equation}
 meaning that the mass matrix, \cref{eq:mass-matrix}, is diagonal.
 This makes the nodal quadrature scheme a form of \emph{mass-lumping} which is often used in the FEM in combination with explicit time integration to remove the requirement for a linear solve.
@@ -1081,40 +1081,44 @@ This makes the nodal quadrature scheme a form of \emph{mass-lumping} which is of
 
 After minimising the norm of the discrete LLG residual with vector test functions by using the Newton-Raphson method (to tolerance $\ntol$) we have, for each $j$:
 \begin{equation}
-  \norm{\intd{ \bigs{\dmdth  + (\mvh \times \hv) - \dampc (\mvh \times \dmdth)} \cdot \tbfv_j + \bigb{\mvh \times \grad \mvh} : \grad \tbfv_j}} < \ntol,
+  \norm{\intd{ \bigs{\dmdth  + \mvh \times \bigb{\hv - \dampc \dmdth}} \cdot \tbfv_j + \bigb{\mvh \times \grad \mvh} : \grad \tbfv_j}} < \ntol,
   \label{eq:81}
 \end{equation}
 where $\norm{\cdot}$ is the norm used to assess the convergence of the Newton-Raphson method (in our implementation this is $\norm{\cdot}_\infty$) and $\tbfv_j$ is the vector test basis function corresponding to node $j$.
 Hence, by writing any test function $\testv$ in terms of the basis functions then using the linearity of $\tbfv$ in \cref{eq:81} and the triangle inequality, we have
 \begin{equation}
-  \norm{\intd{ \bigs{\dmdth  + (\mvh \times \hv) - \dampc (\mvh \times \dmdth)} \cdot \testv + \bigb{\mvh \times \grad \mvh} : \grad \testv}} < \ntol  \sumbasiscoeff,
+  \norm{\intd{ \bigs{\dmdth + \mvh \times \bigb{\hv - \dampc \dmdth}} \cdot \testv + \bigb{\mvh \times \grad \mvh} : \grad \testv}} < \ntol  \sumbasiscoeff,
   \label{eq:82}
 \end{equation}
 for all $\testv \in (\ts)^3$ where $\sumbasiscoeff = \sum_j  \abs{c_{x,j}} + \abs{c_{y,j}} + \abs{c_{z,j}}$ is the sum of all coefficients in the basis representation of $\testv$.
 
-For \thisref{sec:weak-cons-absmv} we write the midpoint (in time) value at the $j$th node as $\mv_j = (\mv_{j,n} + \mv_{j,n+1})/2$,  similarly $\hv_j = \hv((t_n+t_{n+1})/2, \xv_j, \mv_j)$ and $\dmdt_j = (\mv_{j,n+1} - \mv_{j,n})/\dtn$.
+\newcommand{\mvmp}[1][j]{\mv_{{#1},\half}}
+\newcommand{\hvmp}[1][j]{\hv_{{#1},\half}}
+\newcommand{\dmmp}[1][j]{\dmdt_{{#1},\half}}
 
-For the purposes of this derivation we choose the test function to be the midpoint nodal value of $\mv$ at node $j$ multiplied by the $j$th test basis function, \ie $\testv = \mv_{j} \tbf_j$.
-We know that $\mv_{j}\tbf_j \in  (\ts)^3$ because it is simply a multiple of a basis function of $(\ts)^3$.
+For \thisref{sec:weak-cons-absmv} we write the midpoint (in time) value at the $j$th node as $ \mvmp = (\mv_{j,n} + \mv_{j,n+1})/2$,  similarly $\hvmp = \hv((t_n+t_{n+1})/2, \xv_j, \mv_j)$ and $\dmmp = (\mv_{j,n+1} - \mv_{j,n})/\dtn$.
+
+For the purposes of this derivation we choose the test function to be the midpoint nodal value of $\mv$ at node $j$ multiplied by the $j$th test basis function, \ie $\testv = \mvmp \tbf_j$.
+We know that $\mvmp\tbf_j \in  (\ts)^3$ because it is simply a multiple of a basis function of $(\ts)^3$.
 For this test function $a \sim \order{1}$ assuming that the solver has not gone catastrophically wrong.\footnote{Even if $\abs{\mv}=1$ does not hold (and we cannot assume that it does yet), each component of the magnetisation cannot be much more than one. This argument can probably be made rigorous using the LTE of IMR.}
 So using the new notation and this test function we have that
 \begin{equation}
   \begin{aligned}
-    \Bigg|\Bigg| \sum_l \beta_l \bigg[& \bigb{\dmdt_l + \mvdis_l \times \hv_l - \dampc \mvdis_l \times \dmdt_l} \cdot \mv_{j}\tbf_j(\xv_l) \\
-    &+ \bigb{\mvh \times \grad \mvh} : \grad (\mv_{j}\tbf_j(\xv_l)) \Big] \Bigg|\Bigg| < \ntol \sumbasiscoeff.
+    \Bigg|\Bigg| \sum_l \beta_l \bigg[& \bigb{\dmmp[l] + \mvmp[l] \times \bigb{\hvmp[l] - \dampc \dmmp[l]}} \cdot \mvmp\tbf_j(\xv_l) \\
+    &+ \bigb{\mvmp[l] \times \grad \mvmp[l]} : \grad (\mvmp \tbf_j(\xv_l)) \Big] \Bigg|\Bigg| < \ntol \sumbasiscoeff.
   \end{aligned}
 \end{equation}
-Using $\tbf_k(\xv_l) = \delta_{kl}$ we can eliminate the summation, leaving only
+Using $\tbf_j(\xv_l) = \delta_{jl}$ we can eliminate the summation, leaving only
 \begin{equation}
   \begin{aligned}
-    \norm{\beta_j \bigg[ \bigb{\dmdt_j  + (\mv_{j} \times \hv_{j})  - \dampc \bigb{\mv_{j} \times \dmdt_j}} \cdot \mv_{j}
-    + \bigb{\mv_j \times \grad \mv_j} : \grad (\mv_{j})
+    \norm{\beta_j \bigg[ \bigb{\dmmp  + \mvmp \times \bigb{\hvmp  - \dampc \dmmp}} \cdot \mvmp
+    + \bigb{\mvmp \times \grad \mvmp} : \grad (\mvmp)
     \bigg] } < \ntol \sumbasiscoeff.
   \end{aligned}
 \end{equation}
 Now, by the properties of the triple product, the precession and damping terms vanish leaving
 \begin{equation}
-  \norm{\beta_j \dmdt_j \cdot  \mv_{j} } < \ntol \sumbasiscoeff.
+  \norm{\beta_j \dmmp \cdot  \mvmp } < \ntol \sumbasiscoeff.
 \end{equation}
 Substituting in the IMR from \cref{eq:impl-imr} gives the desired conservation result:
 \begin{equation}
@@ -1184,17 +1188,17 @@ After substituting the IMR approximations and using a midpoint approximation for
 Hence we proceed similarly to \cref{sec:proof-energy-prop}: we substitute  \cref{eq:50,eq:76,eq:52} into \cref{eq:46} to obtain
 \begin{equation}
   \begin{aligned}
-    \Bigg|\Bigg| &\frac{\e_{n+1} - \e_n}{\dtn} + \dampc \ltnorm{\frac{\mvh_{n+1} - \mvh_n}{\dtn}}^2 +
+    \Bigg|\Bigg| &\frac{\e_{n+1} - \e_n}{\dtn} + \dampc \ltnorm{\frac{\mvh_{,n+1} - \mvh_{,n}}{\dtn}}^2 +
       \ltip{\frac{\happ(t_{n+1}) +\happ(t_n)}{\dtn}}{\frac{\mvh_{,n+1} +
           \mvh_{,n}}{2}} \\
-      &- \ltip{\happerror}{\frac{\mvh_{n+1} - \mvh_n}{\dtn}} \Bigg|\Bigg| \quad < \ntol \sumbasiscoeff.
+      &- \ltip{\happerror}{\frac{\mvh_{,n+1} - \mvh_{,n}}{\dtn}} \Bigg|\Bigg| \quad < \ntol \sumbasiscoeff.
   \end{aligned}
 \end{equation}
 Finally, by using the triangle inequality, we have
 \begin{equation}
   \begin{aligned}
-    &\norm{ \frac{\e_{n+1} - \e_n}{\dtn} + \dampc \ltnorm{\frac{\mvh_{n+1} - \mvh_n}{\dtn}}^2 } \\
-    &< \norm{\ltip{\frac{\happ(t_{n+1}) + \happ(t_n)}{\dtn}}{\frac{\mvh_{,n+1} + \mvh_{,n}}{2}} - \ltip{\happerror}{\frac{\mvh_{n+1} - \mvh_n}{\dtn}} }
+    &\norm{ \frac{\e_{n+1} - \e_n}{\dtn} + \dampc \ltnorm{\frac{\mvh_{,n+1} - \mvh_{,n}}{\dtn}}^2 } \\
+    &< \norm{\ltip{\frac{\happ(t_{n+1}) + \happ(t_n)}{\dtn}}{\frac{\mvh_{,n+1} + \mvh_{,n}}{2}} - \ltip{\happerror}{\frac{\mvh_{,n+1} - \mvh_{,n}}{\dtn}} }
   + \ntol \sumbasiscoeff.
   \label{eq:86}
   \end{aligned}
