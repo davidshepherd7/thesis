@@ -2,8 +2,6 @@
 \chaptermark{Finite elements for the LLG}
 \label{sec:galerk-meth-llg}
 
-% ??ds use stupid normal function space notation with a million subscripts?
-
 In \cref{sec:intr-finite-ele-diff} we give a general introduction to the finite element method as applied to the magnetostatic potential equation \cref{eq:Hms} in one spatial dimension.
 Then in \cref{sec:llg-initial-equations,sec:time-discretisation-resi} we extend this discussion to the full (non-linear) Landau-Lifshitz-Gilbert equation with magnetostatics in three spatial dimensions.
 The linearisation of the LLG equation is handled using the Newton-Raphson method (see \cref{sec:newt-raph}), hence we need to derive an analytical expression for the Jacobian matrix.
@@ -69,8 +67,7 @@ We require that $V_{T}\subseteq \sob^0([0,1])$ and $V_s \subseteq \sob^2([0,1])$
 So we as the solution space we choose
 \begin{equation}
   \begin{aligned}
-    V_{s} &= \sob^2([0,1]) \cap \Dfs, \\
-    \Dfs &= \setst{\phim}{\phim: \magd \rightarrow \real ,\, \phim(0) = \phim_{a},\, \phim(1) = \phim_{b}},
+    V_{s} &= \setst{\phim \in \sob^2([0,1])}{\phim(0) = \phim_{a},\, \phim(1) = \phim_{b}},
   \end{aligned}
 \end{equation}
 \ie the space of functions that are sufficiently smooth for the integrals to be finite and that satisfy the boundary conditions.
@@ -78,8 +75,7 @@ Since the boundary conditions are automatically enforced by the choice of $V_s$ 
 \begin{equation}
   \label{eq:28}
   \begin{aligned}
-    V_{T} &= \sob^0([0,1]) \cap \Dfs_0, \\
-    \Dfs_0 &= \setst{v}{v \in L^2([0,1]),\; v(0) =0,\; v(1)=0}.
+    V_{T} &= \setst{ v \in \sob^0([0,1]) }{ v(0) =0,\; v(1)=0 }.
   \end{aligned}
 \end{equation}
 
@@ -93,10 +89,17 @@ The smoothness restrictions on the solutions of our weak form approximation can 
   \label{eq:29}
 \end{equation}
 Note that the square bracketed term in \cref{eq:29} is zero because the test functions, $v$, are set to zero on the boundary.
-Hence we are left with the problem: Find $\phim \in \sob^1([0,1]) \cap \Dfs$ such that
+Hence we are left with the problem: Find $\phim \in V_S'$ such that
 \begin{equation}
-  \intui{ \phim'v' } = \intui{ fv } \quad \forall v \in \sob^1([0,1]) \cap \Dfs_0.
+  \intui{ \phim'v' } = \intui{ fv } \quad \forall v \in V'_T,
   \label{eq:symmetric-weak-poisson}
+\end{equation}
+where
+\begin{equation}
+  \begin{aligned}
+    V'_S &= \setst{\phim \in \sob^1([0,1]) }{  \phim(0) = \phim_{a},\, \phim(1) = \phim_{b}}, \\
+     V'_T &= \setst{ \in \sob^1([0,1]) }{  v(0) =0,\; v(1)=0  }.
+  \end{aligned}
 \end{equation}
 Note that our test and solution spaces are now identical apart from the boundary values.
 
@@ -107,19 +110,18 @@ However, since we are given the value of $\phim'$, we can calculate the term $\b
 \subsection{Discretisation}
 
 \Cref{eq:symmetric-weak-poisson} is still continuous (\ie the test and solution spaces are still infinite dimensional) and so it cannot be implemented as a computational method.
-To convert our continuous weak form to a discrete version we approximate the infinite dimensional test function space by an $N$ dimensional subset $V_{T}^{h} \subset \sob^1([0,1]) \cap \Dfs$ such that as $N \rightarrow \infty$ we have $V_{T}^{h} \rightarrow \sob^1([0,1]) \cap \Dfs$.
+To convert our continuous weak form to a discrete version we approximate the infinite dimensional test function space by an $N$ dimensional subset $V_{T}^{h} \subset V'_T$ such that as $N \rightarrow \infty$ we have $V_{T}^{h} \rightarrow V'_T$.
 Since $V_{T}^{h}$ is finite dimensional we can write
 \begin{equation}
-  V_{T}^{h} = \setst{\testh }{ \testh = \sum_{n=0}^{N}\alpha_{\ndi} \tbf_{\ndi},\, \alpha_{\ndi} \in \real} \cap \Dfs_0,
+  V_{T}^{h} = \setst{\testh }{ \testh = \sum_{n=0}^{N}\alpha_{\ndi} \tbf_{\ndi},\, \alpha_{\ndi} \in \real},
   \label{eq:30}
 \end{equation}
-for some finite set of linearly independent test basis functions $\tbf_{\ndi}$.
+for some finite set of linearly independent test basis functions $\tbf_{\ndi}$ (with the obvious extension for Dirichlet boundary conditions).
 Note that
-Similarly, for $V_S^h \subset \sob^1([0,1]) \cap \Dfs$:
+Similarly, for $V_S^h \subset V'_S$:
 \begin{equation}
   \label{eq:34}
-  V_{S}^{h} = \setst{\phimh }{ \phimh = \sum_{l=0}^{N_l}\phimdis_l \sbf_l,\, \phimdis_l \in \real}
-  \cap \Dfs,
+  V_{S}^{h} = \setst{\phimh }{ \phimh = \sum_{l=0}^{N_l}\phimdis_l \sbf_l,\, \phimdis_l \in \real},
 \end{equation}
 with the equivalent requirement when $N \rightarrow \infty$.
 We call $\sbf_l$ the solution basis functions but they are often known as the shape functions.
@@ -388,8 +390,8 @@ Multiplying \cref{eq:phiR} by a test function and integrating over the magnetic 
   \rphi(\phim, \test) = \intd{ (\lap \phim) \test }
   - \intd{ (\div \mv) \test}, \label{eqn:phires1}
 \end{gather}
-where $\phim \in \sob^2(\magd) \cap \Dfs$ and $\mv \in \sob^1(\magd)$.
-Recall that aim is to find some $\phim$ such that $\rphi(\phim, \test) = 0$ for all test functions $\test \in \sob^0(\magd) \cap \Dfs_0$.
+where $\phim \in V_{S\phim} = \setst{\phim \in \sob^2(\magd)}{\phim(\xv) = g_\Dir(\xv) \,\forall \xv \in \boundd_\Dir }$ and $\mv \in \sob^1(\magd)$.
+Recall that aim is to find some $\phim$ such that $\rphi(\phim, \test) = 0$ for all test functions $\test \in V_T = \setst{\phim \in \sob^0(\magd)}{\phim(\xv) = 0 \,\forall \xv \in \boundd_\Dir }$.
 Note that while the use of the Newton-Raphson method is unnecessary for the magnetostatic potential alone (since \cref{eqn:phires1} is linear in $\phim$) it will be necessary later for the coupled problem.
 
 We now reduce the order of the derivatives on $\phim$, as discussed in \cref{Derivation-of-weighted-residuals}, by ``transferring'' the derivatives onto the test functions.
@@ -409,7 +411,7 @@ Substituting \cref{eqn:identitygauss} into \cref{eqn:phires1} gives
   - \intd{ \grad \test \cdot \grad \phim }
   - \intd{ (\div \mv) \test },
 \end{equation}
-where the function spaces are now $\phim \in \sob^1(\magd) \cap \Dfs$ and $v \in \sob^1(\magd) \cap \Dfs_0$.
+where the function spaces are now $V'_{S\phim} = \setst{\phim \in \sob^1(\magd)}{\phim(\xv) = g_\Dir(\xv) \,\forall \xv \in \boundd_\Dir }$ and $V'_T = \setst{\phim \in \sob^1(\magd)}{\phim(\xv) = 0 \,\forall \xv \in \boundd_\Dir }$.
 
 Note that the boundary integral is always zero on $\boundd_\Dir$ by the definition of the test functions.
 Hence the boundary integral is only non-zero over $\boundd_{\Neu}$ where $\grad \phim \cdot \nv = g_{\Neu}$ and we have
@@ -541,7 +543,7 @@ The final residual for the LLG equation, using a vector test function, is
 
 The final weak formulation is:
 \begin{equation}
-  \eqpar{Find $\mv \in (\tsinf)^3$, $\phim \in \tsinf \cap \Dfs$ such that $\rllg(\mv, \testv) = 0$ for all $\testv \in (\tsinf)^3$ and $\rphi(\phim, \test) = 0$ for all $\test \in \tsinf \cap \Dfs_0$.}
+  \eqpar{Find $\mv \in (\tsinf)^3$, $\phim \in V'_{S\phim}$ such that $\rllg(\mv, \testv) = 0$ for all $\testv \in (\tsinf)^3$ and $\rphi(\phim, \test) = 0$ for all $\test \in V'_T$.}
 \label{eq:inf-dim-problem}
 \end{equation}
 
@@ -554,7 +556,7 @@ The final weak formulation is:
 The next step is to choose a finite dimensional approximation for the infinite dimensional test and solution function spaces such that the residuals \cref{res:contphi,eq:llg-res-final} become discrete in space.
 Just as in \cref{sub:Actual-Finite-Elements} we choose to represent the finite dimensional spaces using a set of piecewise linear polynomials, $\tsbasis$, as basis functions.
 
-The approximations to the unknown functions $\mv$ and $\phim$ are represented as a sum over the solution basis functions $\sk \in \tsbasis$ (or $\sk \in \tsbasis \cap \Dfs$ for $\phim$) as
+The approximations to the unknown functions $\mv$ and $\phim$ are represented as a sum over the solution basis functions $\sk \in \tsbasis$ (or,  for $\phim$, $\sk \in \tsbasis[\phim] = \setst{\sk \in \tsbasis}{\sk(\xv) = 0 \forall \xv \in \boundd_\Dir}$) as
 \begin{equation}
   \begin{aligned}
     \mv(\xv) &\approx \mvh = \sum_{k = 0}^{N} \sk \, \mvdis_k, \\
@@ -562,7 +564,7 @@ The approximations to the unknown functions $\mv$ and $\phim$ are represented as
     \label{eq:unknowns-basis}
   \end{aligned}
 \end{equation}
-Similarly the approximations to the test functions are represented as a sum over the test basis functions, $\tn \in \tsbasis$ (or $\tsbasis \cap \Dfs_0$ as applicable), as
+Similarly the approximations to the test functions are represented as a sum over the test basis functions, $\tn \in \tsbasis$ (or $\tsbasis[\phim]$ as applicable), as
 \begin{equation}
   \label{eq:47}
   \test \approx \testh = \sum_{\ndi = 0}^{N} \tn \, a_\ndi.
