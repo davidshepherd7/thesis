@@ -157,6 +157,18 @@
 \newcommand{\Cm}{\mymatrix{C}}
 \newcommand{\Dm}{\mymatrix{D}}
 
+% Preconditioners
+\newcommand{\precond}{\mathcal{P}}
+\newcommand{\preca}{\precond_1}
+\newcommand{\precb}{\precond_2}
+\newcommand{\precc}{\precond_3}
+
+\newcommand{\inexact}[1]{\hat{#1}}
+\newcommand{\parinexact}[1]{\bar{#1}}
+\newcommand{\pbin}{\inexact{\precb}}
+\newcommand{\pcin}{\inexact{\precc}}
+
+
 % Make ams math matrices allow dividing lines
 \makeatletter
 \renewcommand*\env@matrix[1][*\c@MaxMatrixCols c]{%
@@ -234,6 +246,9 @@
 
 \newcommand{\Htest}{\sob^1_0(\magd)}
 \newcommand{\Hsol}{\sob^1_D(\magd)}
+
+\newcommand{\krylov}{\mathcal{K}}
+\DeclareMathOperator{\span}{span}
 
 
 
@@ -454,17 +469,6 @@
 \newcommand{\half}{\nicefrac{1}{2}}
 
 
-% Some typewritter text
-% ============================================================
-
-% Make sure it's not italic or anything as well as being tt, because it
-% looks different (and stupid). \xspace makes sure there is a space
-% afterwards at the correct times without having to explicitly write the
-% empty argument (i.e. \toltt{}). It can be suppressed by writing the empty
-% argument.
-% \newcommand{\toltt}{{\textrm{\textup{\texttt{tol}}}\xspace}}
-%% Didn't want this anyway in the end
-
 
 % Stuff needed for galerkin
 % ============================================================
@@ -558,6 +562,14 @@
 % pde m error
 \newsubcommand{\errmpde}{\myerr}{\mv}
 
+
+
+% Numbers of things
+% ============================================================
+\newcommand{\nrow}{N_r} % matrix rows
+\newcommand{\Nn}{N} % nnodes
+\newcommand{\Nb}{N_\boundd} % boundary nodes
+\newcommand{\Nbul}{N_b} % bulk nodes
 
 %%% Local Variables:
 %%% mode: latex

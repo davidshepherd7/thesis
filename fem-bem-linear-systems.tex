@@ -2,11 +2,6 @@
 \chaptermark{Solution of linear systems}
 \label{sec:solution-strategies}
 
-\newcommand{\Nn}{N} % nnodes
-\newcommand{\Nb}{N_\boundd} % boundary nodes
-\newcommand{\Nbul}{N_b} % bulk nodes
-\newcommand{\Nj}{N_J} % jacobian rows
-
 When we apply implicit time integration schemes, a FEM spatial discretisation and the Newton-Raphson method for linearisation (as discussed in \cref{sec:time-discretisation,sec:galerk-meth-llg}) to the LLG equation we are left with the problem of solving a sequence of large sparse linear systems to obtain the approximate solution.
 With the addition of FEM/BEM for calculation of magnetostatic fields (as discussed in \cref{sec:hybr-finit-elem}), the linear systems to be solved become larger and more complex.
 In this \thisref{sec:solution-strategies} we discuss solution strategies for these systems.
@@ -32,7 +27,7 @@ In \thisref{sec:llg-only-system} we consider the solution of the magnetostatic a
 Such methods are important building blocks for the solution of the coupled system.
 
 Firstly we consider the two linear systems solved in the magnetostatic field calculations: these are both Poisson systems (see \cref{eq:phi-bem-continuous} and \cref{eq:poisson-jacobian}), which are well studied.
-One efficent and robust method for solving Poisson systems on unstructured grids is to use the method of conjugate gradients (CG) with algebraic multigrid (AMG) as a preconditioner \cite[Chap. 2]{HowardElmanDavidSilvester2006}.
+One efficent and robust method for solving Poisson systems on unstructured grids is to use the method of conjugate gradients (CG) with algebraic multigrid (AMG) as a preconditioner \cite{Henson2002}.
 
 Note that the Poisson blocks $\Am$ do not depend on $\phim$, $\phione$ or $\mv$ (\ie the Poisson problems are linear).
 This means that when solving these matrices the Newton-Raphson iteration is not required (or if used it will converge in a single iteration assuming that the linear solve is sufficiently accurate).
@@ -131,7 +126,7 @@ Combining the above with the Jacobian matrix as derived in \cref{sec:llg-magn-co
 where $\Abound = \pd{\phimh}{\phimdis_\boundd}$ is the Jacobian of the bulk $\phim$ values with respect to the boundary values.
 The order of blocks is $\mv$, $\phim$, $\phione$.
 The blocks corresponding to derivatives of the $\phim$ residual are broken into sub-blocks for the bulk and boundary values due to the BEM coupling.
-The overall Jacobian is a square matrix of size $\Nj = 5\Nn$, where $\Nn$ is the number of nodes.
+The overall Jacobian is a square matrix of size $\nrow = 5\Nn$, where $\Nn$ is the number of nodes.
 The LLG block, $\Fm$, is of size $3\Nn\times 3\Nn$, the Poisson block, $\Amu$, is of size $\Nn \times \Nn$.
 The smaller Poisson block, $\Amm$, is of size $\Nbul \times \Nbul$, where $\Nbul$ is the number of bulk nodes.
 The identity and BEM matrices are of size $\Nb \times \Nb$, where $\Nb$ is the number of boundary nodes.
@@ -247,7 +242,7 @@ The matrix-vector product can be computed as
 
 This leads us to the second component of our method: the use of a hierarchical matrix format for the BEM block \cite{Borm2003,Forster2003,Knittel2011}.
 This format reduces the computational cost for a matrix-vector product for the dense block to $\order{\Nb \log \Nb}$.
-Since the number of boundary nodes $\Nb$ is typically less than the total number of nodes in the problem this can allow the cost of matrix-vector products of $\jac$ to be optimal (\ie $\order{\Nj}$) depending on the geometry.
+Since the number of boundary nodes $\Nb$ is typically less than the total number of nodes in the problem this can allow the cost of matrix-vector products of $\jac$ to be optimal (\ie $\order{\nrow}$) depending on the geometry.
 It also reduces the memory requirements for the block to $\order{\Nb \log \Nb}$.
 This introduces a small additional error, but it has been shown that the size of the error can be made significantly less than the FEM approximation error by choosing appropriate parameters \cite[77]{Knittel2011}.
 The use of such formats has recently become fairly common in the application of the hybrid FEM/BEM method to micromagnetics problems.
@@ -258,17 +253,6 @@ Some approaches to constructing such a preconditioner will be discussed in the f
 
 \subsubsection{Preconditioning strategies}
 \label{sec:bem-solver-strategies}
-
-\newcommand{\preca}{\mathcal{P}_1}
-\newcommand{\precb}{\mathcal{P}_2}
-\newcommand{\precc}{\mathcal{P}_3}
-
-\newcommand{\inexact}[1]{\hat{#1}}
-\newcommand{\parinexact}[1]{\bar{#1}}
-\newcommand{\pbin}{\inexact{\precb}}
-\newcommand{\pcin}{\inexact{\precc}}
-
-
 
 
 In this section we give a number preconditioning approaches for the monolithic system with the Jacobian \cref{eq:16}.
@@ -288,11 +272,12 @@ The first preconditioner is very simple: we use a direct solve (using LU decompo
 This preconditioner, while much more efficient than a direct solve including the dense block, still suffers from all the usual problems associated with a direct solver (\ie expensive in both memory and computation time when $\Nn$ is large).
 However, we are interested in its properties as a test of the effectiveness of dropping the $\Gm'$ block from the preconditioner.
 
-As discussed in \cref{sec:linear-solv-micr} a number of other FEM/BEM based models use an approach similar to preconditioner $\preca$ \cite{Suess2002}, except that the preconditioner is solved by an inner Krylov solver, rather than a direct solve.
+A number of other FEM/BEM based models use an approach similar to preconditioner $\preca$ \cite{Suess2002}, except that the preconditioner is solved by an inner Krylov solver, rather than a direct solve.
 This makes the computational cost feasible for realistic problems, but has two issues:
-The first is that technically an inner Krylov solve cannot be used as a preconditioner because it does not apply the same operation at each step of the outer solve, \ie it is not a linear operation (see \cref{sec:preconditioners}).
-This issue can be resolved by using an outer Krylov solver known as Flexible GMRES which accounts for this \cite{Saad1993}.
-The second issue is that a full inner Krylov solve is run at \emph{every iteration} of the outer Krylov solve, which is computationally expensive.
+The first is that technically an inner Krylov solve cannot be used as a preconditioner because it does not apply the same operation at each step of the outer solve \cite{Saad1993}.
+This issue can be resolved by using an outer Krylov solver known as Flexible GMRES which accounts for this.
+The second issue is that a full inner Krylov solve is run at \emph{every iteration} of the outer Krylov solve, which is computationally expensive compared to a standard preconditioner (but still cheaper than a direct solve for sufficiently large problems).
+However we are only interested in $\preca$ as a test of the effect of dropping the dense matrix on the iteration counts, hence we do not pursue this further.
 
 Our second and third preconditioners are more ambitious: motivated again by the fact that the magnetostatic field is usually significantly weaker than the exchange coupling we drop blocks an LLG-magnetostatics block in order to make the preconditioner block triangular.
 It can then be inverted by inverting only the diagonal blocks (exactly or approximately) and using block back/forward substitution.

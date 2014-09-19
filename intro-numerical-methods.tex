@@ -969,60 +969,45 @@ This makes the method useful for applying implicit methods to non-stiff problems
 \subsection{Newton-Raphson method}
 \label{sec:newt-raph}
 
-??ds not quite right, lots of red from Matthias
-A non-linear problem:
-\begin{equation}
-  \begin{aligned}
-    \text{Find $\yv$ such that } \fv(t, \yv, \ldots) = \gv(t, \yv, \ldots).
-  \end{aligned}
-\end{equation}
-can also be stated as an equivalent minimisation problem:
-\begin{equation}
-  \label{eq:non-lin-system}
-  \begin{aligned}
-    \text{min}_{\yv} \resi(t, \yv, \ldots).
-  \end{aligned}
-\end{equation}
-
 In the context of implicit time integration of a semi-discretised PDE we write
 \begin{equation}
   \yvdis_n = \set{\yv_{n,i}}_{i=0}^{i=N},
 \end{equation}
 for the list of spatially discrete values of $\yv$ at time step $n$.
 For example, for an LLG problem consisting of a single macrospin $\yvdis_n = \mv_n$.
-For a finite element semi-discretised LLG problem $\yvdis_n$ is the list of all the discrete values that define $\mv_n$ along with any values needed for the magnetostatic calculations.
-Then the non-linear problem can be written as
+For an LLG problem by semi-discretised by the finite element method $\yvdis_n$ is the list of all the discrete values that define $\mv_n$ along with any values needed for the magnetostatic calculations.
+Using this notation the non-linear problem can be written as
 \begin{equation}
-  \text{Find $\yvdis_{n+1}$ such that } \resi(t, \yvdis_{n+1}, \yvdis_n, \yvdis_{n-1}, \ldots) = 0,
+  \text{Find $\yvdis_{n+1}$ such that } \resi(t_{n+1}, \yvdis_{n+1}, \yvdis_n, \yvdis_{n-1}, \ldots) = 0,
 \end{equation}
-where the number of previous values of $\yvdis$ required depends on the time integration scheme.
+where the number of previous time step values, $\yvdis_i$, required depends on the time integration scheme.
 
 The motivation for the Newton-Raphson method comes from a simple Taylor expansion of the residual, $\resi$.
-If the exact root of the residual is $\nexty$ and we have an initial guess for this root $\nlit{\yvdis}{0}$ then we can obtain a correction to this initial guess from:
+If the exact root of the residual is $\nexty_{n+1}$ and we have an initial guess for this root $\nlit{\yvdis_{n+1}}{0}$ then we can obtain a correction to this initial guess from:
 \begin{equation}
   \begin{aligned}
-    \resi(\nexty) &= 0, \\
-    &= \resi(\nlit{\yvdis}{0} + \pm), \\
-    &= \resi(\nlit{\yvdis}{0}) + \jac(\nlit{\yvdis}{0}) \cdot \corr + \order{\corr^2},
+    \resi(t_{n+1},\nexty_{n+1}) &= 0, \\
+    &= \resi(t_{n+1}, \nlit{\yvdis_{n+1}}{0} + \corr), \\
+    &= \resi(t_{n+1}, \nlit{\yvdis_{n+1}}{0}) + \jac(t_{n+1}, \nlit{\yvdis_{n+1}}{0}) \cdot \corr + \order{\corr^2},
   \end{aligned}
 \end{equation}
-where $\jac(\nlit{\yvdis}{0})$ is the Jacobian matrix of the residual with respect to $\yvdis$ evaluated at $\nlit{\yvdis}{0}$.
+where $\jac(t_{n+1}, \nlit{\yvdis_{n+1}}{0})$ is the Jacobian matrix of the residual with respect to $\yvdis_{n+1}$ evaluated at $\nlit{\yvdis_{n+1}}{0}$.
 So
 \begin{equation}
   \begin{aligned}
     \label{eq:49}
-    \nexty &= \nlit{\yvdis}{0} + \corr, \\
-    &= \nlit{\yvdis}{0} + \jac^{-1}(\nlit{\yvdis}{0}) \cdot \resi(\nlit{\yvdis}{0}) + \order{\corr^2}.
+    \nexty_{n+1} &= \nlit{\yvdis_{n+1}}{0} + \corr, \\
+    &= \nlit{\yvdis_{n+1}}{0} + \jac^{-1}(t_{n+1}, \nlit{\yvdis_{n+1}}{0}) \cdot \resi(\nlit{\yvdis_{n+1}}{0}) + \order{\corr^2}.
   \end{aligned}
 \end{equation}
 This suggests the iteration
 \begin{equation}
-  \nlit{\yvdis}{i+1} = \nlit{\yvdis}{i} - \jac^{-1}(\nlit{\yvdis}{i}) \cdot \resi(\nlit{\yvdis}{i}),
+  \nlit{\yvdis_{n+1}}{i+1} = \nlit{\yvdis_{n+1}}{i} - \jac^{-1}(t_{n+1}, \nlit{\yvdis_{n+1}}{i}) \cdot \resi(\nlit{\yvdis_{n+1}}{i}),
 \end{equation}
-in which, if the Taylor expansion is valid and that we can discard the higher order terms, the error is \emph{squared} after each iteration (\ie convergence is quadratic).
+in which, if the Taylor expansion is valid so that we can discard the higher order terms, the error is \emph{squared} after each iteration (\ie convergence is quadratic).
 
 The assumption that we can discard terms in $\order{\corr^2}$ is fairly strong: it means that we need a good initial guess so that the initial correction, $\corr$, is sufficiently small.
-Fortunately in time integration problems the value at the previous time step provides a good initial guess: $\nlit{\yvdis}{0} = \yvdis_n$.
+Fortunately in time integration problems the value at the previous time step provides a good initial guess: $\nlit{\yvdis_{n+1}}{0} = \yvdis_n$.
 It is also possible to construct an even better initial guess by taking a single cheap explicit ``predictor'' step, as used in Milne's device for adaptive time integration (and if such an adaptive scheme is in use then this improved initial guess is ``free'').
 
 The iteration is terminated when
@@ -1035,7 +1020,7 @@ Alternatively the absolute tolerance condition \cref{eq:newton-convergence-test}
 \begin{equation}
   \norm{\resi(\nlit{\yvdis}{i+1})}_{\infty} < \norm{\resi(\nlit{\yvdis}{0})}_{\infty} \nrtol.
 \end{equation}
-If the residual expression is well normalised, and so has initial magnitude of $\order{1}$, then the two are (roughly) equivalent.
+If the residual expression is well normalised, \ie has initial magnitude of $\order{1}$, then the two are roughly equivalent.
 
 % For micromagnetics problems we find that this reliably converges to a tolerence of $\sim 10^{-10}$ in around 2-3 steps!
 
@@ -1043,7 +1028,7 @@ As discussed in \cref{sec:picard} the main downside of the Newton-Raphson method
 The efficient solution of these systems is the subject of \cref{sec:solution-lin-sys}.
 
 Another potential downside is that the iteration is only guaranteed to converge if the initial guess ``good enough''.
-However for non-linear systems resulting from time stepping we always have a very good initial guess, so this is not often a problem.
+However for non-linear systems resulting from time integration we always have a very good initial guess, so this is not often a problem.
 
 
 % \subsection{Advanced LLG-specific linearisation methods}
@@ -1073,122 +1058,146 @@ However for non-linear systems resulting from time stepping we always have a ver
 
 
 
-\section{Solution of linear systems}
+\section{Solution of sparse linear systems}
 \label{sec:solution-lin-sys}
 
-??ds whole section needs more work
-
 If we are using an implicit time integration scheme with the Newton-Raphson method for linearisation then we are left with the problem of solving a sequence of sparse linear systems.
-The problem can be stated as: Given a sparse $n \times n $ matrix $\Am$ and a vector $\bv$, find $\xv$ such that
+Each of these linear systems can be stated as the problem: Given a sparse $\nrow \times \nrow$ matrix $\Am$ and a vector $\bv$, find $\xv$ such that
 \begin{equation}
   \label{eq:linear-system}
   \Am \xv = \bv.
 \end{equation}
-This is a very widely studied problem, see for example \cite{Saad2000}, but efficient techniques for very large $n$ (which corresponds to a large spatial problem and/or good spatial resolution) are complex and problem dependent.
+This is a very widely studied problem, see for example \cite{Saad2000}, but efficient techniques for very large $\nrow$ (which corresponds to a large spatial problem and/or good spatial resolution) are complex and problem dependent.
+There are two general classes of method: direct methods and iterative methods.
+Direct methods are very general but typically computationally expensive in both memory and time.
+Effective iterative methods typically must be developed for a specific problem but can be much more efficient or even achieve optimal scaling (\ie of computational complexity $\order{\nrow}$ in time and memory).
 
 
 \subsection{Direct methods}
 \label{sec:direct-methods}
 
-??ds expand
-
-Construct exact solutions to linear systems of equations
-
-Main example is LU decomposition.
+Direct methods for the solution of linear systems construct exact solutions to linear systems of equations using methods based on Gaussian elimination.
+The direct method most commonly used in the solution of systems resulting from discretised PDEs is LU decomposition.
 
 The main advantage of direct methods is their robustness: given a well-scaled, non-singular linear system a well designed direct solver will be able provide an answer.
 As such direct solvers are usually the first approach tried when solving a new system of equations.
 
-??ds talk about 3d vs 2d: in 3d there is much more coupling (more overlap of test functions): so larger bandwidth and much slower direct solves
-
 However as matrix sizes become large direct solvers become increasingly demanding in both time and memory.
 The problem is that the factors of a typical sparse matrix are significantly more dense than the starting matrix, \ie there is some amount of fill-in.
-This means that the time and memory requirements for the solution can never scale as $\order{n}$.
-The exact level of fill-in depends on the sparsity pattern of the initial matrix, but is typically somewhere in the range $\order{n^{3/2}}$-$\order{n^2}$.
+This means that the time and memory requirements for the solution rarely scale as $\order{\nrow}$ except for very specific matrices.
+The exact level of fill-in depends on the sparsity pattern of the initial matrix, but the final computational complexity is typically between $\order{\nrow^{3/2}}$ and $\order{\nrow^2}$.
 
-
-\subsection{Multigrid methods}
-
-??ds need to talk about how it's actually the correction we solve for on the coarser grids...
-
-There are a number of ``simple'' iteration methods which are fairly ineffective when used directly to solve reasonably sized linear systems, but are very cheap to apply since they can be written in a form where each iteration is a matrix vector product.
-??ds conditioning is the problem not size (Milan)
-Examples are Jacobi, Gauss-Seidel and SOR methods \cite[103]{Saad2000}.
-
-Multigrid methods are a class of linear solvers which combine these simple iteration methods with a hierarchical algorithm, resulting in highly efficient and scalable solvers for the solution of discrete elliptical PDEs \cite{multigrid-tut}.
-They are based on two observations: firstly that the simple iterative solvers are very effective at reducing the high-frequency (in space) error of a solution, but fail on the low frequency parts.
-The second observation is that many of the low frequency errors can be converted to high frequency errors by projecting them onto a coarser grid and solving for a correction to the solution.
-So by solving the problem on a sequence of meshes all frequencies of error can be treated effectively (except the very lowest, which can be removed by a direct solve on a very coarse mesh).
-
-Typical multigrid solvers work use something similar to the following algorithm
-\begin{itemize}
-\item Start with initial guess on finest mesh
-\item Apply a few iterations of a simple solver
-\item Project the solution onto a coarser mesh
-\item Apply a few iterations of a simple solver
-\item Project the solution onto a coarser mesh \\
-  $\vdots$
-\item On the coarsest mesh solve the solution directly
-\item Project the solution onto a finer mesh
-\item Apply a few iterations of a simple solver \\
-  $\vdots$
-\item End with solution on finest mesh
-\end{itemize}
-The details of the ``simple'' iterative solver, the projection between meshes, the selection of coarse meshes, the exact order/number of repeats of the cycle etc. all vary between methods.
-
-??ds Milan wants an image here
-
-It turns out that multigrid solvers can achieve computation times which scale as $\order{N \log N}$, \ie their performance does not severely degrade as the number of nodes in the mesh is increased.
-??ds memory requirements?
-
-Multigrid methods are very effective on the matrix resulting from discretising a Poisson problem.
-Fortunately the Laplace operator (\ie the core of a Poisson problem) is in some way the ``most important'' part of many elliptic PDEs since it contains the highest derivatives.
-
-In fact it often turns out that multigrid methods are most effective when combined with another type of solver, as will be discussed below.
-
+In the context of PDEs: for three dimensional problems there are significantly more non-zero entries in each row than in two dimensions (due to the increased connectivity of discrete elements).
+Hence the performance of a direct solver is much worse than for similar problems in two dimensions, even if $\nrow$ remains the same.
 
 \subsection{Krylov solvers}
 \label{sec:krylov-solvers}
 
-??ds expand
+The first class of iterative methods for the solution of linear systems that we discuss are the Krylov solvers \cite[151]{Saad2000}.
+These methods are based on finding an approximation to the solution, $\xv$, in the sequence of Krylov subspaces of the matrix $\Am$:
+\begin{equation}
+  \krylov_m(\Am, \yv) = \span \set{\yv, \Am \yv, \Am^2\ym, \ldots, \Am^m\yv}.
+  \label{eq:96}
+\end{equation}
+Note that computing a basis for the next Krylov subspace $\krylov_{m+1}$ only requires a matrix vector product with the matrix $\Am$ applied to a basis vector of $\krylov_m$ (although in practice the simple basis in \cref{eq:96} is modified to improve the properties of the method).
+Hence constructing the subspace is computationally cheap for a sparse matrix $\Am$.
+At each iteration a new approximation to the solution in the space $\krylov_{m+1}$ is found by minimising some easy to calculate form of the error in the direction given by the new Krylov basis vector.
 
-Another class of iterative linear solvers are the Krylov solvers.
-These methods are based on building an approximation to the solution from linear combinations of the Krylov subspace basis set of the matrix $\Am$.
+The two Krylov solvers used in this thesis are the \emph{method of conjugate gradients} (CG) and the \emph{generalised minimum residual method} (GMRES).
+The basic procedure for these methods is:
+1) Find a new direction in the $m$-th Krylov subspace which is ``orthogonal'' to all previous directions.
+2) Find the point in that direction which in some sense gives the ``optimally accurate'' solution and add this vector to the solution.
+The details of what is meant by ``orthogonal'' and ``optimal'' depends on the method.
 
-Based on Krylov subspace (polynomial of $\Am$ multiplied by $\xv$).
+The key difference between the two methods is that CG is only applicable to symmetric positive definite matrices, whereas GMRES is applicable to general matrices.
+However, CG is the more efficient of the two: it takes only $\order{\nrow}$ computation time for each step of the solve whereas GMRES takes $\order{\nrow k}$ time for the $k$-th step (and similarly for the memory requirements).
+This limitation of GMRES can be avoided by restarting the solve after some number of steps with the current approximation as the new initial guess, or by using an alternative Krylov solver such as BiCGStab \cite[172]{HowardElmanDavidSilvester2006}.
+However these methods lose some of the convergence guarantees of GMRES and CG, hence we avoid using them in this thesis.
 
 The size of the Krylov subspace needed for an effective approximation (\ie the number of iterations needed) is strongly dependent on the properties of the matrix, in particular the eigenvalues and eigenvectors.
-So for optimal performance a ``preconditioner'' is needed, which brings the eigenvalues of the matrix close to 1.
-Essentially the preconditioner needs to be a reasonable but cheap to calculate approximation to the inverse of the matrix (since $\Am^{-1}\Am = \Idm$, and the identity matrix is the matrix with all eigenvalues 1).
-The construction of a preconditioner which is effective independent of the mesh size is a difficult and problem dependent task.
+The maximum number of iterations to find a solution using CG or GMRES can be shown to be $\nrow$, if numerical error is ignored.
+However, for the solver to be efficient the number of iterations should be far smaller than $\nrow$ and preferably constant with respect to $\nrow$.
+
+So for optimal performance we often instead solve a modified system of the form
+\begin{equation}
+  \begin{aligned}
+    \Bm \xv &= \cv, \quad \Bm = \precond^{-1} \Am, \quad \cv = \precond^{-1} \bv,
+  \end{aligned}
+\end{equation}
+where $\precond$ is a \emph{preconditioner} which is chosen such that the the matrix $\precond^{-1} \Am$ has the required eigenvalue and eigenvector properties for rapid convergence.
+Since the preconditioner is applied at every step of the Krylov solve it should be computationally cheap to apply.
+The construction of a preconditioner which results in iteration counts independent of the matrix size while also being computationally cheap to set up and apply is a difficult and problem dependent task.
+In the next section we briefly discuss approaches for such preconditioners.
+
+Note that the preconditioner, $\precond$, must be the same at each step in order for the analysis of most Krylov methods to hold.
+This limitation can be avoided by the use of the flexible GMRES method (FGMRES) \cite{Saad1993}, which has performance and memory usage very similar to standard GMRES.
+
+
+\subsection{Preconditioning of Krylov solvers}
+\label{sec:preconditioners}
+
+As mentioned above the preconditioning of Krylov solvers is a critical component in obtaining good performance, but it also requires a highly problem dependant approach.
+
+There are a number of ``general purpose'' preconditioners which have some positive effect on the convergence of the Krylov solver for most linear systems.
+However they typically do not result in low numbers of iterations independent of the number of rows in the matrix.
+One widely used general purpose preconditioner is the incomplete LU decomposition (ILU) \cite[287]{Saad2000}.
+This method uses an LU decomposition, but with the number of additional non-zero values (the fill-in) limited in such a way that the matrix remains sparse and operations remain cheap.
+The simplest way to limit the fill-in is to only $n$ ``generations'' of fill-in, \ie with $n=0$ no fill-in is allowed, with 1 only the original matrix elements are allowed to generate new elements, etc.).
+We denote the ILU method with n levels of fill-in by ILU(n).
+
+Another useful class of preconditioners are based on (algebraic) \emph{multigrid} methods which are discussed in \cref{sec:multigrid-methods}.
+Multigrid-based preconditioners are highly effective for the preconditioning of linear systems arising from Poisson problems (\ie $\lap \phim(\xv) = f(\xv)$), and other similar problems \cite{Henson2002}.
+
+An interesting preconditioning approach for linear systems arising from PDEs containing multiple physical effects is \emph{block preconditioning}.
+This involves the division of the matrix $\Am$ into blocks corresponding to the different physical degrees of freedom.
+A preconditioner can then be constructed by manipulating this matrix on the block level, typically based on the physics of the problem.
+For example, by removing or eliminating blocks the preconditioner can be solved by inverting the diagonal blocks and using block back/forward substitution.
+Then the inverse of the diagonal blocks can then be approximated using known effective preconditioners for the equivalent single-physics problem.
+In \cref{sec:solution-strategies} we introduce such a preconditioning approach for the solution of the LLG-magnetostatics system.
 
 % Some work has been done on preconditioning for the LLG by Suess et. al. \cite{Suess2002}.
 % Also Banas et. al. \cite{Banas2008} \cite{Banas2010} created a multigrid preconditioner for the Maxwell-LLG equation with a fixed point linearisation method (and their time step sizes are a factor of 20 smaller than a similar algorithm using a Newton-Raphson linearisation on the same problem).
 
-Difference between CG, GMRES, BiCGStab:
-
-For symmetrical matrices, $\Am$, the construction of orthogonal Krylov subspace basis vectors (??ds) can be done using a only the last 3 ??ds values of $\Am \bv_i$, this results in CG ??ds also choice of minimisation direction?
-For non-symmetrical matrices ALL of the previous values must be stored: GMRES ??ds different direction too.
-This means that the cost per iteration of GMRES grows with the number of iterations, can avoid this by using restarted GMRES (throw away history after x steps) at the cost of convergence guarantees.
-
-Other way to avoid this cost is to use BiCGStab ??ds
+% ??ds Should I mention how to solve mass matrices? -- diagonal preconditioning? \cite{Wathen1987a}
 
 
-\subsection{Preconditioners}
-\label{sec:preconditioners}
+\subsection{Multigrid methods}
+\label{sec:multigrid-methods}
 
-??ds make sure you mention that preconditioner must be same operation at each step
+There are a number of simple iterative methods, called relaxation methods, which are fairly ineffective when applied directly to most linear systems but are very cheap to apply.
+Examples of these methods are Jacobi, Gauss-Seidel and SOR methods \cite[103]{Saad2000}.
 
+Multigrid methods are a class of linear solvers which combine these relaxation methods with a hierarchical algorithm.
+They can be highly efficient and scalable solvers for the discrete systems arising from certain classes of PDEs \cite{multigrid-tut}.
+Multigrid methods are based on two observations: firstly that relaxation methods are very effective at reducing the high-frequency (in space) error of a solution, but fail on the low frequency parts.
+The second observation is that many of the low frequency errors can be converted to high frequency errors by projecting them onto a coarser grid.
+So by solving the problem on a sequence of meshes all frequencies of error except for the very lowest can be treated effectively using only cheap relaxation methods.
+The lowest frequency errors can be well represented on a very coarse grid (\ie a very small linear system), and so can be cheaply corrected for using a direct solve.
 
-\subsection{Linear solvers in micromagnetics}
-\label{sec:linear-solv-micr}
+Typical multigrid solvers work use something similar to the following algorithm:
+\begin{itemize}
+\item Start with initial guess on the real mesh
+\item Apply a few iterations of a relaxation method
+\item Project the solution onto a coarser mesh
+\item Apply a few iterations of a relaxation method
+\item Project the solution onto a coarser mesh \\
+  $\vdots$
+\item On the coarsest mesh solve the solution directly
+\item Project the solution onto a finer mesh
+\item Apply a few iterations of a relaxation method \\
+  $\vdots$
+\item End with solution on the real mesh
+\end{itemize}
+The details of the relaxation method used, the projection between meshes, the selection of coarse meshes, the exact order/number of repeats of the above cycle etc. all depend on the exact variant of the multigrid method used.
 
+It turns out that for certain problems multigrid solvers can achieve computation times which scale as $\order{N \log N}$, \ie their performance does not severely degrade as the number of nodes in the mesh is increased.
+The memory usage of multigrid methods is around $\order{N}$, depending on the method used to obtain the coarse meshes.
+In particular, as noted in the previous section, multigrid methods are very effective on systems involving the matrix corresponding to a discrete Laplace operator.
+This makes them useful for many problems because Laplace operator is in some way the most important part of many PDEs, since it contains the highest derivatives.
 
-??ds discuss linear solvers used: GMRES from CVODE mostly,
-
-mention BEM block?
-Aquino: unpreconditioned GMRES.
-Suess: ILU preconditioned BiCGstab, used as prec for GMRES solve with BEM block, most people cite this paper.
+Standard multigrid methods make use of the geometric properties of the mesh underlying the elliptical PDE, which makes them difficult to apply to unstructured meshes
+However the same techniques can be applied without any knowledge of the underlying geometry using \emph{algebraic multigrid} (AMG) methods.
+These methods use information purely from the matrix itself to construct ``coarse'' versions of the matrix based on the strength of the coupling between matrix elements.
 
 
 
