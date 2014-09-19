@@ -1,6 +1,7 @@
 \chapter{Numerical experiments}
 \label{cha:numer-experiments}
 
+
 ??ds do I use h for element size elsewhere?
 
 ??ds I've never explained how to solve eBDF3 system: pin magnetostatics, mass matrix inversion, use ll equation, with nodal quadrature we have a lumped mass matrix, no inversion needed!
@@ -19,77 +20,152 @@ This allows us to verify the complete model and to examine the performance of th
 \section{Wave-like solution}
 \label{sec:numer-exper}
 
-The first problem is
-
 \subsection{Problem definition}
+\label{sec:wave-problem-definition}
 
 We solve the LLG without magnetostatics on a two dimensional square domain $\magd = [0,1] \times [0,1]$ with periodic boundary conditions.
-In time we simulate the solution in $[0, 2]$.
+In time we simulate the solution in $T = [0, 5]$.
 
-In the following experiments we use the wave exact solution in 2D (see \cref{sec:wave-like-solution}) for simplicity and because an exact solution is known.
-The solution parameters used are $\kvec = 2\pi$ so that the solution is periodic on domains of unit size, $c = 0.1\pi$ which gives reasonable amplitude oscillations and $\dampc = 0.01$ due to physical relevance).
-For energy conservation experiments $\dampc = 0$ is used.
-
+In the following experiments we use the wave-like exact solution in 2D (see \cref{sec:wave-like-solution}) because an exact solution is known.
+This solution is obtained by setting the initial condition according to \cref{eq:97}:
+\begin{equation}
+  \begin{aligned}
+    m_x(0) &= \sin(c) \cos\bigb{\kvec \cdot \xv}, \\
+    m_y(t) &= \sin(c) \sin\bigb{\kvec \cdot \xv}, \\
+    m_z(t) &= \cos(c),
+  \end{aligned}
+\end{equation}
+and using $\happ = \zerov$.
+The solution parameters we use are $\kvec = 2\pi$ so that the solution is periodic on domains of unit size, $c = 0.1\pi$ which gives reasonable amplitude oscillations and $\dampc = 0.01$ due to physical relevance.
+For the energy conservation experiments $\dampc = 0$ is used instead.
 
 This problem allows us to examine the convergence and conservation properties of IMR with the FEM and nodal quadrature.
-In particular the existence of an exact solution for the LLG with exchange allows us to measure the convergence rate.
-Unfortunately we do not know of any non-trivial (\ie with $\mv$ varying in both space and time) exact solution for the LLG with exchange and magnetostatics.
+In particular the existence of an exact solution allows us to easily measure rate of convergence for the various methods.
+This allows us to explore the effects of the geometric integration properties of IMR on the accuracy of the solution.
 
 
 \subsection{Implementation details}
 
-We use the finite element method as discussed in \cref{sec:galerk-meth-llg} to spatially discretise the LLG equation with exchange coupling (no other effective fields are included).
-We use a mesh of square elements, % and a mesh of triangular elements made by splitting each square element in two with a diagonal line from $\sv = [0, 1]$ to $\sv = [1, 0]$.
-unless otherwise specified we use a mesh with $5 \times 2^4$ elements along each edge.
+We use the finite element method as discussed in \cref{sec:galerk-meth-llg} to spatially discretise the LLG equation with the exchange effective field only, no other effective fields are included in the simulation.
+Unless otherwise specified we use a mesh of square elements with $5 \times 2^4$ elements along each edge (\ie the number of nodes is $\Nn = ??ds$).
+ % and a mesh of triangular elements made by splitting each square element in two with a diagonal line from $\sv = [0, 1]$ to $\sv = [1, 0]$.
 
-Both the nodal quadrature discussed in \cref{sec:local-nodal-integr} and standard Gaussian quadrature are used in order to compare the two.
+Both the nodal quadrature discussed in \cref{sec:local-nodal-integr} and standard Gaussian quadrature methods are used.
+For time integration the adaptive IMR, TR and BDF2 methods are used a tolerance of $\toltt = 10^{-5}$ and an initial time step of $\dtn{0} = 10^{-5}$ (significantly smaller than the time step selected by an initial experimental run).
+The TR and BDF2 methods, along with IMR when Gaussian quadrature is used, are run both with and without re-normalisation of the magnetisation.
+The re-normalisation is implemented by setting each nodal value of the magnetisation to $\mv_i = \mv_i/\abs{\mv_i}$ after each time step (after the selection of the next step size to avoid complicating the adaptivity process).
 
-For time integration the IMR, TR and BDF2 methods are used, adaptive step sizes with a tolerance of $\toltt = 10^{-5}$ are used except for the convergence experiment which requires fixed step sizes.
-
-Linearisation is handled using the Newton-Raphson method, the newton tolerance is set to $10^{-12}$ unless otherwise specified.
-The linear systems are solved using GMRES with an ILU-1 preconditioner.\footnote{\hypre's Euclid preconditioner \cite{hypre} with no drop tolerance and factorisation level 1.}
+Linearisation is handled using the Newton-Raphson method with newton tolerance set to $\ntol = 10^{-12}$ (unless otherwise specified).
+The resulting linear systems are solved using GMRES with an ILU(1) preconditioner as described in \cref{sec:llg-only-system}.
 
 
 \subsection{General results}
 
-
-An example snapshot of the solution is shown in \cref{fig:2d-wave-snapshot}.
-As time proceeds the wave moves in the $[1,1]$ direction and is simultaneous damped out to the $\mv = [0,0,1]$ state.
-Time plots of the exact solution along with more details are given in \cref{sec:wave-like-solution}.
+An example snapshot of the solution at time $t=??ds$ is shown in \cref{fig:2d-wave-snapshot}.
+As time proceeds the wave moves in the $[1,1]$ direction and is simultaneous damped out towards the $\mv = [0,0,1]$ state.
 
 \begin{figure}
   \centering
   \includegraphics[width=0.8\textwidth]{images/placeholder}
-  \caption{Snapshot of the solution}
+  \caption{Snapshot of the solution at $t=??ds$ (solved using adaptive IMR with nodal integration).}
   \label{fig:2d-wave-snapshot}
 \end{figure}
 
+The behaviour of the approximate solutions over time at $\xv= \zerov$ is shown in \cref{fig:2d-wave-time-trace}.
+Only results from the methods without re-normalisation are shown because there are no distinguishable differences at this scale.
+The time steps selected by the various algorithms for this problem are also shown in \cref{fig:2d-wave-time-trace}.
+The appearance of a jump in the time step size at $t=0$ is the result the algorithms rapidly increasing the time step from the small initial step to a value appropriate for the given tolerance.
+After this appropriate time step is reached there is only a slow increase as the solution is damped out.
+This is as expected, in particular note that there is no oscillation of the step size with the precessional motion unlike that observed in \cref{sec:aimr-llgode-numerical-results}.
 
-??ds example time trace?
-
-??ds These choices of mesh and time step resolve the solution well, as can be seen in the convergence experiments above.
-
-The time step behaviour for this problem is simple: all of the integrators rapidly increase the time step to a reasonable value then keep it roughly constant (increasing slightly in the damped case).
-This is as expected, in particular note that there is no oscillation of the step size with the precessional motion unlike in \cref{sec:aimr-llgode-numerical-results}.
-
-
-??ds TR catastrophic failure?
+\begin{figure}
+  \centering
+  \includegraphics[width=0.9\textwidth]{plots/2d_wave_solution_time_trace/get2oftracevaluesvs-get3oftracevaluesvs-get4oftracevaluesvs-dtsvstimes.pdf}
+  \caption{The behaviour of the wave solution at $\xv = \zerov$ over time and the time steps used with the various integration schemes (schemes with re-normalisation are not shown because the results indistinguishable from those without normalisation at this scale).}
+  \label{fig:2d-wave-time-trace}
+\end{figure}
 
 
 \subsection{Convergence}
 
 Since we have an exact solution for this example we can calculate the total error and plot the convergence as $\dtn \goesto 0$ and $h \goesto 0$.
-Following the example of Jeong \etal \cite{Jeong2014} we link the spatial discretisation length to the time step by $\dtn = 0.32h$. (Note that in contrast to explicit time integration methods this is \emph{not} required for stability it is merely more convenient to experiment with a single parameter.)
-We set $h = 1/5(2^n)$ with $n=1,2,3,4,5,6,7,8 ??ds$.
+Following the example of Jeong \etal \cite{Jeong2014} we link the spatial discretisation length to the time step by $\dtn = 0.32h$.
+It is important to note that, in contrast to explicit time integration schemes, this coupling of the time and space discretisation parameters is \emph{not} required for stability.
+It is merely more convenient to experiment with a single parameter than with two independent parameters.
+We set $h = 1/(5 \cot 2^n)$ with $n=1,2,3,4,5,6$.
+Larger values of $n$ grow extremely computationally expensive for two reasons: firstly because we choose to reduce the time step and $h$ simultaneously, and so require more solves of larger systems.
+Secondly our iterative linear solver becomes less effective due to the extremely large systems involved ($\sim 10^6$ rows with $n=8$).
 
-The error norm used is $\errmpde = \norm{m(\xv_j, t_n) - \mv_j,n}$. ??ds this is no good...
+In these experiments we always use re-normalisation for schemes which are not expected to conserve $\abs{\mv}$ because in real-world applications TR and BDF2 would not be used without re-normalisation.
 
-We plot two figures: the error after a single step and the error after some time.
 
-??ds
 
-??ds also look at nodal quadrature
+As a first convergence experiment we examine the norm of the error after a single time step
+\begin{equation}
+  \merr_{,1} = \norm{\mv(\xv_j, t_1) - \mv_{j,1}}_2.
+\end{equation}
+In this case we expect the time convergence to be second order for all methods, and similarly for the error due to the use of linear basis functions in the FEM discretisation.
+The results of this experiment are shown in \cref{fig:convergence-one-step},
+We see that convergence is indeed second order for all methods and that the accuracy for the BDF2 scheme is a roughly constant factor worse than with other schemes.
+We also see that the use of nodal quadrature results in an error increase by a small constant factor.
+This indicates that the geometric integration properties of IMR with nodal quadrature give no benefit for a single time step, as is expected.
+\begin{figure}
+  \centering
+  \includegraphics[width=0.9\textwidth]{plots/2d_wave_solution_convergence_long_time/firstoferrornormsvsfakemeanofdts.pdf}
+  \caption{Convergence in the error norm $\errmpde{}$ after a single step of time integration.}
+  \label{fig:convergence-one-step}
+\end{figure}
 
+
+
+We also wish to examine the norm of the error after a large number of time steps.
+However, reaching the levels of convergence required for $\errmpde$ to be meaningful is difficult in this case because the ``worst case'' for the norm is that the approximated magnetisation is out of phase with the exact solution.
+A plot of the time integral of $\errmpde$ is shown in \cref{fig:convergence-one-step}, as expected no convergence is seen until $n=5$ for IMR and TR, no convergence at all is seen for BDF2.
+\begin{figure}
+  \centering
+  \includegraphics[width=0.9\textwidth]{plots/2d_wave_solution_convergence_long_time/errornormintegralvsmeanofdts.pdf}
+  \caption{Convergence of $\intt{\errmpde}$, where $T=[0,5]$, as $h$ and $\dtn$ are simultaneously decreased.}
+  \label{fig:convergence-long-time-full-norm}
+\end{figure}
+
+
+
+We now introduce alternative error norms to allow better measures of the error even for approximate solutions which are slightly out of phase with the exact solution.
+Our first error norm measures the deviation of $m_z$ from the exact value
+\begin{equation}
+  \errmz = \max_j \abs{m_{z,j,k} - m_z(\xv_j, t_n)}.
+\end{equation}
+This measures the level of over/under damping caused by the approximation.
+The convergence results for the time integral of this error norm are shown in \cref{fig:convergence-long-time-full-norm}.
+We again see second order convergence behaviour for all methods.
+The BDF2 method takes additional time to reach the asymptotic convergence behaviour, and has around an order of magnitude more error than the other methods.
+In particular, note that there is no significant difference between IMR with nodal quadrature (which conserves $\abs{\mv}$) and IMR with Gaussian quadrature (in which $\mv$ is re-normalised).
+
+\begin{figure}
+  \centering
+  \includegraphics[width=0.9\textwidth]{plots/2d_wave_solution_convergence_long_time/auxerr1integralvsmeanofdts.pdf}
+  \caption{Convergence of $\intt{\errmz}$, where $T=[0,5]$, as $h$ and $\dtn$ are simultaneously decreased.}
+  \label{fig:convergence-long-time-mz-norm}
+\end{figure}
+
+
+Our second error norm aims to measure the error in the phase (of the wave).
+It is
+\begin{equation}
+  \begin{aligned}
+    \errphase &= \abs{\psi_{n,0} - \psi(t_n, 0)}, \\
+    &= ??ds,
+  \end{aligned}
+\end{equation}
+where $\psi(t_n, 0) = ...$ is the analytical phase of the wave at $\xv = \zerov$, and $\psi_{n,0}$ is the corresponding phase in approximate solution.
+The convergence results with this error norm are shown in \cref{fig:convergence-long-time-phase-norm}.
+Unfortunately it appears that this error norm is not much better than comparison with the exact solution, and we can only draw the same conclusions as for that example.
+\begin{figure}
+  \centering
+  \includegraphics[width=0.9\textwidth]{plots/2d_wave_solution_convergence_long_time/auxerr0integralvsmeanofdts.pdf}
+  \caption{Convergence of $\intt{\errphase}$, where $T=[0,5]$, as $h$ and $\dtn$ are simultaneously decreased.}
+  \label{fig:convergence-long-time-phase-norm}
+\end{figure}
 
 
 
@@ -97,15 +173,15 @@ We plot two figures: the error after a single step and the error after some time
 \label{sec:2d-wave-results-cons-prop}
 
 % The maximum time was $t_{max} = 5$ ($\approx 20$ wave periods), the damping is small enough that the oscillations continue well past this time. % trace in folder ??ds check it
-\Cref{fig:mean-ml-error-2d} shows the behaviour of the maximum (over all nodes) error in magnetisation length.
-When using (adaptive) IMR with nodal quadrature the magnetisation length error remains extremely small ($\order{10^{-14}}$).
-When using IMR with Gaussian quadrature or BDF2 the error rapidly grows to around $\order{10^{-4}}$ and remains there.
-It is interesting to note that nodal integration has a slight beneficial effect on the magnetisation length error of BDF2.
+First we examine the error in magnetisation length from each of the time integration schemes (without re-normalisation).
+\Cref{fig:mean-ml-error-2d} shows the behaviour of the maximum (over all nodes) of the error in magnetisation length.
+When using (adaptive) IMR with nodal quadrature the magnetisation length error remains extremely small but for other methods the error rapidly grows to around $\order{10^{-4}}$ and remains there.
+These results are as expected.
 
 \begin{figure}
   \centering
-  \includegraphics[width=0.8\textwidth]{plots/2d_wave_solution_m_length/mlengtherrormaxesvstimes}
-  \caption{Evolution of the maximum error of nodal magnetisation lengths in the 2D wave example with various time integrators and quadratures.}
+  \includegraphics[width=0.8\textwidth]{plots/2d_wave_solution_m_length/mlengtherrormaxesvstimes.pdf}
+  \caption{Evolution of the maximum error of nodal magnetisation lengths with various time integrators and quadratures.}
   \label{fig:mean-ml-error-2d}
 \end{figure}
 
@@ -118,18 +194,26 @@ It is interesting to note that nodal integration has a slight beneficial effect 
 
 We also examine the energy conservation properties of the various time integration schemes for the wave solution with $\dampc = 0$.
 The energy is calculated using \cref{eq:nd-e-ex}.
-The integrals can be evaluated exactly using any quadrature because $\grad \mv$ is a constant inside each element.
-
-The results are shown in \cref{fig:energy-error-2d}.
-??ds analysis
+Note that these integrals can be evaluated exactly by any quadrature because $\grad \mv$ is a constant inside each element.
+The results are shown in \cref{fig:energy-error-2d}, interestingly we see that TR and IMR with Gaussian quadrature conserve energy in a similar manner to IMR with nodal quadrature.
 
 \begin{figure}
   \centering
   \includegraphics[width=0.8\textwidth]{plots/2d_wave_solution_energy/absofenergychangevstimes}
-  \caption{Evolution of the error in energy in the undamped 2D wave example with various time integration methods, quadrature schemes and with/without re-normalisation.}
+  \caption{Evolution of the error in energy in the undamped case with various time integration methods and quadrature schemes.}
   \label{fig:energy-error-2d}
 \end{figure}
 
+To check whether these results are a consequence of the particular solution used we run the same experiment with on a non-periodic domain (\ie using standard Neumann boundary conditions) and with an applied field $\happ = [0, 0, 1.1]$, this gives a similar problem but means that the exact solution no longer applies.
+The results of this experiment are shown in \cref{fig:energy-error-2d-happ}, we see that in this case only IMR with nodal quadrature conserves energy as expected.
+The anomalous results for the case of the exact solution are presumably due to the additional symmetry of the problem when solved on a periodic domain.
+
+\begin{figure}
+  \centering
+  \includegraphics[width=0.8\textwidth]{plots/2d_wave_solution_nonperiodic/absofenergychangevstimes}
+  \caption{Evolution of the error in energy in the undamped case with various time integration methods and quadrature schemes on the slightly modified problem using a non-periodic domain and a non-zero applied field.}
+  \label{fig:energy-error-2d-happ}
+\end{figure}
 
 
 \subsection{Effect of Newton tolerance}
@@ -140,39 +224,70 @@ In our model the Newton-Raphson method is used for linearisation (see \cref{sec:
 
 The obvious experiment to carry out would be to vary the Newton tolerance and examine how the error in $\abs{\mv}$ is affected.
 However Newton's method converges extremely quickly meaning that the final residual is often orders of magnitude smaller than the tolerance, this would hide any corrolation between the tolerance and the error.
-Instead we plot the error against the actual converged residual norm (specifically: the mean over time steps of $\norm{\rv}_\infty$ after the Newton method has converged).
-In order to generate a variety of converged residual norms we run the experiment with a wide range of parameters: $\ntol = ??ds$, $\dtn = ??ds$, $\dampc = ??ds$ and $N_h = ??ds$.
-The results are shown in \cref{fig:mean-ml-error-2d-nodal-newton-tests}, there is a clear correlation between small residuals and small $\abs{\mv}$ error.
-??ds any correlation with other parameters?
-
-A similar result is seen in \cref{} for the energy conservation property when $\dampc = 0$.
+Instead we plot the error against the actual converged residual norm (specifically: the mean over all time steps of $\norm{\rv}_\infty$ after the Newton method has converged).
+In order to generate a variety of converged residual norms we run the experiment with a wide range of parameters, we use: $\ntol = 10^{8}, 10^{9}, 10^{10}, 10^{11}, 10^{12}$; $\toltt = 10^{3}, 10^{4}, 10^{5}$; $\dampc = 1, 0.001, 0$; and $h = 0.05, 0.025, 0.0125$.
+For this example we only run the calculations in $T = [0, 1]$ due to the volume of computations required.
+The results are shown in \cref{fig:ml-error-2d-nodal-newton-tests}, there is a clear correlation between small residuals and small $\abs{\mv}$ error.
+A similar result is seen in \cref{fig:energy-error-2d-nodal-newton-tests} for the energy conservation property when $\dampc = 0$.
 
 \begin{figure}
   \centering
   \includegraphics[width=0.8\textwidth]
-  {plots/2d_wave_solution_m_length_newton_res/-maxmaxmathbfm-1vsmeanmathbfr_mathrmfinal_infty.pdf}
-  \caption{Corrolation between maximum error of nodal magnetisation lengths and largest maximum Newton residual norm after convergence in the 2D wave example solved using adaptive IMR and nodal quadrature.}
+  {plots/2d_wave_solution_m_length_newton_res/maxofmlengtherrormaxesvsmeanminofnewtonresiduals.pdf}
+  \caption{Corrolation between maximum (over all nodes and all time steps) error of nodal magnetisation lengths and the mean (over time) converged Newton residual norm in the 2D wave example solved using adaptive IMR and nodal quadrature.}
   \label{fig:ml-error-2d-nodal-newton-tests}
 \end{figure}
 
 
 \begin{figure}
   \centering
-  \includegraphics[width=0.8\textwidth] {images/placeholder}
-  \caption{Corrolation between error in energy and largest maximum Newton residual after convergence in the undamped 2D wave example solved using adaptive IMR and nodal quadrature.}
+  \includegraphics[width=0.8\textwidth]
+  {plots/2d_wave_solution_energy_newton_res/maxofenergychangevsmeanminofnewtonresiduals.pdf}
+  \caption{Corrolation between the maximum (over time) of the error in energy and mean (over time) converged Newton residual norm in the undamped 2D wave example solved using adaptive IMR and nodal quadrature.}
   \label{fig:energy-error-2d-nodal-newton-tests}
 \end{figure}
 
 
 \subsection{Triangular meshes}
 
-??ds sort this out?
+Finally we show some anomalous results when similar problems to the above are run using a mesh consisting of triangular elements.
+The structure of the mesh is equivalent to the square element case except that each element is divided diagonally to give triangular elements.
+We use Neumann boundary conditions and $\happ = [0, 0, 1.1]$ similarly to \cref{sec:2d-wave-results-cons-prop}, with all other parameters as described in \cref{sec:wave-problem-definition}.
+
+The results on conservation of $\abs{\mv}$ are shown in \cref{fig:ml-error-triangle-mesh}
+We see that the $\abs{\mv}$ conservation property of IMR with nodal quadrature fails.
+The results on conservation of energy with $\dampc = 0$ are shown in \cref{fig:energy-error-triangle-mesh}, a similar lack of the expected conservation properties can be observed.
+Other experiments show this issue for a variety of other cases, including 3D problems with tetrahedral elements.
+We do not have an explanation for this effect.
+
+
+\begin{figure}
+  \centering
+  \includegraphics[width=0.8\textwidth]{plots/2d_wave_solution_m_length_triangles/mlengtherrormaxesvstimes.pdf}
+  \caption{Evolution of the maximum error of nodal magnetisation lengths with various time integrators and quadratures using a mesh of triangular elements.}
+  \label{fig:ml-error-triangle-mesh}
+\end{figure}
+
+\begin{figure}
+  \centering
+  \includegraphics[width=0.8\textwidth]{plots/2d_wave_solution_energy_triangles/absofenergychangevstimes.pdf}
+  \caption{Evolution of the maximum error of nodal magnetisation lengths with various time integrators and quadratures using a mesh of triangular elements.}
+  \label{fig:energy-error-triangle-mesh}
+\end{figure}
 
 
 \subsection{Conclusions}
 
+We have shown that all of the methods used have the expected convergence and time step selection properties.
+The asymptotic accuracy of the BDF2 method is somewhat lower than the TR or IMR methods.
+The geometric properties of IMR with nodal integration do not appear to have a major impact for this example, in fact there is a slight decrease in accuracy likely due to the lower accuracy of the nodal quadrature.
+
 We have shown that the conservation properties of IMR persist in a weak form FEM model when used with a nodal quadrature scheme and certain meshes.
-??ds triangle mesh?
+We have also shown that this conservation is linked to the accuracy of the non-linear solver, as predicted in \cref{sec:nodal-integration}.
+
+Finally we have shown an example of a problem where our implementation of IMR with nodal quadrature \emph{does not} give the expected geometric integration properties when used with a mesh of triangular elements, but we cannot explain these results.
+
+
 
 
 % Don't allow floats from last section into this one
@@ -237,7 +352,7 @@ The TR, BDF2 and IMR adaptive time integration schemes (see \cref{sec:adapt-impl
 Re-normalisation of the magnetisation is also tested for the BDF2 and TR schemes.
 
 
-A structured mesh is used consisting of cuboid elements is used due to the simple geometry of the problem.
+A structured mesh consisting of cuboid elements is used due to the simple geometry of the problem and the fact that we have observed issues with geometric integration on tetrahedral elements.
 In the $z$ direction (out of the thin film plane) a single layer of elements is used at all refinements.
 This is the standard approach, and is expected to give acceptable resolution because the exchange length of the material (the length scale over which the magnetisation can vary) is around twice the thickness.
 The number of elements along the $x$ and $y$ axes, denoted $n_x$ and $n_y$, is varied but the ratio is fixed as $n_x = (500/125) n_y$ so that the element edge lengths in each direction are identical.
@@ -260,17 +375,23 @@ The time integrator history data is then set such that it ``has been in this sta
 The relevant applied field as specified in the problem is then set and the simulation is continued.
 The initial condition is always generated using the same numerical methods as are used in the simulation.
 
+Note that with $\dampc = 1$ the time scale for the magnetisation to fully relax is $\sim 1$, \footnote{This is because full relaxation with $\dampc = 1$ takes one precession cycle and our time units are normalised to the time for a precession cycle driven by a field of strength $M_s$.} with $\dampc \sim 0.01$ the time scale is $\sim 1000$ (see \eg \cref{fig:imr-llg-ode}).
+So the simulated time allowed for relaxation to the initial condition is sufficiently long to be considered ``slow'' despite the fact that it is much shorter than the simulated time for the dynamics calculations.
+
+
 
 ??ds mention that LL form of LLG is used for explicit step in IMR, mention CG + ... solver, diagonal mass matrix with nodal integration, .... Or move elsewhere?
 
 
 
 
-\subsection{Results}
+\subsection{General results}
 
+For this problem we find that without either re-normalisation or geometric integration the time steps selected by the adaptive algorithms become unacceptably small.
+Hence these cases were not run until completion and are not included in the results.
+% ??ds do proper analysis of this if time? haha..
 
-??ds turns out that non-conserving, non-renormalising causes major problems: error estimates are v. large and sticks at low step sizes or fails utterly
-??ds do proper analysis of this if time?
+In \cref{fig:intial-mumag4} we show the initial S-state, as generated by ??ds.
 
 \begin{figure}
   \centering
@@ -279,6 +400,15 @@ The initial condition is always generated using the same numerical methods as ar
   \label{fig:intial-mumag4}
 \end{figure}
 
+Next we show the results required for the standard problem: the mean magnetisation for the two fields in \cref{fig:nmag-comparison-mumag4-field1,fig:nmag-comparison-mumag4-field2}.
+The results agree well with each other, and with the results obtained by other finite element methods, as shown in ??ds.
+
+The same plots also show the time step selection behaviour.
+During relaxation: large value initially, decreasing as the field decreases and the relaxation happens, then very large once the field is gone.
+During the dynamics: reasonably large value initially, decreasing around the time of the first switch then steadily increasing as the oscillations are damped out.
+The behaviour for the second field is essentially the same.
+
+??ds different step sizes with nnode during final relax, not sure why
 
 \begin{figure}
   \centering
@@ -297,8 +427,8 @@ The initial condition is always generated using the same numerical methods as ar
   \label{fig:nmag-comparison-mumag4-field2}
 \end{figure}
 
-??ds blow up of $m_y$ at time where it is dodgy?
-
+??ds
+Also the state of the system at the time when $m_x$ crosses zero for field 2 is shown in \cref{fig:mumag4-spatial-x-crossing-0}.
 
 \begin{figure}
   \centering
@@ -308,11 +438,10 @@ The initial condition is always generated using the same numerical methods as ar
 \end{figure}
 
 
-
 Since the second field gives a more challenging test, for the rest of the results we only show that field.
 
-First we plot a comparison of the magnetisation generated using IMR, nodal integration and monolithic or decoupled approach.
-\Cref{fig:mumag4-spatial-x-crossing-0} shows the results, kind of different?
+We show a comparison of the magnetisation generated using IMR, nodal integration and monolithic or decoupled approach in \cref{fig:mumag4-spatial-x-crossing-0}.
+The dynamics are very similar but the monolithic method is able to take larger time steps and suffers from less noise in the step selection during the initial relaxation.
 \begin{figure}
   \centering
   \includegraphics[width=0.8\textwidth]{plots/monolithic_vs_decoupled/meanmxsvs-meanmysvs-meanmzsvs-dtsvstimes.pdf}
@@ -323,7 +452,6 @@ First we plot a comparison of the magnetisation generated using IMR, nodal integ
 
 The maximum (over space) error in the magnetisation length vs time for decoupled and implicit methods are shown in \cref{fig:mumag4-implicit-decoupled}.
 As expected both coupling approaches and all numbers of nodes conserve $\abs{\mv}$ to around the Newton tolerance.
-The increase in error with more nodes is likely to be due to the increase in error accumulation because of larger numbers of calculations ??ds.
 \begin{figure}
   \centering
   \includegraphics[width=0.8\textwidth]{plots/mumag4_ml/mlengtherrormaxesvstimes.pdf}
@@ -332,6 +460,10 @@ The increase in error with more nodes is likely to be due to the increase in err
 \end{figure}
 
 
+The behaviour of the energy when $\dampc = 0$ is shown in \cref{fig:energy-conservation}.
+It can be seen that neither the monolithic or decoupled methods give the hoped-for conservation behaviour.
+From various other experiments we have drawn the conclusion that this occurs when the magnetostatic calculations are introduced, but we are not sure of the cause.
+It should be noted that in the results presented by d'Aquino \cite{DAquino2005} the energy conservation is not as good as would be expected with a Newton tolerance of $10^{-14}$, so it is possible that there is a real problem here.
 
 \begin{figure}
   \centering
@@ -342,9 +474,8 @@ The increase in error with more nodes is likely to be due to the increase in err
 
 
 
-
 Finally we examine the effectiveness of the linear solver for the monolithic method.
-The iterations needed for convergence are shown in \cref{fig:mumag4-solver-iterations}, note that while they are growing with $\Nn$ they remain reasonable for the sizes required here.
+The iterations needed for convergence are shown in \cref{fig:mumag4-solver-iterations}, note that while they increase with the number of nodes, $\Nn$, they remain reasonable for the sizes required here.
 The time taken to set up the preconditioner is displayed in \cref{fig:mumag4-solver-time}, again it grows with the number of nodes but remains reasonable for all cases shown here.
 Also note that with nodal quadrature the preconditioner is cheaper to set up but also less effective, to counteract this a higher level of fill-in could be used with nodal quadrature.
 
@@ -367,20 +498,13 @@ Also note that with nodal quadrature the preconditioner is cheaper to set up but
 ??ds characterise number of newton steps?
 
 
-??ds total solve time? will be dominated by BEM multiplication... meaningless
-
-
+We do not explore the total solve time of the various methods because, due to the lack of hierarchical matrices and the extremely large number of boundary nodes, the solve times are dominated by the BEM matrix and are meaningless for problems to which the FEM/BEM method is useful.
 
 
 \subsection{Conclusions}
 
-Our method works, blah blah
-
-FD gives different results to FEM?
-
-Semi-implicit causes problems with TR stability, IMR energy conservation.
-
-
+Our methods give results for the \mumag problem \#4 which converge well and match up with the results of other FEM/BEM models.
+We observe the expected conservation of magnetisation length with IMR and nodal quadrature, but not the expected conservation of energy.
 
 
 %%% Local Variables:

@@ -103,6 +103,8 @@
 \newcommand{\intb}[1]{\intd[\boundd]{#1}}
 \newcommand{\intui}[2][x]{{\int_0^1 #2 \d{#1}}} % unit interval
 
+\newcommand{\intt}[1]{{\int_T {#1} \d t}}
+
 
 % Jacobian of transformation
 \newcommand{\jstox}{J}
@@ -248,7 +250,7 @@
 \newcommand{\Hsol}{\sob^1_D(\magd)}
 
 \newcommand{\krylov}{\mathcal{K}}
-\DeclareMathOperator{\span}{span}
+\DeclareMathOperator{\spanop}{span}
 
 
 
@@ -554,13 +556,17 @@
 \newcommand{\myerr}{\mathcal{E}}
 
 % switching time error
-\newsubcommand{\swtimeerr}{\mathcal{E}}{\tau}
+\newsubcommand{\swtimeerr}{\myerr}{\tau}
 
 % ode m error
-\newsubcommand{\merr}{\mathcal{E}}{\mv}
+\newsubcommand{\merr}{\myerr}{\mv}
 
-% pde m error
-\newsubcommand{\errmpde}{\myerr}{\mv}
+% pde m error, captions hate \newsubcommand for some reason so just use
+% newcommand
+\newcommand{\errmpde}{\myerr{}_{\mv}}
+
+\newcommand{\errphase}{\myerr_p}
+\newcommand{\errmz}{\myerr_{m_z}}
 
 
 

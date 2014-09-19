@@ -1,0 +1,88 @@
+({
+'-driver' : ['llg'],
+'-tmax' : [500],
+
+'-mesh' : ['sq_mumag4_normalised'],
+'-h-app' : ['mumag4_field2'],
+'-initial-m' : 'xyz',
+'-damping' : [0],
+'-k1' : 0,
+'-relax-m-field' : "mumag4_initial_strong",
+
+
+'-ref' : [25],
+'-tol' : [1e-5],
+'-dt-initial' : [1e-4],
+'-max-dt' : 4.5, # cap dt so that gmres converges ok
+
+'-solver' : ['gmres'],
+'-hlib-bem' : 0,
+
+'-newton-tol': [1e-11],
+'-renormalise' : [-1],
+
+'-phi1-singularity-method' : 'pin',
+
+'-krylov-max-iter' : 200,
+},
+[
+    # imr
+    
+    # monolithic 
+    {'-ms-method' : ['implicit'],
+     '-matrix-type' : 'som',
+     '-prec' : 'som-main-block',
+     '-llg-prec' : 'ilu-1',
+         '-ts' : ["imr"],
+    '-quadrature' : ['lnodal'],
+    },
+
+    # decoupled
+    {'-ms-method' : ['decoupled'],
+     '-matrix-type' : 'cr',
+     '-prec' : 'ilu-1',
+     '-llg-prec' : 'dummy',
+         '-ts' : ["imr"],
+    '-quadrature' : ['lnodal'],
+    },
+
+# bdf2
+
+    # monolithic 
+    {'-ms-method' : ['implicit'],
+     '-matrix-type' : 'som',
+     '-prec' : 'som-main-block',
+     '-llg-prec' : 'ilu-1',
+         '-ts' : ["bdf2"],
+    '-quadrature' : ['gauss'],
+    },
+
+    # decoupled
+    {'-ms-method' : ['decoupled'],
+     '-matrix-type' : 'cr',
+     '-prec' : 'ilu-1',
+     '-llg-prec' : 'dummy',
+         '-ts' : ["bdf2"],
+    '-quadrature' : ['gauss'],
+    },
+
+    # tr
+
+        # monolithic 
+    {'-ms-method' : ['implicit'],
+     '-matrix-type' : 'som',
+     '-prec' : 'som-main-block',
+     '-llg-prec' : 'ilu-1',
+              '-ts' : ["tr"],
+    '-quadrature' : ['gauss'],
+    },
+
+    # decoupled
+    {'-ms-method' : ['decoupled'],
+     '-matrix-type' : 'cr',
+     '-prec' : 'ilu-1',
+     '-llg-prec' : 'dummy',
+         '-ts' : ["tr"],
+    '-quadrature' : ['gauss'],
+    },
+])

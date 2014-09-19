@@ -1096,7 +1096,7 @@ Hence the performance of a direct solver is much worse than for similar problems
 The first class of iterative methods for the solution of linear systems that we discuss are the Krylov solvers \cite[151]{Saad2000}.
 These methods are based on finding an approximation to the solution, $\xv$, in the sequence of Krylov subspaces of the matrix $\Am$:
 \begin{equation}
-  \krylov_m(\Am, \yv) = \span \set{\yv, \Am \yv, \Am^2\ym, \ldots, \Am^m\yv}.
+  \krylov_m(\Am, \yv) = \spanop \set{\yv, \Am \yv, \Am^2\yv, \ldots, \Am^m\yv}.
   \label{eq:96}
 \end{equation}
 Note that computing a basis for the next Krylov subspace $\krylov_{m+1}$ only requires a matrix vector product with the matrix $\Am$ applied to a basis vector of $\krylov_m$ (although in practice the simple basis in \cref{eq:96} is modified to improve the properties of the method).
