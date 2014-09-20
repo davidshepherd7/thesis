@@ -1,9 +1,7 @@
 
 * Write first drafts 
 ** Implementation of eBDF3 step
-LL, mass matrix solve, using BEM from m_n step, nodal quadrature => solve is trivial
-** Linear solvers intro
-** Newton-Raphson intro
+LL, mass matrix solve, using BEM from m_n step, nodal quadrature => solve is trivial 
 ** Numerical experiments chapter
 
 ** Introduction
@@ -41,6 +39,8 @@ The hope is that such methods will greatly reduce the /overall/ numerical error,
 
 * To read for Milan: 
 ** Appendices
+** Linear solvers intro
+** Newton-Raphson intro
 
 * To read for Jim + Matthias: 
 ** Linear systems
@@ -54,7 +54,7 @@ The hope is that such methods will greatly reduce the /overall/ numerical error,
 ** Update illustation in FEM section
 
 * Run computations
-** Wave solution over long time for convergence
+** DONE Wave solution over long time for convergence
 ** mumag4 with 0 damping for energy conservation
 but first experiment with energy conservation: can it work?
 ** wave solution on triangle mesh: non-conservation
