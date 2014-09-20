@@ -1,0 +1,37 @@
+({
+# Problem specification
+'-driver' : ['llg'],
+'-ms-method' : ['disabled'],
+'-mesh' : ['st_square', 'sq_square'],
+'-initial-m' : 'xy',
+'-h-app' : 'linear_z',
+'-damping' : [0, 0.01],
+'-tmax' : 5,
+'-scale' : 5,
+
+# Integration/calculation details
+'-tol' : [1e-5],
+'-dt-initial' : 1e-5,
+'-ref' : [4],
+'-newton-tol' : 1e-12,
+
+'-solver' : 'gmres',
+'-prec' : 'ilu-1',
+
+# Outputs
+'-doc-interval' : 0.01,
+},
+[
+    {
+        '-ts' : 'imr',
+        '-quadrature' : 'lnodal',
+        '-renormalise' : 0,
+    },
+
+    {
+        '-ts' : ['imr', 'tr', 'bdf2'],
+        '-quadrature' : 'gauss',
+        '-renormalise' : [0, 1],
+    },
+
+])

@@ -12,13 +12,13 @@
 
 '-ref' : [25],
 '-tol' : [1e-5],
-'-dt-initial' : [1e-4],
+'-dt-initial' : [0.01],
 '-max-dt' : 4.5, # cap dt so that gmres converges ok
 
 '-solver' : ['gmres'],
 '-hlib-bem' : 0,
 
-'-newton-tol': [1e-11],
+'-newton-tol': [1e-12],
 '-renormalise' : [-1],
 
 '-phi1-singularity-method' : 'pin',
@@ -34,7 +34,7 @@
      '-prec' : 'som-main-block',
      '-llg-prec' : 'ilu-1',
          '-ts' : ["imr"],
-    '-quadrature' : ['lnodal'],
+    '-quadrature' : ['lnodal', 'gauss'],
     },
 
     # decoupled
@@ -43,8 +43,10 @@
      '-prec' : 'ilu-1',
      '-llg-prec' : 'dummy',
          '-ts' : ["imr"],
-    '-quadrature' : ['lnodal'],
+    '-quadrature' : ['lnodal', 'gauss'],
     },
+
+    
 
 # bdf2
 
