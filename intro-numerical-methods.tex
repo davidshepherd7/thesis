@@ -28,7 +28,7 @@ Additionally in micromagnetic modelling the calculation of the magnetostatic fie
 If the integral form given in \cref{eq:Hmsint} is used then an additional integral evaluation method is needed to handle it.
 Alternatively, if the equivalent potential formulation \cref{eq:Hms,eq:cont-phi-bound} is used then the magnetostatic field calculation simply requires solving additional PDEs (although there are some issues with the application of the boundary condition at infinity, see \cref{sec:magstat-field-calc-pote}).
 
-It should be noted that not all methods fit into this framework of applying separate methods for each part of the problem, see \cref{sec:advanced-lin} for one example.
+It should be noted that not all methods fit into this framework of applying separate methods for each part of the problem, see \eg \cite{Alouges2006}.
 
 
 
@@ -898,18 +898,6 @@ In contrast to other time integration methods the result is independent of the o
 \end{figure}
 
 
-\subsection{Symplecity}
-
-??ds This section will probably not end up in the final thesis, although I'm a bit worried because it may turn out to be important and I don't understand it too well.
-However d'Aquino didn't do any experiments on this either, so I can probably get away with skipping it!
-
-The implicit midpoint rule with fixed step size is ``almost symplectic'' for the LLG equation with zero damping, , \ie the property equivalent to Hamiltonian flow for  dissipative systems is conserved up to $\order{??ds}$ \cite{DAquino2005} \cite{Austin1993}.
-
-It is well known that most adaptive schemes are not symplectic \cite[91]{Iserles2009} because they constantly change the ``nearby Hamiltonian'' that is followed by the symplectic integrator.
-Therefore the adaptive IMR is not expected to have the almost-symplectic property discussed in \cref{??ds}.
-
-??ds short discussion, future work?
-
 \subsection{Conclusions}
 
 In the previous sections we have highlighted a number of interesting properties of the implicit midpoint rule.
@@ -1155,10 +1143,6 @@ For example, by removing or eliminating blocks the preconditioner can be solved 
 Then the inverse of the diagonal blocks can then be approximated using known effective preconditioners for the equivalent single-physics problem.
 In \cref{sec:solution-strategies} we introduce such a preconditioning approach for the solution of the LLG-magnetostatics system.
 
-% Some work has been done on preconditioning for the LLG by Suess et. al. \cite{Suess2002}.
-% Also Banas et. al. \cite{Banas2008} \cite{Banas2010} created a multigrid preconditioner for the Maxwell-LLG equation with a fixed point linearisation method (and their time step sizes are a factor of 20 smaller than a similar algorithm using a Newton-Raphson linearisation on the same problem).
-
-% ??ds Should I mention how to solve mass matrices? -- diagonal preconditioning? \cite{Wathen1987a}
 
 
 \subsection{Multigrid methods}
@@ -1231,10 +1215,6 @@ Additionally the derivations in \cref{sec:proof-magn-length-ode-imr-llg,sec:proo
 In contrast to this, many existing models use an explicit approximation to the magnetostatic field in order to avoid including a dense contribution due to the long-range magnetostatic interactions\footnote{At least a dense sub-block arises from all accurate and commonly used magnetostatic calculation methods, in particular: FEM/BEM, FFT and FMM. See \cref{sec:magn-field-calc} for more details.} in the non-linear solve.
 Unfortunately, in this case the energy properties will be lost due to the replacement of $\hopb{\mpm}$ by an alternative approximation (in a similar way to the semi-explicit modification of IMR).
 However, the magnetisation length property will be retained because it only relies on $\mv$ itself being calculated implicitly, and not the effective field.
-
-% ??ds goes in somewhere?
-% However when using this method the adaptive time step calculation must be done specially (\ie not using normal adaptivity) since the system of equations contains no information on the magnetostatic field \cite{Schrefl1997}.
-% Also stability is no longer guaranteeded because an ad-hoc modification to the time integration method.
 
 One way to allow a completely implicit treatment of the magnetostatic field without a dense contribution was explored by d'Aquino \cite{DAquino2005}.
 He used a quasi-Newton method where the dense contribution was simply left out of the Jacobian matrix.
