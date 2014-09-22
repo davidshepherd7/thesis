@@ -2,56 +2,52 @@
 \chapter{Introduction}
 \label{sec:introduction}
 
-There are many technologically important applications of magnetism, particularly in the area of magnetic data storage.
-It is extremely desirable to be able to accurately model systems involving magnetic materials for both research and product design purposes.
-However this can be challenging because of the complex behaviour of magnetic materials.
-There are many sources of this complexity, for example:
-\begin{itemize}
-\item Many competing factors affect the behaviour of the magnetisation in different ways. Examples include: magnetostatic fields, external fields, anisotropy effects, exchange effects and temperature.
+There are many technologically important applications of magnetic materials, particularly in the area of data storage in hard disk drives.
+There are also some promising areas for future technologies such as microwave oscillators and RAM in which the data is stable over long periods of time.
+As such it is extremely desirable to be able to accurately model systems involving magnetic materials for both research and product design purposes.
 
-\item These factors can operate on very different length scales.
-  For example, exchange effects are very strong at very small distances but quickly disappear at larger distances, whereas magnetostatic fields can act (albeit weakly) over interstellar distances!
-\end{itemize}
-
-The use of fundamental physical models (such as density functional theory) to predict the behaviour of magnetic systems is difficult due to the complexity of modelling quantum mechanical effects on the scales required.
+The use of fundamental physical models (such as density functional theory) to predict the behaviour of magnetic systems is extremely computationally expensive due to the difficulty of modelling quantum mechanical effects on the scales required.
 As such theory known as micromagnetics is widely used to model magnetic materials \cite{Coey2010} \cite{Kronmuller2003}.
-In micromagnetics a continuum approximation is used -- we assume that everything can be modelled using continuous functions of space and time (the contribution due to individual atoms is averaged out).
+In micromagnetics a continuum approximation is used -- we assume that everything can be modelled using continuous functions of space and time (\ie the contribution due to individual atoms is averaged out).
 Also a semi-classical approximation is used: effects which are quantum mechanical in origin, such as the exchange interaction, are approximated using classical physics.
-Finally a number of effects causing energy loss in the system are modelled by a single damping term with an empirically determined strength.
+Finally a number of different effects causing energy loss in the system are modelled by a single damping term with an empirically determined strength.
 
 Micromagnetic models are extremely useful for investigations into the behaviour of magnetic systems as evidenced by the large number of citations for micromagnetics packages such as NIST's \texttt{OOMMF} \cite{oommf-website}.
 Additionally the list of customers using SuessCo's \texttt{FEMME} package \cite{suessco-website} contains (along with other companies) all major hard disk drive manufacturers, indicating that micromagnetic models are heavily used in the development of hard disk drives.
 
 Micromagnetic models can be broadly split into two categories: energy based models and dynamic models.
-Energy based models aim to find stable minimum energy states for the system.
-Dynamic models simulate the evolution of the magnetisation over time.
+Energy based models aim to find stable minimum energy states for the system whereas
+dynamic models simulate the evolution of the magnetisation over time.
+Dynamic models require the solution of a differential equation, known as the Landau-Lifshitz-Gilbert equation (LLG).
 
 \section{Aims}
 
-In this thesis we study numerical methods with the final goal of more reliable and efficient dynamic micromagnetics simulations.
+In this thesis we study numerical methods with the final goal of finding more reliable and efficient methods for dynamic micromagnetics simulations.
 In particular we focus on methods which improve the efficiency of so-called Geometric integration methods.
-Such methods are able to retain important properties of the starting differential equation in the approximate solution.
+Geometric integration methods are able to retain important qualitative properties of a differential equation in the approximate solution generated using numerical techniques.
 In other areas such methods have been shown to greatly reduce the overall build-up of numerical errors \cite[77]{Iserles2009}.
-This should allow either more accurate results at the same computational cost, or the use of coarser approximations (reducing the computational cost) without loss of accuracy.
+This allows either more accurate results at the same computational cost, or the use of coarser approximations (reducing the computational cost) without loss of accuracy.
 
 In particular we focus mainly on a widely known time integration scheme with geometrical integration properties when applied to dynamic micromagnetics calculations: the implicit midpoint rule.
+We also focus on methods in which spatial discretisation is handled using the finite element method, such methods are well suited to the study of nano-structured materials.
+
 
 
 \section{Contents of thesis}
 
-The first two chapters \cref{sec:cont-micromag,sec:numer-meth-micr} comprise a basic introduction to micromagnetic models and the numerical methods applied.
-In particular \cref{sec:time-discretisation} contains a detailed description of the properties of a selection of time integration schemes, including geometric integration properties.
-\Cref{sec:galerk-meth-llg} gives a more detailed introduction to the finite element method, including a description of how it can be applied to micromagnetics simulations.
-The chapter ends with a discussion of how the basic finite element method can be extended to allow the geometric integration properties to be maintained.
-
+The first two chapters \cref{sec:cont-micromag,sec:numer-meth-micr} comprise a basic introduction to micromagnetic models and the numerical methods commonly applied.
+In particular \cref{sec:time-discretisation} contains a detailed description of the properties of a selection of time integration schemes.
+\Cref{sec:galerk-meth-llg} gives a more detailed introduction to the finite element method, including a description of how it can be applied to dynamic micromagnetics simulations.
+The chapter ends with a discussion of how the basic finite element method can be extended to retain the geometric integration properties of them implicit midpoint rule.
 \Cref{sec:hybr-finit-elem} introduces the hybrid FEM/BEM method, a widely used technique for the accurate calculation of magnetostatic fields.
 
-The next chapters contain the research contribution of this thesis.
-First \cref{sec:solution-strategies} contains the beginnings of an efficient technique for the solution of linear systems resulting from the application
+The later chapters contain the research contribution of this thesis.
+\Cref{sec:solution-strategies} describes efficient techniques for the solution of the coupled systems resulting from the use of FEM/BEM magnetostatics calculations with a dynamic micromagnetic problem.
+In particular we introduce techniques which reduce the development of an efficient solver for a monolithically coupled model to the development of an efficient solver for the LLG alone.
+Such a coupling strategy is required to retain the geometric integration properties of the implicit midpoint rule.
 
-\Cref{sec:adaptive-imr} describes a novel adaptivity algorithm for the implicit midpoint rule, applicable to the solution of any differential equation.
-To our knowledge this is the first such algorithm.
-The same chapter also contains numerous numerical experiments demonstrating its effectiveness on a number of ordinary differential equation problems.
+In \cref{sec:adaptive-imr} we introduce a novel adaptivity algorithm for the implicit midpoint rule which is applicable to the solution of any differential equation, to our knowledge this is the first such algorithm.
+The same chapter also contains numerous numerical experiments demonstrating its effectiveness on a number of ordinary differential equation problems and the geometric integration properties when applied to the LLG.
 
 In the final two chapters we present a number of numerical experiments using the entirety of the model developed in this thesis.
 In \cref{cha:numer-experiments} the model is validated against a number of problems.
