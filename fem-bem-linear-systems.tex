@@ -174,6 +174,8 @@ An outline of the algorithm for the step from time $t_n$ to $t_{n+1}$ is as foll
 \item Calculate $\phim_{n+1}$ everywhere using the Dirichlet boundary conditions given by 4. and $\mv_{n+1}$ (a Poisson solve).
 \end{enumerate}
 Note that we use an extrapolation of the magnetostatic potential, $\phim$, to $t_{n+1}$ rather than computing it using a step of an explicit time integration scheme because there is no time derivative in the equations for $\phim$.
+A similar method without the extrapolation step been used previously, see \eg \cite{Schrefl1997}.
+
 
 Alternatively we could take an explicit step of the LLG and use the result to calculate $\hat{\phim}_{n+1}$.
 Inside an adaptive time integration scheme the explicit step used to estimate the local truncation error could be reused for this purpose.
