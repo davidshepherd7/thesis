@@ -2,50 +2,65 @@
 \chapter{Introduction}
 \label{sec:introduction}
 
-An important practical application of magnetism is in the area of magnetic data storage. Hard disk drives and tapes both use the magnetisation of magnetic particles deposited on their surface to store binary encoded data. In the past 30 years the storage capacity of hard disk drives has grown even faster than the often cited Moore's law which predicts transistor density growth on semiconductor chips. \cite{McDaniel2005} However for such growth to continue new technologies will soon be needed. %% due to the trilemma of magnetic data storage, as discussed in \cref{sec:trilemma}.
-Two promising technologies are heat assisted recording and bit patterned media.
-
-It is extremely desirable to be able to accurately model systems involving magnetic materials for both research and product design purposes. However this can be challenging because of the complex behaviour of magnetic materials. There are many sources of this complexity, for example:
+There are many technologically important applications of magnetism, particularly in the area of magnetic data storage.
+It is extremely desirable to be able to accurately model systems involving magnetic materials for both research and product design purposes.
+However this can be challenging because of the complex behaviour of magnetic materials.
+There are many sources of this complexity, for example:
 \begin{itemize}
 \item Many competing factors affect the behaviour of the magnetisation in different ways. Examples include: magnetostatic fields, external fields, anisotropy effects, exchange effects and temperature.
 
-\item These factors can operate on very different time and distance scales. For example, exchange effects are very strong at very small distances but quickly disappear at larger distances, whereas magnetostatic fields can act (albeit comparatively weakly) over interstellar distances.
-
-\item Determining the behaviour of magnetisation is almost always a fully three dimensional problem (unlike electrostatics which can often be reduced to a one-dimensional problem).
+\item These factors can operate on very different length scales.
+  For example, exchange effects are very strong at very small distances but quickly disappear at larger distances, whereas magnetostatic fields can act (albeit weakly) over interstellar distances!
 \end{itemize}
 
-The use of fundamental physical models (such as density functional theory) to predict the behaviour of magnetic systems is difficult due to the complexity of modelling quantum mechanical effects. As such a phenomenological theory known as micromagnetics is commonly used to model magnetic materials \cite{Coey2010} \cite{Kronmuller2003}. In micromagnetics a continuum approximation is used -- we assume that everything can be modelled using continuous functions of space and time (the contribution due to individual atoms is averaged). Additionally a number of effects causing energy loss in the system are lumped together into a single damping term, simplifying the model greatly. This, however requires an empirically determined damping constant.
+The use of fundamental physical models (such as density functional theory) to predict the behaviour of magnetic systems is difficult due to the complexity of modelling quantum mechanical effects on the scales required.
+As such theory known as micromagnetics is widely used to model magnetic materials \cite{Coey2010} \cite{Kronmuller2003}.
+In micromagnetics a continuum approximation is used -- we assume that everything can be modelled using continuous functions of space and time (the contribution due to individual atoms is averaged out).
+Also a semi-classical approximation is used: effects which are quantum mechanical in origin, such as the exchange interaction, are approximated using classical physics.
+Finally a number of effects causing energy loss in the system are modelled by a single damping term with an empirically determined strength.
 
-Micromagnetic models are extremely useful for investigations into the behaviour of magnetic systems as evidenced by the large number of citations for micromagnetics packages such as NIST's \texttt{OOMMF} \cite{oommf-website}. Additionally the list of customers using SuessCo's \texttt{FEMME} package \cite{suessco-website} contains (along with other companies) all major hard disk drive manufacturers, indicating that micromagnetic models are heavily used in the development of hard disk drives. However currently existing models are inadequate for the modelling of heat assisted recording and are often not optimally efficient for the modelling of bit patterned media.
+Micromagnetic models are extremely useful for investigations into the behaviour of magnetic systems as evidenced by the large number of citations for micromagnetics packages such as NIST's \texttt{OOMMF} \cite{oommf-website}.
+Additionally the list of customers using SuessCo's \texttt{FEMME} package \cite{suessco-website} contains (along with other companies) all major hard disk drive manufacturers, indicating that micromagnetic models are heavily used in the development of hard disk drives.
 
-%% In this report we first give a summary of the ``trilemma'' problem currently facing magnetic recording, and how it was last overcome by transitioning from longitudinal to perpendicular recording in \cref{sec:trilemma} and \ref{sec:long-perp-record}. We next give an overview of micromagnetic models, methods previously used and the rationale behind the specific methods chosen for this project (\cref{sec:cont-micromag} and~\ref{sec:numer-meth-micr}). We then give an introduction to two commonly used methods of spatial discretisation -- the finite difference and finite element methods in \cref{sec:intr-finite-ele-diff}). Sections~\ref{sec:galerk-meth-llg} and \ref{sec:hybr-finit-elem} give a detailed description of the application of the discretisation methods to the continuous mathematical model. \cref{sec:impl-test} gives a short discussion of the implementation details and some basic tests demonstrating that the model works as expected. Finally \cref{sec:current-progress} and \ref{sec:objectives} discuss the progress made so far and the future objectives of my project.
-
+Micromagnetic models can be broadly split into two categories: energy based models and dynamic models.
+Energy based models aim to find stable minimum energy states for the system.
+Dynamic models simulate the evolution of the magnetisation over time.
 
 \section{Aims}
 
-blah blah fem + imr popular, convergence proofs, not widely used -- impractical?
+In this thesis we study numerical methods with the final goal of more reliable and efficient dynamic micromagnetics simulations.
+In particular we focus on methods which improve the efficiency of so-called Geometric integration methods.
+Such methods are able to retain important properties of the starting differential equation in the approximate solution.
+In other areas such methods have been shown to greatly reduce the overall build-up of numerical errors \cite[77]{Iserles2009}.
+This should allow either more accurate results at the same computational cost, or the use of coarser approximations (reducing the computational cost) without loss of accuracy.
 
-
-So make some practical improvements! Adaptivity + solvers
-
-
-\section{Novel results}
-
-Main results:
-\begin{itemize}
-\item Problem independent adaptive implicit midpoint rule
-\item Efficient monolithic solution of FEM/BEM problems
-\item Analysis of mesh induced stiffness in LLG and FEM/BEM problems
-\end{itemize}
-
-Smaller:
-\begin{itemize}
-\item Numerical integration of FEM/BEM integrals
-\item Numerical experiments on effectiveness of geometric with IMR and weak form
-\end{itemize}
+In particular we focus mainly on a widely known time integration scheme with geometrical integration properties when applied to dynamic micromagnetics calculations: the implicit midpoint rule.
 
 
 \section{Contents of thesis}
+
+The first two chapters \cref{sec:cont-micromag,sec:numer-meth-micr} comprise a basic introduction to micromagnetic models and the numerical methods applied.
+In particular \cref{sec:time-discretisation} contains a detailed description of the properties of a selection of time integration schemes, including geometric integration properties.
+\Cref{sec:galerk-meth-llg} gives a more detailed introduction to the finite element method, including a description of how it can be applied to micromagnetics simulations.
+The chapter ends with a discussion of how the basic finite element method can be extended to allow the geometric integration properties to be maintained.
+
+\Cref{sec:hybr-finit-elem} introduces the hybrid FEM/BEM method, a widely used technique for the accurate calculation of magnetostatic fields.
+
+The next chapters contain the research contribution of this thesis.
+First \cref{sec:solution-strategies} contains the beginnings of an efficient technique for the solution of linear systems resulting from the application
+
+\Cref{sec:adaptive-imr} describes a novel adaptivity algorithm for the implicit midpoint rule, applicable to the solution of any differential equation.
+To our knowledge this is the first such algorithm.
+The same chapter also contains numerous numerical experiments demonstrating its effectiveness on a number of ordinary differential equation problems.
+
+In the final two chapters we present a number of numerical experiments using the entirety of the model developed in this thesis.
+In \cref{cha:numer-experiments} the model is validated against a number of problems.
+Additionally the convergence and geometric integration properties of a variety of time integration schemes are compared for these problems.
+In \cref{cha:stiffn-llg-equat} the comparative efficiency of two classes of time integration schemes (implicit and explicit) are compared for an example problem across a range of spatial discretisation length.
+
+\Cref{cha:analyt-solut-land} contains a description of two analytical solutions to the LLG equation which have proven very useful in the verification of our implementation.
+The other appendices contain technical details of some derivations.
+
 
 %%% Local Variables:
 %%% mode: latex
