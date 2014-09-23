@@ -5,36 +5,35 @@
 When testing numerical methods for differential equations it is very helpful to be able to compare the results with known analytical solutions.
 \Thisref{cha:analyt-solut-land} contains some solutions useful for this purpose.
 
-\section{Ellipsoidial nano-particle solution}
+\section{Ellipsoidial nano-particle}
 
-In a 2000 paper \cite{Mallinson2000} Mallinson gives an analytical equation for the time taken for magnetisation to ``switch'' from one polar angle (angle to the field axis) to another.
-He also gives the azimuthal angle (the angle around the field axis) rotated through during this switching.
+In a 2000 paper \cite{Mallinson2000} Mallinson gives an analytical equation for the time taken for magnetisation to ``switch'' from one polar angle (angle to the $z$-axis) to another.
+He also gives the azimuthal angle (the angle ``around the $z$-axis'') rotated through during this switching.
 
-The conditions for this model to apply are:
+The conditions for the model to apply are:
 \begin{enumerate}
-\item Constant applied field.
-\item ``Infinite'' exchange field (\ie particle is sufficiently small that the exchange field dominates and the magnetisation is uniform).
-\item Uniaxial anisotropy.
-\item Prolate ellipsoidal particle (to have a simple analytical magnetostatic field)
-\item All effective fields along the same axis.
+\item A sufficiently small particle that the exchange field dominates and the magnetisation is uniform.
+\item Constant applied field aligned with the $z$-axis.
+\item Uniaxial magnetocrystalline anisotropy: $\Hca = \frac{2 K}{\mu_0 M_s} \bigb{\Mv \cdot \unitz} \unitz$.
+\item A prolate ellipsoidal particle aligned with the $z$-axis.
 \end{enumerate}
 
-Let $\theta_1$, $\theta_2$ be the initial and final angles between the field axis and the magnetisation (\ie initial and final polar angles in the spherical polar coordinate system with the field axis as the main axis).
-Let $H_k$ be the combined anisotropy field: $H_k = \frac{2 K}{M_s} + M_s(N_\perp - N_\parallel)$ where $N$ is the demagnetisation tensor of the ellipsoid.
-All other symbols have their usual meanings.
-Then the time taken to switch from $\theta_1$ to $\theta_2$ is
+Let $\theta_1$, $\theta_2$ be the initial and final angles between the $z$-axis and the magnetisation (\ie initial and final polar angles in the spherical polar coordinate system with the field axis as the main axis).
+Let $H_k$ be the combined anisotropy field strength: $H_k = \frac{2 K}{M_s} + M_s(N_\perp - N_\parallel)$ where $N$ is the demagnetisation tensor of the ellipsoid and all other symbols have their usual meanings.
+Then the time taken to switch from $\theta_1$ to $\theta_2$ is given by
 \begin{equation}
-  \tau = \frac{\dampc^2 +1}{\gymagc \dampc} \frac{1}{H^2 - H_k^2}
-  \bigb{ H \ln \bigs{ \frac{\tan(\theta_2/2)}{\tan(\theta_1/2)} }
-       + H_k \ln \bigs{ \frac{H - H_k \cos\theta_1}{H - H_k \cos\theta_2} }
-       + H_k \ln \bigs{ \frac{\sin\theta_2}{\sin\theta_1} }
-     }.
+  \begin{aligned}
+    \tau = \frac{\dampc^2 +1}{\gymagc \dampc} \frac{1}{H^2 - H_k^2} \Bigg(
+      H &\ln\bigs{ \frac{\tan(\theta_2/2)}{\tan(\theta_1/2)} }
+      + H_k \ln\bigs{ \frac{H - H_k \cos\theta_1}{H - H_k \cos\theta_2} } \\
+      &+ H_k \ln\bigs{ \frac{\sin\theta_2}{\sin\theta_1} } \Bigg).
+  \end{aligned}
 \label{eq:80}
 \end{equation}
 
 The azimuthal angle precessed through during this switching is
 \begin{equation}
-  \phi = \frac{-1}{\dampc} \ln \bigs{ \frac{\tan(\theta_2/2)}{\tan(\theta_1/2)} }.
+  \phi = - \frac{1}{\dampc} \ln \bigs{ \frac{\tan(\theta_2/2)}{\tan(\theta_1/2)} }.
 \end{equation}
 
 Note that this is not really a true analytical solution to the Landau-Lifshitz-Gilbert equation:
@@ -49,11 +48,11 @@ This is discussed in \cref{sec:aimr-llg-problem-definition}.
 \label{sec:wave-like-solution}
 
 These solutions are taken from \cite{Jeong2014}, \cite{Fuwa2006}, the solution appears to have been originally published in \cite{Lakshmanan1976} in a more abstract form.
-For most parameters the solution is just a wave-like excitation in $m_x(\xv, t)$ and $m_y(\xv, t)$ whose oscillations are damped towards a uniform $m_z = \pm 1$ state over time.
-As far we are aware this is the only exact solution of the LLG equation with the exchange effective field which has non-trivial $\xv$ dependence.
+For most parameters the solution is just a wave-like excitation in $m_x(\xv, t)$ and $m_y(\xv, t)$ whose oscillations are damped towards a uniform state $m_z = \pm 1$.
+This is the only exact solution of the LLG equation with the exchange effective field which has non-trivial $\xv$ dependence, to the best of our knowledge.
 
-For an infinite magnetic domain (\ie using periodic boundary conditions) of dimension $D$ choose some constant $c \in \real$ and $\kvec \in \real^D$.
-Write
+For an infinite magnetic domain (\ie using periodic boundary conditions) of spatial dimension $D$ choose constants  $c \in \real$ and $\kvec \in \real^D$.
+We denote
 \begin{equation}
   \begin{aligned}
     \that(t) &= \frac{t}{1 + \dampc^2}, \\
@@ -77,16 +76,14 @@ The rescaling of time given by $\that(t)$ is needed to convert from a solution o
 
 The function $d(t)$ is a normalisation parameter to keep $\abs{\mv(\xv, t)} = 1$ everywhere.
 To see this: note that $\sin^2(c) \cos^2\bigb{f(\xv)} + \sin^2(c) \sin^2\bigb{f(\xv)} = \sin^2(c)$, hence the length contribution of the combined $x$ and $y$ terms is $\sin^2(c)$.
-
 The vector $\kvec$ is the wave vector, it determines the direction and speed of propagation of the wave.
-
 The parameter $c$ represents in some way the fraction of the initial magnetisation which takes part in the oscillations.
 If $c = 0$ then $m_x, m_y = 0$ and there is no wave.
 
 \begin{figure}
   \centering
   \includegraphics[width=0.8\textwidth]{plots/wave_exact_solution_parameters/exact_solution_parameters.pdf}
-  \caption{One dimensional wave solution values over time at $x=0$ with $k = 2\pi$, $\dampc = 0.05$ and various $c$ well away from $\frac{\pi}{2}$.}
+  \caption{Magnetisation values over time at $x=0$ for the one dimensional wave solution with $k = 2\pi$, $\dampc = 0.05$ and various $c$ (taken well away from $\frac{\pi}{2}$).}
   \label{fig:wave-solution-vary-c}
 \end{figure}
 
@@ -95,8 +92,8 @@ As $c$ increases the initial value of $m_z$ decreases and the amplitude of the o
 
 As $c$ approaches $\frac{\pi}{2}$ the behaviour becomes more complex, this is shown in \cref{fig:wave-solution-vary-c-complex}.
 Essentially there is an additional initial exponential decay towards a state with moderate $m_z$ after which the dynamics are similar to the case for lower $c$.
-At $c=\frac{\pi}{2}$ then $\mv(\xv, t)= (\cos(\kv\cdot\xv), \sin(\kv\cdot\xv), 0)$ and there are no dynamics.
-Above $c=\frac{\pi}{2}$ the initial $m_z$ goes negative and the behaviour is symmetrical with that below $c=\frac{\pi}{2}$
+At $c=\frac{\pi}{2}$ then $\mv(\xv, t)= (\cos(\kv\cdot\xv), \sin(\kv\cdot\xv), 0)$ and there is no dynamical behaviour.
+Above $c=\frac{\pi}{2}$ the initial $m_z$ becomes negative and the behaviour is symmetrical with that below $c=\frac{\pi}{2}$
 
 \begin{figure}
   \centering
@@ -114,9 +111,9 @@ In the limit of $\dampc \goesto 0+$ the solution becomes \cite{Fuwa2006}:
     m_z &= \cos(c).
   \end{aligned}
 \end{equation}
-This is just a simple wave in space and time.
+This is just a simple periodic wave in space and time.
 
-Note that the behaviour in higher dimensions is essentially the same as the 1D behaviour shown here except that the direction of propagation is in the direction described by the vector $\kv$.
+Note that the behaviour in higher dimensions is essentially the same as in 1D except that the direction of propagation is in the direction described by the vector $\kv$.
 
 
 

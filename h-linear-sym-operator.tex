@@ -9,32 +9,33 @@
 \chaptermark{Effective field operator}
 \label{sec:properties-of-field-operators}
 
-In \thisref{sec:properties-of-field-operators} we show some properties of the effective field operator that are used elsewhere in this thesis.
-It seems likely that these properties could be proven for a general effective field using only the definition \cref{eq:62}, but we have not managed to find such a proof.
+In \thisref{sec:properties-of-field-operators} we show some properties of the effective field operator that are used in \cref{sec:energy-cons}.
+It seems possible that these properties could be proven for a general effective field using only the definition \cref{eq:62}, but we have not managed to find such a proof.
 
 \section{Linear Symmetrical operator}
 \label{sec:linear-symm-field-operators}
 
-An operator is linear if
+An operator $\lop$ is linear if
 \begin{equation}
   \lop[\av + c\bv] = \lop[\av] + c\lop[\bv].
 \end{equation}
-The vector Laplace, magnetostatic field and magnetocrystalline anisotropy operators are all easily seen to be linear because they involve only derivatives, integrals and dot products with other vectors (all linear) of the vector function that they operate on.
+The vector Laplace, magnetostatic field and magnetocrystalline anisotropy operators are all easily demonstrated to be linear because they involve only linear operations, such as derivatives, integrals and dot products.
 
-An operator is symmetrical if
+An operator $\lop$ is symmetrical if
 \begin{equation}
   \ip{\lop \av}{\bv} = \ip{\av}{\lop \bv},
 \end{equation}
 for all functions $\av, \bv \in $ in some function space on the real numbers where $\ip{\cdot}{\cdot}$ is defined.
 
-In \thisref{sec:linear-symm-field-operators} we make heavy use of a consequence of the divergence theorem:
+In \thisref{sec:linear-symm-field-operators} we frequently make use of a consequence of the divergence theorem:
 \begin{equation}
   \intd{\fv(\xv) \cdot \grad \gf(\xv)}
-  = \intb{\gf(\xv) \, (\fv(\xv) \cdot \nv)} - \intd{\gf(\xv) \, \div \fv(\xv)}.
+  = \intb{\gf(\xv) \, (\fv(\xv) \cdot \nv(\xv))} - \intd{\gf(\xv) \, \div \fv(\xv)},
   \label{eqn:grad-divergence}
 \end{equation}
+where $\fv : \real^d \rightarrow \real^d$ and $\gf : \real^d \rightarrow \real$.
 
-Note that by substituting $\fv = \grad \ff$ we can derive
+Note that by substituting $\fv = \grad \ff$ into \cref{eqn:grad-divergence} we can derive
 \begin{equation}
   \begin{aligned}
     \intd{(\lap \ff) \gf}
@@ -46,20 +47,20 @@ Note that by substituting $\fv = \grad \ff$ we can derive
 
 \subsection{Applied field}
 
-The applied field part of the effective field is \emph{not} linear or symmetrical because it is independent of $\mv$.
+The applied field part of the effective field is in general \emph{not} linear or symmetrical because it is independent of $\mv$.
 
 \subsection{Vector Laplace operator}
 
 \begin{theorem}
-  If $\lop$ is a symmetric operator on $m \in \ltwo$ then so is its ``vector equivalent'', $\bar{\lop}[\mv] = \threevec{\lop m_0}{\lop m_1}{\lop m_2}$.
+  If $\lop$ is a symmetric operator on $v \in \ltwo$ then so is its ``vector equivalent'', $\bar{\lop}[\vv] = \threevec{\lop v_1}{\lop v_2}{\lop v_3}$.
 \end{theorem}
 
 \begin{proof}
   \begin{equation}
     \begin{aligned}
       \ip{\bar{\lop}\av}{\bv} &= \intd{ \bar{\lop} \av \cdot \bv}, \\
-      &= \intd{\lop[a_0] b_0} + \intd{\lop[a_1] b_1} + \intd{\lop[a_2] b_2}, \\
-      & = \ip{\lop[a_0]}{b_0} + \ip{\lop[a_1]}{b_1} + \ip{\lop[a_2]}{b_2}.
+      &= \intd{\lop[a_1] b_1} + \intd{\lop[a_2] b_2} + \intd{\lop[a_3] b_3}, \\
+      & = \ip{\lop[a_1]}{b_1} + \ip{\lop[a_2]}{b_2} + \ip{\lop[a_3]}{b_3}.
     \end{aligned}
   \end{equation}
   So $\bar{\lop}$ is symmetrical if and only if $\lop$ is symmetrical.
@@ -81,36 +82,36 @@ The applied field part of the effective field is \emph{not} linear or symmetrica
   \end{equation}
 \end{proof}
 
-From these two theorems we see that our operator $\lap \mv$ is symmetrical. Note that this is \emph{not} automatically true when we have surface anisotropy or when the length of $\mv$ is not constant (because in either of these cases we do not necessarily have $\ddn{\mv} = 0$)!
-
-The Laplace operator is easily seen to be linear because it only involves derivatives.
+From these two theorems we see that the vector Laplacian operator $\lap$ is symmetrical.
+Note that the above does not include the case with surface anisotropy or when the length of $\mv$ is not constant because in either of these cases we do not necessarily have $\ddn{\mv} = 0$.
+The case with periodic boundary conditions is true by the combination of \cref{eq:93,eq:95}.
 
 
 \subsection{Magnetostatic field operator}
 
-For simplicity write
+For simplicity we write
 \begin{equation}
   \knl = \frac{1}{4\pi \abs{\xv - \xv'}}.
 \end{equation}
 
 \begin{theorem}[Symmetry of magnetostatic field operator]
-  If $\av, \bv \in \ltwo$ and $\grad \av, \grad\bv \in \ltwo$ then the operator
+  If $\av, \bv \in \ltwo$ and $\grad \av, \grad\bv \in \ltwo$  (\ie $\av, \bv \in \sob^1$) then the operator
   \begin{equation}
     \begin{aligned}
       \hmsop [\av](\xv) &= - \grad \phim[\av](\xv), \\
       &= -\grad \bigs{
               -\intd[\magd']{ \knl \grad' \cdot \av(\xv') }
               + \intd[\boundd']{\knl \av(\xv') \cdot \nv(\xv') }
-            }.
+            },
     \end{aligned}
   \end{equation}
-  is symmetrical.
+  where primes denote another set of coordinates, is symmetrical.
   %% Do we also need some properties on k? Is k in ltwo -- yes int(k) something like [1/x]form -inf to inf = 0
 \end{theorem}
 
 \begin{proof}
 
-  Essentially we just apply identity~\cref{eqn:grad-divergence}, rearrange the result using the symmetry of the kernel, $\knl$, and apply the identity again in reverse. We drop the $\xv$ argument from $\phim$ where it is obvious.
+  Essentially we apply identity~\cref{eqn:grad-divergence}, rearrange the result using the symmetry of the kernel, $\knl$, and apply the identity again in reverse. We drop the $\xv$ argument from $\phim$ where it is obvious.
 
   Using~\cref{eqn:grad-divergence} we get
   \begin{equation}
@@ -145,12 +146,10 @@ Changing the order of the integrals gives (since $\av$, $\bv$ and their derivati
 
 \end{proof}
 
-Note that this is a property of the operator itself and so holds regardless of the method used to calculate the field.
-
 
 \subsection{Magnetocrystalline anisotropy}
 
-Here we only examine the case of uniaxial anisotropy
+Here we only examine the case of uniaxial anisotropy as it is the most technologically relevant
 \begin{equation}
   \hca[\mv] = \kone (\mv \cdot \ev) \ev.
 \end{equation}
@@ -172,31 +171,27 @@ A useful relationship between the effective field and the energy is:
 \begin{equation}
   \begin{aligned}
     \hop[\mv] &=  \lap \mv + \hms + \hca, \\
-    \frac{-1}{2} \ip{\mv}{\hop[\mv]} &= \frac{-1}{2} \intd{\mv \cdot
-      \hop[\mv]} = \e,
+    -\frac{1}{2} \ip{\mv}{\hop[\mv]} &= - \frac{1}{2} \intd{\mv \cdot
+      \hop[\mv]} = \e.
   \end{aligned}
 \end{equation}
-(note that this does not include the applied field energy).
+Note that this does not include the applied field energy.
 
-For the magnetostatic field this is obvious from the definition of $\ems$.
+For the magnetostatic field this relationship is obvious from the definition of $\ems$, \cref{eq:nd-e-ms}.
 For a uniaxial magnetocrystalline anisotropy effective field the derivation is very simple:
 \begin{equation}
-  \frac{-1}{2} \intd{\bigb{\kone (\mv \cdot \ev) \ev} \cdot \mv} =  \frac{-\kone}{2}\intd{(\mv \cdot \ev)^2} = \eca.
+  - \frac{1}{2} \intd{\bigb{\kone (\mv \cdot \ev) \ev} \cdot \mv} =  - \frac{\kone}{2}\intd{(\mv \cdot \ev)^2} = \eca.
 \end{equation}
 
-For the exchange effective field we use, from \cref{eq:93}, that
+For the exchange effective field we use \cref{eq:93} to obtain
 \begin{equation}
-  \intd{a \lap  b} = \intb{b \ddn{a}} - \intd{\grad a \cdot \grad b},
+  -\frac{1}{2} \intd{\mv \cdot \lap  \mv} = -\frac{1}{2} \intb{\mv \cdot \ddn{\mv}} + \frac{1}{2}  \intd{\grad \mv : \grad \mv}.
 \end{equation}
-and so
+Then applying Neumann or periodic boundary conditions on $\mv$ gives the result
 \begin{equation}
-  \frac{-1}{2} \intd{\mv \cdot \lap  \mv} = \frac{-1}{2} \intb{\mv \cdot \ddn{\mv}} + \frac{1}{2}  \intd{\grad \mv : \grad \mv}.
+  -\frac{1}{2} \intd{\mv \cdot \lap \mv} = \frac{1}{2} \intd{(\grad \mv)^2} = \eex.
 \end{equation}
-Then using the Neumann boundary condition on $\mv$, \cref{eq:94}, gives the result
-\begin{equation}
-  \frac{-1}{2} \intd{\mv \cdot \lap \mv} = \frac{1}{2} \intd{(\grad \mv)^2} = \eex.
-\end{equation}
-Alternatively, with periodic boundary conditions, the boundary integral is zero due to opposite sides of the boundary having equal $\mv$ and $\dmdn$ except for the opposite sign of $\nv$ (as in \cref{eq:95}).
+% Alternatively, with periodic boundary conditions, the boundary integral is zero due to opposite sides of the boundary having equal $\mv$ and $\dmdn$ except for the opposite sign of $\nv$ (as in \cref{eq:95}).
 
 
 
