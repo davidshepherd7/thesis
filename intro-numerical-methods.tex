@@ -1158,20 +1158,22 @@ The second observation is that many of the low frequency errors can be converted
 So by solving the problem on a sequence of meshes all frequencies of error except for the very lowest can be treated effectively using only cheap relaxation methods.
 The lowest frequency errors can be well represented on a very coarse grid (\ie a very small linear system), and so can be cheaply corrected for using a direct solve.
 
-Typical multigrid solvers work use something similar to the following algorithm:
-\begin{itemize}
-\item Start with initial guess on the real mesh
-\item Apply a few iterations of a relaxation method
-\item Project the solution onto a coarser mesh
-\item Apply a few iterations of a relaxation method
-\item Project the solution onto a coarser mesh \\
-  $\vdots$
-\item On the coarsest mesh solve the solution directly
-\item Project the solution onto a finer mesh
-\item Apply a few iterations of a relaxation method \\
-  $\vdots$
-\item End with solution on the real mesh
-\end{itemize}
+Typical multigrid solvers use something similar to the following algorithm:
+
+\begin{algorithm}[H]
+Start with initial guess on the real mesh\;
+Apply a few iterations of a relaxation method\;
+Project the solution onto a coarser mesh\;
+Apply a few iterations of a relaxation method\;
+Project the solution onto a coarser mesh\;
+\qquad $\vdots$\\
+On the coarsest mesh solve the solution directly\;
+Project the solution onto a finer mesh\;
+Apply a few iterations of a relaxation method\;
+\qquad $\vdots$\\
+End with solution on the real mesh\;
+\end{algorithm}
+
 The details of the relaxation method used, the projection between meshes, the selection of coarse meshes, the exact order/number of repeats of the above cycle etc. all depend on the exact variant of the multigrid method used.
 
 It turns out that for certain problems multigrid solvers can achieve computation times which scale as $\order{N \log N}$, \ie their performance does not severely degrade as the number of nodes in the mesh is increased.

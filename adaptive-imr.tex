@@ -276,13 +276,17 @@ However for PDE solvers, and in particular for PDE solvers using iterative metho
 \subsection{The complete algorithm}
 
 Assuming that we have values for $\yv_n$, $\yv_{n-1}$, $\yv_{n-2}$ (these can be obtained \eg by doing a few steps of fixed step IMR) then an outline of the final adaptive IMR algorithm is as follows:
-\begin{enumerate}
-\item Calculate $\yv_{n+1}^\ebdf$ from $\yv_n$, $\yv_{n-1}$, $\yv_{n-2}$ using eBDF3, \cref{eqn:ebdf-coeffs}.
-\item Calculate $\yv_{n+1}$ from $\yv_n$ using IMR, \cref{eq:67} (along with some linear/non-linear solver as appropriate).
-\item Calculate $\dtx{n+1}$ from $\yv_{n+1}^\ebdf$, $\yv_{n+1}$ and $\dtn$ using
-  \cref{eq:next-step-dt}.
-\item If $t > t_{\text{max}}$ then stop, otherwise set $n := n+1$ and go to step 1.
-\end{enumerate}
+
+\begin{algorithm}[H]
+  Set initial conditions and time\;
+  \While{ $t \leq t_{\text{max}}$}{
+    Set $t := t + \dtn$\;
+    Calculate $\yv_{n+1}^\ebdf$ from $\yv_n$, $\yv_{n-1}$, $\yv_{n-2}$ using eBDF3, \cref{eqn:ebdf-coeffs}\;
+    Calculate $\yv_{n+1}$ from $\yv_n$ using IMR, \cref{eq:67}, along with some linear/non-linear solver as appropriate\;
+    Calculate $\dtx{n+1}$ from $\yv_{n+1}^\ebdf$, $\yv_{n+1}$ and $\dtn$ using
+  \cref{eq:next-step-dt}\;
+}
+\end{algorithm}
 
 Steps 1 and 2 are interchangeable, but in some cases the value $\yv_{n+1}^\ebdf$ may be useful as an initial guess for the calculation of $\yv_{n+1}$.
 

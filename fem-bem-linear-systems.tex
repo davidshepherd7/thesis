@@ -164,15 +164,15 @@ The idea is to use implicit calculations for the LLG parts as normal, but to tre
 The resulting scheme then only requires independent calculations of the magnetostatic field and the magnetisation as described in \cref{sec:llg-only-system}.
 Since the magnetostatic fields are typically much weaker than the exchange field we hope that the stability of the scheme will not be greatly reduced.
 
-An outline of the algorithm for the step from time $t_n$ to $t_{n+1}$ is as follows:
-??MM write as formal algorithm?
-\begin{enumerate}
-\item Extrapolate the magnetostatic potential (using $\phim_n$, $\phim_{n-1}$) to time $t_{n+1}$, and call the result $\hat{\phim}_{n+1}$.
-\item Use the approximation $\hat{\phim}_{n+1}$ to calculate $\mv_{n+1}$ using an implicit time integration scheme (a non-linear solve of the $\Fm$ block).
-\item Calculate $\phione_{n+1}$ using $\mv_{n+1}$ (a Poisson solve).
-\item Use boundary values of $\phione_{n+1}$ to get $\phim_{n+1}$ on the boundary (a matrix-vector multiply with the BEM matrix).
-\item Calculate $\phim_{n+1}$ everywhere using the Dirichlet boundary conditions given by 4. and $\mv_{n+1}$ (a Poisson solve).
-\end{enumerate}
+An outline of the algorithm to compute the step from time $t_n$ to $t_{n+1}$ is as follows:
+\begin{algorithm}[H]
+  Extrapolate the magnetostatic potential (using $\phim_n$, $\phim_{n-1}$) to time $t_{n+1}$, call the result $\hat{\phim}_{n+1}$\;
+  Use $\hat{\phim}_{n+1}$ to calculate $\mv_{n+1}$ using an implicit time integration scheme (a non-linear solve of the $\Fm$ block)\;
+  Calculate $\phione_{n+1}$ using $\mv_{n+1}$ (a Poisson solve)\;
+  Use boundary values of $\phione_{n+1}$ to calculate the boundary values of $\phim_{n+1}$ (a matrix-vector multiply with the BEM matrix)\;
+  Calculate $\phim_{n+1}$ everywhere using these Dirichlet boundary conditions and $\mv_{n+1}$ (a Poisson solve)\;
+\end{algorithm}
+
 Note that we use an extrapolation of the magnetostatic potential, $\phim$, to $t_{n+1}$ rather than computing it using a step of an explicit time integration scheme because there is no time derivative in the equations for $\phim$.
 A similar method without the extrapolation step been used previously, see \eg \cite{Schrefl1997}.
 

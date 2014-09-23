@@ -521,13 +521,17 @@ It is likely that similar analytical results could be derived for each of these 
 As discussed in \cref{sec:bem-singularity} the integral $\bmint$ is non-singular, so no special techniques are needed for its integration (other than what is needed to attain good accuracy).
 As such an adaptive quadrature method can effectively calculate the integrals.
 We use a simple adaptive quadrature algorithm as follows:
-\begin{enumerate}
-\item Calculate the integral $\bmint$ with a quadrature of order $n_1$ to obtain $I_1$.
-\item Calculate the integral $\bmint$ with a quadrature of order $n_2$ to obtain $I_2$.
-\item If $\abs{\frac{I_1 - I_2}{I_2}} < \tolq$ then accept the result.
-\item Otherwise set $I_1 = I_2$, $n_2 = 2n_2$ and go back to step 2.
-\end{enumerate}
-The choice to double the quadrature order after each non-convergence in step 3 means that little time is wasted attempting to evaluate near-singular integrals with low order quadratures.
+
+\begin{algorithm}[H]
+  Calculate the integral $\bmint$ with a quadrature of order $n_1$ to obtain $I_1$\;
+  Calculate the integral $\bmint$ with a quadrature of order $n_2$ to obtain $I_2$\;
+  \While{$\abs{\frac{I_1 - I_2}{I_2}} \geq \tolq$}{
+    \nllabel{algo:next-quad} Set $I_1 = I_2$, $n_2 = 2n_2$\;
+    Calculate the integral $\bmint$ with a quadrature of order $n_2$ to obtain $I_2$\;
+  }
+\end{algorithm}
+
+The choice to double the quadrature order after each non-convergence in line~\ref{algo:next-quad} means that little time is wasted attempting to evaluate near-singular integrals with low order quadratures.
 
 It is possible to optimise this process by using a quadrature scheme which reuses the knots (\ie evaluation points) from the lower order calculations in the more accurate calculations, such as the Clenshaw-Curtis quadrature \cite{Trefethen2008}.
 However, for simplicity, we have not done this.
