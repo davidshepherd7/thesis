@@ -30,7 +30,7 @@ Firstly we consider the two linear systems solved in the magnetostatic field cal
 One efficent and robust method for solving Poisson systems on unstructured grids is to use the method of conjugate gradients (CG) with algebraic multigrid (AMG) as a preconditioner \cite{Henson2002}.
 
 Note that the Poisson blocks $\Am$ do not depend on $\phim$, $\phione$ or $\mv$ (\ie the Poisson problems are linear).
-This means that when solving these matrices the Newton-Raphson iteration is not required (or if used it will converge in a single iteration assuming that the linear solve is sufficiently accurate).
+This means that when solving these parts of the problem the Newton-Raphson iteration is not required (or if used it will converge in a single iteration assuming that the linear solve is sufficiently accurate).
 Also the $\Am$ matrices only depend on the geometry and so can be computed once and stored for reuse throughout the duration of the simulation (and similarly for the coarsening information required by the AMG preconditioner).
 
 
@@ -42,13 +42,13 @@ The first method used is a direct solve by LU decomposition.
 As discussed in \cref{sec:direct-methods} this method is extremely robust but is very slow for large matrices, particularly for problems in three spatial dimensions.
 
 The second method is to use a Krylov solver preconditioned by an incomplete LU decomposition (ILU), inspired by \cite{Suess2002}.
-This method is expected to be efficient for medium sized problems and/or small time steps, especially in 2D or thin film problems where there is less coupling FEM nodes.
+This method is expected to be efficient for medium sized problems and/or small time steps, especially in 2D or thin film problems where the FEM nodes are less coupled.
 However the effectiveness is strongly dependent on the diagonal dominance of the matrix.
 In particular as the volume of the elements decreases or the time step size increases the matrix will become less diagonally dominant and the effectiveness will decrease.
 Hence this method is not expected to scale optimally to fine meshes or to be robust with respect to varying parameters.
 
-Unfortunately we have not had time to research more effective solvers for the LLG system.
-% ??ds write something abount what these might be? block based AMG smoothers (as used for fixed point)? block preconditioners with AMG underlying? [Milan/Matthias: what's the big difference?]
+% Unfortunately we have not had time to research more effective solvers for the LLG system.
+% maybe write something abount what these might be? block based AMG smoothers (as used for fixed point)? block preconditioners with AMG underlying? [Milan/Matthias: what's the big difference?]
 
 \section{Solution of the coupled LLG-magnetostatics system}
 \label{sec:solut-coupl-syst}
@@ -64,8 +64,8 @@ However it also means that we are no longer using the time integration methods d
 The second approach, described in \cref{sec:fully-implicit-bem}, is to construct a linear solver which can efficiently handle the dense block.
 We present a novel solver which consists of a Krylov solver combined with a preconditioner and an efficient representation of the BEM block.
 This approach has the benefit that all of the properties of the original time integration schemes carry over to the coupled problem.
-In particular when using this approach the IMR retains the energy property described in \cref{sec:proof-energy-prop}, which is the most unique of its geometrical integration properties.\footnote{A number of integration schemes can obtain length conservation: Cayley transform methods \cite{Lewis2003}, semi-analytical methods \cite{Wiele2010} and various types of semi-implicit midpoint rule methods \cite{Spargo2003} \cite{Mentink2010} (including the one described in \cref{sec:semi-implicit-bem}).}
-Additionally it may be useful for stochastic problems (\ie when thermal fields are involved, see \cref{sec:temperature-effects}), in this case only a few time integration schemes are known to converge to the correct solution.
+In particular when using this approach the IMR retains the energy property described in \cref{sec:proof-energy-prop}, which is the most interesting of its geometrical integration properties.\footnote{A number of integration schemes can obtain length conservation: Cayley transform methods \cite{Lewis2003}, semi-analytical methods \cite{Wiele2010} and various types of semi-implicit midpoint rule methods \cite{Spargo2003} \cite{Mentink2010} (including the one described in \cref{sec:semi-implicit-bem}).}
+Additionally it may be useful for stochastic problems (\ie when thermal fields are involved, see \cref{sec:temperature-effects}), since in this case only a few time integration schemes are known to converge to the correct solution.
 The implicit midpoint rule is one of these schemes, but the semi-implicit modification is likely to remove this property \cite{DAquino2006}.
 
 Before describing these approaches in more detail, we briefly discuss the implementation of the monolithic coupling between the LLG and magnetostatic problems, and the structure of the resulting Jacobian.
@@ -74,7 +74,7 @@ Before describing these approaches in more detail, we briefly discuss the implem
 \label{sec:bem-jacobian-structure}
 
 As mentioned in \cref{sec:discretisation} the pair of potentials used in the FEM/BEM method is similar to that of the simplified magnetostatic potential discussed in \cref{sec:galerk-meth-llg}.
-There are two differences, the first is that there is no coupling from the auxiliary potential $\phione$ to the LLG equation, and hence no corresponding block in the full Jacobian.
+There are two differences: the first is that there is no coupling from the auxiliary potential $\phione$ to the LLG equation, and hence no corresponding block in the full Jacobian.
 
 The second difference is that there is an additional coupling between the boundary values of $\phione$ and the boundary values of $\phim$.
 This coupling between the BEM part (a collocation method) and the FEM part (a Galerkin method) is implemented using the following residual vector:
@@ -126,7 +126,7 @@ Combining the above with the Jacobian matrix as derived in \cref{sec:llg-magn-co
 where $\Abound = \pd{\phimh}{\phimdis_\boundd}$ is the Jacobian of the bulk $\phim$ values with respect to the boundary values.
 The order of blocks is $\mv$, $\phim$, $\phione$.
 The blocks corresponding to derivatives of the $\phim$ residual are broken into sub-blocks for the bulk and boundary values due to the BEM coupling.
-The overall Jacobian is a square matrix of size $\nrow = 5\Nn$, where $\Nn$ is the number of nodes.
+The overall Jacobian is a square matrix with number of rows $\nrow = 5\Nn$, where $\Nn$ is the number of nodes.
 The LLG block, $\Fm$, is of size $3\Nn\times 3\Nn$, the Poisson block, $\Amu$, is of size $\Nn \times \Nn$.
 The smaller Poisson block, $\Amm$, is of size $\Nbul \times \Nbul$, where $\Nbul$ is the number of bulk nodes.
 The identity and BEM matrices are of size $\Nb \times \Nb$, where $\Nb$ is the number of boundary nodes.
@@ -159,8 +159,8 @@ where $\resi$ is the vector of the current discrete Newton residuals for $\mv$, 
 \subsection{The semi-implicit approach}
 \label{sec:semi-implicit-bem}
 
-One approach to the solution of the linear system \cref{eq:87} is to break it into multiple decoupled systems.
-The idea is to use implicit calculations for the LLG parts as normal, but to treat the magnetostatic calculations explicitly.
+One approach, which avoids solving the complete non-linear system, is to break the monolithic system into multiple coupled but simpler problems.
+This can be achieved by using implicit calculations for the LLG parts as normal, but treating the magnetostatic calculations explicitly.
 The resulting scheme then only requires independent calculations of the magnetostatic field and the magnetisation as described in \cref{sec:llg-only-system}.
 Since the magnetostatic fields are typically much weaker than the exchange field we hope that the stability of the scheme will not be greatly reduced.
 
@@ -176,10 +176,9 @@ An outline of the algorithm to compute the step from time $t_n$ to $t_{n+1}$ is 
 Note that we use an extrapolation of the magnetostatic potential, $\phim$, to $t_{n+1}$ rather than computing it using a step of an explicit time integration scheme because there is no time derivative in the equations for $\phim$.
 A similar method without the extrapolation step been used previously, see \eg \cite{Schrefl1997}.
 
-
-Alternatively we could take an explicit step of the LLG and use the result to calculate $\hat{\phim}_{n+1}$.
-Inside an adaptive time integration scheme the explicit step used to estimate the local truncation error could be reused for this purpose.
-We have not experimented with this idea.
+% Alternatively we could take an explicit step of the LLG and use the result to calculate $\hat{\phim}_{n+1}$.
+% Inside an adaptive time integration scheme the explicit step used to estimate the local truncation error could be reused for this purpose.
+% We have not experimented with this idea.
 
 For step 1 of the algorithm we require a second order accurate extrapolation in order to ensure that the local truncation error of the overall time integration scheme remains second order.
 A simple second order extrapolation formula (based on Lagrange interpolation \cite[312]{Kincaid2002}) is
@@ -192,10 +191,9 @@ replacing differences in time with the appropriate time steps gives:
   \label{eq:66}
   \hat{\phim}_{n+1} = \frac{-\dtx{n+1}}{\dtn} \phim_{n-1} + \frac{\dtx{n+1} + \dtn}{\dtn} \phim_n.
 \end{equation}
-??MM wants Simo-Armero connection but I have no idea how that works...
 Note that if we are using the implicit midpoint rule we need to extrapolate $\phim$ to the midpoint rather than $t_{n+1}$, hence we use $\dtx{n+1} = \dtx{n+1} /2$ in the above equation.
 
-% ??ds write out LTE for this scheme somehow?
+%  write out LTE for this scheme somehow?
 
 Unfortunately this method requires two initial values for the magnetostatic potential values.
 The additional value can be generated by directly calculating the potential if the magnetisation values at two initial times are known.
@@ -243,7 +241,8 @@ The matrix-vector product can be computed as
 \ie the dense and sparse parts can be stored and used completely independently.
 
 This leads us to the second component of our method: the use of a hierarchical matrix format for the BEM block \cite{Borm2003,Forster2003,Knittel2011}.
-This format reduces the computational cost for a matrix-vector product for the dense block to $\order{\Nb \log \Nb}$.
+This format uses techniques similar to the fast multipole method to use computationally cheap (in both time and memory) but less accurate approximations to the matrix where possible, without compromising overall accuracy.
+It reduces the computational cost for a matrix-vector product with the dense block to $\order{\Nb \log \Nb}$.
 Since the number of boundary nodes $\Nb$ is typically less than the total number of nodes in the problem this can allow the cost of matrix-vector products of $\jac$ to be optimal (\ie $\order{\nrow}$) depending on the geometry.
 It also reduces the memory requirements for the block to $\order{\Nb \log \Nb}$.
 This introduces a small additional error, but it has been shown that the size of the error can be made significantly less than the FEM approximation error by choosing appropriate parameters \cite[77]{Knittel2011}.
@@ -259,7 +258,6 @@ Some approaches to constructing such a preconditioner will be discussed in the f
 
 In this section we give a number preconditioning approaches for the monolithic system with the Jacobian \cref{eq:16}.
 The aim is to construct a preconditioner which gives an approximately constant number of Krylov solver iterations independently of all problem and discretisation parameters but which is also quick to set up and does not consume a large quantity of memory.
-We make some progress towards this goal, but more research is still needed.
 
 The first preconditioner is very simple: we use a direct solve (using LU decomposition) of the sparse part of $\Jm$, \ie
 \begin{equation}
@@ -281,7 +279,7 @@ This issue can be resolved by using an outer Krylov solver known as Flexible GMR
 The second issue is that a full inner Krylov solve is run at \emph{every iteration} of the outer Krylov solve, which is computationally expensive compared to a standard preconditioner (but still cheaper than a direct solve for sufficiently large problems).
 However we are only interested in $\preca$ as a test of the effect of dropping the dense matrix on the iteration counts, hence we do not pursue this further.
 
-Our second and third preconditioners are more ambitious: motivated again by the fact that the magnetostatic field is usually significantly weaker than the exchange coupling we drop blocks an LLG-magnetostatics block in order to make the preconditioner block triangular.
+Our second and third preconditioners are more ambitious: motivated again by the fact that the magnetostatic field is usually significantly weaker than the exchange effective field we drop an LLG-magnetostatics coupling block in order to make the preconditioner block triangular.
 It can then be inverted by inverting only the diagonal blocks (exactly or approximately) and using block back/forward substitution.
 The two preconditioners, resulting from dropping different LLG-magnetostatics blocks, are:
 \begin{equation}
@@ -332,7 +330,7 @@ where we use $\inexact{x}$ to denote that the block is approximated iteratively 
 \end{equation}
 \ie only the Poisson block of $\Amm'$ is approximated by AMG, the rest can be solved by block back/forward substitution.
 
-As a final fully inexact preconditioner we try approximating the $\Fm$ block using ILU.
+As a final fully-inexact (\ie using only cheap approximations with iterative methods) preconditioner we try approximating the $\Fm$ block using ILU.
 However we should expect poor performance for large matrix sizes and time steps, similar to the case of pure-LLG solves preconditioned with ILU as discussed in \cref{sec:llg-only-system}.
 We define two fully-iterative preconditioners using this approximation in addition to the AMG approximation for the Poisson blocks discussed above:
 \begin{equation}
@@ -367,14 +365,14 @@ A comparison of the performance and stability of the monolithic and semi-implici
 \subsection{Problem definition and implementation details}
 
 In order to perform these experiments we need a representative example problem.
-We do not use the \mumag standard problem \#4 because the hybrid FEM/BEM method for magnetostatic calculations is particularly unsuited for such thin film problems (as discussed in \cref{sec:bound-elem-meth}).
-So the performance on the standard problem would likely be irrelevant for realistic problems using this method and the computational cost would be unnecessarily large.
+We do not use the \mumag standard problem \#4 because the hybrid FEM/BEM method for magnetostatic calculations is particularly ill-suited for such thin film problems (as discussed in \cref{sec:bound-elem-meth}).
+The performance on the standard problem would be irrelevant for realistic problems using this method and the computational cost would be unnecessarily large.
 
 Since the majority of practical FEM micromagnetics calculations are in three dimensions our test case should also be 3D.
 It also must have sharp corners or edges, in order to include any effect of near singular integrals in the FEM/BEM method.
 Based on these considerations we choose to test the solvers on an $L\times L \times L$ cube with $L=1$ exchange length.
 
-When testing solvers it is convenient to chose the initial condition such that non-trivial dynamics occur immediately and so relevant results can be obtained with only a single time step.
+When testing solvers it is convenient to chose the initial condition such that non-trivial dynamics occur immediately and relevant results can be obtained with only a single time step.
 As such the initial magnetisation is chosen to be
 \begin{equation}
   \mv_0(x, y, z) = \threevec{\sin(2\pi x/50) + \sin(2\pi y/50)}{\cos(2\pi x/50) + \cos(2 \pi y/50)}{1.0 - m_y - m_z}.
@@ -398,7 +396,7 @@ We use both the nodal quadrature discussed in \cref{sec:local-nodal-integr} and 
 Since the only effect of changing the time integration methods on the linear systems is a small change to the constant in the time derivative terms we only run experiments using IMR.
 
 The solvers are run both with and without the use of a hierarchical matrix representation for the dense $\Gm$ block.
-We use the \hlib library \cite{hlib-website} with patches from \nmag \cite{nmag-website} allowing a co-location BEM approach.
+We use the \hlib library \cite{hlib-website} with patches from \nmag \cite{nmag-website} allowing a collocation BEM approach.
 For compatibility with this library we use a tetrahedral mesh.
 We use the HCA II algorithm with parameters based on those used by Knittel \cite{Knittel2011}:
 $\epsilon_{ACA} = 10^{-5}$,
@@ -409,14 +407,14 @@ numerical quadrature order $q=3$.
 We also use adaptive recompression with $\epsilon = 10^{-3}$.
 
 The CG and GMRES solvers used are \oomph's built-in implementations with relative convergence tolerances of $10^{-8}$.
-No restarts and left preconditioning are used for GMRES to ensure reliable convergence and reliable residual norms.
+GMRES with no restarts and left preconditioning is used for to ensure reliable convergence and reliable residual norms.
 LU decomposition is implemented using the \superlu package \cite{superlu}.
 The AMG implementation used as a preconditioner for Poisson matrices/blocks is \hypre's BoomerAMG \cite{hypre}.
 One V(1,1) cycle with Gauss-Seidel smoothing, CLJP coarsening and a connection strength threshold of $0.7$ is used.
 The ILU preconditioner used for LLG matrices/blocks is \hypre's Euclid with one level of fill in and no drop tolerance (ILU without fill-in was also tried but was extremely ineffective).
 
 
-All experiments are run in serial on a desktop using an Intel Core i7-3820 processor running at 3.6GHz and with 16GB of RAM.
+All experiments are run in serial on a desktop computer with an Intel Core i7-3820 processor running at 3.6GHz and 16GB of RAM.
 
 
 \subsection{Results}
@@ -444,7 +442,8 @@ As with the iteration counts, the setup times become significantly larger as $\N
 
 
 Next we consider the monolithic system \cref{eq:16} solved using preconditioner $\preca$, recall that this uses a direct solve of the sparse part of the Jacobian.
-The iteration counts are shown in \cref{fig:its-p1-exact}, note that they are roughly independent of the number of nodes and vary only slightly with time step and the various other parameters.
+The iteration counts are shown in \cref{fig:its-p1-exact}.
+Note that they are roughly independent of the number of nodes and vary only slightly with time step and the various other parameters.
 However the preconditioner setup times, shown in \cref{fig:times-p1-exact}, rapidly increase with increasing matrix size as would be expected from a direct solve.
 Also, due to the direct solve, the memory usage of this preconditioner is large.
 Note that some data for the largest $\Nn$ are missing, this is because the memory required was more than the 16GB available.
@@ -474,8 +473,10 @@ Some data points for the largest $\Nn$ are missing due the LU factors requiring 
 Now we consider the partially-inexact preconditioners $\parinexact{\precb}$ and $\parinexact{\precc}$, which were designed to reduce the setup time and memory issues of $\preca$ by inverting part of the preconditioner approximately using iterative methods.
 The iteration counts are shown in \cref{fig:its-p23-exact}, we see that for both preconditioners the number of iterations increases only slightly as the number of nodes increases and that the various other parameters have little impact on their effectiveness.
 Also note that the iteration counts are not much larger than those of $\preca$.
-The preconditioner setup times are shown in \cref{fig:times-p23-exact}, they are significantly smaller than those in \cref{fig:times-p1-exact} but still grow unacceptably large due to the direct solve of the $\Fm$ block.
-Interestingly the use of nodal integration decreases the time required for the set of the preconditioner, this is likely due to the ``mass-lumping'' effect discussed in \cref{sec:local-nodal-integr}.
+The preconditioner setup times are shown in \cref{fig:times-p23-exact}.
+They are significantly smaller than those in \cref{fig:times-p1-exact} but still grow unacceptably large due to the direct solve of the $\Fm$ block.
+Interestingly the use of nodal integration decreases the time required for the setup of the preconditioner.
+This is likely due to the ``mass-lumping'' effect discussed in \cref{sec:local-nodal-integr}.
 However it does not decrease the time sufficiently for the preconditioner to be viable for practical usage on problems with number of nodes $\Nn \gtrsim 10^4$.
 Also of note is that, unlike $\preca$, the required LU decomposition fits within the 16GB of available memory for all parameters.
 
@@ -503,7 +504,7 @@ We cannot expect $\Nn$-independent results here, since even the simpler case of 
 The iteration counts shown in \cref{fig:its-p23-ilu1}, are as expected: low at first but becoming ineffective for large number of nodes $\Nn$.
 In particular, for the largest number of nodes GMRES did not converge within 400 iterations for any of the parameter sets.
 Also of note is the much larger variation of the iteration counts with the problem parameters even for the same problem size.
-However the preconditioner set up times, as shown in \cref{fig:times-p23-ilu1} are much better than when using the LU decomposition of the $\Fm$ block.
+However the preconditioner setup times, as shown in \cref{fig:times-p23-ilu1} are much better than when using the LU decomposition of the $\Fm$ block.
 
 % ??ds try to find/show parameter dependency: some iteration counts are ok!
 
@@ -551,7 +552,7 @@ We now compare the \emph{expected} performance of the fully implicit and decoupl
 
 First we examine the relative cost of the assembly of the Jacobian matrices and Newton residuals.
 As mentioned above the Jacobian matrices corresponding to linear equations are only dependent  on the geometry and so do not need to be recomputed at each Newton step.
-So the Poisson Jacobians and the LLG-Poisson coupling blocks, $\Qm$ and $\Pm$, (of \cref{eq:16}) do not need to be recomputed.
+So the Poisson Jacobians and the LLG-Poisson coupling blocks ($\Qm$ and $\Pm$ from \cref{eq:16}) do not need to be recomputed.
 This means that for both methods only assembly of the $\Fm$ block is required, and the computation time is identical.
 
 As an aside: the mass matrix blocks on the diagonal of $\Fm$ ($\Mm$ of \cref{eq:llg-jacobian}) are also linear.
@@ -573,10 +574,11 @@ Based on all these factors we can estimate that, with an effective preconditione
 
 \section{Conclusions and future work}
 
+Monolithic solvers are required for the energy property of IMR, as well as for various other useful properties of implicit time integration schemes.
 We have demonstrated that a fully implicit (monolithic) LLG-magnetostatics solver using GMRES with an effective preconditioner can have a computational cost per linear solve close to that of a semi-implicit method.
 The partially-inexact preconditioners $\parinexact{\precb}$ and $\parinexact{\precc}$ are able to reduce the iteration count of GMRES extremely effectively and almost independently of the number of nodes, but the set up cost is high for large matrices.
 However the fully-inexact equivalents, $\inexact{\precb}$ and  $\inexact{\preca}$, which use ILU(1) to approximate the LLG block are ineffective for more than a few thousand nodes (\ie matrices of size $\sim 10,000$).
-As such cheap, effective and mesh independent approximations for the LLG block, $\Fm$, are still needed for the monolithic block-preconditioned method discussed here to be effective on general large problems.
+Hence cheap, effective and mesh independent approximations for the LLG block, $\Fm$, are still needed for the monolithic block-preconditioned method discussed here to be effective on general large problems.
 
 We have also demonstrated solvers for a decoupled LLG block solve, for medium numbers of nodes it appears that ILU(1) is a good preconditioner for this case.
 However, the time integration properties of the semi-implicit scheme using this solve have yet to be seen.
