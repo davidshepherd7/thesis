@@ -202,7 +202,7 @@ Otherwise the first can be calculated from the initial condition and the potenti
 The linear and non-linear systems resulting from the application of this algorithm are exactly those discussed in \cref{sec:llg-only-system}.
 
 
-% ??ds mention semi-implicit + fixed point iteration approach? No one's ever used it in micromagnetics as far as I know.
+% could mention semi-implicit + fixed point iteration approach? No one's ever used it in micromagnetics as far as I know.
 
 
 \subsection{The monolithic approach}
@@ -354,9 +354,8 @@ We define two fully-iterative preconditioners using this approximation in additi
 \section{Numerical experiments}
 \label{sec:numer-exper-fem-bem-systems}
 
-% ??ds mean iterations to ``mean GMRES iterations''?
-% ??ds linear scale for problem size?
-% ??ds show full solver times? -- probably not interesting in general, but would be good to show at least one hlib vs dense...
+% linear scale for problem size for Milan?
+% show full solver times? -- probably not interesting in general, but would be good to show at least one hlib vs dense...
 
 We now test the performance and robustness of the linear solvers described in \thisref{sec:solution-strategies}.
 A comparison of the performance and stability of the monolithic and semi-implicit approaches (using the solvers developed here) will be performed in \cref{cha:numer-experiments}.
@@ -389,7 +388,7 @@ The problem geometry and initial conditions are illustrated in \cref{fig:cube-in
 
 
 We use a range of damping and anisotropy parameters: $\dampc = 0, 0.01, 1$, $\kone = 0, 0.1$.
- % ??ds I should really have done $L=1,10,100$ (equivalent to varying exchange coeff), do it if there's time.
+ % I should really have done $L=1,10,100$ (equivalent to varying exchange coeff), do it if there's time.
 We use zero applied field to avoid inducing accidental symmetries.
 Time steps of sizes $\dtn = 0.01, 0.1, 0.5, 1.0$ are chosen, and meshes with $\Nn= 71, 791, 5631, 42461$ nodes (note that the number of rows/columns in the Jacobian is roughly 5 times the number of nodes).
 We use both the nodal quadrature discussed in \cref{sec:local-nodal-integr} and a standard Gaussian quadrature.
@@ -506,7 +505,7 @@ In particular, for the largest number of nodes GMRES did not converge within 400
 Also of note is the much larger variation of the iteration counts with the problem parameters even for the same problem size.
 However the preconditioner setup times, as shown in \cref{fig:times-p23-ilu1} are much better than when using the LU decomposition of the $\Fm$ block.
 
-% ??ds try to find/show parameter dependency: some iteration counts are ok!
+% could try to find/show parameter dependency: some iteration counts are ok!
 
 \begin{figure}
   \centering
@@ -528,22 +527,11 @@ However the preconditioner setup times, as shown in \cref{fig:times-p23-ilu1} ar
   \label{fig:times-p23-ilu1}
 \end{figure}
 
-% ??ds Effect of HLib? If time do this later
+% Effect of HLib? If time do this later
 
 
-% ??ds if I get inner iteration preconditioner working then compare the total solve time for the semi-implicit method (with GMRES and ILU-1 preconditioning) and fully implicit method (with $\precb$, ILU-1 for the $\Fm$ block or maybe using BiCGstab for F?), both using HLib.
-
-
-% Results are shown in \cref{fig:times-semi-vs-fully-implicit}, the fully implicit method is a little slower but not horrible..
-% Note that in our current implementation the Jacobian assembly time for the fully implicit method is longer than that of the semi-implicit one, however this does not need to be the case with some simple optimisations discussed in \cref{sec:furth-optim-opport}.
-
-% \begin{figure}
-%   \centering
-%   \includegraphics[width=0.8\textwidth]{images/placeholder}
-%   \caption{}
-%   \label{fig:times-semi-vs-fully-implicit}
-% \end{figure}
-
+% if I get inner iteration preconditioner working then compare the total solve time for the semi-implicit method (with GMRES and ILU-1 preconditioning) and fully implicit method (with $\precb$, ILU-1 for the $\Fm$ block or maybe using BiCGstab for F?), both using HLib.
+% No chance of this now...
 
 \section{Outlook}
 \label{sec:furth-optim-opport}
