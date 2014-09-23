@@ -1052,13 +1052,11 @@ However for non-linear systems resulting from time integration we always have a 
 \section{Solution of sparse linear systems}
 \label{sec:solution-lin-sys}
 
-??ds other name for matrix (so that it doesn't clash with Poisson)?
-
 If we are using an implicit time integration scheme with the Newton-Raphson method for linearisation, then we are left with the problem of solving a sequence of sparse linear systems.
-Each of these linear systems can be stated as the problem: Given a sparse $\nrow \times \nrow$ matrix $\Am$ and a vector $\bv$, find $\xv$ such that
+Each of these linear systems can be stated as the problem: Given a sparse $\nrow \times \nrow$ matrix $\mat$ and a vector $\bv$, find $\xv$ such that
 \begin{equation}
   \label{eq:linear-system}
-  \Am \xv = \bv.
+  \mat \xv = \bv.
 \end{equation}
 This is a very widely studied problem, see for example \cite{Saad2000}, but efficient techniques for very large $\nrow$ (which corresponds to a large spatial problem and/or good spatial resolution) are complex and problem dependent.
 There are two general classes of method: direct methods and iterative methods.
@@ -1087,13 +1085,13 @@ Hence the performance of a direct solver is much worse than for comparable probl
 \label{sec:krylov-solvers}
 
 The first class of iterative methods for the solution of linear systems that we discuss are the Krylov solvers \cite[151]{Saad2000}.
-These methods are based on finding an approximation to the solution, $\xv$, in the sequence of Krylov subspaces of the matrix $\Am$:
+These methods are based on finding an approximation to the solution, $\xv$, in the sequence of Krylov subspaces of the matrix $\mat$:
 \begin{equation}
-  \krylov_m(\Am, \yv) = \spanop \set{\yv, \Am \yv, \Am^2\yv, \ldots, \Am^m\yv}.
+  \krylov_m(\mat, \yv) = \spanop \set{\yv, \mat \yv, \mat^2\yv, \ldots, \mat^m\yv}.
   \label{eq:96}
 \end{equation}
-Note that computing a basis for the next Krylov subspace $\krylov_{m+1}$ only requires a matrix vector product with the matrix $\Am$ applied to a basis vector of $\krylov_m$ (although in practice the simple basis in \cref{eq:96} is modified to improve the properties of the method).
-Hence constructing the subspace is computationally cheap for a sparse matrix $\Am$.
+Note that computing a basis for the next Krylov subspace $\krylov_{m+1}$ only requires a matrix vector product with the matrix $\mat$ applied to a basis vector of $\krylov_m$ (although in practice the simple basis in \cref{eq:96} is modified to improve the properties of the method).
+Hence constructing the subspace is computationally cheap for a sparse matrix $\mat$.
 At each iteration a new approximation to the solution in the space $\krylov_{m+1}$ is found by minimising some easy to calculate form of the error in the direction given by the new Krylov basis vector.
 
 The two Krylov solvers used in this thesis are the \emph{method of conjugate gradients} (CG) and the \emph{generalised minimum residual method} (GMRES).
@@ -1115,10 +1113,10 @@ However, for the solver to be efficient the number of iterations should be much 
 In order to achieve optimal performance we often instead solve a modified system of the form
 \begin{equation}
   \begin{aligned}
-    \Bm \xv &= \cv, \quad \Bm = \precond^{-1} \Am, \quad \cv = \precond^{-1} \bv,
+    \Bm \xv &= \cv, \quad \Bm = \precond^{-1} \mat, \quad \cv = \precond^{-1} \bv,
   \end{aligned}
 \end{equation}
-where $\precond$ is a \emph{preconditioner} which is chosen such that the the matrix $\precond^{-1} \Am$ has the required eigenvalue and eigenvector properties for rapid convergence.
+where $\precond$ is a \emph{preconditioner} which is chosen such that the the matrix $\precond^{-1} \mat$ has the required eigenvalue and eigenvector properties for rapid convergence.
 Since the preconditioner is applied at every step of the Krylov solve it should be computationally cheap to apply.
 The construction of a preconditioner which results in iteration counts independent of the matrix size while also being computationally cheap to set up and apply is a difficult and problem dependent task.
 In the next section we briefly discuss approaches for such preconditioners.
@@ -1144,7 +1142,7 @@ Another useful class of preconditioners are based on (algebraic) \emph{multigrid
 Multigrid-based preconditioners are highly effective for the preconditioning of linear systems arising from Poisson problems (\ie $\lap \phim(\xv) = f(\xv)$), and other similar problems \cite{Henson2002}.
 
 An interesting preconditioning approach for linear systems arising from PDEs containing multiple physical effects is \emph{block preconditioning}.
-This involves the division of the matrix $\Am$ into blocks corresponding to the different physical degrees of freedom.
+This involves the division of the matrix $\mat$ into blocks corresponding to the different physical degrees of freedom.
 A preconditioner can then be constructed by manipulating this matrix on the block level, typically based on the physics of the problem.
 For example, by removing or eliminating off-diagonal blocks the preconditioner can be solved by inverting the diagonal blocks and using block back/forward substitution.
 Then the inverse of the diagonal blocks can then be approximated using known effective preconditioners for the equivalent single-physics problem.
