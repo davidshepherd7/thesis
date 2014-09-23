@@ -2,10 +2,11 @@
 \chapter{Introduction}
 \label{sec:introduction}
 
+??ds lots more waffle about this stuff
 There are many technologically important applications of magnetic materials, particularly in the area of data storage in hard disk drives.
 There are also some promising areas for future technologies such as microwave oscillators and RAM in which the data is stable over long periods of time.
-As such it is extremely desirable to be able to accurately model systems involving magnetic materials for both research and product design purposes.
 
+It is extremely desirable to be able to accurately model systems involving magnetic materials for both research and product design purposes.
 The use of fundamental physical models (such as density functional theory) to predict the behaviour of magnetic systems is extremely computationally expensive due to the difficulty of modelling quantum mechanical effects on the scales required.
 As such theory known as micromagnetics is widely used to model magnetic materials \cite{Coey2010} \cite{Kronmuller2003}.
 In micromagnetics a continuum approximation is used -- we assume that everything can be modelled using continuous functions of space and time (\ie the contribution due to individual atoms is averaged out).
@@ -19,6 +20,9 @@ Micromagnetic models can be broadly split into two categories: energy based mode
 Energy based models aim to find stable minimum energy states for the system whereas
 dynamic models simulate the evolution of the magnetisation over time.
 Dynamic models require the solution of a differential equation, known as the Landau-Lifshitz-Gilbert equation (LLG).
+??ds mention stochastic-ness here?
+
+??ds mention limitations of current models? -- are there any limitations?...
 
 \section{Aims}
 
@@ -46,13 +50,13 @@ The later chapters contain the research contribution of this thesis.
 In particular we introduce techniques which reduce the development of an efficient solver for a monolithically coupled model to the development of an efficient solver for the LLG alone.
 Such a coupling strategy is required to retain the geometric integration properties of the implicit midpoint rule.
 
-In \cref{sec:adaptive-imr} we introduce a novel adaptivity algorithm for the implicit midpoint rule which is applicable to the solution of any differential equation, to our knowledge this is the first such algorithm.
+In \cref{sec:adaptive-imr} we introduce a novel adaptive algorithm for the implicit midpoint rule which is not specific to the LLG; to our knowledge this is the first such algorithm.
 The same chapter also contains numerous numerical experiments demonstrating its effectiveness on a number of ordinary differential equation problems and the geometric integration properties when applied to the LLG.
 
-In the final two chapters we present a number of numerical experiments using the entirety of the model developed in this thesis.
-In \cref{cha:numer-experiments} the model is validated against a number of problems.
+In the final two chapters we present a number of numerical experiments using the entirety of the models developed in this thesis.
+In \cref{cha:numer-experiments} the model is validated against a number of examples: a wave-like problem with an analytical solution, relaxation under a non-uniform field and the \mumag standard problem \#4.
 Additionally the convergence and geometric integration properties of a variety of time integration schemes are compared for these problems.
-In \cref{cha:stiffn-llg-equat} the comparative efficiency of two classes of time integration schemes (implicit and explicit) are compared for an example problem across a range of spatial discretisation length.
+In \cref{cha:stiffn-llg-equat} the comparative efficiency of two classes of time integration schemes (implicit and explicit) are compared for an example problem across a range of spatial discretisations.
 
 \Cref{cha:analyt-solut-land} contains a description of two analytical solutions to the LLG equation which have proven very useful in the verification of our implementation.
 The other appendices contain technical details of some derivations.

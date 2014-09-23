@@ -1,4 +1,4 @@
-\chapter{Numerical experiments}
+\chapter{Validation, convergence and conservation experiments}
 \label{cha:numer-experiments}
 
 In this section we apply the various numerical methods constructed throughout this thesis to some more realistic micromagnetics problems.
@@ -43,7 +43,7 @@ This allows us to explore the effects of the geometric integration properties of
 \label{sec:impl-deta}
 
 We use the finite element method as discussed in \cref{sec:galerk-meth-llg} to spatially discretise the LLG equation.
-Unless otherwise specified we use a mesh of square elements with $5 \times 2^4$ elements along each edge (\ie the number of nodes is $\Nn = ??ds$).
+Unless otherwise specified we use a mesh of square elements with $5 \times 2^4$ elements along each edge.
 For the evaluation of the resulting integrals both the nodal quadrature discussed in \cref{sec:local-nodal-integr} and standard Gaussian quadrature methods are used.
 
 For time integration the adaptive IMR, TR and BDF2 methods are used with a tolerance of $\toltt = 10^{-5}$ and an initial time step of $\dtn{0} = 10^{-5}$ (significantly smaller than the time step selected by an initial experimental run).
