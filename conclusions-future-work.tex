@@ -3,10 +3,33 @@
 
 \section{Conclusions}
 
-blah blah
+Introduced a complete FEM + NR + implicit time integration + FEM/BEM + linear solvers model.
+Validated on analytical solution
+Sort of validated on \mumag standard problem \#4
 
-??ds
+Found an effective preconditioner for the monolithically coupled LLG with FEM/BEM magnetostatics problem.
+Such coupling methods should be useful in getting energy conservation of IMR
+Also potential benefits over semi-implicit coupling for stochastic problems, stability.
 
+
+Invented generally applicable, efficient and effective adaptive IMR
+Shown that the adaptivity works well for a wide variety of ODE test cases
+Shown that the geometrical integration properties carry through in the ODE and PDE (without magnetostatics) cases
+
+Studied the performance of common implicit time integration schemes on some exact solutions.
+Found that BDF2 always worse than TR and IMR
+But analytical solutions too simple for analysis of geometric integration effects
+
+Studied effect of discretisation length on relative performance of implicit and explicit time integration methods (aka stiffness).
+Showed that stiffness in micromagnetics can arise from discretisation alone, more stiff for smaller edge lengths, as expected from classic PDE theory.
+Found that for simple problems explicit methods are sufficient, but there are many classes of problem where implicit methods are expected to be more efficient.
+Especially when FEM/BEM is introduced.
+
+
+Had some issues...
+Non-conservation of energy with magnetostatics -- almost certainly due to collocation BEM which results in a non-symmetric discrete operator.
+Non-conservation of magnetisation length on triangular meshes -- no idea where this could come from, need to test with other peoples code.
+Errors in field 2 of mumag, probably due to FEM/BEM difficulties with corner singularities
 
 \section{Future work}
 

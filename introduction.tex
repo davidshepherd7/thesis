@@ -2,8 +2,16 @@
 \chapter{Introduction}
 \label{sec:introduction}
 
+Ferromagnetism is ...
+
+gives a system with no moving parts but multiple stable states
+
+
 ??ds lots more waffle about this stuff
-There are many technologically important applications of magnetic materials, particularly in the area of data storage in hard disk drives.
+
+Due to this property there are many technologically important applications of ferromagnetic materials (referred to in this thesis as simply ``magnetic materials'').
+In particular in the area of data storage: the existence of multiple stable states is a prerequesite for data storage, but especially good because? easy to read + write at high speed?
+
 There are also some promising areas for future technologies such as microwave oscillators and RAM in which the data is stable over long periods of time.
 
 It is extremely desirable to be able to accurately model systems involving magnetic materials for both research and product design purposes.
@@ -20,7 +28,7 @@ Micromagnetic models can be broadly split into two categories: energy based mode
 Energy based models aim to find stable minimum energy states for the system whereas
 dynamic models simulate the evolution of the magnetisation over time.
 Dynamic models require the solution of a differential equation, known as the Landau-Lifshitz-Gilbert equation (LLG).
-??ds mention stochastic-ness here?
+More recently stochastic models have been studied as a means to introduce high temperature effects to dynamic models.
 
 ??ds mention limitations of current models? -- are there any limitations?...
 
@@ -48,7 +56,7 @@ The chapter ends with a discussion of how the basic finite element method can be
 The later chapters contain the research contribution of this thesis.
 \Cref{sec:solution-strategies} describes efficient techniques for the solution of the coupled systems resulting from the use of FEM/BEM magnetostatics calculations with a dynamic micromagnetic problem.
 In particular we introduce techniques which reduce the development of an efficient solver for a monolithically coupled model to the development of an efficient solver for the LLG alone.
-Such a coupling strategy is required to retain the geometric integration properties of the implicit midpoint rule.
+Such a coupling strategy is required to retain the geometric integration properties of the implicit midpoint rule, and may also be useful in the integration of the stochastic LLG.
 
 In \cref{sec:adaptive-imr} we introduce a novel adaptive algorithm for the implicit midpoint rule which is not specific to the LLG; to our knowledge this is the first such algorithm.
 The same chapter also contains numerous numerical experiments demonstrating its effectiveness on a number of ordinary differential equation problems and the geometric integration properties when applied to the LLG.
