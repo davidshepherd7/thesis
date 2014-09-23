@@ -1074,17 +1074,16 @@ Note that with this quadrature scheme we have that
 meaning that the mass matrix, \cref{eq:mass-matrix}, is diagonal.
 This makes the nodal quadrature scheme a form of \emph{mass-lumping} which is often used in the FEM in combination with explicit time integration to remove the requirement for a linear solve.
 
-
 \subsection{Conservation of $\abs{\mv}$}
 \label{sec:weak-cons-absmv}
 
-After minimising the norm of the discrete LLG residual with vector test functions by using the Newton-Raphson method (to tolerance $\ntol$) we have, for each $j$:
+After reducing the norm of the discrete LLG residual to tolerance $\ntol$ we have for each $j$ (using vector test function notation):
 \begin{equation}
   \norm{\intd{ \bigs{\dmdth  + \mvh \times \bigb{\hv - \dampc \dmdth}} \cdot \tbfv_j + \bigb{\mvh \times \grad \mvh} : \grad \tbfv_j}} < \ntol,
   \label{eq:81}
 \end{equation}
-where $\norm{\cdot}$ is the norm used to assess the convergence of the Newton-Raphson method (in our implementation this is $\norm{\cdot}_\infty$) and $\tbfv_j$ is the vector test basis function corresponding to node $j$.
-Hence, by writing any test function $\testv$ in terms of the basis functions then using the linearity of $\tbfv$ in \cref{eq:81} and the triangle inequality, we have
+where $\norm{\cdot}$ is the norm used to assess the convergence of the linearisation method (in our implementation this is $\norm{\cdot}_\infty$) and $\tbfv_j$ is the vector test basis function corresponding to node $j$.
+Hence, by writing any test function $\testv$ as a linear combination of the basis functions and then using the linearity of $\tbfv$ in \cref{eq:81} and the triangle inequality, we have
 \begin{equation}
   \norm{\intd{ \bigs{\dmdth + \mvh \times \bigb{\hv - \dampc \dmdth}} \cdot \testv + \bigb{\mvh \times \grad \mvh} : \grad \testv}} < \ntol  \sumbasiscoeff,
   \label{eq:82}
@@ -1095,12 +1094,13 @@ for all $\testv \in (\ts)^3$ where $\sumbasiscoeff = \sum_j  \abs{c_{x,j}} + \ab
 \newcommand{\hvmp}[1][j]{\hv_{{#1},\half}}
 \newcommand{\dmmp}[1][j]{\dmdt_{{#1},\half}}
 
-For \thisref{sec:weak-cons-absmv} we write the midpoint (in time) value at the $j$th node as $ \mvmp = (\mv_{j,n} + \mv_{j,n+1})/2$,  similarly $\hvmp = \hv((t_n+t_{n+1})/2, \xv_j, \mv_j)$ and $\dmmp = (\mv_{j,n+1} - \mv_{j,n})/\dtn$.
+In \thisref{sec:weak-cons-absmv} we write the midpoint value (in time) of the magnetisation at the $j$th node as $ \mvmp = (\mv_{j,n} + \mv_{j,n+1})/2$.
+Similarly for the magnetic field we write $\hvmp = \hv((t_n+t_{n+1})/2, \xv_j, \mv_j)$ and the time derivative of the magnetisation $\dmmp = (\mv_{j,n+1} - \mv_{j,n})/\dtn$.
 
-For the purposes of this derivation we choose the test function to be the midpoint nodal value of $\mv$ at node $j$ multiplied by the $j$th test basis function, \ie $\testv = \mvmp \tbf_j$.
-We know that $\mvmp\tbf_j \in  (\ts)^3$ because it is simply a multiple of a basis function of $(\ts)^3$.
-For this test function $a \sim \order{1}$ assuming that the solver has not gone catastrophically wrong.\footnote{Even if $\abs{\mv}=1$ does not hold (and we cannot assume that it does yet), each component of the magnetisation cannot be much more than one. This argument can probably be made rigorous using the LTE of IMR.}
-So using the new notation and this test function we have that
+For the purposes of this derivation we choose the test function to be $\testv = \mvmp \tbf_j$, \ie the midpoint value of the magnetisation at node $j$ multiplied by the corresponding test basis function.
+We know that $\mvmp\tbf_j \in  (\ts)^3$ because it is simply a vector valued multiple of a basis function of $\ts$.
+
+Using the new notation and this test function we have that
 \begin{equation}
   \begin{aligned}
     \Bigg|\Bigg| \sum_l \beta_l \bigg[& \bigb{\dmmp[l] + \mvmp[l] \times \bigb{\hvmp[l] - \dampc \dmmp[l]}} \cdot \mvmp\tbf_j(\xv_l) \\
@@ -1119,16 +1119,18 @@ Now, by the properties of the triple product, the precession and damping terms v
 \begin{equation}
   \norm{\beta_j \dmmp \cdot  \mvmp } < \ntol \sumbasiscoeff.
 \end{equation}
-Substituting in the IMR from \cref{eq:impl-imr} gives the desired conservation result:
+Substituting in the formula for the IMR from \cref{eq:impl-imr} gives the desired conservation result:
 \begin{equation}
   \begin{aligned}
-    \norm{\frac{\beta_j}{2\dtn}(\mv_{j,n+1} - \mv_{j,n}) \cdot (\mv_{j, n+1} + \mv_{j, n})} &< \ntol, \\
+    \norm{\frac{\beta_j}{2\dtn}(\mv_{j,n+1} - \mv_{j,n}) \cdot (\mv_{j, n+1} + \mv_{j, n})} &< \ntol \sumbasiscoeff, \\
     \norm{\abs{\mv_{j, n+1}}^2 - \abs{\mv_{j, n}}^2} &< \frac{2\dtn}{\beta_j} \ntol \sumbasiscoeff.
   \end{aligned}
 \end{equation}
 
 This is applicable for all nodes $j$.
-Hence all nodal magnetisation lengths are conserved up to an error which can be controlled by decreasing the tolerance of the Newton-Raphson method.
+Note that for this test function $\sumbasiscoeff \sim \abs{\mvmp}^2 = \order{1}$ assuming that the solver has not gone catastrophically wrong.\footnote{Even if $\abs{\mv}=1$ does not hold (and for the purposes of this proof we cannot assume that it does), the length of the magnetisation cannot be too far away from one.}
+Hence all nodal magnetisation lengths are conserved up to an error which can be controlled by decreasing the tolerance of the linearisation method.
+
 
 
 \subsection{Energy properties}
@@ -1145,14 +1147,17 @@ Hence all nodal magnetisation lengths are conserved up to an error which can be 
 
 \newcommand{\ipg}[2]{\intd{{#1} \cdot {#2}}}
 
-We now show that the IMR and FEM discretisation discussed above also retains the energy conservation property of the IMR discussed in \cref{sec:energy-cons}.
+\newcommand{\nodal}{\textrm{nodal}}
 
-For now we assume an additional constraint on the solution and test function spaces: all functions must be in $\sob_h^2(\magd)$.
-This constraint is required so that we can use a simpler form of the LLG residual, it can be relaxed by more technical arguments which are discussed at the end of this \thisref{eq:82}.
+We now show that the IMR/FEM discretisation discussed above also retains the energy conservation property of the IMR applied to an ODE discussed in \cref{sec:energy-cons}.
+
+For now we assume an additional property of the solution and test function spaces: all functions must be in $\sob_h^2(\magd)$ (\ie the second derivatives are integrable).
+This constraint is required so that we can use a simpler form of the LLG residual and can be relaxed by using nodal quadrature and more technical arguments which are discussed following the derivation.
 We also assume that $\happ$ can be written as a linear combination of basis functions.
 This is a reasonable assumption because if this is not true the spatial discretisation error will be large.
+Finally we make use of the fact that the test and solution spaces coincide for the magnetisation (due to the lack of any Dirichlet boundary conditions).
 
-So we begin with the LLG residual:
+As in the previous section we start from the LLG residual:
 \begin{equation}
   \begin{aligned}
     &\norm{\intd{ \bigs{\dmdth + \mvh \times \bigb{\hv - \dampc \dmdth}} \cdot \testv}} < \ntol \sumbasiscoeff(\testv), \\
@@ -1160,30 +1165,22 @@ So we begin with the LLG residual:
     \end{aligned}
   \label{eq:85}
 \end{equation}
-and choose the vector test function
+and choose as the test function
 \begin{equation}
-  \testv = \hv - \dampc \dmdth,
+  \testv = \hv - \dampc \dmdth.
   \label{eq:84}
 \end{equation}
-The term $\dampc \dmdth$ is clearly in the space of test functions since it is a linear combination of $\mvh_{,n}$ and $\mvh_{,n+1}$, each of which is in the solution space.
+The term $\dampc \dmdth$ belongs to the space of test functions since it is a linear combination of $\mvh_{,n}$ and $\mvh_{,n+1}$, each of which is in the solution space.
 Since we are using $\testv \in \sob_h^2(\magd)$ the function $\lap \mvh$ is clearly in the test function space.
-The $\hca$ and $\hms$ effective fields are similarly contained in the space of test functions: $\hms$ is just a derivative of the solution basis functions and $\hca$ is a linear function of $\mvh$.
-
-For the test function given in \cref{eq:84} the value of $\sumbasiscoeff$ is fairly large
-\begin{equation}
-  \begin{aligned}
-    a &= \order{N_n \bigb{1 + \kone + \max_{\xv} \happ(t, \xv)} }, \\
-    &= \order{N_n}.
-  \end{aligned}
-\end{equation}
-
+The $\hca$ effective field is similarly contained in the space of test functions as it is a linear function of $\mvh$.
+Finally, since the space of test functions for $\mv$ is non-zero on the boundary (\ie there are no Dirichlet conditions on $\mv$) we can represent $\grad \phim$ using them, for any boundary conditions on $\phim$.
 
 We substitute \cref{eq:84} into \cref{eq:85} and apply the triple product identity to find that
 \begin{equation}
   \norm{\intd{\dmdth \cdot \hv} - \dampc \intd{\dmdth \cdot \dmdth}} < \ntol \sumbasiscoeff.
   \label{eq:46}
 \end{equation}
-After substituting the IMR approximations and using a midpoint approximation for the applied field in \cref{eq:46} the expression inside the norm is exactly \cref{eq:54} of the derivation of the energy loss property for the strong form of the LLG.
+After substituting the IMR approximations and using a midpoint approximation for the applied field in \cref{eq:46} the expression inside the norm coincides with \cref{eq:54} of the derivation of the energy loss property for the strong form of the LLG.
 Hence we proceed similarly to \cref{sec:proof-energy-prop}: we substitute  \cref{eq:50,eq:76,eq:52} into \cref{eq:46} to obtain
 \begin{equation}
   \begin{aligned}
@@ -1202,37 +1199,44 @@ Finally, by using the triangle inequality, we have
   \label{eq:86}
   \end{aligned}
 \end{equation}
-As in \cref{sec:proof-energy-prop}: if $\dampc = 0$ and $\happ$ constant we have energy conservation (up to an error which can be controlled using the Newton-Raphson tolerance). Similarly for the other properties discussed in \cref{sec:proof-energy-prop}.
+The inequality \cref{eq:86} has the same interpretations as in \cref{sec:proof-energy-prop}.
+In particular: if $\dampc = 0$ and $\happ$ is constant in time we have energy conservation (up to an error which can be controlled using the linearisation tolerance).
 
-Note that the integration of the energies and $\ltwo$ norms in \cref{eq:86} are not necessarily exact because we are using nodal quadrature.
+Note that the energy integrals and $\ltwo$ norms in \cref{eq:86} are not necessarily exact because we are using nodal quadrature.
 The exchange energy is exact for the same reasons as discussed in \cref{sec:local-nodal-integr}, and the energy due to magnetostatics is exact for the same reason.
-The magnetocrystalline anisotropy energy and $\dmdt$ norm integrals are not exact.
-The Zeeman energy depends on the spatial variation of the applied field.
+In contrast the magnetocrystalline anisotropy energy and $\dmdt$ norm integrals are not exact and
+the Zeeman energy depends on the spatial variation of the applied field: if the field is constant in space then the conserved energy will be exact.
 
-The restriction of $\testv \in \sob_h^2(\magd)$ can be relaxed by considering an implicitly defined discrete Laplacian operator such that for $\av \in \sob^1(\magd)$, $\bv \in \ts$
+Also note that for the test function given in \cref{eq:84} the value of $\sumbasiscoeff$ is fairly large
 \begin{equation}
-  -\ip{\disclap \av(\xv)}{\bv(\xv)}_h = \ltip{\grad \av(\xv)}{\grad \bv(\xv)},
+  \begin{aligned}
+    \sumbasiscoeff &= \order{N_n \bigb{1 + \kone + \max_{\xv} \happ(t, \xv)} }, \\
+    &= \order{N_n},
+  \end{aligned}
+\end{equation}
+and so the bound may be lose for very large numbers of nodes.
+However this a pessimistic bound, the actual error is not likely to grow this large.
+
+The restriction of $\testv \in \sob_h^2(\magd)$ introduced at the start of this section can be relaxed by considering an implicitly defined discrete Laplacian operator defined for $\av \in \sob^1(\magd)$, $\bv \in \ts$ as
+\begin{equation}
+  -\ip{\disclap \av(\xv)}{\bv(\xv)}_\nodal = \ltip{\grad \av(\xv)}{\grad \bv(\xv)},
 \end{equation}
 where
 \begin{equation}
-  \ip{\av}{\bv}_h = \sum_{j \in nodes} \av(\xv_j) \cdot \bv(\xv_j),
+  \ip{\av}{\bv}_\nodal = \sum_{j \in nodes} \beta_j \av(\xv_j) \cdot \bv(\xv_j),
 \end{equation}
 \ie the nodally-integrated version of the $L^2$ inner product.
-It can be shown \cite{Bartels2007} that
+It can be shown that \cite{Bartels2007}:
 \begin{equation}
   \norm{\disclap \av(\xv)}_{\infty} = \ip{\disclap \av(\xv)}{\disclap \av(\xv)}_\infty < \infty,
 \end{equation}
-so $\norm{\disclap \av(\xv)}_{\ltwo} < \infty$ and $\disclap \av(\xv) \in \ts$.
-Note that $\ip{\disclap \mvh}{\mvh}_h = \ltip{\grad \mvh}{\grad \mvh} = \eex$.
-This means that we can replace the Laplacian operator everywhere in the derivation by the discrete Laplace operator to obtain the derivation without requiring $\testv \in \sob_h^2(\magd)$.
+so $\norm{\disclap \av(\xv)}_{\ltwo} < \infty$ and the required integrals are finite when calculated using nodal quadrature.
+Note that $\ip{\disclap \mvh}{\mvh}_\nodal = \ltip{\grad \mvh}{\grad \mvh} = \eex$.
+This means that we can replace the Laplacian operator everywhere in the derivation by the discrete Laplace operator to obtain the derivation without the restriction $\testv \in \sob_h^2(\magd)$.
 
 \subsection{Non-conservation with Gaussian quadrature}
 \label{sec:non-cons-gaussian}
 
-% To simplify the notation we use inner product notation for the integral of a dot product:
-% \begin{equation}
-%   \intd{\av \cdot \bv} = \ipg{\av}{\bv}.
-% \end{equation}
 We now show (by a counterexample) that the conservation result does not hold with a standard quadrature scheme.
 To obtain our result we examine the case where $\testv = \mvh$.
 Note that $\mvh \in (\ts)^3$ because we are using identical test and solution function spaces and each component of $\mvh$ is a linear combination of solution basis functions.
