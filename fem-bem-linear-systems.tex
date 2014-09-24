@@ -35,7 +35,7 @@ Also the $\Am$ matrices only depend on the geometry and so can be computed once 
 
 
 Now we focus on the sequence of linear systems resulting from solving the LLG equation with the Newton-Raphson method, \cref{eq:llg-jacobian}.
-There do not appear to be any solvers which are efficient, robust and scale optimally with matrix size (previously used approaches are discussed in \cref{sec:linear-solv-micr}).
+There do not appear to be any solvers which are efficient, robust and scale optimally with matrix size in the literature.
 We try two solvers in our implementation, unfortunately neither are expected to be efficient for large matrix sizes and large time steps.
 
 The first method used is a direct solve by LU decomposition.
