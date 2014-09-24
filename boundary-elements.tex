@@ -21,10 +21,9 @@ Methods of coupling the FEM/BEM magnetostatic calculations to the FEM-discretise
 \label{sec:bem-derivation}
 
 
-??ds I'm worried about whether all this is ok with weak form: we use strong form for derivation of boundary formulation then ``just assume'' that it will all be ok when we weak form it...
-But since, in the final equations, there are no derivatives of the solution we should be ok right?
-Milan didn't address this yet
-
+ % I'm worried about whether all this is ok with weak form: we use strong form for derivation of boundary formulation then ``just assume'' that it will all be ok when we weak form it...
+% But since, in the final equations, there are no derivatives of the solution we should be ok right?
+% It must be ok somehow because people use Galerkin BEM! Just need to read the book to see why
 
 We want to use the boundary element method in the calculation of the magnetostatic scalar potential, $\phim$, (defined in \cref{eq:Hms,eq:cont-phi-bound}) to avoid performing calculations that involve the infinite external domain.
 However, applying the boundary element method alone would require the solution of dense matrix equations for the entire problem.
