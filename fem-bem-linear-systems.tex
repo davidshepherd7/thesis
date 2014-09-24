@@ -332,7 +332,7 @@ where we use $\inexact{x}$ to denote that the block is approximated iteratively 
 
 As a final fully-inexact (\ie using only cheap approximations with iterative methods) preconditioner we try approximating the $\Fm$ block using ILU.
 However we should expect poor performance for large matrix sizes and time steps, similar to the case of pure-LLG solves preconditioned with ILU as discussed in \cref{sec:llg-only-system}.
-We define two fully-iterative preconditioners using this approximation in addition to the AMG approximation for the Poisson blocks discussed above:
+We define two fully-inexact preconditioners using this approximation in addition to the AMG approximation for the Poisson blocks discussed above:
 \begin{equation}
   \inexact{\precb} =
   \begin{pmatrix}

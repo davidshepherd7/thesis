@@ -430,7 +430,7 @@ The time steps should start small but rapidly increase as the exponential decays
 
 The results of the applying the three methods to problem~\cref{eqn:imr-test-stiff} with $\lambda = 100$ (fairly stiff) and $\yv_0 = 1$ are shown in \cref{fig:imr-stiff-example}.
 The behaviour of the IMR and BDF2 time integrators is essentially the same, indicating that our adaptivity algorithm is effective for stiff problems.
-The time steps selected by the TR algorithm do not grow as fast as those selected for the other schemes at large $t$, this is probably due to the ``ringing'' phenomenon \cite{??ds}.
+The time steps selected by the TR algorithm do not grow as fast as those selected for the other schemes at large $t$, this is probably due to the build-up of round-off error as noted in \eg \cite{Gresho2008}.
 
 \begin{figure}
   \centering
