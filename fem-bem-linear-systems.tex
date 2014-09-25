@@ -563,7 +563,7 @@ Based on all these factors we can estimate that, with an effective preconditione
 
 \section{Conclusions and future work}
 
-Monolithic solvers are required for the energy property of IMR, as well as for various other useful properties of implicit time integration schemes.
+Monolithic solvers are required for the energy property of IMR, as well as for other properties of implicit time integration schemes including properties important in stochastic problems.
 We have demonstrated that a fully implicit (monolithic) LLG-magnetostatics solver using GMRES with an effective preconditioner can have a computational cost per linear solve close to that of a semi-implicit method.
 The partially-inexact preconditioners $\parinexact{\precb}$ and $\parinexact{\precc}$ are able to reduce the iteration count of GMRES extremely effectively and almost independently of the number of nodes, but the set up cost is high for large matrices.
 However the fully-inexact equivalents, $\inexact{\precb}$ and  $\inexact{\preca}$, which use ILU(1) to approximate the LLG block are ineffective for more than a few thousand nodes (\ie matrices of size $\sim 10,000$).
