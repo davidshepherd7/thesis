@@ -549,10 +549,6 @@ As expected both coupling approaches conserve $\abs{\mv}$ to around the Newton t
 The evolution of the energy of the system when $\dampc = 0$ is shown in \cref{fig:energy-conservation}.
 It can be seen that neither the monolithic or decoupled methods give the desired conservation behaviour.
 From various other experiments we have drawn the conclusion that this occurs when the magnetostatic calculations are introduced.
-We believe the cause is the use of a collocation rather than a Galerkin approach to the discretisation of the boundary element part of the magnetostatic calculation.
-Collocation based approaches do not preserve the symmetry of the underlying operators, and so would be expected to cause issues with energy conservation based on \cref{eqn:imr-linop} and \cref{eq:orth-energy}.
-Implementation of a Galerkin BEM within the \oomph framework, in order to test this theory, is ongoing.
-
 \begin{figure}
   \centering
   \includegraphics[width=0.8\textwidth]
@@ -565,6 +561,13 @@ Implementation of a Galerkin BEM within the \oomph framework, in order to test t
   }
   \label{fig:energy-conservation}
 \end{figure}
+
+We believe that the lack of energy conservation is due to the asymmetry of the discrete BEM operator.
+This asymmetry be expected to cause issues with energy conservation because the symmetry property \cref{eqn:imr-linop} no longer holds and so the energy property \cref{eq:orth-energy} cannot be derived.
+Collocation based discretisation approaches, as used in our discretisation of the BEM operator, do not preserve the symmetry of the underlying operators and this is expected to be the cause of the asymmetry.
+In contrast a symmetric discrete BEM operator could be obtained by applying a symmetric Galerkin BEM discretisation \cite{Bonnet2003} \cite[75]{Wrobel2002} to the formulation discussed in \cref{sec:hybr-finit-elem}.
+Alternatively a standard Galerkin BEM discretisation combined with the single-layer-potential formulation described by Garc\'{i}a-Cervera and Roma \cite{Garcia-Cervera2006} \cite[19]{Knittel2011} would result in a symmetric discrete operator without the requirement to evaluate hyper-singular integrals.
+
 
 
 \subsection{Effectiveness of the linear and non-linear solver}
@@ -642,6 +645,7 @@ In this chapter we have demonstrated the effectiveness of the methods developed 
 We observed that our adaptive IMR algorithm selects appropriate time steps even for complex problems involving exchange and magnetostatics.
 We have shown that IMR with nodal quadrature retains its magnetisation length conservation property on a number of problems, but that it fails on certain meshes of triangular elements.
 Similarly IMR (with nodal quadrature) provides energy conservation for problems without FEM/BEM magnetostatics, but that the energy conservation fails when collocation FEM/BEM magnetostatics calculations are included.
+This issue is likely due to the asymmetry of the discrete BEM operator and could be avoided by using an alternative formulation of the BEM problem.
 
 Our methods converge exactly as expected to an exact solution of the LLG with exchange effective field.
 Their accuracy on the first applied field of the \mumag standard problem \#4 also appears to be very good.
