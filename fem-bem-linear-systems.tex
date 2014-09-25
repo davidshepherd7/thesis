@@ -272,7 +272,7 @@ The first preconditioner is very simple: we use a direct solve (using LU decompo
 This preconditioner, while much more efficient than a direct solve including the dense block, still suffers from all the usual problems associated with a direct solver (\ie expensive in both memory and computation time when $\Nn$ is large).
 However, we are interested in its properties as a test of the effectiveness of dropping the $\Gm'$ block from the preconditioner.
 
-A number of other FEM/BEM based models use an approach similar to preconditioner $\preca$ \cite{Suess2002}, except that the preconditioner is solved by an inner Krylov solver, rather than a direct solve.
+A number of other FEM/BEM based models use an approach similar to preconditioner $\preca$ \cite{Suess2002}, except that the preconditioner is applied using an inner Krylov solver rather than an LU decomposition.
 This makes the computational cost feasible for realistic problems, but has two issues:
 The first is that technically an inner Krylov solve cannot be used as a preconditioner because it does not apply the same operation at each step of the outer solve \cite{Saad1993}.
 This issue can be resolved by using an outer Krylov solver known as Flexible GMRES which accounts for this.
