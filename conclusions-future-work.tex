@@ -3,61 +3,45 @@
 
 \section{Conclusions}
 
-Introduced a complete FEM + NR + implicit time integration + FEM/BEM + linear solvers model.
-Validated on analytical solution
-Sort of validated on \mumag standard problem \#4
+In this thesis we have introduced a complete numerical method for the solution of dynamic micromagnetic problems using the finite element method with Newton-Raphson linearisation, a variety of implicit time integration schemes, hybrid FEM/BEM magnetostatics calculations and efficient iterative linear solvers.
+The methods have been validated against an analytical without magnetostatics and against the \mumag standard problem \#4 with magnetostatics.
 
-Found an effective preconditioner for the monolithically coupled LLG with FEM/BEM magnetostatics problem.
-Such coupling methods should be useful in getting energy conservation of IMR
-Also potential benefits over semi-implicit coupling for stochastic problems, stability.
+In \cref{sec:adaptive-imr} we have demonstrated a novel and widely applicable adaptive time step selection algorithm for the implicit midpoint rule.
+We have also shown that the time step selection works well for a wide variety of ODE test cases, as well as a number of PDE test cases using the LLG equation.
+Additionally we have shown that the geometrical integration properties of the constant time step IMR are also applicable to the adaptive time step version.
 
+In \cref{sec:solution-strategies,sec:effect-line-non} we demonstrated efficient, robust and scalable solution methods for the monolithically coupled LLG-FEM/BEM magnetostatics problem provided that a good preconditioner for the LLG system alone is available.
+Such monolithic couplings are required to obtain the energy property of the implicit midpoint rule and may offer advantages in stochastic integration methods.
 
-Invented generally applicable, efficient and effective adaptive IMR
-Shown that the adaptivity works well for a wide variety of ODE test cases
-Shown that the geometrical integration properties carry through in the ODE and PDE (without magnetostatics) cases
+In \cref{imr,numerical} we studied the performance of common implicit time integration schemes on some micromagnetic problems with exact solutions.
+We found that the BDF2 scheme always performs poorly compared to the TR and IMR schemes, this is probably due to a combination of the larger local truncation error and the spurious numerical damping of BDF2.
+Unfortunately we were unable to analyse the effect of geometric integration on the error accumulation due to the fact that TR also displays some geometrical integration properties for these simple examples.
 
-Studied the performance of common implicit time integration schemes on some exact solutions.
-Found that BDF2 always worse than TR and IMR
-But analytical solutions too simple for analysis of geometric integration effects
-
-Studied effect of discretisation length on relative performance of implicit and explicit time integration methods (aka stiffness).
-Showed that stiffness in micromagnetics can arise from discretisation alone, more stiff for smaller edge lengths, as expected from classic PDE theory.
-Found that for simple problems explicit methods are sufficient, but there are many classes of problem where implicit methods are expected to be more efficient.
-Especially when FEM/BEM is introduced.
+Finally in \cref{cha:stiffn-llg-equat} we studied the effect of discretisation length on the relative performance of implicit and explicit time integration schemes (stiffness).
+We found that stiffness in micromagnetics can arise from discretisation alone, and that the stiffness increases as the element size is decreased as expected from standard PDE theory.
 
 
-Had some issues...
-Non-conservation of energy with magnetostatics -- almost certainly due to collocation BEM which results in a non-symmetric discrete operator.
-Non-conservation of magnetisation length on triangular meshes -- no idea where this could come from, need to test with other peoples code.
-Errors in field 2 of mumag, probably due to FEM/BEM difficulties with corner singularities
 
 \section{Future work}
 
-Simple optimisations: store linear blocks of Jacobian between solves: $19/25$ of the $N \times N$ blocks are linear or empty, so this should speed up assembly significantly (the 3 diagonal LLG blocks are mass matrices, all magnetostatics blocks are linear or empty).
-Similarly almost all contributions to the 6 non-linear blocks are skew symmetric and so can be reused.
-With these optimisations Jacobian assembly time (which makes up around half of the runtime for time steps where an iterative can be used) could be reduced by around a factor of 10.
-Also using biCGStab or restarted GMRES could reduce computation time when a large number of iterations are needed (although both have reduced convergence guarantees, hence why GMRES was used so far).
+
+In the course of our numerical experiments we uncovered some issues with the geometrical integration properties of our complete model.
+Firstly we found that the magnetisation length conservation property of IMR with FEM and nodal quadrature did not work when applied to meshes of triangular elements, at least in our implementation.
+This effect is fairly small and is not contradicted by any numerical results in the literature that we are aware of due to the common use of comparatively loose linearisation tolerances.
+An alternative implementation of IMR with FEM and nodal quadrature should be used with a tight linearisation tolerance in order to find out if this effect is an artefact of our implementation or a real issue.
+
+Secondly we found that when FEM/BEM magnetostatics calculations discretised by a collocation based approach were included the energy conservation property of IMR is lost.
+This is probably due to the asymmetry of the discrete BEM operator, which could be corrected by the use of alternative formulations of the method.
+In particular the use of the Garc\'{i}a-Cervera-Roma formulation \cite{Garcia-Cervera2006} with a Galerkin discretisation approach \cite[75]{Wrobel2002} should remove this issue.
+
+Once these issues have been resolved the relative performance of schemes with geometric integration properties should be evaluated for realistic problems.
 
 
-Integrate the linear solvers with an efficient and robust multigrid based preconditioner for the Newton-Raphson linearised LLG equation.\footnote{The multigrid smoother developed in \cite{Jeong2014} is probably not relevant because it relies on a cancelation only present in finite-difference simulations.}
-Also integrate hierarchical BEM matrix.
-This will allow linear scaling (\ie $\order{N}$) in both space and time independently for most geometries ($\order{N \log N}$ for surface dominated geometries), as discussed in \cref{sec:desir-prop-numer}.
+??ds this needs work
+In the area of linear solvers, an efficient, robust and scalable preconditioner for the Newton-Raphson linearised LLG equation is still required.
+One approach to the construction of such a preconditioner could be to exploit the block structure of the Jacobian matrix and to use multigrid-based methods to approximate the Laplacian-like skew-symmetric blocks resulting from the exchange effective field.
+With such an enhanced LLG preconditioner the effectiveness of the preconditioner discussed in \cref{sec:solution-strategies} on extremely large problems could be investigated.
 
-
-With such an enhanced solver the effectiveness of the preconditioner discussed in \cref{sec:solution-strategies} on extremely large problems could be investigated.
-It is possible that neglecting the entire BEM block could cause problems in cases which are beyond the reach of the generic ilu preconditioner used here.
-
-
-Investigate the use of Galerkin BEM in magnetostatic calculations, the \hlib developers consider Galerkin to be superior to collocation methods but (as far as I am aware) all existing micromagnetics models use a collocation approach.
-Also Galerkin BEM methods should restore the energy conservation properties of IMR.
-
-
-Investigate the effects of the various geometric integration properties of IMR on the overall accuracy for a variety of problems.
-In particular: does loss of symplectic properties due to adaptive time integration have a noticeable impact on the accuracy?
-
-
-Investigate the relationship between ``no spurious damping'' and energy conservation with $\dampc = 0$.
-I suspect energy conservation is a result of ``no spurious damping'' and length conservation combined, this could be tested using TR with Lagrange multipliers for length conservation (see \eg \cite{Szambolics2008a}).
 
 
 %%% Local Variables:
