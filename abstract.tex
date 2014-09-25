@@ -1,17 +1,21 @@
 
-* micromagnetics is ....
+Micromagnetics is a continuum mechanics theory of magnetic materials widely used in industry and academia.
+In this thesis we describe a complete numerical method, with a number of novel components, for the computational solution of dynamic micromagnetic problems by solving the Landau-Lifshitz-Gilbert  (LLG) equation.
+In particular we focus on the use of the implicit midpoint rule (IMR), a time integration scheme which when applied to the LLG conserves magnetisation length and, in the case of zero damping, the energy.
+We use the finite element method (FEM) for spatial discretisation, and use nodal quadrature schemes to retain the conservation properties of IMR despite the weak-form approach.
 
-* adaptive IMR
-** geometric integration
-** adaptivity
+We introduce a novel generally applicable adaptive time step selection algorithm for the IMR.
+We show that our scheme selects error-appropriate time steps for a variety of problems and that it retains the conservation of magnetisation length and conservation of energy properties of the fixed step IMR.
+We also show how these conservation properties can be extended to the PDE case using finite elements with a nodal quadrature scheme.
 
-* linear solvers
+We show how hybrid FEM/BEM magnetostatic calculations can be coupled to the LLG equation in a monolithic manner.
+This allows the coupled solver to maintain all properties of the standard time integration scheme, in particular the energy conservation property of IMR and the solution converged to in the stochastic case.
+We demonstrate a preconditioned Krylov solver for the coupled system which can efficiently solve the monolithic system given an effective preconditioner for the decoupled LLG system.
 
-* convergence of geometric integration
+??ds should I mention convergence of TR/IMR vs BDF2?
 
-* validation
-
-* discretisation induced stiffness
+Finally we investigate the effect of the spatial discretisation length on the comparative effectiveness of implicit and explicit time integration schemes (\ie the stiffness).
+We find that explicit methods are more efficient for simple problems, but for the short discretisation lengths required in a number of more complex cases implicit schemes become much more efficient.
 
 
 %%% Local Variables:
