@@ -2,69 +2,77 @@
 \chapter{Introduction}
 \label{sec:introduction}
 
-Ferromagnetism is ...
+In this thesis we study numerical techniques for the modelling of ferromagnetic materials.
+In ferromagnetic materials, referred to in this thesis as simply ``magnetic materials'', exchange coupling between nearby spins causes the emergence of spontaneous magnetisation.
+In ferromagnetic materials with some anisotropy effect, for example due to the crystal lattice structure, systems with two stable states can be obtained.
+Such a system can be switched between these states by the application of a magnetic field, which can be easily generated using pulses of electrical current.
+These states can be extremely stable, having average lifetimes of decades at room temperature even for extremely small volumes of material.
+Such materials have many technological applications, one major application is in the area of data storage.
 
-gives a system with no moving parts but multiple stable states
+In current hard disk drives collections of nanometre-sized grains of anisotropic magnetic material are magnetised using a write head (an electromagnet) in order to store bits of data.
+The data can be read by magnetoresistive sensors, which change their resistance based on the magnetic field.
+Such sensors can be extremely sensitive and extremely small, allowing them be very close to the bits and to obtain good signal-to-noise ratios despite the small size of the bits.
+
+Another application area where ferromagnetic materials show great promise is in random access memory (RAM), \ie short term data storage for computers.
+The current standard RAM technology (dynamic RAM or DRAM) is based on charging capacitors.
+These capacitors leak charge fairly rapidly, resulting in data lifetimes on the order of milliseconds.
+Hence they must be continually refreshed and can require significant power usage to maintain a standby state.
+A widely proposed alternative is MRAM (magnetoresistive RAM) which uses arrays of nano-sized regions of magnetic material to store data and in-place magnetoresistive sensors to allow random-access reads.
+The vastly longer data lifetimes allowed by the use of magnetic materials results in greatly reduced standby power usage by removing the requirement for continual refreshing.
+Historically there have been issues with random-access writes in MRAM: moving write heads (as used in hard drives) cannot be used because the time to move the head to the correct location is far too long, and in-place generation of the required magnetic fields turns out to require large currents.
+However recent developments in spin-torque-transfer, where spin-polarised currents are used to directly apply a torque to the magnetisation of a ferromagnet, offer a solution to these difficulties.
+Spin torque transfer MRAM (ST-MRAM) has recently been commercialised by Everspin Technologies \cite{everspin} and is beginning to make its way into products.
+Due to the combination of non-volatility, high density, random-access, and low read/write times such ST-MRAM is a candidate for a so-called ``universal memory'', where all data is stored a RAM-like memory eliminating long access times.
 
 
-??ds lots more waffle about this stuff
-
-Due to this property there are many technologically important applications of ferromagnetic materials (referred to in this thesis as simply ``magnetic materials'').
-In particular in the area of data storage: the existence of multiple stable states is a prerequesite for data storage, but especially good because? easy to read + write at high speed?
-
-There are also some promising areas for future technologies such as microwave oscillators and RAM in which the data is stable over long periods of time.
-
-It is extremely desirable to be able to accurately model systems involving magnetic materials for both research and product design purposes.
-The use of fundamental physical models (such as density functional theory) to predict the behaviour of magnetic systems is extremely computationally expensive due to the difficulty of modelling quantum mechanical effects on the scales required.
-As such theory known as micromagnetics is widely used to model magnetic materials \cite{Coey2010} \cite{Kronmuller2003}.
-In micromagnetics a continuum approximation is used -- we assume that everything can be modelled using continuous functions of space and time (\ie the contribution due to individual atoms is averaged out).
-Also a semi-classical approximation is used: effects which are quantum mechanical in origin, such as the exchange interaction, are approximated using classical physics.
-Finally a number of different effects causing energy loss in the system are modelled by a single damping term with an empirically determined strength.
-
-Micromagnetic models are extremely useful for investigations into the behaviour of magnetic systems as evidenced by the large number of citations for micromagnetics packages such as NIST's \texttt{OOMMF} \cite{oommf-website}.
-Additionally the list of customers using SuessCo's \texttt{FEMME} package \cite{suessco-website} contains (along with other companies) all major hard disk drive manufacturers, indicating that micromagnetic models are heavily used in the development of hard disk drives.
+It is extremely desirable to be able to accurately model the behaviour of magnetic materials for both research and device design purposes.
+However the use of models based on fundamental physics (such as density functional theory) to predict the behaviour of magnetic systems is extremely computationally expensive due to the length scales required.
+Instead a theory known as micromagnetics is typically employed \cite{Aharoni1996}.
+In micromagnetics a continuum approximation of the ferromagnet's magnetisation is used -- it is  assumed that everything can be modelled using continuous functions of space and time (\ie the contribution due to individual atoms is averaged out).
+This is a good approximation for many cases because of the smoothing effect of the ferromagnetic exchange effect.
+Additionally a semi-classical approach is used: the various important quantum mechanical effects are approximated by classical representations.
+The result of these approximations is a powerful framework for theoretical and computational predictions of the behaviour of magnetic materials.
 
 Micromagnetic models can be broadly split into two categories: energy based models and dynamic models.
 Energy based models aim to find stable minimum energy states for the system whereas
 dynamic models simulate the evolution of the magnetisation over time.
-Dynamic models require the solution of a differential equation, known as the Landau-Lifshitz-Gilbert equation (LLG).
-More recently stochastic models have been studied as a means to introduce high temperature effects to dynamic models.
+Dynamic models may be favourable even when there are no time-dependent effects because standard energy based models are unable to distinguish which of the various stable states will be the final state of the system.
+Dynamic micromagnetic models require the solution of a differential equation, known as the Landau-Lifshitz-Gilbert equation (LLG).
+Depending on the physical system modelled the LLG may be an ordinary, partial or stochastic differential equation.
+The very closely related Landau–Lifshitz–Slonczewski equation can be used to model magnetisation dynamics when spin-torque-transfer effects are included.
 
-??ds mention limitations of current models? -- are there any limitations?...
-
-\section{Aims}
 
 In this thesis we study numerical methods with the final goal of finding more reliable and efficient methods for dynamic micromagnetics simulations.
-In particular we focus on methods which improve the efficiency of so-called Geometric integration methods.
-Geometric integration methods are able to retain important qualitative properties of a differential equation in the approximate solution generated using numerical techniques.
-In other areas such methods have been shown to greatly reduce the overall build-up of numerical errors \cite[77]{Iserles2009}.
-This allows either more accurate results at the same computational cost, or the use of coarser approximations (reducing the computational cost) without loss of accuracy.
-
-In particular we focus mainly on a widely known time integration scheme with geometrical integration properties when applied to dynamic micromagnetics calculations: the implicit midpoint rule.
-We also focus on methods in which spatial discretisation is handled using the finite element method, such methods are well suited to the study of nano-structured materials.
+In particular we focus on methods which improve the efficiency of so-called ``geometric integration'' schemes.
+Geometric integration schemes are numerical methods which are able to retain important \emph{qualitative} properties of a differential equation in an approximate solution.
+In other areas of computational physics such methods have been shown to greatly reduce the overall accumulation of numerical errors \cite[77]{Iserles2009}.
+This would allow either more accurate results at the same computational cost, or the use of coarser approximations (reducing the computational cost) without loss of accuracy.
+In particular we focus mainly on a widely known time integration scheme with geometric integration properties when applied to dynamic micromagnetics calculations: the implicit midpoint rule.
 
 
 
 \section{Contents of thesis}
 
-The first two chapters \cref{sec:cont-micromag,sec:numer-meth-micr} comprise a basic introduction to micromagnetic models and the numerical methods commonly applied.
+The first two chapters, \cref{sec:cont-micromag,sec:numer-meth-micr}, comprise a basic introduction to micromagnetic models and the numerical methods commonly applied.
 In particular \cref{sec:time-discretisation} contains a detailed description of the properties of a selection of time integration schemes.
 \Cref{sec:galerk-meth-llg} gives a more detailed introduction to the finite element method, including a description of how it can be applied to dynamic micromagnetics simulations.
-The chapter ends with a discussion of how the basic finite element method can be extended to retain the geometric integration properties of them implicit midpoint rule.
+The chapter ends with a discussion of how the basic finite element method can be extended to retain the geometric integration properties of the implicit midpoint rule.
 \Cref{sec:hybr-finit-elem} introduces the hybrid FEM/BEM method, a widely used technique for the accurate calculation of magnetostatic fields.
 
 The later chapters contain the research contribution of this thesis.
 \Cref{sec:solution-strategies} describes efficient techniques for the solution of the coupled systems resulting from the use of FEM/BEM magnetostatics calculations with a dynamic micromagnetic problem.
-In particular we introduce techniques which reduce the development of an efficient solver for a monolithically coupled model to the development of an efficient solver for the LLG alone.
+In particular we introduce techniques which reduce the development of an efficient solver for such a monolithically coupled model to the development of an efficient solver for the LLG alone.
 Such a coupling strategy is required to retain the geometric integration properties of the implicit midpoint rule, and may also be useful in the time integration of the stochastic LLG.
 
-In \cref{sec:adaptive-imr} we introduce a novel adaptive algorithm for the implicit midpoint rule which is not specific to the LLG; to our knowledge this is the first such algorithm.
-The same chapter also contains numerous numerical experiments demonstrating its effectiveness on a number of ordinary differential equation problems and the geometric integration properties when applied to the LLG.
+In \cref{sec:adaptive-imr} we introduce a novel adaptive time step selection algorithm for the implicit midpoint rule.
+This algorithm is not specific to the LLG, and to our knowledge is the first such algorithm.
+The same chapter also contains numerous numerical experiments demonstrating the selection of appropriate time steps for a number of ordinary differential equations (ODEs), and the demonstrating the geometric integration properties when applied to an ODE form of the LLG.
 
-In the final two chapters we present a number of numerical experiments using the entirety of the models developed in this thesis.
-In \cref{cha:numer-experiments} the model is validated against a number of examples: a wave-like problem with an analytical solution, relaxation under a non-uniform field and the \mumag standard problem \#4.
-Additionally the convergence and geometric integration properties of a variety of time integration schemes are compared for these problems.
-In \cref{cha:stiffn-llg-equat} the comparative efficiency of two classes of time integration schemes (implicit and explicit) are compared for an example problem across a range of spatial discretisations.
+In \cref{cha:numer-experiments} we present a number of numerical experiments using combinations of the methods developed in this thesis.
+The methods are validated against a number of examples: a wave-like problem with an analytical solution, relaxation under a non-uniform field and the \mumag standard problem \#4.
+Additionally the convergence and geometric integration properties of a variety of time integration schemes are compared for problems.
+
+Finally in \cref{cha:stiffn-llg-equat} the comparative efficiency of two classes of time integration schemes (implicit and explicit) are compared for an example problem across a range of spatial discretisations.
 
 \Cref{cha:analyt-solut-land} contains a description of two analytical solutions to the LLG equation which have proven very useful in the verification of our implementation.
 The other appendices contain technical details of some derivations.
