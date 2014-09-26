@@ -21,7 +21,8 @@ This allows us to verify the complete model and to examine the geometric integra
 \subsection{Problem definition}
 \label{sec:wave-problem-definition}
 
-In this experiment we solve a micromagnetic problem which has a wave-like exact solution in 2D, the details of this solution are given in \cref{sec:wave-like-solution}.
+In this experiment we solve a micromagnetic problem which has a wave-like exact solution in 2D.
+The details of this solution are given in \cref{sec:wave-like-solution}.
 We solve the LLG without magnetostatics on a two dimensional square domain $\magd = [0,1] \times [0,1]$ with periodic boundary conditions.
 We integrate time over $T = [0, 5]$.
 This solution is obtained by setting the initial condition according to \cref{eq:97}:
@@ -33,7 +34,7 @@ This solution is obtained by setting the initial condition according to \cref{eq
   \end{aligned}
 \end{equation}
 and using $\happ = \zerov$.
-The solution parameters used are $\kvec = 2\pi$ (so that the solution is periodic on domains of unit size), $c = 0.1\pi$, and $\dampc = 0.01$.
+The solution parameters used are $\kvec = [2\pi, 2\pi]$ (so that the solution is periodic on domains of unit size), $c = 0.1\pi$, and $\dampc = 0.01$.
 For the energy conservation experiments $\dampc = 0$ is used instead.
 
 This problem allows us to examine the convergence and geometric integration properties of IMR with the FEM using nodal quadrature.
@@ -49,7 +50,7 @@ Unless otherwise specified we use a mesh of square elements with $5 \times 2^4$ 
 For the evaluation of the resulting integrals both the nodal quadrature discussed in \cref{sec:local-nodal-integr} and standard Gaussian quadrature methods are used.
 
 For time integration the adaptive IMR, TR and BDF2 methods are used with a tolerance of $\toltt = 10^{-5}$ and an initial time step of $\dtx{0} = 10^{-5}$ (significantly smaller than the time step selected by an initial experimental run).
-The methods which do not naturally conserve $\abs{\mv}$ (TR and BDF2 methods, and IMR with Gaussian quadrature is used) are run both with and without re-normalisation of the magnetisation.
+The methods which do not naturally conserve $\abs{\mv}$ (TR and BDF2 methods, and IMR with Gaussian quadrature) are run both with and without re-normalisation of the magnetisation.
 The re-normalisation process is implemented by setting each nodal value of the magnetisation to $\mv_i = \mv_i/\abs{\mv_i}$ after each time step (after the selection of the next step size to avoid complicating the adaptivity process).
 
 Linearisation is handled using the Newton-Raphson method with Newton tolerance set to $\ntol = 10^{-12}$ (unless otherwise specified).
@@ -109,7 +110,7 @@ As a first convergence experiment we examine the norm of the error after a singl
 \end{equation}
 In this case we expect the convergence (in both space and time) to be second order for all methods.
 The results of this experiment are shown in \cref{fig:convergence-one-step},
-We see that convergence is indeed second order for all methods and that the accuracy for the BDF2 scheme is a worse than the other schemes by a roughly constant factor.
+We see that convergence is indeed second order for all methods and that the accuracy of the BDF2 scheme is worse than the other schemes by a roughly constant factor.
 We also see that the use of nodal quadrature results in an error increase by a small constant factor.
 This indicates that the geometric integration properties of IMR with nodal quadrature give no benefit for a single time step, as would be expected.
 \begin{figure}
@@ -126,7 +127,7 @@ However, reaching the levels of convergence required for $\errmpde$ to be meanin
 A plot of the time integral of $\errmpde$ is shown in \cref{fig:convergence-long-time-full-norm}, as expected no convergence is seen until the spatial/temporal refinement level reaches $n=5$ for IMR and TR, and not at all for BDF2.
 \begin{figure}
   \centering
-  \includegraphics[width=0.9\textwidth]{plots/2d_wave_solution_convergence_long_time/errornormintegralvsmeanofdts.pdf}
+  \includegraphics[width=0.9\textwidth]{plots/2d_wave_solution_convergence_long_time/errornormintegralvsfakemeanofdts.pdf}
   \caption{Convergence of $\intt{\errmpde}$, where $T=[0,5]$, for the 2D wave-like problem.
   }
   \label{fig:convergence-long-time-full-norm}
@@ -146,7 +147,7 @@ The BDF2 method requires additional refinement to reach the asymptotic convergen
 Also note that there is no significant difference between IMR with nodal quadrature (which conserves $\abs{\mv}$) and IMR with Gaussian quadrature (in which $\mv$ is re-normalised), indicating that geometric integration offers no significant benefits in this case.
 \begin{figure}
   \centering
-  \includegraphics[width=0.9\textwidth]{plots/2d_wave_solution_convergence_long_time/auxerr1integralvsmeanofdts.pdf}
+  \includegraphics[width=0.9\textwidth]{plots/2d_wave_solution_convergence_long_time/auxerr1integralvsfakemeanofdts.pdf}
   \caption{Convergence of $\intt{\errmz}$, where $T=[0,5]$, for the 2D wave-like problem.
   }
   \label{fig:convergence-long-time-mz-norm}
@@ -197,7 +198,8 @@ When using IMR with nodal quadrature the magnetisation length error remains extr
 We next examine the energy conservation properties of the various schemes for the wave solution with $\dampc = 0$.
 The only energy involved is the exchange energy, which can be calculated using \cref{eq:nd-e-ex}.
 Note that these integrals can be evaluated exactly by any quadrature because $\grad \mv$ is a constant inside each element.
-The results are shown in \cref{fig:energy-error-2d}, interestingly we see that IMR with Gaussian quadrature and TR both conserve energy in a similar manner to IMR with nodal quadrature.
+The results are shown in \cref{fig:energy-error-2d}.
+Interestingly we see that IMR with Gaussian quadrature and TR both conserve energy in a similar manner to IMR with nodal quadrature.
 This is likely due to some special property of the exact solution, and does not appear to be the case in general (see \cref{sec:non-uniform-applied}).
 \begin{figure}
   \centering
@@ -483,7 +485,7 @@ The issues may be due to corner singularities in the magnetostatic field and, if
 
 The same plots show the time step selection behaviour.
 During relaxation (negative time in the figures) the time step has a large value initially, which decreases as the field decreases and the relaxation happens, then very large once the field becomes zero.
-During the dynamics(positive time in the figures): a reasonable large time step is selected initially.
+During the dynamics (positive time in the figures): a reasonable large time step is selected initially.
 It then decreases around the time of the peak in $\mv$ and steadily increases as the oscillations are damped out.
 The behaviour observed for the second field is essentially the same.
 
@@ -577,8 +579,10 @@ Alternatively a standard Galerkin BEM discretisation combined with the single-la
 Here we examine the effectiveness of the iterative linear solver for the monolithic method introduced in \cref{sec:fully-implicit-bem} for the standard problem.
 The number of iterations required for convergence as the number of nodes varys are shown in \cref{fig:mumag4-solver-iterations}.
 Note that while they increase with the number of nodes, $\Nn$, they remain reasonable for the problem sizes required good accuracy in this example.
-The time taken to set up the preconditioner is displayed in \cref{fig:mumag4-solver-time}, again it grows with the number of nodes but remains reasonable for all cases shown here.
-Also note that with nodal quadrature the preconditioner is cheaper to set up but less effective, to counteract this a higher level of fill-in could be used with nodal quadrature.
+The time taken to set up the preconditioner is displayed in \cref{fig:mumag4-solver-time}.
+Again it grows with the number of nodes but remains reasonable for all cases shown here.
+Also note that with nodal quadrature the preconditioner is cheaper to set up but less effective.
+To counteract this a higher level of fill-in could be used with nodal quadrature.
 
 \begin{figure}
   \centering
