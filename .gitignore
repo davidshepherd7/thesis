@@ -11,3 +11,6 @@ main.fdb_latexmk
 main.fls
 main.lof
 main.lot
+
+# word count file
+word.count

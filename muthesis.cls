@@ -464,14 +464,12 @@ of \degreetitle.
 	% instructions below
         % Download texcount.pl from  http://app.uio.no/ifi/texcount/ and
         % uncomment following lines to have word count handled automatically
-	%~\\
-        %~\\
-        %Word Count: 999,999
+	~\\
+        ~\\
+        % Word Count: 999,999
         % Run texcount on report.tex and write results to word.count
-        %\immediate\write18{perl ./texcount.pl -1 -sum -relaxed -inc report.tex > word.count}
-        % TC:ignore
-        %Word Count: \input{word.count} % texcount ignore around this to stop error message (open recursion on file)
-       % TC:endignore
+        \immediate\write18{texcount -1 -sum -relaxed -inc main.tex -utf8 > word.count}
+        Word Count: \input{word.count} % texcount ignore around this to stop error message (open recursion on file)
         % note: if this causes an error (word.count missing, or a blank wordcount) you may need to add: " --enable-write18" (win) or "--shell-escape" (Linux) to arguments for LaTeX
         % see http://app.uio.no/ifi/texcount/faq.html for details of this and other possible errors
         ~\\

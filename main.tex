@@ -30,13 +30,16 @@
 \WarningFilter{hyperref}{You have enabled option `breaklinks'.}
 \usepackage[hyphenbreaks]{breakurl}
 
-
+% This stops the word count from complaining that it doesn't recognise
+% packages. Note that the lack of a space in "%TC" is important!
+%TC:ignore
 \usepackage[colorlinks=true, % colour all links black (just using
             linkcolor=black, % colorlinks=false results in boxes around
             citecolor=black, % links)
             filecolor=black,
             urlcolor=black,
             breaklinks]{hyperref}
+%TC:endignore
 
 \usepackage{xspace} % command for fixing spaces after macros
 
@@ -101,6 +104,7 @@
 %% ============================================================
 
 % biblatex setup
+%TC:ignore
 \usepackage[backend=biber,
   citestyle=numeric,
   firstinits=true, % Only print initials of first names
@@ -109,6 +113,8 @@
   url=true, % for websites, see below for removing it from papers etc.
   % backref=true
 ]{biblatex}
+%TC:endignore
+
 
 % clear urls for papers, proceedings, books
 \AtEveryBibitem{%
@@ -167,11 +173,14 @@
 % \def\sectionautorefname{Section} % capitalise
 % \def\subsectionautorefname{Section} % capitalise, say section not subsection
 
+%TC:ignore
 \usepackage[sort&compress, % on multiple refs sort them and write as range
             capitalise, % Use Section not section etc.
             noabbrev, % Use Table not Tab. etc.
             nameinlink % Make the name (eg Section) part of the hyperlink
             ]{cleveref}
+
+%TC:endignore
 
 % Call subsections sections
 \crefname{subsection}{Section}{Sections}
