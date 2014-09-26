@@ -29,11 +29,12 @@ We want to use the boundary element method in the calculation of the magnetostat
 However, applying the boundary element method alone would require the solution of dense matrix equations for the entire problem.
 We can circumvent this issue by applying a hybrid method using both FEM and BEM.
 We use the linearity of the Poisson operator to split the potential into two parts $\phim = \phione + \phitwo$ in such a way that $\phione$ can be calculated in the magnetic domain, $\magd$, using only the finite element method.
-This results in conditions on $\phitwo$ that must be satisfied to give the correct total potential, including problematic condition at infinity.
+This results in conditions on $\phitwo$ that must be satisfied to give the correct total potential, including the problematic condition at infinity.
 
-It turns out that $\phim$ can be split in such a way that the $\phitwo$ is equivalent to the potential resulting from a specific (imaginary) arrangement of magnetic charges, which is known to solve the required differential equation including the boundary condition at infinity.
+It turns out that $\phim$ can be split in such a way that the $\phitwo$ is equivalent to the potential resulting from a specific arrangement of fictional magnetic charges, which is known to solve the required differential equation including the boundary condition at infinity.
 The details of this ``charge distribution'', which gives rise to a double-layer potential, depend on the boundary values of $\phione$.
 The use of such a charge distribution is equivalent to applying the BEM to $\phitwo$.
+
 So given $\phione$ and using the known solution for this charge distribution we can calculate $\phitwo$ anywhere.
 However the calculation of $\phitwo$ at a point using this method involves an expensive dense matrix operation, so we only use it to calculate Dirichlet boundary conditions for $\phitwo$ on the boundary of the magnetic domain, $\boundd$.
 These boundary conditions allow us to apply the finite element method to find $\phitwo$ inside the magnetic domain $\magd$ using standard sparse matrix techniques.
@@ -43,7 +44,7 @@ Then using identity \cref{eq:20}, the linearity of Poisson's equation and the di
 Applying Dirichlet, Neumann or mixed boundary conditions shows that the boundary integral is zero and hence $\grad \phi = 0$.}
 
 In \cref{sec:problem-description} we describe in more detail the splitting of the potential that allows this process.
-Then in \cref{sec:double-layer-potent} we describe the properties of the imaginary charge distribution.
+Then in \cref{sec:double-layer-potent} we describe the properties of the fictional charge distribution.
 Finally in \cref{sec:appl-magn-calc} we combine these parts to give a formulation of the magnetostatic problem involving only finite sized domains.
 
 \subsection{The potential splitting}
@@ -101,10 +102,9 @@ Finally we have the condition that
   \phim(\xv) \rightarrow 0 \qquad \text{ as } \abs{\xv} \rightarrow \infty.
   \label{eq:48}
 \end{equation}
-Note that \cref{eqn:dphibound,eqn:phibound} imply continuity but not smoothness of the magnetic potential $\phim$ across $\boundd$. This effect can be thought of as the effect of (imaginary) surface monopole charges.
+Note that \cref{eqn:dphibound,eqn:phibound} imply continuity but not smoothness of the magnetic potential $\phim$ across $\boundd$. This effect can be thought of as the effect of (fictional) surface monopole charges.
 
 The key observation for this part of the derivation is that \cref{eq:2,eq:48,eqn:dphibound,eqn:phibound} are linear, \ie if $\phim = \phione + \phitwo$ then $\lap \phim = \lap \phione + \lap \phitwo$ and similarly for the boundary conditions.
-
 Based on this observation we define a new potential $\phione$ which satisfies
 \begin{equation}
   \phim(\xv) = \phione(\xv) + \phitwo(\xv),
@@ -163,7 +163,7 @@ This arrangement of charges is discussed in the next section.
 \subsection{Double Layer Potentials}
 \label{sec:double-layer-potent}
 
-A double layer potential can be thought of as the potential due to a layer of dipoles (\ie two charges separated by an infinitesimal distance) of magnitude $\mu(\xv)$ in direction $\nv$ over the surface $\boundd$ \cite{Sternberg1946}.\footnote{Note that our potentials are a factor of $\frac{-1}{4 \pi}$ different from those in reference \cite{Sternberg1946} and that our $\phim^\inte$ and $\phim^\exte$ definitions correspond to $\phim^-$ and $\phim^+$ respectively in the book.}
+A double layer potential can be thought of as the potential due to a layer of dipoles (\ie two charges separated by an infinitesimal distance) of magnitude $\mu(\xv)$ in direction $\nv$ over the surface $\boundd$ \cite{Sternberg1946}.\footnote{Note that our potentials are a factor of $\frac{-1}{4 \pi}$ different from those in reference \cite{Sternberg1946} and that our $\phim^\inte$ and $\phim^\exte$ definitions correspond to their $\phim^-$ and $\phim^+$.}
 In \thisref{sec:double-layer-potent} we give some (mathematical) properties of a double layer potential.
 %, in \cref{} we will demonstrate that we can use a double layer potential to calculate $\phitwo^\inte$ in terms of $\phione^\inte$.
 
@@ -214,13 +214,13 @@ We have the following results from potential theory:
 
 \end{enumerate}
 
-Note that some derivations of the results above rely on the surface being a ``Lyapunov surface'' which imposes a number of smoothness conditions on the surface, in particular excluding surfaces with corners.
+Note that some derivations of the results above rely on the surface being a Lyapunov surface which imposes a number of smoothness conditions on the surface, in particular excluding surfaces with corners.
 The proofs given in \cite{Sternberg1946} allow a finite number of sharp corners, \ie a polygonal domain.
 
 \subsection{Application to Magnetostatic Calculations}
 \label{sec:appl-magn-calc}
 
-From \cref{sec:double-layer-potent} we can see that conditions \cref{eq:8,eq:5,eq:4} on $\phitwo$ are satisfied by a double layer potential with magnitude\footnote{It is also possible to directly derive the double layer potential formula from \cref{eq:8,eq:5,eq:4}, as described in \cite[App. 2]{Knittel2011}.}
+From \cref{sec:double-layer-potent} we can see that conditions \cref{eq:8,eq:5,eq:4} on $\phitwo$ are satisfied by a double layer potential with magnitude\footnote{It is also possible to directly derive the double layer potential formula from \cref{eq:8,eq:5,eq:4}, as described in \cite[Appendix 2]{Knittel2011}.}
 \begin{equation}
   \label{eq:24}
   \mu(\xv) = - \phione^\inte(\xv).
@@ -297,7 +297,7 @@ We let
   \phione = \sum_\ibasisb \phione_{\ibasisb} \tbfone_{\ibasisb}(\xv),
   \label{eq:25}
 \end{equation}
-where $\tbf_i$ are the same linear polynomial basis functions as used in \cref{sec:galerk-meth-llg}.
+where $\tbf_i$ are the same linear polynomial basis functions as used in the finite element method of \cref{sec:galerk-meth-llg}.
 
 Substituting \cref{eq:25} into \cref{eq:18} we have
 \begin{equation}
@@ -321,7 +321,7 @@ This would result in a system of linear equations $\Mm \phimdis = \bm' \phionedi
 However this would require calculating a double integral for each entry in $\bm'$.
 Instead we apply a collocation method.
 Collocation methods enforce pointwise relationships in contrast to the Galerkin method which enforces relationships in a weighted integral form.
-The collocation method is the conventional choice of discretisation approach used with the FEM/BEM in micromagnetics.
+The collocation method is the conventional choice of discretisation approach for the BEM operator in micromagnetics.
 
 To get the value of $\phim$ at node $\ibasisc$ using the collocation method we choose $\xv = \xv_\ibasisc$ in \cref{eq:27}.
 Then using the property $\tbf_\ibasis(\xv_\ibasisc) = \delta_{\ibasis \ibasisc}$ and replacing $\ibasisc$ by $\ibasis$ we have
@@ -392,7 +392,7 @@ where
 \label{sec:calc-integr-i_bm}
 
 In \thisref{sec:calc-integr-i_bm} we discuss methods of calculating the entries of the discrete boundary element matrix, $\bm_{\ibasis\ibasisb}$.
-Firstly we discuss the apparent singularity in the integral \cref{eq:bmint}, then we give two methods for evaluating these integrals for the case where the solution basis functions, $\tbfone_j$, are linear.
+Firstly we discuss the apparent singularity in the integral \cref{eq:bmint}, then we give two methods for evaluating these integrals: an analytical method and a numerical method.
 
 \subsection{Apparent singularity of the main integral}
 \label{sec:bem-singularity}
@@ -535,7 +535,7 @@ The choice to double the quadrature order after each non-convergence in line~\re
 It is possible to optimise this process by using a quadrature scheme which reuses the knots (\ie evaluation points) from the lower order calculations in the more accurate calculations, such as the Clenshaw-Curtis quadrature \cite{Trefethen2008}.
 However, for simplicity, we have not done this.
 
-The implementation of this algorithm in \oomph uses standard Gaussian quadrature (as mentioned in \cref{sec:numer-eval-integrals} with $\tolq = 10^{-8}$, starting orders of $n_1=2$, $n_2=4$, and a maximum order of $256$.
+The implementation of this algorithm in \oomph uses standard Gaussian quadrature (as mentioned in \cref{sec:numer-eval-integrals}) with $\tolq = 10^{-8}$, starting orders of $n_1=2$, $n_2=4$, and a maximum order of $256$.
 These parameters performed well, so we did not spend much time optimising these values.
 
 
@@ -545,7 +545,7 @@ In this chapter we have derived a hybrid FEM/BEM approach to calculating the mag
 This approach is beneficial in that it enforces the boundary condition on the potential at infinity without requiring calculations on an infinite domain.
 However, it involves a dense matrix of size proportional to the number of boundary nodes, and the process of evaluating the required integrals is more complex that those given by a FEM discretisation.
 
-We have also described general methods for the evaluation of the resulting integrals using numerical quadrature and a less general method using an analytical formula.
+We have also described general methods for the evaluation of the resulting integrals using numerical quadrature and a less general method for a common case using an analytical formula.
 There is a large scope for improving the efficiency of the adaptive numerical quadrature described here.
 However, such optimisations were not investigated because the evaluation of the boundary matrix is not a performance critical component of the coupled LLG-magnetostatics problem because it only needs to be evaluated once for a given mesh.
 
