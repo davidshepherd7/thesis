@@ -6,17 +6,17 @@
 
 In \thisref{sec:numer-meth-micr} we give an overview of numerical methods that have previously been used in dynamic micromagnetic calculations.
 These calculations involve solving some form of the LLG equation \cref{eq:LLG} with effective fields determined by energy derivatives as discussed in \cref{sec:cont-micromag}.
-These systems of partial differential equations (PDEs) can only be solved analytically in a few extremely simple cases \cite{Aharoni1996}, so numerical solution methods are almost always necessary.
+These systems of partial differential equations (PDEs) can only be solved analytically in a few simple cases \cite{Aharoni1996}, so numerical solution methods are almost always necessary.
 
 
 \subsection{Components of a numerical method for solving PDEs}
 
 Many numerical methods for solving non-linear PDEs, such as \cref{eq:LLG}, can be thought of as a combination of various component methods, each of which handles a different part of the conversion from a continuous PDE into an algorithm which can be performed by a computer\footnote{Technically proofs of convergence etc. should be carried out for every different combination of time and space discretisation \cite[382]{Iserles2009}; in practice surprises seem to be rare, at least within micromagnetics.}.
 
-The essential components of a numerical method for solving PDE problems are:
+The essential components of a numerical method for solving time-dependent PDE problems are:
 \begin{itemize}
 \item Spatial discretisation: convert space derivatives into algebraic relationships, typically between discrete points, in space, \eg finite elements, finite differences, macrospin models.
-\item Time discretisation (a.k.a. time integration):  convert time derivatives into algebraic relationships in time, again typically between points, \eg Runge-Kutta methods, backwards difference formulae.
+\item Time discretisation (a.k.a. time integration): convert time derivatives into algebraic relationships, again typically between points in time, \eg Runge-Kutta methods, backwards difference formulae.
 \end{itemize}
 For some choices of time and space discretisations additional component methods are needed:
 \begin{itemize}
@@ -26,7 +26,7 @@ For some choices of time and space discretisations additional component methods 
 
 Additionally in micromagnetic modelling the calculation of the magnetostatic field is required.
 If the integral form given in \cref{eq:Hmsint} is used then an additional integral evaluation method is needed to handle it.
-Alternatively, if the equivalent potential formulation \cref{eq:Hms,eq:cont-phi-bound} is used then the magnetostatic field calculation simply requires solving additional PDEs (although there are some issues with the application of the boundary condition at infinity, see \cref{sec:magstat-field-calc-pote}).
+Alternatively, if the equivalent potential formulation given in \cref{eq:Hms,eq:cont-phi-bound} is used then the magnetostatic field calculation simply requires solving additional PDEs, although there are some issues with the application of the boundary condition at infinity which are discussed in \cref{sec:magstat-field-calc-pote}.
 
 It should be noted that not all methods fit into this framework of applying separate methods for each part of the problem, see \eg \cite{Alouges2006}.
 
@@ -35,45 +35,44 @@ It should be noted that not all methods fit into this framework of applying sepa
 \subsection{Desirable properties of a numerical method}
 \label{sec:desir-prop-numer}
 
-Ideally all numerical methods would run quickly on cheap hardware and with sufficient accuracy, unfortunately this is not the case in general and we are forced to make trade-offs.
-In \thisref{sec:numer-meth-micr} we detail some \emph{ideal} properties of a numerical method (although satisfying all of these properties at once is almost certainly impossible).
+Ideally all numerical methods would run quickly on cheap hardware and with sufficient accuracy.
+Unfortunately this is not the case in general and we are forced to make trade-offs.
+In \thisref{sec:numer-meth-micr} we roughly describe some \emph{ideal} properties of a numerical method (although obtaining all of these properties in a single method is almost certainly impossible).
 
-The accuracy of a simulation is generally proportional to the ``fineness''  of the discretisations used (\ie the number of points used in the approximation), but increasing the fineness also increases the computational time.
 However, careful choice of algorithms can improve the accuracy at no additional cost or improve the speed with no loss of accuracy.
 
+
+The accuracy of a simulation is generally proportional to the ``fineness''  of the discretisations used (\ie the number of points used in the approximation), but increasing the fineness also increases the computation time.
+The following properties of methods are important in this respect:
 \begin{itemize}
-\item The time discretisation fineness should be dictated only by what is needed to accurately resolve the physics and not by numerical properties of the discretisation.
+\item The discretisation fineness in time should be dictated only by what is needed to accurately resolve the physics and not by numerical properties of the discretisation.
   In particular improved spatial fineness should not require improved time fineness.
 
-\item The optimal fineness in time (and space) should be determined automatically by the algorithm, and should be allowed to vary as needed.
-  This allows us to get the best ``value'' for our time when increasing the fineness of the discretisation.
+\item The optimal fineness in both time and space should be determined automatically, and should be allowed to vary as needed.
+  This allows us to get the best ``value'' for our computational effort when increasing the fineness of the discretisation.
 
-\item The computation time should scales linearly as fineness in space or time increases.
+\item The computation time should increase as little as possible as fineness in space or time increases.
   The minimum increase is linear scaling ($\order{N}$, where $N$ is the number of discrete points involved) because we always have to do \emph{something} with each value.
-  Attaining this property for fine spatial discretisation requires specific time discretisations (\ie increasing the fineness should not be coupled).
   Attaining this property for spatial discretisation usually impacts the choice of linear solver and/or magnetostatic calculation: many methods do not scale this well.
 
-\item Can handle ``interesting'' geometries without extortionate cost:
-  Ideally our method should be able to effectively approximate any geometry without major computational cost.
+\item The method should be able to handle non-trivial geometries without extortionate computational cost.
 \end{itemize}
 
-Additionally we would like our algorithms to be ``robust'', that is they should reliably give a correct answer (up to any tolerances specified).
+Additionally we would like our algorithms to be robust, that is they should reliably be able to give a correct answer no matter what parameters are used (up to any tolerances specified).
 In other words there should be few edge cases or ``interesting'' surprises when applying the method to various physical problems.
 Some important properties which improve robustness are:
 \begin{itemize}
-\item Automatic determination of the required fineness helps here as well: there is less possibility to choose
-
 \item The method should obey any qualitative physical properties of the continuous equation.
 
 \item Mathematical evidence that all parts of the method will ``work'' on any well defined problem (\eg proofs of convergence, etc.).
+
+\item The numerical method should automatically detect difficulties and apply the required effort to obtain the correct answer.
 \end{itemize}
 
-Other nice things to have are
 
-Simplicity: people need to understand a method before they can implement it, and even users need a surface level understanding of a method.
-
-Generality: methods which apply to many problems can be implemented once in a library by experts and reused by many users.
-Also general applicability makes methods much easier to test because of a greater choice of example problems.
+In addition to these properties there are a few practical considerations.
+The method should be reasonably simple: people need to understand a method before they can implement it, and even users need a surface level understanding.
+Finally the method should be as general as possible to reduce implementation effort and to simplify testing (by allowing a greater selection of example problems).
 
 
 \section{Spatial Discretisation}
@@ -83,36 +82,34 @@ Also general applicability makes methods much easier to test because of a greate
 \label{sec:sd-macrospins}
 
 In a granular magnetic material (a material consisting of magnetic grains separated by a non-magnetic material) the simplest way to handle spatial variation in the problem is to assume that within each grain the exchange effective field is so strong that the magnetisation is constant, \ie that each grain behaves as a single \emph{macrospin}.
-We assign a single value of $\Mv$ to each macrospin and proceed to calculate energy, effective field and/or magnetisation of each macrospin as required.
+We assign a single value of $\mv$ to each macrospin and proceed to calculate energy, effective field and/or magnetisation of each macrospin as required.
 One caveat is that the effects of the magnetostatic field of a grain on the grain itself is not automatically accounted for since there is no modelling of intra-grain effects.
 Hence it must be calculated and included separately to the magnetostatic interactions between grains.
 When included in this way the magnetostatic self field is often called the \emph{shape anisotropy} since it is dependent on the shape of the grain and acts in a similar way to the magnetocrystalline anisotropy.
 
-This macrospin approach may be used with any system in which there are a number of ``small'',\footnote{All dimensions of the bodies must be much smaller than the exchange length so that all magnetisation within the body is approximately parallel.} separate magnetic bodies with approximately uniform magnetisation inside the body.
-
-The obvious downside of a macrospin approach is that it only applies to a fairly specific geometry, although the case of a granular media has been of much interest for magnetic data storage.
+The obvious downside of a macrospin approach is that it only applies to fairly specific geometries, although the case of a granular media has been of much interest for magnetic data storage.
 Additionally, if there are nonuniformities in magnetisation within the regions where it has been assumed constant the model may be inaccurate.
 
 However it is often simpler to construct a macrospin model than to use the more general methods described in \cref{sec:sd-finite-diff-meth,sec:sd-finite-elem-meth}.
-Also the assumption that each grain has uniform magnetisation will reduce the number of calculations needed.
+Also the assumption that each grain has uniform magnetisation can reduce the number of calculations needed.
 
 Closely related to macrospin models are atomistic models \cite{Evans2014}.
 In these models the assumption of a continuous magnetisation $\mv(\xv, t)$ is dropped in favour of an assumption that each atom is the location of a single macrospin.
-As such they allow modelling of some systems, such as anti-ferromagnetic materials, that are inaccessible using micromagnetics.
-However, the required spatial resolution comes with a large increase in computational cost.
+As such they allow the modelling of some systems that are inaccessible using micromagnetics, such as anti-ferromagnetic materials.
+However, the required spatial resolution for an atomistic model comes with a large increase in computational cost.
 Additionally  such methods are only accurate for materials where the magnetic moment is localised to an atom, which is not always the case.
 
 
 \subsection{Finite Difference Methods}
 \label{sec:sd-finite-diff-meth}
 
-Another method of spatial discretisation is the finite difference method: a single magnetisation vector is assigned to each point on (or ``cell'' in) a simple square/cubic grid which covers the entire domain.
+Another widely used method of spatial discretisation is the finite difference method: a single magnetisation vector is assigned to each point on (or ``cell'' in) a square/cubic grid which covers the entire domain.
 Spatial derivatives in the PDE are then approximated by using truncated Taylor series expansions.
 
 The finite difference method works well for very simple geometries when the grid can be lined up with all geometric features.
 For example when we are interested in how the magnetisation evolves over time in a non-granular cuboid-shaped thin film of magnetic material a finite difference method will be sufficient (\eg in the \mumag standard problems \cite{mumag-website}).
 
-However when the geometry involves curves, diagonals, hexagonal grains, bit patterned media or any other more complex geometric system other methods are better suited.
+However when the geometry involves curves, diagonals, hexagonal grains, bit patterned media or any other more complex geometric system alternative methods may be better suited.
 
 
 \subsection{Finite Element Methods}
@@ -120,18 +117,18 @@ However when the geometry involves curves, diagonals, hexagonal grains, bit patt
 
 A more complex method of spatial discretisation is the finite element method \cite{HowardElmanDavidSilvester2006}.
 Here the magnetic body is divided up into a finite number of non-overlapping \emph{elements}, which can vary in both shape and size.
-Within each of these elements each magnetisation component is approximated by a simple polynomial function of space, typically a linear polynomial.
-Spatial derivatives are calculated by simply differentiating these polynomial functions.
-In contrast to macrospin and finite difference methods the actual equations solved by the finite element method are a \emph{weak} form of the standard PDE (or the \emph{strong} form).
+Within each of these elements the spatial variation of the magnetisation is approximated by a polynomial function, typically a linear polynomial.
+Spatial derivatives are easily calculated by differentiating these polynomial functions, although higher derivatives can require some tricks.
+In contrast to macrospin and finite difference methods the actual equations solved by the finite element method are a \emph{weak} form of the standard, or \emph{strong}, form of the PDE.
 More details of the weak form and the finite element method are given in \cref{sec:intr-finite-ele-diff}.
 
 The main advantage of the finite element method is that it can cheaply and accurately (compared to the finite difference method) approximate non-trivial geometrical features by an using an appropriate mesh of elements.
-An additional advantage is that the size of elements (and thus the accuracy of the approximation) can be varied arbitrarily as needed to give better accuracy in more complex or important regions.
-The choice of element size can be done automatically using \emph{adaptive mesh refinement}: after each calculation an error estimate is calculated (known as \emph{a posteriori} error estimation).
-If the error is determined to be too high anywhere the mesh is refined near that region and the calculation is repeated.
+An additional advantage is that the size of elements, and thus the accuracy of the approximation, can be varied arbitrarily as needed to give better accuracy in more complex or important regions.
+The choice of element size can be done automatically using \emph{adaptive mesh refinement}: after each calculation an error estimate is calculated.
+If the error is determined to be too high anywhere the mesh is refined near that region and the calculation is repeated (and similarly if the error is very low the mesh can be unrefined).
 Hence, given the desired error and a method to estimate the error, a mesh giving an efficient and accurate approximation can be automatically generated \cite{Schrefl1999}.
 
-The major downside of finite element models is that the underlying mathematics is more complex than that required for other methods, especially finite difference methods.
+The major downside of finite element models is that the underlying mathematics is more complex than that required for other methods.
 Also the set up time and memory usage can be greater because of the additional ``bookkeeping'' required to keep track of the more complex meshes.
 
 
@@ -140,11 +137,10 @@ Also the set up time and memory usage can be greater because of the additional `
 
 Methods for the calculation of magnetostatic fields belong to two categories: integral and potential methods.
 Integral methods are based on efficiently approximating the very large number of integrals required by \cref{eq:Hmsint}.
-Potential methods are based on the use of the potential form \cref{eq:Hms} with standard spatial discretisation methods.
-However special treatment is required for the boundary condition on the potential at infinity \cref{eq:cont-phi-bound}.
+Potential methods are based on the solution of the PDE \cref{eq:Hms} with standard spatial discretisation methods, although some special treatment is required for the boundary condition at infinity.
 
 In \thisref{sec:magn-field-calc} we use the term ``discrete magnetisations'' to mean the macrospins/cells/nodes as appropriate for the spatial discretisation.
-We use $N$ to denote the number of such charges.
+We use $N$ to denote the number of discrete magnetisations.
 
 % More recently models have been developed which extend the magnetic field calculations to include all of Maxwells equations (the electric field and its effects on the magnetic field as well).
 % Such models greatly increase the number of degrees of freedom in the problem: 3 magnetisation components, 3 magnetic field components and 3 electrical field components are needed, whereas for magnetostatic calculations only the magnetisation and possibly up to 2 potentials are needed.
@@ -182,9 +178,9 @@ Integral methods are based on the expression
 \end{equation}
 
 A naive way to evaluate the integrals in \cref{eq:Hmsint2} would be to calculate the field at each node due to each other node.
-So for each node a sum of the contributions from all other nodes must be calculated.
+So for each node a sum over all other nodes must be calculated.
 Hence this results in a computation time that scales as $\order{N^2}$, which is usually unacceptably slow for reasonably large $N$.
-Instead, more advanced techniques are used which treat the large number of integral evaluations in an efficient way.
+Instead, more advanced techniques are used which treat the large number of integral evaluations in a more efficient way.
 
 
 \subsubsection{Fast Fourier transform methods}
@@ -208,24 +204,21 @@ In such ``non-uniform FFT'' methods distant discrete magnetisations are approxim
 \label{sec:fast-mult-meth}
 
 An alternative method of calculation of the magnetostatic field is the fast multipole method (FMM) \cite{Beatson1997}.
-The fast multipole method takes advantage of the fact that distant magnetic charge has a much smaller effect on the total field at a point than a nearby magnetic charge.
+The fast multipole method takes advantage of the fact that distant magnetic charge has a much smaller contribution to the total field at a point than a nearby magnetic charge due to the $\frac{1}{(\xv - \xv')^2}$ scaling in \cref{eq:Hmsint2}..
+Hence much less accuracy is needed in the calculation of these distant contributions.
 
 For the field calculation at a specific point the full calculation is only performed for nearby discrete magnetisations.
 Groups of more distant magnetisations are approximated (lumped) as a single multipole placed at the centre of the group.
-As the magnetisations become more distant they contribute much less to the field due to the $\frac{1}{(\xv - \xv')^2}$ scaling in \cref{eq:Hmsint2}.
-Hence for distant points less accurate but cheaper approximation can be used without reducing the accuracy of the final result.
-
 The trick for quickly calculating fields at a large number of points is to pre-calculate multipole approximations for a range of accuracies over all space.
 Then the calculation of a field at a single point only requires the full calculation of effects from a few nearby points and from the appropriate multipoles.
 
-One advantage of this method over the fast Fourier transform is that it allows for arbitrary geometries.
-Also the complexity of the method is $\order{N}$ \cite{Chang2011}, so the FMM is more efficient than the FFT for sufficiently large problems (although ``sufficiently large'' may in fact be very large due to the cost of precomputing the required multipole approximations).
+The main advantage of this method over the fast Fourier transform is that it allows for arbitrary geometries.
 
 
 \subsection{Scalar potential methods}
 \label{sec:magstat-field-calc-pote}
 
-Potential methods are based on the formulation (see \cref{sec:magnetostatic-field} for details):
+Potential methods are based on the formulation
 \begin{equation}
   \begin{aligned}
     \label{eq:Hms2}
@@ -245,17 +238,18 @@ and
 \begin{equation}
   \begin{aligned}
     \label{eq:phi-inf-bound}
-    \phim \rightarrow 0 \text{ as } &\abs{\xv} \rightarrow \infty.
+    \phim \rightarrow 0 \text{ as } &\abs{\xv} \rightarrow \infty,
   \end{aligned}
 \end{equation}
+see \cref{sec:magnetostatic-field} for details.
 
-This is a differential equation and so inside the domain, $\magd$, it can be solved simply by applying finite element or finite difference discretisation methods.
+Inside the domain $\phim$ can be solved for simply by applying finite element or finite difference discretisation methods.
 However \cref{eq:phi-inf-bound}, the boundary condition on $\phim$ at infinity, is problematic.
 We obviously can not apply this condition directly using standard methods, since that would involve either an infinite number of elements or infinitely large elements (actually these are  possible but impose heavy limitations on the allowed mesh geometries see \eg \cite{Alouges2001} and \cite{Fidler2000} respectively).
-Hence other techniques must be used, and such techniques are the subject of the rest of \thisref{sec:numer-meth-micr}.
+Hence more advanced techniques must be used, such techniques are the subject of the rest of \thisref{sec:numer-meth-micr}.
 
-The system of equations for the internal field calculations results in a well known linear algebra problem which can be solved in $\order{N}$ time a number of well studied linear solvers (more details are given in \cref{sec:solution-lin-sys,sec:solution-strategies}).
-However applying the boundary conditions can require additional processing time.
+The system of equations for the internal field calculations results in a well known linear algebra problem which can be solved in $\order{N}$ time by well studied linear solvers (more details are given in \cref{sec:solution-lin-sys,sec:solution-strategies}).
+However applying or calculating boundary conditions can require additional processing time.
 
 
 
@@ -273,9 +267,9 @@ Unfortunately the accuracy of this approach is still quite low, even for large t
 \subsubsection{The hybrid finite element method/boundary element method}
 \label{sec:bound-elem-meth}
 
-The idea of the hybrid finite element method/boundary element method (FEM/BEM) is to replace the external domain by a dipole layer placed on the surface of the magnetic domain which mimics the effect of the infinite external domain \cite{Fredkin1990}.
+The idea of the hybrid finite element method/boundary element method (FEM/BEM) is to replace the external domain by a dipole layer placed on the surface of the magnetic domain which gives the correct boundary condition at infinity \cite{Fredkin1990}.
 This removes the need to truncate or discretise the infinite external domain.
-The name comes from the similarity of the use of a dipole layer with the boundary element method, and the fact that the standard finite element method is used to calculate the required potentials in the bulk.
+The name comes from the close relationship between the use of a dipole layer and the boundary element method, and the fact that the standard finite element method is used to calculate the required potentials in the bulk.
 The full details of the method applied to magnetostatic calculations is discussed in \cref{sec:hybr-finit-elem}.
 
 A comparison by Bottauscio \cite{Bottauscio2008} found that using the FEM/BEM method was more accurate than applying asymptotic boundary conditions (ABCs) for a calculation of the time evolution of the magnetisation of a sphere with zero exchange coupling.
@@ -285,24 +279,21 @@ Even when exchange coupling was added (giving an easier test) the ABC method was
 The main downside of the FEM/BEM method is that it involves dense matrix of size $N_b \times N_b$ where where $N_b$ is the number of boundary nodes (see \cref{sec:hybr-finit-elem} for details).
 This matrix must be stored in memory, and multiplied by a vector for the calculation of the boundary conditions.
 The speed of calculation of the boundary values in the method is limited by the dense matrix multiplication which, the cost of which is $\order{N_b^2}$.
-Similarly, the additional memory usage is $\order{N_b^2}$, which can limit the size of problems.
+Similarly, the memory usage is $\order{N_b^2}$, which can limit the size of problems.
+The use of hierarchical matrix techniques can reduce both the speed and the memory usage to $\order{N_b \log(N_b)}$ \cite{Knittel2009}.
 
-The use of hierarchical matrix techniques can reduce both the speed and the memory usage of FEM/BEM to $\order{N_b \log(N_b)}$ \cite{Knittel2009}.
 In 3D structures which are roughly spherical $N_b = \order{N^{2/3}}$ and so the use of a hierarchical matrix gives optimal computation speed\footnote{With hierarchical matrix techniques the speed is $\order{N^{2/3}\log(N^{2/3})}$ but $\log(x) \ll x^{1/2}$ for large $x$, hence $\order{N^{2/3}\log(N^{2/3})} \ll \order{N}$, \ie optimal computation speed scaling.} but for extremely flat structures such as thin films the number of boundary nodes can be as large as $N_b = N$.
 Hence the speed of the FEM/BEM method depends on the geometry.
 
 Another downside of FEM/BEM is the increase in the complexity of the model: some components of the FEM/BEM method are fundamentally different to FEM.
 As such substantial additional code and mathematical knowledge may be needed for its implementation when standard FEM libraries are used as a basis.
-As an example: singular integrals occur in the boundary element method so more advanced integration methods are needed than for FEM alone.
-
-The details of the FEM/BEM method and its implementation are discussed in \cref{sec:hybr-finit-elem}.
 
 
 \section{Time Integration}
 \label{sec:time-discretisation}
 
 Time integration schemes are used to convert the time derivatives of a PDE into a form that can be handled computationally.
-When discussing time integration schemes it is helpful to use a (vector) initial value ordinary differential equation as an example:
+When discussing time integration schemes it is helpful to use a (vector) initial value ordinary differential equation (ODE) as an example:
 \begin{equation}
   \begin{aligned}
     \frac{d \yv}{dt} &= \ffv{t, \yv}, \\
@@ -310,24 +301,24 @@ When discussing time integration schemes it is helpful to use a (vector) initial
     \label{eq:45}
   \end{aligned}
 \end{equation}
-where $\fv(t,\yv)$ is a known function and $\yv_0$ is the (known) initial condition.
-After the application of one of the spatial discretisations described above a PDE is typically reduced to the form \cref{eq:45}; this is sometimes called a \emph{semi-discretised} PDE.
+where $\fv(t,\yv)$ is a known function and $\yv_0$ is the known initial condition.
+After the application of one of the spatial discretisations described above a time-dependent PDE is typically reduced to the form \cref{eq:45}; this is known as a \emph{semi-discretised} PDE.
 
 The time integration methods discussed here all bear a strong similarity to the finite difference method discussed in \cref{sec:sd-finite-diff-meth}, except that the independent variable discretised is time instead of space.
 This is appropriate since time is one-dimensional, hence no complex geometry is possible and so typically there is no need for the more advanced finite element method.
 
 Some key attributes of a time integration scheme are \cite{Atkinson2009}:
 \begin{itemize}
-\item \textbf{Accuracy (order)} -- An estimate of how rapidly the approximate solution converges as the time step size is reduced.
+\item \textbf{Accuracy (order)} -- An estimate of how rapidly the approximate solution converges to the exact solution as the time step size is reduced.
 
-\item \textbf{Stability} -- Roughly speaking a scheme is stable if the approximate solution does not ``blow up'' (\ie become catastrophically inaccurate, infinite, oscillate in non-physical ways, \ldots) for sufficiently large time steps (see \cref{sec:A-stability} for a more rigorous description).
+\item \textbf{Stability} -- Roughly speaking a scheme is stable if the approximate solution does not ``blow up'' (\ie become catastrophically inaccurate, infinite, oscillate in non-physical ways, \ldots) for sufficiently large time steps, see \cref{sec:A-stability} for a more rigorous description.
 
 \item \textbf{Conservation properties} -- Some differential equations have properties which should ideally be conserved in the discretised system.
 For example the magnetisation length and energy properties of the Landau-Lifshitz-Gilbert equation discussed in \cref{sec:prop-cont-llg}.
 Schemes which conserve such properties are often referred to as ``geometric'' integrators.
 
 \item \textbf{Self-starting} -- A scheme is self starting if it only requires a single initial value.
-This is desirable because methods of estimating additional initial values make the final scheme more complex and may introduce additional errors.
+This is desirable because methods of estimating additional initial values make the final scheme more complex and may introduce additional error.
 \end{itemize}
 
 These attributes are discussed more rigorously in the rest of \thisref{sec:time-discretisation}.
@@ -339,13 +330,13 @@ Explicit time discretisation schemes calculate the value at the next time step i
 The simplest such scheme is the \emph{(forward) Euler method}
 \begin{equation}
   \label{eq:44}
-  \yv_{n+1} = \yv_n + \dtn f(t_n, \yv_n),
+  \yv_{n+1} = \yv_n + \dtn \fv(t_n, \yv_n),
 \end{equation}
 where $\dtn = t_{n+1} - t_n$ is the $n$-th time step size and $\yv_i$ is the approximation to $\yv(t_i)$.
-Clearly, given $f(t,y)$ and an initial value for $y(t_0)$ we can solve for $y(t_n)$ for any $n$.
+Clearly, given $\fv(t,y)$ and an initial value for $\yv(t_0)$, we can calculate $\yv(t_n)$ for any $n$.
 
 In contrast to explicit schemes, implicit schemes use the value at the next time step in its own calculation.
-Hence at each step a (possibly non-linear) system of equations must be solved.
+Hence at each step a (linear or non-linear) system of equations must be solved.
 The simplest implicit scheme is the first order \emph{backwards difference formula} (BDF1, also known as backwards Euler)
 \begin{equation}
   \label{eq:bdf1-definition}
@@ -355,7 +346,7 @@ The simplest implicit scheme is the first order \emph{backwards difference formu
 At first glance it seems that the additional solution of a system of equations required for one step of an implicit scheme mean would that explicit schemes are more efficient, and it is true that one step of an implicit method requires more computational effort than one step of an explicit method.
 However all explicit time integration schemes suffer from issues of limited stability for some problems, and so are forced to use time step sizes much smaller than would be required for reasons of accuracy (see \cref{sec:A-stability} for details).
 In these cases implicit schemes can be much more efficient; problems where this is the case are often called ``stiff'' problems.
-The semi-discretisation of a PDE often results in a stiff problem.
+The semi-discretisation of a PDE often results in such a stiff problem.
 In \cref{cha:stiffn-llg-equat} we investigate stiffness in micromagnetics problems.
 
 
@@ -366,7 +357,7 @@ In \cref{cha:stiffn-llg-equat} we investigate stiffness in micromagnetics proble
 \subsection{Some implicit time integration schemes}
 \label{sec:some-implicit-time-integrators}
 
-For the remainder of \thisref{sec:time-discretisation} we will use three time integration schemes with good stability and accuracy properties that are widely employed in practice as examples.
+For the remainder of this thesis we will focus on three time integration schemes with good stability and accuracy properties that are widely employed in practice.
 All three are implicit schemes for reasons of stability, as mentioned in \cref{sec:explicit-vs-implicit-schemes}.
 
 \emph{Trapezoid rule} (TR) is the average of the forward and backward Euler methods from \cref{sec:explicit-vs-implicit-schemes} and is defined as \cite[260]{GreshoSani}:
@@ -381,23 +372,20 @@ The \emph{second order backwards difference formula} (BDF2) is \cite[715]{Gresho
   + \frac{\dtn + \dtx{n-1}}{2\dtn + \dtx{n-1}} \fv(t_{n+1}, \yv_{n+1}).
 \end{equation}
 
-The method that this thesis focuses on (for reasons that will become clear through the remainder of \thisref{sec:time-discretisation}) is the \emph{implicit midpoint rule} (IMR).
+The method that this thesis focuses on most of all (for reasons that will become clear through the remainder of \thisref{sec:time-discretisation}) is the \emph{implicit midpoint rule} (IMR).
 It is given by \cite[263]{GreshoSani}:
 \begin{equation}
   \label{eq:imr-definition}
   \yv_{n+1} = \yv_n + \dtn \ffv{\frac{t_{n+1} + t_n}{2}, \frac{\yv_n + \yv_{n+1}}{2}}.
 \end{equation}
-Note that for cases where $\fv$ is linear in both $t$ and $\yv$ IMR, \cref{eq:imr-definition}, is equivalent to TR, \cref{eq:tr-definition}.
-In general the properties of the two methods are similar.
+Note that for cases where $\fv$ is linear in both $t$ and $\yv$, IMR is equivalent to TR, and in general the properties of the two methods are similar.
 
-IMR is trivial to implement in any existing implicit solver: take a step of BDF1 (the simplest possible implicit method), \cref{eq:bdf1-definition}, using $\dtn^\bdfo = \dtn^\imr/2$ to find $\yv_\midp$ at $t_\midp$.
-Then calculate $\yv_{n+1}$ and $t_{n+1}$ using rearrangements of $\yv_\midp = \frac{\yv_n + \yv_{n+1}}{2}$ \cite{Malidi2005}:
+IMR can be easily implemented in terms of BDF1 by the following simple algorithm: take a step of BDF1 (the simplest possible implicit method) using $\dtn^\bdfo = \dtn^\imr/2$ to find $\yv_\midp$ at $t_\midp$.
+Then calculate $\yv_{n+1}$ using a rearrangement of $\yv_\midp = \frac{\yv_n + \yv_{n+1}}{2}$ \cite{Malidi2005}:
 \begin{equation}
-  \begin{aligned}
-    t_{n+1} &= t_\midp + \dtn^\imr/2, \\
-    \yv_{n+1} &= 2\yv_\midp - \yv_n.
-  \end{aligned}
+    \yv_{n+1} = 2\yv_\midp - \yv_n,
 \end{equation}
+and set $t_{n+1} = t_\midp + \dtn^\imr/2$.
 
 TR and IMR are both self starting, while BDF2 requires an additional start-up value.
 This can be generated, for example, by taking a single step of IMR or TR before beginning the use of BDF2.
@@ -418,7 +406,6 @@ For example the local truncation error of IMR is
   \lte^\imr =  \yv(t_{n+1}) - \yv(t_n) - \dtn \ffv{\thf, \frac{\yv(t_n) + \yv_{n+1}^\imr}{2}}.
   \label{eq:trunc-start}
 \end{equation}
-
 If the local truncation error of a time integration scheme is such that
 \begin{equation}
   \lte \leq c \dtn^p
@@ -480,7 +467,7 @@ Substituting \cref{eq:taylornp1,eq:taylorn} into \cref{eq:trunc-start} gives\foo
   \label{eq:trunc-mid}
 \end{equation}
 
-There are two parts to \cref{eq:trunc-mid}: the first term (I) is fairly standard for second order time integration schemes (\cf the LTEs for TR and BDF2, \cref{eq:tr-lte,eq:bdf2-lte}).
+There are two parts to \cref{eq:trunc-mid}: the first term (I) is fairly standard for second order time integration schemes (\cf the LTEs for TR and BDF2).
 The second term (II) originates from the use of an approximation to $\yv(\thf)$ in the evaluation of $\fv$ (\ie the Runge-Kutta nature of IMR).
 The rest of the derivation requires applying Taylor expansions to II and is carried out in \cref{sec:full-imr-lte-calculation}.
 The final result shows that IMR is of second order:
@@ -494,15 +481,17 @@ An additional condition required in the derivation is that the magnitude of the 
 This condition is easily satisfied in the asymptotic case for most $\fv$, the case where it does not hold is discussed in more detail in \cref{sec:order-reduction}.
 
 For a true comparison with the other local truncation errors we would need to shift this approximation to $t_n$.
-However a simple approximation can be given easily: for $\fv$ linear in $yv$, $t$ TR and IMR are the same, hence term I must be the same as TR in this case, a second error term is then added to $\lte^\imr$ corresponding to II for non-linear $\fv$.
+However a simple comparison can be given easily: for $\fv$ linear in $\yv$, $t$ TR and IMR are the same, hence term I must be the same as TR in this case,.
+A second error term is then added to $\lte^\imr$ corresponding to II for non-linear $\fv$.
 Hence TR has the smallest LTE of the three methods discussed for most real-world ODEs.
 The relative magnitude of the additional term in $\lte^\imr$ is highly problem dependent, see \cref{sec:order-reduction} for details, so the comparison of the LTEs of IMR and BDF2 is more complex.
-However in terms of the accuracy of calculations the \emph{accumulated} local truncation error is what matters, so these comparisons are not the whole story.
+
+Note however that for the accuracy of calculations the \emph{accumulated} local truncation error is what matters, so these comparisons are not the whole story.
 
 \subsection{A-stability}
 \label{sec:A-stability}
 
-To discuss the stability of time integrators the following initial value ODE is widely used
+To discuss the stability of time integrators the following initial value ODE is widely used:
 \begin{equation}
   \begin{aligned}
     \ffv{\yv} &= \lambda \yv, \\
@@ -519,14 +508,15 @@ A-stability\footnote{The A does not stand for anything, it is just ``A'' \cite[4
 % When $\realp(\lambda) > 0$ the ODE itself is unstable (, and so stability is not expected in general.
 
 The IMR, TR, BDF1 and BDF2 methods are all A-stable \cite[pgs. 43, 251]{HairerWanner}.
-Linear explicit methods are never A-stable \cite{Nevanlinna1974} (``linear'' methods in this reference include all common time integration methods: Runge-Kutta, multistep, predictor-corrector, \ldots)\footnote{These limitations could theoretically be circumvented by using significantly more complex methods, but such questions are far beyond the scope of this thesis.}, which is the main reason for our focus on implicit methods.
-Additionally there are no A-stable linear multistep methods of order greater than two\footnote{A-stable implicit Runge-Kutta methods of higher order do exist, see \eg \cite[73]{HairerWanner}, but they require the solution of significantly larger systems of equations.} \cite[261]{GreshoSani}, which is why we have chosen the  methods in \cref{sec:some-implicit-time-integrators} for discussion.
+Linear explicit methods are never A-stable \cite{Nevanlinna1974} (``linear'' methods in this reference include all common time integration methods: Runge-Kutta, multistep, predictor-corrector, \ldots), which is the main reason for our focus on implicit methods.
+Additionally there are no A-stable linear multistep methods of order greater than two \cite[261]{GreshoSani}, which is why we have chosen the  methods in \cref{sec:some-implicit-time-integrators} for discussion.
+It should be noted that A-stable implicit Runge-Kutta methods of higher order do exist, see \eg \cite[73]{HairerWanner}, but they require the solution of significantly larger systems of equations at each time step.
 
 \subsection{Spurious numerical damping}
 \label{sec:numerical-damping}
 
-Some time integration methods create additional, non-physical damping in approximate solutions, even when none exists in the exact solution.
-This is problematic for the modelling of highly oscillatory ODEs, such as the LLG with low damping.
+Some time integration methods create additional, non-physical damping in approximate solutions, even when none exists in the true solution.
+This can be problematic for the modelling of highly oscillatory ODEs, such as the LLG with low damping.
 
 In the solution of the ODE \cref{eq:ode-test-f} with $\lambda = i\omega$, $\abs{y}$ should not decrease over time.
 If $\abs{y_n}$ decreases over time in the approximate solution given by a time integration scheme, then we say that the scheme causes spurious damping.
@@ -584,13 +574,13 @@ In the case of the implicit midpoint rule this corresponds to cases when term II
 This occurs when the error in $\ffv{t, \yv}$ due to a small error in $\yv$ is large.
 
 The concept of ``B-convergence'' is used to analyse this effect.
-Roughly speaking, a Runge-Kutta method is B-convergent of order $r$ if the global error is $\order{\dtx{\text{max}}^r}$ for ``infinitely stiff'' ODEs.
-The implicit midpoint rule is B-convergent of order 1 \cite[231]{HairerWanner},\footnote{In this reference IMR is referred to as the second order Gauss method, BDF1 is Radau IIA, TR is Lobatto IIIA \cite[72-76]{HairerWanner}.} which is one order less than its global error on typical ODEs.
+Roughly speaking, a Runge-Kutta method is B-convergent of order $r$ if the global error is $\order{\dtn^r}$ for ``infinitely stiff'' ODEs.
+The implicit midpoint rule is B-convergent of order 1 \cite[231]{HairerWanner},\footnote{In this reference IMR is referred to as ``the second order Gauss method'', BDF1 is Radau IIA, TR is Lobatto IIIA \cite[72-76]{HairerWanner}.} which is one order less than its global error on typical ODEs.
 We call this effect ``order reduction''.
 In contrast, the TR and BDF methods do not suffer from order reduction \cite[159]{Atkinson1994}.
 This is because all evaluations of $\fv$ are at integer time points (\ie $t_{n+1}, t_{n}, t_{n-1}, \ldots$ rather than $\thf$) and so there is no term in the LTE containing $\pd{\fv}{\yv}$.
 
-This order reduction effect is a potential downside for IMR, but only when applied to specific ODEs (no such effect has been reported in micromagnetics simulations we are aware).
+This order reduction effect is a potential downside for IMR, but only when applied to specific ODEs (and no such effect has been reported in micromagnetics simulations we are aware).
 Additionally it should be accounted for by a good adaptive time step selection algorithm (see \cref{sec:adaptivity} for details).
 
 A simple test ODE demonstrates this phenomenon \cite[157]{Atkinson2009}:
@@ -630,19 +620,20 @@ If additionally $\abs{\lambda\dtn} \gg \abs{g'''(t)}$, which will typically be t
   \lte^\imr = \frac{-\dtn^2}{4} g''(\thf) + \order{\dtn^3}.
   \label{eq:reduced-order-imr-truncation-error}
 \end{equation}
-So we can see that the order has been reduced by one power of $\dtn$ compared with the standard LTE \cref{eq:trunc-final} (which is the case for $\abs{\lambda\dtn} < 1$).
+So we can see that the order has been reduced by one power of $\dtn$ compared with the standard LTE \cref{eq:trunc-final} for cases when $\abs{\lambda\dtn} < 1$.
 
 
 \subsection{Adaptivity}
 \label{sec:adaptivity}
 
 Adaptive time integration methods automatically select time step sizes in response to an estimate of the local truncation error.
-This can improve efficiency depending on the equation being solved, for example on problems where a high frequency part of the solution is gradually damped out the time step can increase by orders of magnitude at later times without loss of accuracy.
-Adaptive integration also greatly simplifies the use of the simulation program: the user only has to choose the allowed local temporal error and the program will handle the rest.
+This can improve efficiency: for example on problems where a high frequency part of the solution is gradually damped out the time step can increase by orders of magnitude at later times without loss of accuracy.
+Adaptive integration also greatly simplifies the use of the numerical method: the user only has to choose the allowed temporal LTE and the algorithm will handle the rest.
 
-Most local truncation error estimators for implicit integrators (e.g. TR, BDF2) use a Milne-device based method \cite[707-716]{GreshoSani}.
-This means that they compute an explicit estimate of the solution $\yv^E_{n+1} \sim \yv(t_{n+1})$  (sometimes known as a predictor step) to the same order of accuracy as the implicit method and using only derivatives that are required for the implicit method (so that no additional $\fv$ evaluations are needed).
-They then use algebraic rearrangements of the local truncation error expressions of the predictor step and the implicit step to compute an approximation to the local truncation error.
+Most local truncation error estimators for implicit integrators (e.g. TR, BDF2) compute an explicit estimate of the solution $\yv^E_{n+1} \sim \yv(t_{n+1})$ (sometimes known as a predictor step) to the same order of accuracy as the implicit method.
+The explicit method is selected such that it uses only the same derivatives as are required for the implicit method, so no additional $\fv$ evaluations are needed.
+Algebraic rearrangements of the LTE expressions for the explicit and the implicit methods are then used to compute an approximation to the actual LTE \cite[707-716]{GreshoSani}.
+This is known as Milne's device.
 
 No such estimation is possible for IMR because of the specific form of the local truncation error \eqref{eq:trunc-mid}.
 The details of this issue and the first (to our knowledge) algorithm for adaptive time integration with IMR are described in \cref{sec:adaptive-imr}.
@@ -650,21 +641,21 @@ The details of this issue and the first (to our knowledge) algorithm for adaptiv
 It is also possible to construct adaptive time step algorithms based on error estimates specific to the equation being solved.
 Such estimates have the obvious limitation that they are only (directly) applicable to the equations for which they were derived.
 
-One example of such an algorithm for the LLG equation (in cases where the damping is not exactly correct) the effective damping can be used as an error estimator, as proposed by Albuquerque \etal \cite{Albuquerque2001}.
-A major disadvantage of this method (aside from the obvious requirement that the damping be inexact) is that the error estimator is unable to distinguish between spatial errors and temporal errors.
-
-As another example of this less general class of adaptivity methods time error estimates for the LLG equation with limited effective field terms and a specific finite element discretisation were proven and used as part of an adaptive time integration algorithm with both IMR and BDF2 by Banas \cite{Banas-thesis}.
-However the derivation is fairly complex (at least for non-numerical analysts), and so would be difficult to extend to include exchange field or FEM/BEM magnetostatics.
+One example of such an algorithm for the LLG equation is to compare the effective damping with the expected damping and use the difference as an error estimator, as proposed by Albuquerque \etal \cite{Albuquerque2001}.
+A major disadvantage of this method is that the error estimator is unable to distinguish between spatial errors and temporal errors.
+Possible method is to use the time error estimates for the LLG equation, with limited effective field terms and a specific finite element discretisation, derived for both IMR and BDF2 by Banas \cite{Banas-thesis}.
+However the derivation is fairly complex, and may be difficult to extend to include exchange field or FEM/BEM magnetostatics.
 
 
 \subsection{Magnetisation length conservation}
 \label{sec:ensuring-constant-mv}
 
+We now move on to the discussion of some properties specific to the LLG equation.
 As discussed in \cref{sec:prop-cont-llg}, the length of the magnetisation, $\abs{\mv}$, at each point in space is constant over time.
 However, in the approximations given by numerical methods this property is often lost, and must be enforced separately.
-Note that this is not related to the spurious damping discussed in \cref{sec:numerical-damping}: in that \thisref{sec:numerical-damping} the key property was the conservation of the \emph{amplitude} of oscillations.
+Note that this is not related to the spurious damping discussed in \cref{sec:numerical-damping}: in that section the key property was the conservation of the amplitude of \emph{oscillations}.
 
-A simple method of dealing with the constraint is to re-normalise each $\mv$ after some number of time steps or when the error in $\abs{\mv}$ exceeds some tolerance \cite{Fidler2000}.
+A simple method of dealing with the constraint is to re-normalise each value of $\mv$ after some number of time steps, or when the error in $\abs{\mv}$ exceeds some tolerance \cite{Fidler2000}.
 However this approach fundamentally changes the system of equations being solved in a non-linear and unpredictable manner \cite{Lewis2003}.
 
 Another way to avoid this problem is to use a spherical polar coordinate system $(r,\theta,\phi)$ for the magnetisation.
@@ -677,11 +668,11 @@ However problems occur with this approach when the polar angle, $\theta$, approa
 Also the calculation of the sum of the effective field vectors is much more complex in spherical polar coordinates (involving trigonometric identities), resulting in more complex non-linear/linear systems when using implicit time integration schemes.
 
 Geometric time integration schemes aim to solve the issue of length conservation by constructing a scheme that naturally preserves the value of $\abs{\mv}$.
-Some examples of such schemes are based on IMR \cite{DAquino2005}, or a semi-explicit extension of IMR using explicit extrapolations of the effective field \cite{Spargo2003,Serpico2001}.
+Some examples of such schemes are based on IMR \cite{DAquino2005}, or a semi-implicit extension of IMR using extrapolations of the effective field \cite{Spargo2003,Serpico2001}.
 Alternatively, geometric integration methods based on Cayley transforms can be used \cite{Lewis2003,Bottauscio2011}.
 
 A third approach is to use Lagrange multipliers to constrain the solution such that $\abs{\mv}$ is constant \cite{Szambolics2008a}.
-The main problem with this method is that an additional degree of freedom is needed for every $\mv$ value in space.
+The main problem with this method is that an additional degree of freedom is needed for every value of $\mv$ in space.
 
 \subsubsection{Conservation of $\abs{\mv}$ by IMR in a macrospin model}
 \label{sec:proof-magn-length-ode-imr-llg}
@@ -706,7 +697,7 @@ So the IMR-discretised version of the LLG is
   \label{eqn:disc-llg}
 \end{equation}
 
-Intuitively the conservation properties of the IMR discretisation can be seen to come from the cancellation of cross terms in the inner product $\ip{\lop[\mv]}{\dmdt}$ for any symmetrical linear operator $\lop$.
+The conservation properties of the IMR discretisation come from the cancellation of cross terms in the inner product $\ip{\lop[\mv]}{\dmdt}$ for any symmetrical linear operator $\lop$.
 More precisely:
 \begin{equation}
   \begin{aligned}
@@ -722,10 +713,10 @@ More precisely:
     \Big].
   \end{aligned}
 \end{equation}
-This means that if $\lop \mv$ is orthogonal to $\dmdt$ in continuous equations it will also be orthogonal in the IMR discretised version.
-In particular setting $\lop$ as the identity operator will allow us to show that $\mv$ and $\dmdt$ are orthogonal in \thisref{sec:proof-magn-length-ode-imr-llg} and setting $\lop = \hop$ will allow us to show some nice properties on the energy (see \cref{sec:proof-energy-prop}).
+This means that if $\lop \mv$ is orthogonal to $\dmdt$ in the continuous or semi-discretised equations then it will also be orthogonal in the IMR-discretised version.
+In particular, setting $\lop$ as the identity operator will allow us to show that $\mv$ and $\dmdt$ are orthogonal in \thisref{sec:proof-magn-length-ode-imr-llg} and setting $\lop = \hop$ will allow us to show some nice properties of the energy in \cref{sec:proof-energy-prop}.
 
-We can now examine the change in magnetisation length using the same technique as in \cref{sec:prop-cont-llg}: take the dot product of \cref{eqn:disc-llg} with $\frac{\mv_{n+1} + \mv_n}{2}$ on both sides and use the triple product identity \cref{eq:dot-cross-id} to get
+We now examine the change in magnetisation length using the same technique as in \cref{sec:prop-cont-llg}: take the dot product of \cref{eqn:disc-llg} with $\frac{\mv_{n+1} + \mv_n}{2}$ on both sides and use the triple product identity \cref{eq:dot-cross-id} to get
 \begin{equation}
   \label{eq:63}
   \frac{\mv_{n+1} + \mv_n}{2} \cdot \frac{\mv_{n+1} - \mv_n}{\dtn} = 0.
@@ -751,20 +742,20 @@ For example, in the case of BDF1 we have
       - \ip{\mv_n}{\lop \mv_n} },
   \end{aligned}
 \end{equation}
-\ie orthogonality properties from the continuous form do not carry over to the discrete form in general.
+\ie orthogonality properties from the continuous form do not carry over to the discrete form.
 
 Notice that the only requirement in the derivation of \cref{eq:63} is to use the midpoint approximation of magnetisation in the LLG itself.
 The derivation does not make any assumption about how the effective field is approximated.
-This explains why the semi-explicit modification to IMR also conserves the magnetisation length.
+This explains why various semi-implicit modifications to IMR which use explicit calculations of effective fields also conserve the magnetisation length.
 
 
 \subsection{Energy conservation/decay}
 \label{sec:energy-cons}
 
-Another geometrical property of the Landau-Lifshitz-Gilbert equation, also discussed in \cref{sec:prop-cont-llg}, is the conservation or monotonic decay of energy depending on the value of the damping constant $\dampc$.
+Another geometrical property of the Landau-Lifshitz-Gilbert equation, also discussed in \cref{sec:prop-cont-llg}, is the conservation or monotonic decay of energy depending on the value of the damping constant $\dampc$ (and the applied field $\happ$).
 
-IMR also conserves energy when $\dampc = 0$ and it ensures that the energy is a decreasing function of time when $\dampc > 0$ \cite{DAquino2005}, a proof of this property is given in the next section.
-The other geometric integration schemes mentioned in \cref{sec:ensuring-constant-mv}, in particular the semi-explicit modifications of IMR, do not have this property.
+IMR also conserves energy when $\dampc = 0$ and it ensures that the energy is a decreasing function of time when $\dampc > 0$ and $\happ$ is constant \cite{DAquino2005}, a proof of this property is given in the next section.
+The other geometric integration schemes mentioned in \cref{sec:ensuring-constant-mv}, and in particular the semi-implicit modifications of IMR, do not have this property.
 
 
 \subsubsection{Proof of energy property for the IMR discretised macrospin model}
@@ -774,12 +765,12 @@ The other geometric integration schemes mentioned in \cref{sec:ensuring-constant
 
 In \thisref{sec:proof-energy-prop} we show that the change in the energy of the magnetic system over time when evolved using the IMR discretised LLG equation obeys certain relationships which are similar to those of the continuous LLG equation.
 
-Before starting the derivation we introduce some alternative notation for the effective field, $\hv$, when considered as an operator, $\hopb{\mv}$:
+Before starting the derivation we introduce some alternative notation for the effective field when considered as an operator, $\hopb{\mv}$:
 \begin{equation}
   \begin{aligned}
     \label{eq:hop}
+    \hv(\xv, t) &= \hopb{\mv(\xv)} + \happ(\xv, t). \\
     \hopb{\mv(\xv)} &= \lap \mv(\xv) + \hms[\mv(\xv)] + \hca[\mv(\xv)], \\
-    \hv(\xv, t)[\mv(\xv)] &= \hopb{\mv(\xv)} + \happ(\xv, t). \\
   \end{aligned}
 \end{equation}
 
@@ -823,12 +814,11 @@ So from \cref{eqn:imr-linop} with $\lop = \hop$ we have the property
   = \frac{1}{2\dtn} \bigs{ \ltip{\mv_{n+1}}{\hop \mv_{n+1}} - \ltip{\mv_{n}}{\hop \mv_{n}}}.
   \label{eq:orth-energy}
 \end{equation}
-Additionally the energy at time step $n$ due to the effective field operator $\hop$ can be written as\footnote{This essentially follows from the definitions of the (non-dimensionalised) energies and the effective fields given in \cref{sec:land-lifsh-gilb-normalisation}, details are given in \cref{sec:energy-field-relation}.}
+Additionally the energy at time step $n$ due to the effective field operator $\hop$ can be written as\footnote{This essentially follows from the definitions of the non-dimensional energies and the effective fields given in \cref{sec:land-lifsh-gilb-normalisation}, details are given in \cref{sec:energy-field-relation}.}
 \begin{equation}
   \label{eq:energy-hop}
-  \ehop_{,n} = - \frac{1}{2}\ltip{\mv_n}{\hopb{\mv_n}},
+  \ehop_{,n} = - \frac{1}{2}\ltip{\mv_n}{\hopb{\mv_n}}.
 \end{equation}
-where the factor of $1/2$ is to avoid double counting as discussed in \cref{sec:magnetostatic-field}.
 So using \cref{eq:energy-hop,eq:orth-energy} we can write the $\hop$ term of \cref{eq:54} as
 \begin{equation}
   \begin{aligned}
@@ -870,14 +860,16 @@ Finally, we insert the results of \cref{eq:50,eq:76,eq:52} into \cref{eq:54} to 
     \label{eqn:imr-llg-energy}
   \end{aligned}
 \end{equation}
-If the applied field is linear in time (and so $\happerror = 0$) this is exactly the midpoint discretisation of the continuous energy balance \cref{eq:energy-decay}.
-In particular the energy is conserved when $\dampc = 0$ and the applied field is constant.
+The first term of this expression is exactly the discrete representation of the energy loss due to damping.
+The second term is the discrete representation of the energy change due to changes in the applied field.
+The third term is the error due to changes in the applied field which are not accurately captured by the approximations used in IMR.
+In particular note that the energy is conserved when $\dampc = 0$ and the applied field is constant.
 This relationship is illustrated in \cref{fig:commutation-imr-energy}.
 
 When $\happ$ is piecewise linear, for example when an applied field is instantaneously switched on, time steps can be selected such that each non-linear change happens exactly at the start/end of a step.
 So again we have $\happerror = 0$ and the same properties as for linear applied fields.
 
-Also note that none of the above is applicable to the semi-explicit modification of IMR since in that case $\mphop$ is replaced by an expression of the form $a\hopb{\mv_n} + b\hopb{\mv_{n-1}}$.
+It should be noted that none of the above is applicable to the semi-implicit modification of IMR since in that case $\mphop$ is replaced by an expression of the form $a\hopb{\mv_n} + b\hopb{\mv_{n-1}}$.
 
 \begin{figure}
   \centering
@@ -900,17 +892,17 @@ In contrast to other time integration methods the result is independent of the o
 
 \subsection{Conclusions}
 
-In the previous sections we have highlighted a number of interesting properties of the implicit midpoint rule.
-We have a number of reasons to believe that the geometric properties will translate into an improvement in the accuracy and robustness of the overall solver:
+In the previous sections we have described a number of important properties of time integration schemes.
+
+We also highlighted a number of interesting geometric integration properties of the implicit midpoint rule.
+There are a number of reasons to believe that the geometric integration properties will translate into an improvement in the accuracy and robustness of the overall solver:
 \begin{itemize}
 \item Errors in the energy dissipation \cite{Albuquerque2001} and magnetisation length \cite{Chantrell2001} have been successfully used as error estimators for local truncation error.
 Hence the removal of energy or magnetisation length errors should reduce the total local truncation error.
-\item It is well known that geometric integration schemes typically result in much smaller long-timescale error build-up than schemes that do not preserve such quantities \cite[77]{Iserles2009}.
+\item It is well known that geometric integration schemes can result in much smaller long-timescale error build-up than schemes that do not preserve such quantities \cite[77]{Iserles2009}.
 \item The non-linear modification to the Landau-Lifshitz-Gilbert equation caused by renormalisation of the magnetisation length (as commonly used to maintain correct magnetisation length in non-conservative time integrators) may cause significant step changes in the magnetostatic field \cite{Lewis2003}.
+This also modifies the balance between the various energy terms, which is similar to the methods that lead to the ``flying ice cube'' problem \cite{Harvey1998} in molecular dynamics.\footnote{In such problems the rescaling of particle velocities (to maintain constant temperature despite numerical error accumulation) can result in large amounts of kinetic energy being transferred from the motion of internal degrees of freedom to motion of the centre of mass.}
 Avoiding renormalisation eliminates the possibility of such errors occurring.
-\item Renormalisation of the magnetisation modifies the balance between the various energy terms.
-This is similar to the methods that lead to the ``flying ice cube'' problem \cite{Harvey1998} in molecular dynamics.\footnote{In such problems the rescaling of particle velocities (to maintain constant temperature despite numerical error accumulation) can result in large amounts of kinetic energy being transferred from the motion of internal degrees of freedom to motion of the centre of mass.}
-Again, by avoiding renormalisation we eliminate the possibility of such errors.
 \end{itemize}
 
 Additionally, the same geometric properties enable a proof of convergence for IMR when applied to a FEM semi-discretised LLG equation with a slight modification that will be discussed in \cref{sec:nodal-integration} \cite{Bartels2006}.
@@ -922,30 +914,37 @@ Additionally, the same geometric properties enable a proof of convergence for IM
 When implicit time integration methods are applied to a non-linear differential equation (such as the LLG equation) a non-linear system of equations must be solved.
 Explicit time integration methods sidestep the issue of non-linearity by avoiding the need to solve any system.
 
+In the context of implicit time integration of a semi-discretised PDE we write
+\begin{equation}
+  \yvdis_n = \set{\yv_{n,i}}_{i=0}^{i=N},
+\end{equation}
+for the list of spatially discrete values of $\yv$ at time step $n$.
+For example, for an LLG problem consisting of a single macrospin $\yvdis_n = \mv_n$.
+For an LLG problem by semi-discretised by the finite element method $\yvdis_n$ is the list of all the discrete values that define $\mv_n$ along with any values needed for the magnetostatic calculations.
+
 
 \subsection{Functional iteration}
 \label{sec:picard}
 
-\newcommand{\wconv}{w}
-
 Functional iteration is the process of repeatedly applying a function until the result converges to a fixed point.
 This process can be applied to find the solution of a non-linear system by constructing a function such that its fixed point solves the system.
 
-As an example we can use functional iteration to solve the non-linear system resulting from the discretisation of a non-linear ODE, written as $\dydt = f(t,y)$, by the implicit midpoint rule.
-We first solve for an auxiliary variable $\wconv$, which can be thought of as the approximation for $y$ used in the evaluation of $f$, \ie $\wconv = (y_{n+1} + y_n)/2$, using the iteration
+As an example we can use functional iteration to solve the non-linear system resulting from the discretisation of a non-linear ODE, written as $\dydt = \fv(t,y)$, by the implicit midpoint rule.
+We first solve for an auxiliary variable $\wvdis$ using the iteration
 \begin{equation}
   \begin{aligned}
-    \nlit{w}{0} &= y_n, \\
-    \nlit{w}{i+1} &= \frac{\dtn}{2} f(t_n + \frac{\dtn}{2}, \nlit{w}{i}) + y_n.
+    \nlit{\wvdis}{0} &= \yvdis_n, \\
+    \nlit{\wvdis}{i+1} &= \frac{\dtn}{2} \fv(t_n + \frac{\dtn}{2}, \nlit{\wvdis}{i}) + \yvdis_n.
     \label{eq:98}
   \end{aligned}
 \end{equation}
-Once the iteration \cref{eq:98} has converged (as determined, for example, by $\abs{\nlit{w}{i+1} - \nlit{w}{i}} < \epsilon$), the value of $y_{n+1}$ is calculated as
+This variable can be thought of as the approximation for $y$ used in the evaluation of $f$, \ie $\wv = (\yvdis_{n+1} + \yvdis_n)/2$,
+Once the iteration \cref{eq:98} has converged (as determined, for example, by $\abs{\nlit{\wv}{i+1} - \nlit{\wv}{i}} < \epsilon$), the value of $\yvdis_{n+1}$ is calculated using
 \begin{equation}
-  y_{n+1} = y_n + \dtn f(t_n + \frac{\dtn}{2}, \wconv).
+  \yvdis_{n+1} = \yvdis_n + \dtn \fv(t_n + \frac{\dtn}{2}, \wvdis).
 \end{equation}
 
-The main advantage of functional iteration is that convergence proofs can be easily constructed via the Banach fixed point theorem (albeit under some fairly restrictive assumptions on time step size)\cite[125]{Iserles2009}.
+The main advantage of functional iteration is that convergence proofs can be easily constructed via the Banach fixed point theorem (albeit under some fairly restrictive assumptions on time step size) \cite[125]{Iserles2009}.
 
 Additionally, the cost of each iteration can be very cheap if the function $\fv(t, \yv)$ can be written explicitly (\ie the ODE is not implicit in $\dydt$), since it only requires the application of a function rather than a linear solve required by the Newton-Raphson method.
 This is not the case for the LLG, but the linear systems resulting from functional iteration are simpler than those resulting from other methods, which can simplify the construction of an efficient linear solver \cite{Bartels2006}.
@@ -958,24 +957,17 @@ This makes the method useful for applying implicit methods to non-stiff problems
 \subsection{Newton-Raphson method}
 \label{sec:newt-raph}
 
-In the context of implicit time integration of a semi-discretised PDE we write
-\begin{equation}
-  \yvdis_n = \set{\yv_{n,i}}_{i=0}^{i=N},
-\end{equation}
-for the list of spatially discrete values of $\yv$ at time step $n$.
-For example, for an LLG problem consisting of a single macrospin $\yvdis_n = \mv_n$.
-For an LLG problem by semi-discretised by the finite element method $\yvdis_n$ is the list of all the discrete values that define $\mv_n$ along with any values needed for the magnetostatic calculations.
-Using this notation a non-linear problem can be written as
+A non-linear problem can be written in residual form as
 \begin{equation}
   \text{Find $\yvdis_{n+1}$ such that } \resi(t_{n+1}, \yvdis_{n+1}, \yvdis_n, \yvdis_{n-1}, \ldots) = 0,
 \end{equation}
-(where the required number of previous time step values, $\yvdis_i$, depends on the time integration scheme).
+where the required number of previous time step values, $\yvdis_i$, depends on the time integration scheme.
 
 The motivation for the Newton-Raphson method comes from a simple Taylor expansion of the residual, $\resi$.
 If the exact root of the residual is $\nexty_{n+1}$ and we have an initial guess for this root $\nlit{\yvdis_{n+1}}{0}$ then we can obtain a correction to this initial guess from:
 \begin{equation}
   \begin{aligned}
-    \resi(t_{n+1},\nexty_{n+1}) &= 0, \\
+    0 &= \resi(t_{n+1},\nexty_{n+1}), \\
     &= \resi(t_{n+1}, \nlit{\yvdis_{n+1}}{0} + \corr), \\
     &= \resi(t_{n+1}, \nlit{\yvdis_{n+1}}{0}) + \jac(t_{n+1}, \nlit{\yvdis_{n+1}}{0}) \cdot \corr + \order{\corr^2},
     \label{eq:99}
@@ -996,7 +988,7 @@ This suggests the iteration
 \end{equation}
 in which, if the residual is sufficiently smooth and the required correction is ``small'', the error is \emph{squared} after each iteration (\ie convergence is quadratic).
 
-The assumption that we can discard terms in $\order{\corr^2}$ is fairly strong: it means that we need a good initial guess so that the initial correction, $\corr$, is sufficiently small.
+The assumption that we can discard terms in $\order{\corr^2}$ is fairly strong: it means that we need a good initial guess so that the initial correction, $\corr$, is small.
 Fortunately in time integration problems the value at the previous time step provides a good initial guess: $\nlit{\yvdis_{n+1}}{0} = \yvdis_n$.
 It is also possible to construct an even better initial guess by taking a single cheap explicit ``predictor'' step, as used in Milne's device for adaptive time integration (and if such an adaptive scheme is in use then this improved initial guess is ``free'').
 
@@ -1006,7 +998,7 @@ The iteration is terminated when
 \label{eq:newton-convergence-test}
 \end{equation}
 for some user defined tolerance $\ntol$.
-Alternatively the absolute tolerance condition \cref{eq:newton-convergence-test} can be replaced by or combined with a relative tolerance condition
+Alternatively the absolute tolerance condition \cref{eq:newton-convergence-test} can be replaced by, or combined with, a relative tolerance condition
 \begin{equation}
   \norm{\resi(\nlit{\yvdis}{i+1})}_{\infty} < \norm{\resi(\nlit{\yvdis}{0})}_{\infty} \nrtol.
   \label{eq:100}
@@ -1059,27 +1051,27 @@ Each of these linear systems can be stated as the problem: Given a sparse $\nrow
   \mat \xv = \bv.
 \end{equation}
 This is a very widely studied problem, see for example \cite{Saad2000}, but efficient techniques for very large $\nrow$ (which corresponds to a large spatial problem and/or good spatial resolution) are complex and problem dependent.
-There are two general classes of method: direct methods and iterative methods.
-Direct methods are very general, but are typically computationally expensive in both memory and time.
-Effective iterative methods are usually problem specific but can be much more efficient and can even achieve optimal scaling (\ie of computational complexity $\order{\nrow}$ in time and memory).
+There are two general classes of linear solvers: direct solvers and iterative solvers.
+Direct solvers are very general, but are typically computationally expensive in both memory and time.
+Effective iterative solvers are usually problem specific but can be much more efficient and can even achieve optimal scaling (\ie of computational complexity $\order{\nrow}$ in time and memory).
 
 
 \subsection{Direct methods}
 \label{sec:direct-methods}
 
-Direct methods for the solution of linear systems seek exact solutions to linear systems of equations using methods based on Gaussian elimination.
+Direct methods for the solution of linear systems seek exact solutions using methods based on Gaussian elimination.
 The direct method most commonly used in the solution of systems resulting from discretised PDEs is LU decomposition.
 
 The main advantage of direct methods is their robustness: given a well-scaled, non-singular linear system a well designed direct solver will be able provide an answer.
 As such direct solvers are usually the first approach tried when solving a system of equations.
 
 However as matrix sizes become large direct solvers become increasingly demanding in both time and memory.
-The problem is that the factors of a typical sparse matrix are significantly more dense than the original matrix, \ie there is some amount of fill-in.
+The problem is that the factors of a typical sparse matrix can be significantly more dense than the original matrix, \ie there is some amount of fill-in.
 This means that the time and memory requirements for the solution rarely scale as $\order{\nrow}$ except for very specific matrices.
 The exact level of fill-in depends on the sparsity pattern of the initial matrix, but the final computational complexity is typically between $\order{\nrow^{3/2}}$ and $\order{\nrow^2}$.
 
-In the context of PDEs: for three dimensional problems there are significantly more non-zero entries in each row than in two dimensions (due to the increased connectivity of discrete elements).
-Hence the performance of a direct solver is much worse than for comparable problems in two dimensions, even if $\nrow$ remains the same.
+For three dimensional PDE problems there are significantly more non-zero entries in each row than in two dimensions due to the increased connectivity of the discrete points.
+Hence the performance of a direct solver on three dimensional problems is much worse than for comparable problems in two dimensions, even if $\nrow$ remains the same.
 
 \subsection{Krylov solvers}
 \label{sec:krylov-solvers}
@@ -1091,8 +1083,8 @@ These methods are based on finding an approximation to the solution, $\xv$, in t
   \label{eq:96}
 \end{equation}
 Note that computing a basis for the next Krylov subspace $\krylov_{m+1}$ only requires a matrix vector product with the matrix $\mat$ applied to a basis vector of $\krylov_m$ (although in practice the simple basis in \cref{eq:96} is modified to improve the properties of the method).
-Hence constructing the subspace is computationally cheap for a sparse matrix $\mat$.
-At each iteration a new approximation to the solution in the space $\krylov_{m+1}$ is found by minimising some easy to calculate form of the error in the direction given by the new Krylov basis vector.
+Hence constructing the subspace is computationally cheap for a sparse $\mat$.
+At each iteration of a Krylov method a new approximation to the solution in the space $\krylov_{m+1}$ is found by minimising some easy to calculate form of the error in the direction given by the new Krylov basis vector.
 
 The two Krylov solvers used in this thesis are the \emph{method of conjugate gradients} (CG) and the \emph{generalised minimum residual method} (GMRES).
 The basic procedure for these methods is:
@@ -1108,18 +1100,18 @@ However, these methods lose some of the convergence guarantees of GMRES and CG, 
 
 The size of the Krylov subspace needed for an effective approximation (\ie the number of iterations needed) is strongly dependent on the properties of the matrix, in particular its eigenvalues and eigenvectors.
 The maximum number of iterations to find a solution using CG or GMRES can be shown to be $\nrow$, if numerical error is ignored.
-However, for the solver to be efficient the number of iterations should be much smaller than $\nrow$, and preferably constant with respect to $\nrow$.
+However, for the solver to be efficient the number of iterations should be far smaller than $\nrow$, and preferably constant with respect to $\nrow$.
 
 In order to achieve optimal performance we often instead solve a modified system of the form
 \begin{equation}
   \begin{aligned}
-    \Bm \xv &= \cv, \quad \Bm = \precond^{-1} \mat, \quad \cv = \precond^{-1} \bv,
+    \Dm \xv &= \cv, \quad \Dm = \precond^{-1} \mat, \quad \cv = \precond^{-1} \bv,
   \end{aligned}
 \end{equation}
 where $\precond$ is a \emph{preconditioner} which is chosen such that the the matrix $\precond^{-1} \mat$ has the required eigenvalue and eigenvector properties for rapid convergence.
-Since the preconditioner is applied at every step of the Krylov solve it should be computationally cheap to apply.
+Since the preconditioner must be applied at every step of the Krylov solve it should be computationally cheap to compute $\precond^{-1}\xv$.
 The construction of a preconditioner which results in iteration counts independent of the matrix size while also being computationally cheap to set up and apply is a difficult and problem dependent task.
-In the next section we briefly discuss approaches for such preconditioners.
+In the next section we briefly discuss some approaches for such preconditioners.
 
 Note that the preconditioner, $\precond$, must be the same at each step in order for the analysis of most Krylov methods to hold.
 This limitation can be avoided by the use of the flexible GMRES method (FGMRES) \cite{Saad1993}, which has performance and memory usage very similar to standard GMRES.
@@ -1146,7 +1138,7 @@ This involves the division of the matrix $\mat$ into blocks corresponding to the
 A preconditioner can then be constructed by manipulating this matrix on the block level, typically based on the physics of the problem.
 For example, by removing or eliminating off-diagonal blocks the preconditioner can be solved by inverting the diagonal blocks and using block back/forward substitution.
 Then the inverse of the diagonal blocks can then be approximated using known effective preconditioners for the equivalent single-physics problem.
-In \cref{sec:solution-strategies} we introduce such a preconditioning approach for the solution of the LLG-magnetostatics system.
+In \cref{sec:solution-strategies} we introduce such a preconditioning approach for the solution of the coupled LLG-magnetostatics system.
 
 
 
@@ -1186,7 +1178,7 @@ The details of the cycle(s), along with the relaxation method used, the projecti
 It turns out that for certain problems multigrid solvers can achieve computation times which scale as $\order{\nrow \log \nrow}$, \ie their performance does not severely degrade as the number of nodes in the mesh is increased.
 The memory usage of multigrid methods is around $\order{\nrow}$, depending on the method used to obtain the coarse meshes.
 In particular, as noted in the previous section, multigrid methods are very effective on systems involving the matrix corresponding to a discrete Laplace operator.
-This makes them useful for a number of problems because Laplace operator is an important part of many PDEs.
+This makes them useful for a number of problems because the Laplace operator is an important part of many PDEs.
 
 Standard multigrid methods make use of the geometric properties of the mesh underlying the PDE, which makes them difficult to apply to most unstructured meshes.
 However the same techniques can be applied without any knowledge of the underlying geometry using \emph{algebraic multigrid} (AMG) methods.
@@ -1197,21 +1189,21 @@ These methods use information purely from the matrix itself to construct ``coars
 \section{Compatibility of methods}
 \label{sec:comp-meth}
 
-While in theory any of the methods discussed above can be combined with any other, there are certain combinations which are problematic.
+While in theory any of the methods discussed above can be combined with any other, there are certain combinations which are more effective than others.
 In \thisref{sec:comp-meth} we discuss which combinations of methods are particularly compatible or incompatible.
 
-The use of integral methods for magnetostatic field calculations with implicit time integration is problematic: the integral formulation couples magnetisation at every point to every other point, meaning that the Jacobian representing the derivatives of each magnetisation with respect to each other magnetisation is a full matrix (and hence solution times are extremely slow)!
+The use of integral methods for magnetostatic field calculations with implicit time integration is problematic: the integral formulation couples magnetisation at every point to every other point, meaning that the Jacobian representing the derivatives of each magnetisation with respect to each other magnetisation is a full matrix (and hence solution times are extremely slow).
 Explicit time integration methods avoid this issue because no system solve is required.
 
 For problems with very simple geometry (\ie thin films, cuboid shapes) the finite difference method with FFT for magnetostatic calculations is sufficient.
 Additionally: for simple geometry there is often no need for well refined meshes, so the problem can be only mildly stiff and explicit time integration methods can be efficient.
-This combination of methods is very simple to implement and so is often used for GPU based code \cite{Vansteenkiste2011}.
 The most well known example of such a model is \oommf \cite{oommf-website}.
+This combination of methods is very simple to implement and so is often used for GPU based code \cite{Vansteenkiste2011}.
 
 For problems with more complex geometry the finite element method must be used for spatial discretisation to obtain good accuracy.
-Magnetostatic calculations on the resulting non-uniform mesh are typically carried out using FEM/BEM (\nmag \cite{Fischbacher2007}, \magpar \cite{Scholz2003}, \femme, \ldots) although fastmag uses a non-uniform FFT approach \cite{Chang2011}.
+Magnetostatic calculations on the resulting non-uniform mesh are typically carried out using FEM/BEM (\eg in \nmag \cite{Fischbacher2007}, \magpar \cite{Scholz2003} and \femme) although a non-uniform FFT approach has been used in at least one model \cite{Chang2011}.
 The use of refined meshes to fully resolve the geometry can often result in stiff problems, requiring the use of implicit time integration schemes for good efficiency (see \cref{cha:stiffn-llg-equat} or \cite{Shepherd2014}).
-In all ``real world'' models using implicit time integration we know of the Newton-Raphson method is used for linearisation.
+In all ``real world'' models that we know of using implicit time integration the Newton-Raphson method is used for linearisation.
 Typically some form of preconditioned Krylov solver is then used to solve the resulting linear systems.
 
 
@@ -1220,42 +1212,26 @@ Typically some form of preconditioned Krylov solver is then used to solve the re
 It should be noted that the geometric properties of IMR derived in \cref{sec:proof-magn-length-ode-imr-llg,sec:proof-energy-prop} are only true up to the accuracy with which we solve the discrete LLG.
 This is the tolerance of the linearisation method used if the problem is non-linear or the tolerance of the iterative solver if it is linear.
 
-Additionally the derivations in \cref{sec:proof-magn-length-ode-imr-llg,sec:proof-energy-prop} assume that all fields are calculated at the midpoint without any additional approximations, \ie that we are using a fully implicit method.
-In contrast to this, many existing models use an explicit approximation to the magnetostatic field in order to avoid including a dense contribution due to the long-range magnetostatic interactions\footnote{At least a dense sub-block arises from all accurate and commonly used magnetostatic calculation methods, in particular: FEM/BEM, FFT and FMM. See \cref{sec:magn-field-calc} for more details.} in the non-linear solve.
-Unfortunately, in this case the energy properties will be lost due to the replacement of $\hopb{\mpm}$ by an alternative approximation (in a similar way to the semi-explicit modification of IMR).
+Additionally the derivations in \cref{sec:proof-magn-length-ode-imr-llg,sec:proof-energy-prop} assume that all fields are calculated at the midpoint without any additional approximations, \ie that we are using a fully implicit (monolithic) method.
+In contrast to this, some models use an explicit approximation to the magnetostatic field in order to avoid including a dense contribution due to the long-range magnetostatic interactions\footnote{At least a dense sub-block arises from all accurate and commonly used magnetostatic calculation methods, in particular: FEM/BEM, FFT and FMM. See \cref{sec:magn-field-calc} for more details.} in the non-linear solve.
+Unfortunately, in this case the energy properties will be lost due to the replacement of $\hopb{\mpm}$ by an alternative approximation (in a similar way to the semi-implicit modification of IMR).
 However, the magnetisation length property will be retained because it only relies on $\mv$ itself being calculated implicitly, and not the effective field.
 
 One way to allow a completely implicit treatment of the magnetostatic field without a dense contribution was explored by d'Aquino \cite{DAquino2005}.
 He used a quasi-Newton method where the dense contribution was simply left out of the Jacobian matrix.
-This greatly slows down the convergence of the non-linear solve: in the example given in the paper 10-14 iterations were needed (compared to $\sim2$ with a full Newton method).
-Additionally, in the general case it is not clear that this modified Newton method will converge at all!
+This greatly slows down the convergence of the non-linear solve: in the example given in the paper 10-14 iterations were needed (compared to $\sim2$ with a full Newton-Raphson method).
+However, in the general case it is not clear that this quasi-Newton method will converge at all!
 
-In \cref{sec:fully-implicit-bem} we describe and demonstrate a novel efficient and robust solver allowing fully implicit magnetostatic calculations.
+In \cref{sec:solution-strategies} we describe these issues in more detail and demonstrate a novel efficient and robust solver allowing fully implicit magnetostatic calculations.
 
 
 \section{Conclusions}
 \label{sec:num-meth-conclusions}
 
-In this \thisref{sec:numer-meth-micr} we have examined a number of numerical methods for each part of overall PDE solver.
-Now we need to decide which methods to use.
-
-For the space discretisation we favour FEM for it's ability to easily handle non-trivial geometries.
-
-For the magnetostatic calculations we have chosen FEM/BEM: in general the potential methods intergrate better with FEM, and FEM/BEM is the most accurate of these.
-Additionally the non-optimality of the BEM matrix can be handled to a large extent by using a hierarchical matrix representation (and such methods are well developed).
-
-For time integration explicit methods are out of the running because they do not scale well with spatial refinement.
-The BDF methods are also discarded because of the oscillatory nature of LLG dynamics and the spurious damping they cause.
-This leaves TR and IMR: IMR has superior geometric integration properties and can be proven to converge but does not have an adaptive time integration algorithm.
-In our research we have addressed this shortcoming, the details are given in \cref{sec:adaptive-imr}, and so IMR is now the superior choice.
-
-For the non-linear solver the (full) Newton-Raphson method is generally superior because it does not limit the time step size like picard iteration and it has significantly faster convergence than a quasi-Newton method.
-However the convergence proofs attainable with a fixed point iteration may be useful in some extreme cases, such as when the solution undergoes ``blow-up'' \cite{Bartels2006}.
-Additionally a fixed point iteration may be useful if the geometric integration properties of IMR are required for a non-stiff LL problem.
-
-For the linear solver we aim to use a preconditioned Krylov method using a multigrid based preconditioner for $\order{N}$ scaling.
-However an efficient mesh-independent preconditioner for the final linear system has not yet been found.
-In our research we have made some progress towards this goal, see \cref{sec:solution-strategies} for details.
+In \thisref{sec:numer-meth-micr} we have described a number of numerical methods for each component of a dynamic micromagnetic solver.
+For the rest of this thesis we focus on the methods appropriate for modelling general geometries: the FEM for spatial discretisation, with implicit time integration methods to avoid issues with stiffness, and FEM/BEM magnetostatic calculations.
+We use a Newton-Raphson linearisation method because of the faster convergence and the lack of time step limitations.
+We aim to solve the resulting linear systems with preconditioned Krylov solvers for high computational efficiency.
 
 %%% Local Variables:
 %%% mode: latex
