@@ -332,6 +332,10 @@ Documentation:
     \expandafter{\@dept}
   \end{center}\vskip.5in
   \newpage
+
+  % blank page
+  \null
+  \newpage
 }
 
 \def\abstracttitle{%
