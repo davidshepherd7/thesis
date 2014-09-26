@@ -40,6 +40,11 @@ In the area of linear solvers, an efficient, robust and scalable preconditioner 
 One approach to the construction of such a preconditioner could be to exploit the block structure of the Jacobian matrix and to use multigrid-based methods to approximate the Laplacian-like skew-symmetric blocks resulting from the exchange effective field.
 With such an enhanced LLG preconditioner the effectiveness of the preconditioner discussed in \cref{sec:solution-strategies} on extremely large problems could be investigated.
 
+In the time integration of the stochastic LLG (as used for non-zero temperature models)
+only a few time integration schemes are known to converge to the correct solution, one of which is the implicit midpoint rule.
+Since semi-implicit magnetostatics coupling means no-longer using IMR itself, a monolithic coupling scheme is required to maintain this property.
+The preconditioner developed in \cref{sec:solution-strategies} should be tested in this capacity.
+
 
 
 %%% Local Variables:
