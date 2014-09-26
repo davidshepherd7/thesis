@@ -33,11 +33,11 @@
 %% via the local newsgroup man.cs.tex.
 %%
 %% The \school command can be used to define a school other than
-%% Computer Science, 
+%% Computer Science,
 %% e.g \school{School of Applied Basket Weaving}
-%% but no support is provided for users outside the School of C.Sc. 
+%% but no support is provided for users outside the School of C.Sc.
 %% The \faculty command can be used to define a faculty other than
-%% EPS, 
+%% EPS,
 %% e.g \faculty{Other Stuff}
 %%
 %% Note that this makes no attempt to deal with multi-volume thesis -
@@ -76,12 +76,12 @@
 %%       time warp from the future and landed on my desk. These note
 %%       that single spacing is allowed in typeset thesis, with a
 %%       footnote that those who were in favour of double spacing were
-%%       the first against the wall when the revolution came. 
+%%       the first against the wall when the revolution came.
 %%               If everyone who submits a thesis goes and argues with
 %%       them about this they may eventually get the hint, but this is
 %%       unlikely. By all means use the singlespace class option while
 %%       producing draft copies, but remember to remove it before you
-%%       hand in. 
+%%       hand in.
 %%
 %%
 %% 5) The binding (left hand) margin must be no less than 40mm, other
@@ -181,7 +181,7 @@
 
 Documentation:
     It sets the margins and interline spacing and disallows page
-    breaks at hyphens. 
+    breaks at hyphens.
 
     The \beforeabstract command creates the title page, a copyright
     page (default), and a signature page (optional), the tables of
@@ -189,7 +189,7 @@ Documentation:
     in the rules for submission, and by implication are not allowed.
 
     The user then includes the preface using the
-    \prefacesection{Abstract} command. 
+    \prefacesection{Abstract} command.
 
     Next should come an \afterabstract command to insert the declaration.
 
@@ -239,11 +239,11 @@ Documentation:
         If you set all these to false, then perhaps you don't want any
         preface at all, so perhaps you hould leave out both \beforepreface
         and \afterpreface -).
-        
+
         This style uses interline spacing that is 1.24 times normal
         (about one and half spaced), except in the figure and table
         environments where normal spacing is used.
-        
+
         The example above shows the 12pt substyle being used.  This
         seems to give acceptable looking results, but it may be
         omitted to get smaller print.
@@ -378,8 +378,8 @@ Documentation:
     \url{http://www.manchester.ac.uk/library/aboutus/regulations}) and
     in The University's policy on presentation of Theses
 
- 
-\end{enumerate} 
+
+\end{enumerate}
 
 % Copyright in text of this thesis rests with the Author. Copies (by any
 % process) either in full, or of extracts, may be made \textbf{ only} in
@@ -398,7 +398,7 @@ Documentation:
 
 % Further information on the conditions under which disclosures and
 % exploitation may take place is available from the Head of the
-% \expandafter{\@dept}. 
+% \expandafter{\@dept}.
 
 % WBD
 %%        \null\vfill
@@ -407,7 +407,7 @@ Documentation:
 %%                by\\
 %%                \@author\\
 %%        \end{center}
-        
+
 \vfill\newpage}
 
 \long\def\signature#1{%
@@ -485,7 +485,8 @@ of \degreetitle.
                 \addvspace{10pt}
                 \listoffigures
                 \newpage
-        \fi}
+        \fi
+      }
 
 \def\afterabstract{
 %% \newpage inserted by DPC 15/9/93
@@ -536,4 +537,3 @@ of \degreetitle.
 \def\endthebibliography{%
   \def\@noitemerr{\@warning{Empty `thebibliography' environment}}%
   \endlist}
-
