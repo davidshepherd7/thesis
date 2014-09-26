@@ -392,12 +392,12 @@ The magnetic domain is a sheet of magnetic material $500 \times 125 \times 3$nm 
 The simulation is run with two different applied fields:
 \begin{equation}
   \begin{aligned}
-    \happ_1 = [-24.6, 4.3, 0.0] \E{-3}\text{A/m}, \\
-    \happ_2 = [-35.5, -6.3, 0.0] \E{-3}\text{A/m}, \\
+    \mu_0 \happ_1 = [-24.6, 4.3, 0.0] \text{mT}, \\
+    \mu_0 \happ_2 = [-35.5, -6.3, 0.0] \text{mT}, \\
   \end{aligned}
   \label{eq:mumag-h-app}
 \end{equation}
-where we have converted from the magnetic flux intensity specified by the \mumag website to a magnetic field by dropping the factor of $\mu_0$.
+where $\mu_0 = 4\pi\times10^{-7}$.
 The initial condition is the S-state given by slowly relaxing the magnetisation from the state created by a saturating field in the $[1,1,1]$ direction.
 
 The magnetic parameters result in a magnetostatic exchange length (and unit length in our simulations) of
