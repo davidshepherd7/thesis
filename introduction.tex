@@ -4,8 +4,8 @@
 
 In this thesis we study numerical techniques for the modelling of ferromagnetic materials.
 In ferromagnetic materials, referred to in this thesis as simply ``magnetic materials'', exchange coupling between nearby spins causes the emergence of spontaneous magnetisation.
-In ferromagnetic materials with some anisotropy effect, for example due to the crystal lattice structure, systems with two stable states can be obtained.
-Such a system can be switched between these states by the application of a magnetic field, which can be easily generated using pulses of electrical current.
+Some magnetic materials have preferred magnetisation directions (anisotropy), for example due to the crystal lattice structure, and in such materials systems with two stable states can be obtained.
+The system can be switched between these states by the application of a magnetic field, which can be easily generated using pulses of electrical current.
 These states can be extremely stable, having average lifetimes of decades at room temperature even for extremely small volumes of material.
 Such materials have many technological applications, one major application is in the area of data storage.
 
@@ -16,17 +16,18 @@ Such sensors can be extremely sensitive and extremely small, allowing them be ve
 Another application area where ferromagnetic materials show great promise is in random access memory (RAM), \ie short term data storage for computers.
 The current standard RAM technology (dynamic RAM or DRAM) is based on charging capacitors.
 These capacitors leak charge fairly rapidly, resulting in data lifetimes on the order of milliseconds.
-Hence they must be continually refreshed and can require significant power usage to maintain a standby state.
+Hence they must be continually refreshed and can require significant power usage to retain data.
 A widely proposed alternative is MRAM (magnetoresistive RAM) which uses arrays of nano-sized regions of magnetic material to store data and in-place magnetoresistive sensors to allow random-access reads.
 The vastly longer data lifetimes allowed by the use of magnetic materials results in greatly reduced standby power usage by removing the requirement for continual refreshing.
-Historically there have been issues with random-access writes in MRAM: moving write heads (as used in hard drives) cannot be used because the time to move the head to the correct location is far too long, and in-place generation of the required magnetic fields turns out to require large currents.
+Also computers could be easily put into a completely powered-off hibernation state without writing data to disk.
+Historically there have been issues with random-access writes in MRAM: moving write heads (as used in hard drives) cannot be used because the time to move the head to the correct location is far too long, and in-place generation of the required magnetic fields requires large currents.
 However recent developments in spin-torque-transfer, where spin-polarised currents are used to directly apply a torque to the magnetisation of a ferromagnet, offer a solution to these difficulties.
 Spin torque transfer MRAM (ST-MRAM) has recently been commercialised by Everspin Technologies \cite{everspin} and is beginning to make its way into products.
 Due to the combination of non-volatility, high density, random-access, and low read/write times such ST-MRAM is a candidate for a so-called ``universal memory'', where all data is stored a RAM-like memory eliminating long access times.
 
 
 It is extremely desirable to be able to accurately model the behaviour of magnetic materials for both research and device design purposes.
-However the use of models based on fundamental physics (such as density functional theory) to predict the behaviour of magnetic systems is extremely computationally expensive due to the length scales required.
+However the use of models based on quantum mechanics (such as density functional theory) to predict the behaviour of magnetic systems is extremely computationally expensive due to the length scales required.
 Instead a theory known as micromagnetics is typically employed \cite{Aharoni1996}.
 In micromagnetics a continuum approximation of the ferromagnet's magnetisation is used -- it is  assumed that everything can be modelled using continuous functions of space and time (\ie the contribution due to individual atoms is averaged out).
 This is a good approximation for many cases because of the smoothing effect of the ferromagnetic exchange effect.
@@ -53,20 +54,20 @@ In particular we focus mainly on a widely known time integration scheme with geo
 
 \section{Contents of thesis}
 
-The first two chapters, \cref{sec:cont-micromag,sec:numer-meth-micr}, comprise a basic introduction to micromagnetic models and the numerical methods commonly applied.
+The first two chapters, \cref{sec:cont-micromag,sec:numer-meth-micr}, comprise a basic introduction to micromagnetic models and the numerical methods commonly used.
 In particular \cref{sec:time-discretisation} contains a detailed description of the properties of a selection of time integration schemes.
 \Cref{sec:galerk-meth-llg} gives a more detailed introduction to the finite element method, including a description of how it can be applied to dynamic micromagnetics simulations.
 The chapter ends with a discussion of how the basic finite element method can be extended to retain the geometric integration properties of the implicit midpoint rule.
 \Cref{sec:hybr-finit-elem} introduces the hybrid FEM/BEM method, a widely used technique for the accurate calculation of magnetostatic fields.
 
 The later chapters contain the research contribution of this thesis.
-\Cref{sec:solution-strategies} describes efficient techniques for the solution of the coupled systems resulting from the use of FEM/BEM magnetostatics calculations with a dynamic micromagnetic problem.
+\Cref{sec:solution-strategies} describes efficient techniques for the solution of the coupled systems resulting from the use of FEM/BEM magnetostatics calculations in an LLG-based dynamic model.
 In particular we introduce techniques which reduce the development of an efficient solver for such a monolithically coupled model to the development of an effective preconditioner for the LLG alone.
 Such a coupling strategy is required to retain the geometric integration properties of the implicit midpoint rule, and may also be useful in the time integration of the stochastic LLG.
 
 In \cref{sec:adaptive-imr} we introduce a novel adaptive time step selection algorithm for the implicit midpoint rule.
 This algorithm is not specific to the LLG, and to our knowledge is the first such algorithm.
-The same chapter also contains numerous numerical experiments demonstrating the selection of appropriate time steps for a number of ordinary differential equations (ODEs), and the demonstrating the geometric integration properties when applied to an ODE form of the LLG.
+The same chapter also contains numerous numerical experiments demonstrating the selection of appropriate time steps for a number of ordinary differential equations (ODEs), and demonstrating the geometric integration properties when applied to an ODE form of the LLG.
 
 In \cref{cha:numer-experiments} we present a number of numerical experiments using combinations of the methods developed in this thesis.
 The methods are validated against a number of examples: a wave-like problem with an analytical solution, relaxation under a non-uniform field and the \mumag standard problem \#4.

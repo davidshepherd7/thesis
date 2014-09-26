@@ -4,7 +4,7 @@
 \section{Conclusions}
 
 In this thesis we have introduced a complete numerical method for the solution of dynamic micromagnetic problems using the finite element method with Newton-Raphson linearisation, a variety of implicit time integration schemes, hybrid FEM/BEM magnetostatics calculations and efficient iterative linear solvers.
-The methods have been validated against an analytical without magnetostatics and against the \mumag standard problem \#4 with magnetostatics.
+The methods have been validated against an analytical solution for a problem without magnetostatics and against the \mumag standard problem \#4 with magnetostatics.
 
 In \cref{sec:adaptive-imr} we have demonstrated a novel and widely applicable adaptive time step selection algorithm for the implicit midpoint rule.
 We have also shown that the time step selection works well for a wide variety of ODE test cases, as well as a number of PDE test cases using the LLG equation.
@@ -13,9 +13,9 @@ Additionally we have shown that the geometrical integration properties of the co
 In \cref{sec:solution-strategies,sec:effect-line-non} we demonstrated efficient, robust and scalable solution methods for the monolithically coupled LLG-FEM/BEM magnetostatics problem provided that a good preconditioner for the LLG system alone is available.
 Such monolithic couplings are required to obtain the energy property of the implicit midpoint rule and may offer advantages in stochastic integration methods.
 
-In \cref{imr,numerical} we studied the performance of common implicit time integration schemes on some micromagnetic problems with exact solutions.
+In \cref{sec:imr-ode-llg-numer-exper,sec:numer-exper} we studied the performance of common implicit time integration schemes on some micromagnetic problems with exact solutions.
 We found that the BDF2 scheme always performs poorly compared to the TR and IMR schemes, this is probably due to a combination of the larger local truncation error and the spurious numerical damping of BDF2.
-Unfortunately we were unable to analyse the effect of geometric integration on the error accumulation due to the fact that TR also displays some geometrical integration properties for these simple examples.
+% Unfortunately we were unable to analyse the effect of geometric integration on the error accumulation due to the fact that TR also displays some geometrical integration properties for these simple examples.
 
 Finally in \cref{cha:stiffn-llg-equat} we studied the effect of discretisation length on the relative performance of implicit and explicit time integration schemes (stiffness).
 We found that stiffness in micromagnetics can arise from discretisation alone, and that the stiffness increases as the element size is decreased as expected from standard PDE theory.
@@ -36,8 +36,6 @@ In particular the use of the Garc\'{i}a-Cervera-Roma formulation \cite{Garcia-Ce
 
 Once these issues have been resolved the relative performance of schemes with geometric integration properties should be evaluated for realistic problems.
 
-
-??ds this needs work
 In the area of linear solvers, an efficient, robust and scalable preconditioner for the Newton-Raphson linearised LLG equation is still required.
 One approach to the construction of such a preconditioner could be to exploit the block structure of the Jacobian matrix and to use multigrid-based methods to approximate the Laplacian-like skew-symmetric blocks resulting from the exchange effective field.
 With such an enhanced LLG preconditioner the effectiveness of the preconditioner discussed in \cref{sec:solution-strategies} on extremely large problems could be investigated.
