@@ -323,6 +323,7 @@ We choose the Gilbert form of the LLG even though it is less intuitive than the 
 A side effect of this choice is that explicit time integration schemes cannot be used since the time derivative is only defined implicitly.
 
 \subsection{The strong form}
+\label{sec:strong-form}
 
 After non-dimensionalisation (see \cref{sec:land-lifsh-gilb-normalisation}) the strong form of our system of equations is given by
 \begin{equation}
@@ -356,6 +357,8 @@ We define $\boundd_\Dir$ and $\boundd_\Neu$ respectively to represent the part o
   \end{aligned}
 \end{equation}
 where $\nv(\xv)$ is the outward unit normal.
+If the boundary conditions are purely Neumann then this problem is actually singular: the solution can vary by an arbitrary constant.
+This has no effect on the magnetostatic field and can be dealt with, for example, by pinning a single value of $\phim$.
 
 From \cref{eq:103} we have that the boundary condition on the magnetisation is
 \begin{equation}

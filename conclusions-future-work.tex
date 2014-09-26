@@ -39,6 +39,9 @@ Once these issues have been resolved the relative performance of schemes with ge
 In the area of linear solvers, an efficient, robust and scalable preconditioner for the Newton-Raphson linearised LLG equation is still required.
 One approach to the construction of such a preconditioner could be to exploit the block structure of the Jacobian matrix and to use multigrid-based methods to approximate the Laplacian-like skew-symmetric blocks resulting from the exchange effective field.
 With such an enhanced LLG preconditioner the effectiveness of the preconditioner discussed in \cref{sec:solution-strategies} on extremely large problems could be investigated.
+Another approach to such a preconditioner for the case of granular or patterned media could be to use a domain decomposition preconditioner.
+In such a method the small matrix block associated with each grain/island would be inverted by a direct solver and used as a block diagonal preconditioner.
+Due to the weak coupling this would provide a good approximation for the inverse of the entire LLG block.
 
 In the time integration of the stochastic LLG (as used for non-zero temperature models)
 only a few time integration schemes are known to converge to the correct solution, one of which is the implicit midpoint rule.
