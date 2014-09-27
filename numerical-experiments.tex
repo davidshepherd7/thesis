@@ -567,9 +567,9 @@ From various other experiments we have drawn the conclusion that this occurs whe
 \end{figure}
 
 We believe that the lack of energy conservation is due to the asymmetry of the discrete BEM operator.
-This asymmetry be expected to cause issues with energy conservation because the symmetry property \cref{eqn:imr-linop} no longer holds and so the energy property \cref{eq:orth-energy} cannot be derived.
-Collocation based discretisation approaches, as used in our discretisation of the BEM operator, do not preserve the symmetry of the underlying operators and this is expected to be the cause of the asymmetry.
-In contrast a symmetric discrete BEM operator could be obtained by applying a symmetric Galerkin BEM discretisation \cite{Bonnet2003} \cite[75]{Wrobel2002} to the formulation discussed in \cref{sec:hybr-finit-elem}.
+This asymmetry be expected to cause issues with energy conservation because the symmetry property \cref{eqn:imr-linop} no longer holds, and the energy property \cref{eq:orth-energy} cannot be derived.
+Standard collocation based discretisation approaches, as used in our discretisation of the BEM operator, do not preserve the symmetry of the underlying operators.
+A symmetric discrete BEM operator could be obtained by applying a \emph{symmetric Galerkin} BEM discretisation \cite{Bonnet2003} \cite[75]{Wrobel2002} to the formulation discussed in \cref{sec:hybr-finit-elem}.
 Alternatively a standard Galerkin BEM discretisation combined with the single-layer-potential formulation described by Garc\'{i}a-Cervera and Roma \cite{Garcia-Cervera2006} \cite[19]{Knittel2011} would result in a symmetric discrete operator without the requirement to evaluate hyper-singular integrals.
 
 
@@ -610,8 +610,8 @@ To counteract this a higher level of fill-in could be used with nodal quadrature
 
 
 Next we look at the number of iterations of the Newton-Raphson method required to solve the monolithically coupled non-linear system.
-The mean number of iterations required for convergence is consistently just over 2 (and always less than 3) despite the extremely tight tolerance and the very large time steps used in the calculation of the initial condition.
-In particular we note that the number of iterations required is significantly lower than the $\sim 14$ quasi-Newton iterations required for the monolithic method used in \cite{DAquino2005}.
+The mean number of iterations required for convergence is consistently just over 2 (and always less than 3) despite the extremely tight tolerance and the very large time steps (during the calculation of the initial condition).
+In particular, we note that the number of iterations required is significantly lower than the $\sim 14$ quasi-Newton iterations required for the monolithic method used in \cite{DAquino2005}.
 The various other problems covered in this chapter required similar numbers of Newton-Raphson iterations.
 
 \begin{figure}
@@ -624,30 +624,29 @@ The various other problems covered in this chapter required similar numbers of N
 \end{figure}
 
 
-We do not explore the total solve times of the various methods for this example:
-due to the fact that we have not used a hierarchical matrix representation of the dense block and the extremely large number of boundary nodes the solve times are dominated by the calculations involving the BEM matrix.
+We do not explore the total solve times of the various methods for this example.
+The solve times are dominated by the calculations involving the BEM matrix due to the fact that we have not used a hierarchical matrix representation of the dense block and the extremely large number of boundary nodes.
 Hence any timing results would be meaningless for practical problems in which the FEM/BEM method is appropriate.
 
 
 \subsection{Conclusions}
 
-Our methods give results for the \mumag problem \#4 which converge well and match up reasonably well with the results of other models.
+Our methods give results for the \mumag problem \#4 which converge well and match up reasonably with the benchmark results of other models.
 
 We observe the expected conservation of magnetisation length with IMR and nodal quadrature.
 However, we do not observe the expected conservation of energy.
 We believe that this is due to the use of a collocation approach for the discretisation of the BEM part of the problem.
-Collocation approaches do not preserve symmetry of underlying operators and so the symmetry of the effective field operator, which is essential for the energy properties of IMR, will have been lost.
-Implementation of a Galerkin BEM method is ongoing, but there are no theoretical difficulties (see \eg \cite[58]{Borm2003}).
+Collocation approaches do not preserve symmetry of underlying operators so the symmetry of the effective field operator, which is essential for the energy properties of IMR is lost.
 
 Finally we have shown that, aside from issues with the lack of a hierarchical matrix implementation for rectangular boundary elements, we can efficiently solve the monolithic non-linear problem resulting from coupling the LLG with FEM/BEM magnetostatics calculations.
-Application of Newton-Raphson method results in around 2.2 Newton iterations per non-linear.
-The use of GMRES preconditioned by $\inexact{\precc}$ results in around 15 Krylov iterations per linear solve, with a reasonable setup time.
+Application of Newton-Raphson method results in around 2.2 Newton iterations per non-linear solve on average.
+The use of GMRES preconditioned by $\inexact{\precc}$ from \cref{sec:bem-solver-strategies} results in around 15 Krylov iterations per linear solve, with a reasonable setup time.
 
 
 
 \section{Conclusions}
 
-In this chapter we have demonstrated the effectiveness of the methods developed in the rest of this thesis.
+In this chapter we have demonstrated the effectiveness of the methods described and developed throughout this thesis on micromagnetic problems with spatial variations.
 
 We observed that our adaptive IMR algorithm selects appropriate time steps even for complex problems involving exchange and magnetostatics.
 We have shown that IMR with nodal quadrature retains its magnetisation length conservation property on a number of problems, but that it fails on certain meshes of triangular elements.
