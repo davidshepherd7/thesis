@@ -3,11 +3,11 @@
 
 \section{Conclusions}
 
-In this thesis we have introduced a complete numerical method for the solution of dynamic micromagnetic problems using the finite element method with Newton-Raphson linearisation, a variety of implicit time integration schemes, hybrid FEM/BEM magnetostatics calculations, and efficient iterative linear solvers.
+In this thesis we have introduced a complete numerical method for the solution of dynamic micromagnetic problems using the finite element method with the Newton-Raphson linearisation, a variety of implicit time integration schemes, hybrid FEM/BEM magnetostatics calculations, and efficient iterative linear solvers.
 The methods have been validated against an analytical solution for a problem without magnetostatics and against the \mumag standard problem \#4 with magnetostatics.
 
 In \cref{sec:adaptive-imr} we have demonstrated a novel and widely applicable adaptive time step selection algorithm for the implicit midpoint rule.
-We have also shown that the time step selection works well for a wide variety of ODE test cases, as well as a number of PDE test cases using the LLG equation.
+We have also shown that the time step selection works well for a wide variety of ODE test cases, as well as for a number of PDE test cases using the LLG equation.
 Additionally we have shown that the geometrical integration properties of the constant time step IMR extend to the adaptive time step version.
 
 In \cref{sec:solut-coupl-syst,sec:numer-exper-fem-bem-systems,sec:mumag-stand-probl} we introduced and tested efficient, robust and scalable solution methods for the monolithically coupled LLG-FEM/BEM magnetostatics problem provided that a good preconditioner for the LLG sub-problem is available.
@@ -19,6 +19,7 @@ We found that the overall accuracy of the BDF2 scheme is always poor compared to
 
 Finally in \cref{cha:stiffn-llg-equat} we studied the effect of spatial discretisation on the relative performance of implicit and explicit time integration schemes (stiffness).
 We found that stiffness in micromagnetics can arise from the spatial discretisation alone, and that the stiffness increases as the element size is decreased, as expected from standard PDE theory.
+We also found that the introduction of FEM/BEM magnetostatics calculations increases the stiffness.
 
 
 
@@ -34,18 +35,18 @@ Secondly, we found that when FEM/BEM magnetostatics calculations discretised by 
 This is probably due to the asymmetry of the discrete BEM operator, which could be corrected by the use of alternative formulations of the method.
 In particular the use of the Garc\'{i}a-Cervera-Roma formulation \cite{Garcia-Cervera2006} with a Galerkin discretisation approach \cite[75]{Wrobel2002} should resolve this issue.
 
-Once these issues have been corrected the relative performance of schemes with geometric integration properties should be evaluated for realistic problems.
+Once these issues have been corrected the relative performance of schemes with geometric integration properties, in terms of the accumulation of the temporal error, should be evaluated for realistic problems.
 
 In the area of linear solvers a general, efficient, robust and scalable preconditioner for the Newton-Raphson linearised LLG equation is still required.
 One approach to the construction of such a preconditioner could be to exploit the block structure of the Jacobian matrix and to use multigrid-based methods to approximate the Laplacian-like skew-symmetric off-diagonal blocks resulting from the exchange effective field.
-Another approach to such a preconditioner for the case of granular or patterned media could be to use a domain decomposition preconditioner.
-In such a method the small matrix block associated with each grain/island would be inverted by a direct solver and used as a block diagonal preconditioner.
-Due to the weak coupling this would provide a good approximation for the inverse of the entire LLG block.
-With such an enhanced LLG preconditioner the effectiveness of the preconditioner discussed in \cref{sec:solution-strategies} on extremely large problems could be investigated.
+A less general approach for the case of granular or patterned media could be the use of a domain decomposition preconditioner.
+In such a method the small matrix block associated with each grain/island would be inverted by a direct solver and the combination used as a block diagonal preconditioner.
+Due to the weak coupling between grains/islands this would provide a good approximation for the inverse of the entire LLG block.
+With either of these enhanced LLG preconditioners the effectiveness of the preconditioner discussed in \cref{sec:solution-strategies} on extremely large problems could be investigated.
 
 
-In the time integration of the stochastic LLG only a few time integration schemes are known to converge to the correct solution, one of which is the implicit midpoint rule.
-Since the use of semi-implicit magnetostatics coupling modifies the time integration scheme a monolithic coupling scheme is required to maintain this property.
+In the time integration of the stochastic LLG only a few time integration schemes are known to converge to the correct solution, one of which is the implicit midpoint rule \cite{DAquino2006}.
+Since the use of a semi-implicit magnetostatics coupling modifies the time integration scheme a monolithic coupling scheme is required to maintain this property.
 The preconditioner developed in \cref{sec:solution-strategies} should be tested in this capacity once effective preconditioners for the LLG sub-problem are available.
 
 
