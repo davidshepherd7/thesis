@@ -2,19 +2,17 @@
 \chaptermark{Numerical experiments}
 \label{cha:numer-experiments}
 
-??Ds make sure you refer to \cref{sec:linear-systems-probl-spec} for solver parameters
+In this chapter we apply the various numerical methods constructed throughout this thesis to some micromagnetics problems.
 
-In this section we apply the various numerical methods constructed throughout this thesis to some micromagnetics problems.
-
-The first case examined is a 2D problem without magnetostatics, where there is a known wave-like analytical solution for certain initial conditions.
-This allows us to test the convergence of the various discretisations when applied to the LLG with exchange effective field.
-It also allows us to test the geometric integration properties of the IMR.
+The first case examined is a 2D problem without magnetostatics where there is a known wave-like analytical solution for certain initial conditions.
+This allows us to test the convergence of the various discretisation approaches when applied to the LLG with the exchange effective field (\ie the PDE form).
+It also allows us to test the geometric integration properties of the IMR for a simple PDE problem.
 
 The second problem is another simple case, but with no analytical solution: a non-uniform applied field is used to induce non-uniform dynamics in a 2D problem without magnetostatics.
 This allows us to test geometric integration properties of the IMR in the absence of an analytical solution.
 
-We then show results from the \mumag standard problem \#4 \cite{mumag-website}, which is widely used to test dynamic micromagnetic codes.
-This allows us to verify the complete model and to examine the geometric integration properties when the FEM/BEM magnetostatics calculations are included.
+Finally we show results for the \mumag standard problem \#4 \cite{mumag-website}, which is widely used to test dynamic micromagnetic codes.
+This allows us to verify the complete model and to examine the geometric integration properties when FEM/BEM magnetostatics calculations are included.
 
 
 \section{Example with a wave-like solution}
@@ -56,7 +54,7 @@ The methods which do not naturally conserve $\abs{\mv}$ (TR and BDF2 methods, an
 The re-normalisation process is implemented by setting each nodal value of the magnetisation to $\mv_i = \mv_i/\abs{\mv_i}$ after each time step (after the selection of the next step size to avoid complicating the adaptivity process).
 
 Linearisation is handled using the Newton-Raphson method with Newton tolerance set to $\ntol = 10^{-12}$ (unless otherwise specified).
-The resulting linear systems are solved using GMRES with an ILU(1) preconditioner as described in \cref{sec:llg-only-system}.
+The resulting linear systems are solved using GMRES with an ILU(1) preconditioner as described in \cref{sec:llg-only-system,sec:linear-systems-probl-spec}.
 
 The adaptive IMR integrator, as described in \cref{sec:adaptive-imr}, requires the computation of an explicit time step.
 For this step we use the Landau-Lifshitz form of the LLG discretised in exactly the same way as described in \cref{sec:galerk-meth-llg}.
@@ -421,6 +419,7 @@ The hybrid FEM/BEM method, described in \cref{sec:hybr-finit-elem}, is used for 
 For the coupling of LLG equation with the magnetostatic calculations we use both the monolithic and semi-implicit methods discussed in \cref{sec:solution-strategies}.
 The solution of the monolithic linear system is done using the fully iterative preconditioner $\inexact{\precc}$, it turns out that for thin film problems the ILU(1) approximation to the LLG block, $\Fm$, is effective.
 The decoupled systems resulting from the semi-implicit method are solved using the methods described in \cref{sec:llg-only-system}.
+Both methods use the parameters described in \cref{sec:linear-systems-probl-spec}.
 
 Both Gaussian quadrature and the nodal quadrature are used.
 The TR, BDF2 and IMR adaptive time integration schemes (see \cref{sec:adapt-impl-midp,sec:aimr-implementation}) are tested.
