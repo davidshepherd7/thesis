@@ -1,0 +1,41 @@
+\documentclass[12pt,PhD,a4paper,pdftex]{muthesis}
+
+% define my commands (need \ie)
+\usepackage{amsmath}
+\input{commands.tex}
+
+% margins
+\usepackage[margin=1.5in]{geometry}
+
+% paragraphs
+\setlength{\parskip}{\medskipamount}
+\setlength{\parindent}{0pt}
+\usepackage[hang,flushmargin]{footmisc} % same for footnotes
+
+% Language
+% ============================================================
+% Support for UTF8 input
+\usepackage[utf8]{inputenc}
+
+% Commonly recommend, not sure what it does...
+\usepackage[UKenglish]{babel}
+
+\title{Numerical methods for dynamic micromagnetics}
+\author{David Shepherd}
+\principaladviser{Jim Miles\\
+  Milan Mihajlovi\'{c}\\
+  Matthias Heil}
+
+
+
+\begin{document}
+\pagenumbering{gobble}
+
+\abstracttitle
+\input{abstract.tex}
+\end{document}
+
+%%% Local Variables:
+%%% mode: latex
+%%% TeX-master: t
+%%% End:

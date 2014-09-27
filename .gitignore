@@ -7,8 +7,8 @@ results*
 main.pdf
 
 # latexmk output
-main.fdb_latexmk
-main.fls
+*.fdb_latexmk
+*.fls
 main.lof
 main.lot
 
