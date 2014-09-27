@@ -4,8 +4,6 @@
 \label{cha:stiffn-llg-equat}
 
 
-\section{Introduction}
-
 For continuum mechanics models of the LLG equation stiffness (the restriction of time step size by stability rather than by the desired accuracy) has long been recognised as an issue, at least for some problems \cite{Nakatani1989}.
 
 Stiffness in time-dependent PDEs has at least two possible sources:
@@ -15,7 +13,7 @@ In particular a fine spatial discretisation often results in a stiff system of O
 An intuitive explanation for this is that a finer mesh resolves shorter wavelength modes, even if they have almost no effect on the resulting solution.
 Shorter wavelength implies higher frequency, \ie shorter characteristic time scales.
 These modes interact with the solution, and the large variation in time scales causes stiffness in a similar way to physical effects.
-For a rigorous discussion of this effect in terms of the eigenvalues of the time integration operator see e.g. \cite[Sec 8.2]{Atkinson2009}.
+For a more rigorous discussion of this effect in terms of the eigenvalues of the time integration operator see e.g. \cite[Sec 8.2]{Atkinson2009}.
 
 As discussed in \cref{sec:time-discretisation} time integration methods can be roughly divided into two classes: those which are inefficient when applied to the solution of stiff problems and those which are not.
 These two classes correspond to \emph{explicit} methods that calculate the value at the next time exclusively in terms of previous values and \emph{implicit} methods in which a system of equations must be solved.
@@ -28,7 +26,7 @@ In \thisref{cha:stiffn-llg-equat} we examine numerically the relationship betwee
 We also explore how stiffness is affected by the use of the FEM/BEM method for magnetostatic calculations.
 Finally, we study the effects of discretisation on stiffness in methods which combine explicit magnetostatic calculations with implicit exchange field and LLG calculations (\ie semi-implicit methods).
 
-The results in this chapter have been published in \cite{Shepherd2014}.
+The results in this chapter have been accepted for publication in the IEEE Transactions on Magnetics journal \cite{Shepherd2014}.
 
 
 \section{Problem definition}
@@ -55,25 +53,17 @@ As mentioned above, the simple geometry of this problem means that the physics c
     \hv &= \happ - \mv/3,
   \end{aligned}
 \end{equation}
-where $\mv = \mv(t)$.
-
-To assess physical stiffness and to find a time step size which gives sufficiently accurate results we solved \cref{eq:ode-llg} using the RK2 and IMR methods detailed above with $\dtx{} = 0.1$.
-Using IMR with $\alpha = 0.01$ we found a relative error in the final switching time of $0.3\%$ (absolute error  $1.2 \text{ time units} \approx 6\text{ps}$), for other values of $\alpha$ the percentage error is even smaller.
-The relative error in switching time with $\alpha = 0.01$ using RK2 was $2.25\%$.
-Since these results are from an ODE calculation the error is only due to the time integration, with no contributions from spatial discretisation.
-Based on these results we conclude that $\dtinitial = 0.1$ gives a sufficiently small temporal error to be a reasonable maximum time step size.
-Additionally, since no stability issues were seen for any value of $\alpha$, we conclude that any lack of stability when integrating the equivalent PDE must arise purely from the spatial discretisation rather than the underlying physics.
-
-% and forward Euler needs dt=0.0001 to get comparable error!!
+where $\mv = \mv(t)$ and we have used the Landau-Lifshitz form for ease of implementation.
 
 
 \section{Implementation details}
 
-In these experiments we use the FEM discretisation of the non-dimensionalised LLG as discussed in \cref{sec:galerk-meth-llg}.
-Magnetostatics calculations (when in use) are handled using either the FEM/BEM discretisation as discussed in \cref{sec:hybr-finit-elem} or the analytical formula from \cref{eq:ode-llg}.
+In these experiments we use the FEM discretisation of the non-dimensional LLG as discussed in \cref{sec:galerk-meth-llg}.
+Magnetostatics calculations (when in use) are handled using either the FEM/BEM discretisation as discussed in \cref{sec:hybr-finit-elem} or the analytical formula $\hms = -\mv/3$.
 We use three time integration schemes.
 The first is the standard IMR as discussed in \cref{sec:some-implicit-time-integrators}, with monolithic coupling to the magnetostatic calculations as described in \cref{sec:fully-implicit-bem}.
-The second scheme is IMR with decoupled (semi-implicit) magnetostatic calculations as discussed in \cref{sec:semi-implicit-bem}.
+The second scheme is IMR with semi-implicit (decoupled) magnetostatic calculations as discussed in \cref{sec:semi-implicit-bem}.
+
 The third scheme is an explicit method.
 For explicit time integration we use the mathematically equivalent Landau-Lifshitz form of the LLG, \cref{eq:ll-nd} because the time derivative can be written explicitly, avoiding a non-linear solve.
 We use a two stage Runge-Kutta method (RK2), also known as Heun's method \cite[58]{Atkinson2009}:
@@ -85,9 +75,9 @@ We use a two stage Runge-Kutta method (RK2), also known as Heun's method \cite[5
       \mvtemp) \right).
   \end{aligned}
 \end{equation}
-The time derivatives required in \cref{eq:heunn} are calculated within the Galerkin method by inverting the finite-element mass matrix using a diagonally preconditioned conjugate gradient solver.
+The time derivatives required in \cref{eq:heunn} are calculated by inverting the finite-element mass matrix using a diagonally preconditioned conjugate gradient solver.
 The magnetostatic potential $\phim$ is recalculated using the FEM/BEM method at appropriate time and magnetisation values during each stage of \cref{eq:heunn}.
-The Poisson solves required for the evaluation of the potentials $\phione$ and $\phim$ use the methods discussed in \cref{sec:llg-only-system}.
+The Poisson solves required for the evaluation of the potentials $\phione$ and $\phim$ use the methods and parameters discussed in \cref{sec:solution-strategies}.
 
 
 
@@ -97,9 +87,21 @@ Meshes were refined by decreasing the maximum element volume parameter.
 All simulations were run for 4 time units ($\approx 20\text{ps}$) with a full reversal taking between 8 and 400 time units depending on the damping.
 We ran the simulations without magnetostatics, with FEM/BEM magnetostatics, and with the analytical magnetostatic field for each value of the Gilbert damping constant.
 
-We use a simple heuristic algorithm to find bounds for the maximum stable step size, $\dtmax$: The computation is repeated with a sequence of decreasing step sizes (halved each time) until a stable solution is observed, with step size $\dtx{a}$. A solution is considered to be unstable if at any node $|\mv| \neq 1$ or if the maximum angle between the magnetisation of neighbouring nodes is greater than $\pi/4$. The initial step size, $\dtinitial$ is selected such that the temporal error is sufficiently small (so that any reduction in step size below this value is wasteful).
-
+To find bounds for the maximum stable step size, $\dtmax$ we use a simple heuristic algorithm:
+The computation is repeated with a sequence of decreasing step sizes (halved each time) until a stable solution is observed, this stable step size is denoted $\dtx{a}$.
+A solution is considered to be unstable if the maximum angle between the magnetisation of neighbouring nodes is greater than $\pi/4$.
 This provides bounds on the maximum stable step of $\dtmax \in [\dtx{a}, 2\dtx{a})$. To tighten these bounds we then use two steps of a standard binary search algorithm: the computation is run with $\dtn{} = 3\dtx{a}/2$, if it is successful then $\dtmax \in [\frac{3\dtx{a}}{2}, 2\dtx{a})$ otherwise $\dtmax \in [\dtx{a}, \frac{3\dtx{a}}{2})$.
+
+The initial step size, $\dtinitial$, is selected such that the temporal error is sufficiently small to obtain good accuracy (so any reduction in step size below this value is wasteful.
+
+To assess physical stiffness and to find a time step size which gives sufficiently accurate results we solved the ODE form of the problem, \cref{eq:ode-llg}, using the RK2 and IMR methods with $\dtx{} = 0.1$.
+Using IMR with $\alpha = 0.01$ we found a relative error in the final switching time of $0.3\%$ (absolute error  $1.2 \text{ time units} \approx 6\text{ps}$), for other values of $\alpha$ the percentage error is even smaller.
+The relative error in switching time with $\alpha = 0.01$ using RK2 was $2.25\%$.
+Since these results are from an ODE calculation the error is only due to the time integration, with no contributions from spatial discretisation.
+Based on these results we conclude that $\dtinitial = 0.1$ gives a sufficiently small temporal error to be a reasonable time step size.
+Additionally, since no stability issues were seen for any value of $\alpha$, we conclude that any lack of stability when integrating the equivalent PDE must arise purely from the spatial discretisation rather than the underlying physics.
+
+% and forward Euler needs dt=0.0001 to get comparable error!!
 
 \section{Numerical results}
 
@@ -115,7 +117,7 @@ This provides bounds on the maximum stable step of $\dtmax \in [\dtx{a}, 2\dtx{a
 The results of the experiments with $\hms = \zerov$ are shown in \cref{fig:no-hms-stability}.
 Results with full FEM/BEM magnetostatics and results with the analytical formula for magnetostatics are shown in \cref{fig:hms-stability} and \ref{fig:analytic-hms-stability} respectively.
 
-In all cases we find that as the damping constant is reduced by an order of magnitude, stable explicit time step sizes are reduced by approximately a factor of two (due to an increase in the stiffness).
+In all cases we find that as the damping constant is reduced by an order of magnitude, stable explicit time step sizes are reduced by approximately a factor of two (\ie an increase in the stiffness).
 
 \begin{figure}
   \centering
@@ -138,25 +140,24 @@ However, from \cref{fig:analytic-hms-stability} we see that adding the exact fie
 From our data we cannot predict whether other methods of calculating the magnetostatic field, such as multipole methods, will result in similar increases in the number of explicit time steps required.
 However we expect that the effect is due to the coupling with the additional Poisson problems (which means that the semi-discretised equation is a differential algebraic equation \cite[371]{HairerWanner} rather than an ODE), thus any potential based method is likely to exhibit similar behaviour.
 
-\cref{fig:hms-stability} shows that using a semi-implicit method with explicit magnetostatic calculations (SIMR) imposes no stability restrictions on the time step due to spatial discretisation for the spatial resolutions relevant for micromagnetic problems.
+\cref{fig:hms-stability} shows that using a semi-implicit method with explicit magnetostatic calculations (SIMR) imposes no stability restrictions on the time step due to spatial discretisation at the spatial resolutions relevant for micromagnetic problems for this example.
 
 To further analyse our results we need an estimate of the ratio of computational effort for explicit vs implicit time steps. Without magnetostatics we find that each step of IMR takes on average 5.86 times more computation time than a step of RK2. With magnetostatics each step of SIMR only takes 3.40 times more computation time than a step of RK2 (the difference is due to the cost of solving multiple Poisson problems at each Runge-Kutta stage). Using these ratios we can calculate the stable RK2 time step required to have equivalent computational efficiency to IMR with step size 0.1. This stable step size is marked on \cref{fig:no-hms-stability}, \ref{fig:hms-stability} and \ref{fig:analytic-hms-stability} with a dashed line.
 
 Based on these results we say that a problem is ``stiff'', and that an implicit method will perform significantly better than an explicit one, if the ratio of the desired time step, $\dtinitial$ to the maximum stable explicit time step, $\dtmax$ is greater than 20.
 % This roughly agrees with the results of Suess \etal \cite{Suess2002}, who used the widely used (and presumably heavily optimised) CVODE package to solve the \mumag standard problem 4 using similar techniques to ours. % Their bdf2 steps are extremely slow, probably bad preconditioner.
-A caveat is that both types of model could be further optimised using, for example parallelism, improved preconditioning, mass lumping, boundary matrix compression etc.
+A caveat is that both types of model could be further optimised using, for example parallelism, improved preconditioning, mass lumping, hierarchical boundary matrix representations, etc.
 
 Typical advice for the number of elements per exchange length is that an absolute minimum is one, and in order to show that the results are mesh independent the mesh should be refined a few times \cite[Sec. 11]{nmag-manual}.
 This leads to a reasonable finest mesh with around three elements per exchange length.
 
 We see that with FEM/BEM magnetostatics, realistic damping ($\alpha = 0.01$) and at least three elements per exchange length our case study is stiff.
-
 Without FEM/BEM magnetostatics stiffness only occurs if refinement to around five or more elements per exchange length is needed for any part of the domain.
 Problems that require this level of refinement include resolving the geometry in studies of granular or patterned media \cite{Suess2002} and resolving vortex-core-like structures \cite{Andreas2014b}.
 % also \cite[App. D]{Knittel2011} found he needed this level of refinement for some parts of model to be accurate.
 
-On the other hand LLG problems can be only moderately stiff if refinement is only needed up to the level of a few elements per exchange length, as is often required for simple geometries.
-This is consistent with the fact that the \mumag standard problem \#4 is often solved using explicit integration methods with spatial refinement of around 0.5 exchange lengths \cite{mumag-website}.
+On the other hand LLG problems can be only moderately stiff if refinement is only needed up to the level around one element per exchange length, as is often required for simple geometries.
+This is consistent with the fact that the \mumag standard problem \#4 is often solved using explicit time integration methods \cite{mumag-website}.
 
 Similar experiments with the standard 4th order Runge-Kutta method \cite[41]{Iserles2009} and $\alpha=1.0$ (plots not shown) give essentially the same results as for RK2. As $\alpha$ is reduced the maximum stable step size $\dtmax$ is reduced, but not as rapidly as for RK2. However due to the increased computational cost per time step (a factor of two) the onset of stiffness for RK4 (for all $\alpha$) occurs at roughly the same spatial discretisation as for RK2 with $\alpha = 0.1$.
 
@@ -169,10 +170,10 @@ Our results show that the LLG equation without magnetostatics or with analytical
 If FEM/BEM magnetostatic calculations are used stiffness occurs at much coarser discretisations, beginning at around $2\dash 3$ elements per exchange length.
 In all cases decreasing the damping constant also increases the stiffness.
 
-The results for the ODE version of the problem indicate that the observed stiffness is a result of the spatial discretisation and not the physics of the problem.
-Since more complex physics is unlikely to reduce the stiffness, we expect that these results will extend to other, more complex, problems.
+The results for the ODE version of the problem indicate that the observed stiffness is due to the spatial discretisation and not the physics of the problem.
+Since more complex physics is unlikely to ever reduce the stiffness, we expect that these results will extend to other, more complex, problems.
 
-We also found that our semi-implicit FEM/BEM method does not suffer from discretisation induced stiffness.
+We also found that our semi-implicit FEM/BEM method does not suffer from discretisation induced stiffness in this simple test case.
 
 
 %%% Local Variables:
