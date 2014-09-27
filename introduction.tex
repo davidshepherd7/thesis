@@ -2,36 +2,36 @@
 \chapter{Introduction}
 \label{sec:introduction}
 
-??ds discuss exchange?
 
 In this thesis we study numerical techniques for the modelling of ferromagnetic materials.
 In ferromagnetic materials, referred to in this thesis as simply ``magnetic materials'', exchange coupling between nearby spins causes the emergence of spontaneous magnetisation.
-Some magnetic materials have preferred magnetisation directions (anisotropy), for example due to the crystal lattice structure, and in such materials systems with two stable states can be obtained.
+Some magnetic materials have preferred magnetisation directions (anisotropy), for example due to the crystal lattice structure.
+In such materials systems with two stable states can be obtained.
 The system can be switched between these states by the application of a magnetic field, which can be easily generated using pulses of electrical current.
 These states can be extremely stable, having average lifetimes of decades at room temperature even for extremely small volumes of material.
-Such materials have many technological applications, one major application is in the area of data storage.
+Such systems have many technological applications, particularly in the area of data storage.
 
 In current hard disk drives collections of nanometre-sized grains of anisotropic magnetic material are magnetised using a write head (an electromagnet) in order to store bits of data \cite[Sec. 14.6]{Kronmuller1997}.
-The data can be read by magnetoresistive sensors, which change their resistance based on the magnetic field.
+The data is read back using magnetoresistive sensors, which change their resistance based on the magnetic field.
 Such sensors can be extremely sensitive and extremely small, allowing them be very close to the bits and to obtain good signal-to-noise ratios despite the small size of the bits.
 
-Another application area where ferromagnetic materials show great promise is in random access memory (RAM), \ie short term data storage for computers.
-The current standard RAM technology (dynamic RAM or DRAM) is based on charging capacitors.
+Another application area where ferromagnetic materials show great promise is in random access memory (RAM), used as short term data storage for computers.
+The current standard RAM technology (dynamic RAM or DRAM) is based on the charge stored in capacitors.
 These capacitors leak charge fairly rapidly, resulting in data lifetimes on the order of milliseconds.
 Hence they must be continually refreshed and can require significant power usage to retain data.
 A widely proposed alternative is MRAM (magnetoresistive RAM) which uses arrays of nano-sized regions of magnetic material to store data and in-place magnetoresistive sensors to allow random-access reads \cite[Sec. 14.4]{Kronmuller1997}.
 The vastly longer data lifetimes allowed by the use of magnetic materials results in greatly reduced standby power usage by removing the requirement for continual refreshing.
 Moreover, computers could be easily put into a completely powered-off hibernation state without writing data to disk.
 Historically there have been issues with random-access writes in MRAM: moving write heads (as used in hard drives) cannot be used because the time to move the head to the correct location is impractically long, and in-place generation of the required magnetic fields requires large currents.
-However recent developments in spin-torque-transfer, where spin-polarised currents are used to directly apply a torque to the magnetisation of a ferromagnet, offer a solution to these difficulties \cite{??ds-st-mram-citation}.
-Spin torque transfer MRAM (ST-MRAM) has recently been commercialised by Everspin Technologies \cite{everspin} and is beginning to make its way into products.
-Due to the combination of non-volatility, high density, random-access, and low read/write times such ST-MRAM is a candidate for a so-called ``universal memory'', where all data is stored a RAM-like memory eliminating long access times.
+However recent developments in spin-torque-transfer, where spin-polarised currents are used to directly apply a torque to the magnetisation of a ferromagnet, offer a solution to these difficulties \cite{Apalkov2013}.
+Spin torque transfer MRAM has recently been commercialised by Everspin Technologies \cite{everspin} and is beginning to make its way into products.
+Due to the combination of non-volatility, high density, random-access, and low read/write times it is a candidate for a so-called ``universal memory'', where all data is stored a RAM-like memory eliminating long access times.
 
 
 It is extremely desirable to be able to accurately model the behaviour of magnetic materials for both research and device design purposes.
 However the use of models based on quantum mechanics (such as density functional theory) to predict the behaviour of magnetic systems is extremely computationally expensive due to the length scales required.
 Instead a theory known as \emph{micromagnetics} is typically employed \cite{Aharoni1996}.
-In micromagnetics a continuum approximation of the ferromagnet's magnetisation is used -- it is  assumed that the magnetisation can be modelled using a continuous functions of space and time (\ie the contribution due to individual atoms is averaged out).
+In micromagnetics a continuum approximation of the ferromagnet's magnetisation is used -- it is  assumed that the magnetisation can be modelled as a continuous functions of space and time (\ie the contribution due to individual atoms is averaged out).
 This is a good approximation for many cases because of the smoothing effect of ferromagnetic exchange.
 Additionally a semi-classical approach is used: the various important quantum mechanical effects are approximated by classical representations.
 The result of these approximations is a powerful framework for theoretical and computational predictions of the behaviour of magnetic materials.
@@ -49,7 +49,7 @@ In this thesis we study numerical methods with the final goal of finding more re
 In particular we focus on methods which improve the efficiency of so-called ``geometric integration'' schemes.
 Geometric integration schemes are numerical methods which are able to retain important \emph{qualitative} properties of a differential equation in an approximate solution.
 In other areas of computational physics such methods have been shown to greatly reduce the overall accumulation of numerical errors \cite[77]{Iserles2009}.
-This allows more accurate results at the same computational cost (or a reduction in computational cost for the same accuracy).
+This allows more accurate results at the same computational cost (or a reduction in the computational cost to obtain the same accuracy).
 In particular we focus mainly on a widely known time integration scheme with geometric integration properties when applied to dynamic micromagnetics calculations: the implicit midpoint rule.
 
 
@@ -64,7 +64,7 @@ The chapter ends with a discussion of how the basic finite element method can be
 
 The later chapters contain the main novel research contributions of this thesis.
 \Cref{sec:solution-strategies} describes efficient iterative techniques for the solution of the coupled linear and non-linear systems resulting from the use of FEM/BEM magnetostatics calculations in an LLG-based dynamic model.
-In particular we introduce techniques which reduce the development of an efficient solver for such a monolithically coupled model to the development of an effective preconditioner for the LLG sub-problem alone.
+In particular we introduce techniques which reduce the development of an efficient solver for a monolithically coupled problem to the development of an effective preconditioner for the LLG sub-problem alone.
 Such a coupling strategy is required to retain the geometric integration properties of the implicit midpoint rule, and may also be useful in the time integration of the stochastic LLG.
 
 In \cref{sec:adaptive-imr} we introduce a novel adaptive time step selection algorithm for the implicit midpoint rule.
@@ -73,7 +73,7 @@ The same chapter also contains numerous numerical experiments demonstrating the 
 
 In \cref{cha:numer-experiments} we present a number of numerical experiments using combinations of the methods developed in this thesis.
 The methods are validated against a number of examples: a wave-like problem with an analytical solution, relaxation under a non-uniform field, and the \mumag standard problem \#4.
-Additionally the convergence and geometric integration properties of a variety of time integration schemes are compared for problems.
+Additionally the convergence and geometric integration properties of a variety of time integration schemes are compared.
 
 Finally, in \cref{cha:stiffn-llg-equat} the comparative efficiency of two classes of time integration schemes (implicit and explicit) are compared for an example problem across a range of spatial discretisations.
 
