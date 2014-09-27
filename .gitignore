@@ -4,8 +4,6 @@ other_models.tex
 
 results*
 
-main.pdf
-
 # latexmk output
 *.fdb_latexmk
 *.fls
