@@ -46,6 +46,7 @@ This method is expected to be efficient for medium sized problems and/or small t
 However the effectiveness is strongly dependent on the diagonal dominance of the matrix.
 As the volume of the elements decreases or the time step size increases the matrix becomes less diagonally dominant and the effectiveness of the preconditioner will decrease.
 Hence this method is not expected to scale optimally to fine meshes or to be very robust with respect to varying parameters.
+% ??ds Hans wants to add note that this is what nmag, and probably magpar + femme do, find citations?!
 
 % Unfortunately we have not had time to research more effective solvers for the LLG system.
 % maybe write something abount what these might be? block based AMG smoothers (as used for fixed point)? block preconditioners with AMG underlying? [Milan/Matthias: what's the big difference?]
@@ -304,7 +305,7 @@ However, inverting $\precb$ or $\precc$ directly would still require an expensiv
 Ideally we want to approximate these inverses by some cheap iterative process instead.
 
 Based on the fact that AMG is known to be an optimal preconditioner for Krylov solves of Poisson problems, we apply an AMG approximation for the $\Am$ blocks.
-Using this approximation we define two semi-inexact preconditioners
+Using this approximation we define two ``semi-inexact'' preconditioners (\ie preconditioners where some of the blocks are approximated using iterative methods)
 \begin{equation}
   \parinexact{\precb} =
   \begin{pmatrix}

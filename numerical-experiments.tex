@@ -273,9 +273,9 @@ This experiment also reveals some odd behaviour on meshes of triangular elements
 We solve the LLG without magnetostatics on a two dimensional square domain $\magd = [0,5] \times [0,5]$ with Neumann boundary conditions.
 The problem is integrated in time over $T = [0, 5]$.
 
-We use a uniform initial condition $\mv = [1, 1, 0]/\sqrt{2}$ with a non-uniform applied field
+We use a uniform initial condition $\mv = [1, 1, 0]/\sqrt{2}$ with a non-uniform applied field $\happ = [0, 0, h_z]$ where
 \begin{equation}
-  \happ =
+  h_z =
   \begin{cases}
     1.1 (1 -  x) & x  < 1, \\
     0 & \mathrm{otherwise}.
@@ -287,7 +287,7 @@ The dynamics occurring in this problem are quite simple: the magnetisation in th
 Exchange interactions force the rest of the domain to move towards the same field, albeit much more slowly, until eventually the entire domain is in a uniform state.
 
 The implementation details of this example are exactly as described in \cref{sec:impl-deta}, except that we also use meshes of triangular elements.
-The structure of the triangular element mesh is equivalent to the square element mesh except with element divided diagonally into two triangles.
+The structure of the triangular element mesh is equivalent to the square element mesh except that the square elements are divided diagonally into two triangles.
 
 
 \subsection{Geometric Integration properties}

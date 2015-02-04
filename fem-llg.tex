@@ -132,7 +132,7 @@ Different choices of $\tbf_{\ndi}$ and $\sbf_l$ lead to different methods, the c
 For now we continue with a description of the conversion to a general discrete form.
 
 
-Replacing $\testh$ from \cref{eq:poisson1} by $\tbf_{\ndi}$ gives an equivalent set of conditions
+Replacing $\test$ from \cref{eq:symmetric-weak-poisson} by $\tbf_{\ndi}$ gives an equivalent set of conditions
 \begin{equation}
   \intui{  \phim'_h \tbf_{\ndi}'  }  = \intui{ f\tbf_{\ndi} } \qquad n=0,\ldots,N,
   \label{eq:discrete_weak_test_fns_replaced}
@@ -282,7 +282,7 @@ This is the highest possible polynomial order of exact evaluation for a quadratu
 
 In higher dimensions the integration is not quite so simple.
 Typically a quadrature scheme only applies for integration over a specific shape of element (or at least the scheme must be non-trivially modified for alternative geometries).
-To get around this issue we use a coordinate transformation to a reference element \cite[29]{HowardElmanDavidSilvester2006}, \eg any four sided element is mapped to the square $[-1, 1] \times [-1, 1]$, meaning that standard quadrature schemes can be used.
+To get around this issue we use a coordinate transformation to a reference element \cite[29]{HowardElmanDavidSilvester2006}, \eg in two dimensions any four sided element is mapped to the square $[-1, 1] \times [-1, 1]$, meaning that standard quadrature schemes can be used.
 
 We call the coordinates on the reference element the ``local coordinates'' and denote them as $\sv$, we call the original coordinates the ``global coordinates''.
 We use a transformation (from local to global coordinates) that can be written similarly to \cref{eq:y-spans}:
@@ -293,7 +293,7 @@ We use a transformation (from local to global coordinates) that can be written s
 this is known as an isoparametric transformation.
 The final difficulty is to calculate the Jacobian of this transformation:
 \begin{equation}
-  J = \abs{ \pd{\sv}{\xv}} = \frac{1}{\abs{\pd{\xv}{\sv}}},
+J_e = \det \pd{\sv}{\xv} = \frac{1}{\det \pd{\xv}{\sv}},
 \end{equation}
 where we have used the notation defined in \cref{eq:jac-def} for the Jacobian of derivatives of a function.
 Note that the elements of the Jacobian matrix $\pd{\xv}{\sv}$ can be calculated by simply differentiating \cref{eq:88}.
@@ -638,7 +638,7 @@ The properties of these time discretisations are exactly as discussed in \cref{s
 Here we write the residual using the \emph{scalar} test function form because it is the form most suitable for use in a computer implementation.
 We define the effect of $\gradv$ on a scalar function $\tbf$ to be $\gradv \tbf = (\grad \tbf, \grad \tbf, \grad \tbf)$, this allows us to use scalar and vector test functions in the same way in the following.
 
-We write $\dmdth$ for the fully discrete time derivative approximations at step $n+1$ and $\mvh$, $\phimh$ for the fully discrete approximations to $\mv$, $\phim$ as required for the time derivative.\footnote{For BDF, TR methods $\mvh$ is as defined in \cref{eq:unknowns-basis}. For IMR it is the average of the function at step $n+1$ and step $n$.}
+We write $\dmdth$ for the fully discrete time derivative approximations at step $n+1$; and $\mvh$, $\phimh$ for the fully discrete approximations to $\mv$, $\phim$ as required for the time derivative.\footnote{These are given by \cref{eq:impl-bdf1,eq:impl-bdf2,eq:impl-imr,eq:imr-bdf1,eq:impl-tr} as appropriate, with the $\yv_i$ values replaced by the spatially discrete approximations defined in \cref{eq:unknowns-basis}.}
 Then the fully discrete residuals are
 \begin{equation}
   \label{res:llg-discrete}
@@ -1004,7 +1004,7 @@ The downside of such a scheme is that the accuracy of the evaluation of integral
 
 In the micromagnetics literature this choice of quadrature is known as ``reduced integration'' \cite{Cimrak2008}.
 However in other finite element literature reduced integration refers to the use of a Gaussian quadrature whose order is not sufficient to evaluate the integrals exactly, typically it is used to reduce the computational cost of the quadrature.
-\emph{Nodal integration} is the standard term for quadrature schemes where the nodal values are used directly in the quadrature (typically with mesh-free methods \eg \cite{Puso2008}), but prefer the term ``nodal quadrature'' to avoid confusion with time integration.
+\emph{Nodal integration} is the standard term for quadrature schemes where the nodal values are used directly in the quadrature (typically with mesh-free methods \eg \cite{Puso2008}), but we prefer the term ``nodal quadrature'' to avoid confusion with time integration.
 
 In \thisref{sec:nodal-integration} we first demonstrate that $\abs{\mv_j}=1$ is conserved when a nodal integration scheme is used.
 Then we demonstrate that the energy property of IMR (as discussed in \cref{sec:energy-cons}) applies in our FEM + IMR model.
@@ -1211,7 +1211,7 @@ The restriction of $\testv \in \sob_h^2(\magd)$ introduced at the start of this 
 \end{equation}
 where
 \begin{equation}
-  \ip{\av}{\bv}_\nodal = \sum_{j \in nodes} \beta_j \av(\xv_j) \cdot \bv(\xv_j),
+\ip{\av}{\bv}_\nodal = \sum_{j \in \textrm{nodes}} \beta_j \av(\xv_j) \cdot \bv(\xv_j),
 \end{equation}
 \ie the nodally-integrated version of the $L^2$ inner product.
 It can be shown that \cite{Bartels2007}:

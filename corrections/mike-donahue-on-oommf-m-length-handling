@@ -1,0 +1,79 @@
+From: Fangohr H. <H.FANGOHR@soton.ac.uk<mailto:H.FANGOHR@soton.ac.uk>>
+To: Michael J Donahue <michael.donahue@nist.gov<mailto:michael.donahue@nist.gov>>
+Cc: Fangohr H. <H.FANGOHR@soton.ac.uk<mailto:H.FANGOHR@soton.ac.uk>>
+Subject: Re: normalisation of magnetisation in OOMMF
+Date: 3 February 2015 10:26:48 GMT
+
+Hi Mike,
+
+On 2 Feb 2015, at 20:45, Michael J Donahue <michael.donahue@nist.gov<mailto:michael.donahue@nist.gov>> wrote:
+
+Hi Hans,
+
+I am examining a PhD thesis with a section on time integration. I know
+how it works for Magpar and Nmag, and I know your nice attached talk, in
+which you outline two methods to deal with normalisation:
+
+(i) projection of new m to the ‘right point on the orbit’
+
+(ii) adding of self correcting term to LLG
+
+Can you tell me (briefly) which (if either) of those you use in OOMMF?
+(I tried digging around in the code, but didn’t find this entirely
+clear…)
+
+The standard OOMMF Runge-Kutta code simply renormalizes (m -> m/|m|) on
+each step.  The norm error is tracked, but it looks like it is not used.
+IIRC, the error when using the higher order methods is small enough that
+it is only a problem when alpha is very nearly zero.  I think I decided
+that alpha itself was a fudgey enough quantity (and concept) that it
+wasn't worthwhile to mess with the norm correction.  I would be
+interested in pertinent examples to the contrary.
+
+I might feel differently if I were using a first or second order method
+--- which reminds that in fact the Euler evolver in OOMMF does employ
+(i) above.
+
+What do Magpar and Nmag do?
+
+
+Magpar is rescaling ‘when required’: there is some criterion that if m grows by x%, it stops, rescales, and carries on. Part of the reason (I think) for doing it this way, is that they want to use CVODE for time integration, and in general smoothness (which you lose when re-scaling) of the right hand side is good for multi-step predictor corrector methods.
+
+NMag uses the correction term (ii): I like it because you never need to rescale explicitly (keeps integrators happy), but I have never systematically evaluated the error you make in this. One needs to choose a suitable pre-factor for the correction in the LLG to decide the strength/timescale of it: too small, and |m| can grow too much before you correct, too big and you could induce oscillations of |m| around 1 (or |M| around M_s).
+
+Are you happy for me to pass your replies onto the student to help him improve his work?
+
+Many thanks for the quick reply,
+
+Hans
+
+
+Cheers,
+
+Mike
+
+P.S.
+
+In case you are interested, I happened across some files named
+
+modllg_{euler,rungekutta}evolve.{h,cc}
+
+in the OOMMF development repository.  These files date back to 2005 and
+include several options for |m| normalization.  These files are not
+included in the majority of OOMMF releases, but are in the
+
+OOMMF 1.2 alpha 4-pre, 27-Jun-2008
+
+snapshot available at
+
+http://math.nist.gov/oommf/software-12a4pre.html
+--
+Michael J. Donahue
+National Institute of Standards and Technology
+Mathematical & Computational Sciences Division
+100 Bureau Dr Stop 8910
+Gaithersburg, MD 20899-8910
+email: michael.donahue@nist.gov<mailto:michael.donahue@nist.gov>
+voice: (301) 975-5424
+fax: (301) 975-3553
+web: http://math.nist.gov/~MDonahue/

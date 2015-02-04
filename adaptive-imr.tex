@@ -161,10 +161,13 @@ Differentiating \cref{eqn:divided-diff-intp} with respect to $t$, recalling that
 \begin{equation}
   \begin{aligned}
     \pv_k'(t) &= \yv[t_{n+1}, t_n] + \yv[t_{n+1}, t_n, t_{n-1}]\bigb{(t - t_n) + (t - t_{n+1})} \\
-    &\quad + \yv[t_{n+1}, t_n, t_{n-1}, t_{n-2}]\bigb{(t - t_n)(t - t_{n-1}) + (t - t_{n+1})(t - t_{n-1}) + (t - t_{n+1})(t - t_n)} \\
+    &\quad + \yv[t_{n+1}, t_n, t_{n-1}, t_{n-2}]\big( (t - t_n)(t - t_{n-1}) + (t - t_{n+1})(t - t_{n-1})\\
+    &\qquad \qquad  + (t - t_{n+1})(t - t_n) \big) \\
     &\quad + \ldots \\
-    &\quad + \yv[t_{n+1}, \ldots, t_{n+1-k}]\bigb{(t-t_{n})\cdots(t-t_{n-k}) + \ldots + (t-t_{n+1})\cdots(t-t_{n-k+1})}, \\
-    &= \sum_{j=1}^k \yv[t_{n+1}, \ldots, t_{n+1-j}] \sum_{l=0}^{j-1} \prod_{i=0, i \neq l}^{j-1} (t - t_{n+1-i}).
+    &\quad + \yv[t_{n+1}, \ldots, t_{n+1-k}]\big( (t-t_{n})\cdots(t-t_{n-k}) \\
+    &\qquad \qquad + \ldots + (t-t_{n+1})\cdots(t-t_{n-k+1}) \big), \\
+    &= \sum_{j=1}^k \yv[t_{n+1}, \ldots, t_{n+1-j}] \sum_{l=0}^{j-1}
+    \prod_{i=0, i \neq l}^{j-1} (t - t_{n+1-i}).
     \label{eq:59}
   \end{aligned}
 \end{equation}
@@ -246,7 +249,7 @@ For constant time steps the result reduces to: $ b = 3\dtn$, $c_n = -3/2$, $c_{n
 
 It should be noted that the calculation of the coefficients in \cref{eqn:ebdf-coeffs} requires $\sim 100$ operations (assuming no compiler optimisation of the multiplications).
 Hence it could be disproportionately expensive if the number of $y$-values is small.
-However when used in finite-element or finite-difference calculations the number of $y$-values is at least tens of thousands.
+However when used in finite-element or finite-difference calculations $\yv_n$ is a vector of 10,000+ values.
 So the cost of \cref{eqn:ebdf-coeffs} is trivial by comparison with, for example, a single calculation of $\ffv{t_n, \yv_n}$.
 
 
@@ -268,7 +271,7 @@ We limit $\frac{\dtx{n+1}}{\dtn}$ to 4 to help improve stability.
 
 Note that some alternative strategies try to minimise the number of modifications to the time step size \cite[Chap. 6]{Iserles2009}, in particular this strategy is used in the CVODE library \cite[Sec. 2.1]{cvode-manual}.
 The motivation for this is the use of a modified Newton-Raphson method where the Jacobian is not recalculated at each Newton step.
-In the case of ODE solvers this is extremely beneficial, because the Jacobian is usually dense and direct methods are used to solve it--by keeping the Jacobian constant the number of solves and Jacobian assemblies are greatly reduced.
+In the case of ODE solvers this is extremely beneficial, because the Jacobian is usually dense and direct methods are used to solve it -- by keeping the Jacobian constant the number of solves and Jacobian assemblies are greatly reduced.
 The downside is a reduction in the convergence speed of the Newton method.
 Keeping the step size constant for as long as possible is required here because modifications to the time step cause modifications to the Jacobian.
 However for PDE solvers, and in particular for PDE solvers using iterative methods to solve the linear systems there is little-to-no benefit in using this technique: the reduction in convergence speed is more detrimental than the gain of not assembling and solving the additional sparse linear systems \cite[128]{Iserles2009}.
@@ -280,7 +283,7 @@ Assuming that we have values for $\yv_n$, $\yv_{n-1}$, $\yv_{n-2}$ (these can be
 
 \begin{algorithm}[H]
   Set initial conditions and time\;
-  \While{ $t \leq t_{\text{max}}$}{
+  \While{ $t \leq t_{\mathrm{max}}$}{
     Set $t := t + \dtn$\;
     Calculate $\yv_{n+1}^\ebdf$ from $\yv_n$, $\yv_{n-1}$, $\yv_{n-2}$ using eBDF3, \cref{eqn:ebdf-coeffs}\;
     Calculate $\yv_{n+1}$ from $\yv_n$ using IMR, \cref{eq:67}, along with some linear/non-linear solver as appropriate\;
@@ -582,7 +585,7 @@ Note that with $\dampc = 0$ \cref{eqn:nd-ode-llg} becomes simply $\dmdt = - \mv 
 
 \subsection{Implementation details}
 
-The implementation of the three time integration algorithms without re-normalisation of $\mv$ is exactly as discussed in \cref{sec:aimr-implementation}.
+The implementation of the three time integration algorithms without the re-normalisation of $\mv$ is exactly as discussed in \cref{sec:aimr-implementation}.
 We also test the performance of the TR and BDF2 methods with an added re-normalisation step to enforce constant $\abs{\mv}$.
 The re-normalisation is done by simply replacing $\mv$ by $\mv/\abs{\mv}$, and is carried out at after every step (after the selection of the next time step to avoid complicating the step selection process).
 In the experiments we compare the performance with and without re-normalisation where appropriate.
@@ -738,7 +741,7 @@ We have implemented an efficient algorithm for adaptive time step selection with
 The algorithm has been tested on a number of ODEs and found to follow the correct theoretically predicted step selection behaviour, and to behave similarly to other second-order adaptive time integrators.
 We have also demonstrated robustness in stiff problems and correct behaviour even when order reduction phenomena are encountered.
 
-When applied to an ODE form of the LLG the adaptive IMR algorithm conserves $\abs{\mv}$ as expected for a wide variety of parameters, but the example used here is to be too simple for the energy property to be studied.
+When applied to an ODE form of the LLG the adaptive IMR algorithm conserves $\abs{\mv}$ as expected for a wide variety of parameters, but the example used here may be too simple for the energy property to be studied.
 It also appears to give smaller global error norms than would be expected from its local truncation error, this may be due to the geometric integration properties.
 Any effects of these geometric integration properties would be expected to be greatly amplified when solving ODE problems with many interacting spins or PDE problems.
 This scenario will be tested in \cref{cha:numer-experiments} where the adaptive IMR algorithm is combined with the PDE methods discussed in other chapters.

@@ -296,9 +296,9 @@ Time integration schemes are used to convert the time derivatives of a PDE into 
 When discussing time integration schemes it is helpful to use a (vector) initial value ordinary differential equation (ODE) as an example:
 \begin{equation}
   \begin{aligned}
-    \frac{d \yv}{dt} &= \ffv{t, \yv}, \\
-    \yv(0) &= \yv_0,
-    \label{eq:45}
+  \frac{\textrm{d} \yv}{\textrm{d}t} &= \ffv{t, \yv}, \\
+  \yv(0) &= \yv_0,
+  \label{eq:45}
   \end{aligned}
 \end{equation}
 where $\fv(t,\yv)$ is a known function and $\yv_0$ is the known initial condition.
@@ -643,7 +643,7 @@ Such estimates have the obvious limitation that they are only (directly) applica
 
 One example of such an algorithm for the LLG equation is to compare the effective damping with the expected damping and use the difference as an error estimator, as proposed by Albuquerque \etal \cite{Albuquerque2001}.
 A major disadvantage of this method is that the error estimator is unable to distinguish between spatial errors and temporal errors.
-Possible method is to use the time error estimates for the LLG equation, with limited effective field terms and a specific finite element discretisation, derived for both IMR and BDF2 by Banas \cite{Banas-thesis}.
+A possible method is to use the time error estimates for the LLG equation, with limited effective field terms and a specific finite element discretisation, derived for both IMR and BDF2 by Banas \cite{Banas-thesis}.
 However the derivation is fairly complex, and may be difficult to extend to include exchange field or FEM/BEM magnetostatics.
 
 
@@ -793,8 +793,8 @@ Now we are ready to derive the energy property in the same manner as \cref{sec:p
 We begin by taking the $\ltwo$ inner product of the IMR discretised LLG equation, \cref{eqn:disc-llg}, with the sum of the IMR discretised effective field and damping terms:
 \begin{equation}
   \begin{aligned}
-    & \mphop + \happ(\mpt) - \dampc \mpdmdt, \\
-    &= \mphop + \frac{\happ(t_{n+1}) + \happ(t_n)}{2} + \happerror - \dampc \mpdmdt.
+  & \mphop + \happ\bigb{\mpt} - \dampc \mpdmdt, \\
+  &= \mphop + \frac{\happ(t_{n+1}) + \happ(t_n)}{2} + \happerror - \dampc \mpdmdt.
   \end{aligned}
 \end{equation}
 The result of this inner product is
@@ -920,7 +920,7 @@ In the context of implicit time integration of a semi-discretised PDE we write
 \end{equation}
 for the list of spatially discrete values of $\yv$ at time step $n$.
 For example, for an LLG problem consisting of a single macrospin $\yvdis_n = \mv_n$.
-For an LLG problem by semi-discretised by the finite element method $\yvdis_n$ is the list of all the discrete values that define $\mv_n$ along with any values needed for the magnetostatic calculations.
+For an LLG problem semi-discretised by the finite element method $\yvdis_n$ is the list of all the discrete values that define $\mv_n$ along with any values needed for the magnetostatic calculations.
 
 
 \subsection{Functional iteration}
@@ -1062,13 +1062,13 @@ Effective iterative solvers are usually problem specific but can be much more ef
 Direct methods for the solution of linear systems seek exact solutions using methods based on Gaussian elimination.
 The direct method most commonly used in the solution of systems resulting from discretised PDEs is LU decomposition.
 
-The main advantage of direct methods is their robustness: given a well-scaled, non-singular linear system a well designed direct solver will be able provide an answer.
+The main advantage of direct methods is their robustness: given a well-scaled, non-singular linear system a well designed direct solver will be able to provide an answer.
 As such direct solvers are usually the first approach tried when solving a system of equations.
 
 However as matrix sizes become large direct solvers become increasingly demanding in both time and memory.
 The problem is that the factors of a typical sparse matrix can be significantly more dense than the original matrix, \ie there is some amount of fill-in.
 This means that the time and memory requirements for the solution rarely scale as $\order{\nrow}$ except for very specific matrices.
-The exact level of fill-in depends on the sparsity pattern of the initial matrix, but the final computational complexity is typically between $\order{\nrow^{3/2}}$ and $\order{\nrow^2}$.
+The exact level of fill-in depends on the sparsity pattern of the initial matrix, but the final computational complexity is typically between $\order{\nrow^{3/2}}$ and $\order{\nrow^2}$ \cite{??ds: need citation for this for corrections, Iserles?}.
 
 For three dimensional PDE problems there are significantly more non-zero entries in each row than in two dimensions due to the increased connectivity of the discrete points.
 Hence the performance of a direct solver on three dimensional problems is much worse than for comparable problems in two dimensions, even if $\nrow$ remains the same.
@@ -1217,7 +1217,7 @@ In contrast to this, some models use an explicit approximation to the magnetosta
 Unfortunately, in this case the energy properties will be lost due to the replacement of $\hopb{\mpm}$ by an alternative approximation (in a similar way to the semi-implicit modification of IMR).
 However, the magnetisation length property will be retained because it only relies on $\mv$ itself being calculated implicitly, and not the effective field.
 
-One way to allow a completely implicit treatment of the magnetostatic field without a dense contribution was explored by d'Aquino \cite{DAquino2005}.
+One way to allow a completely implicit treatment of the magnetostatic field without a dense contribution was explored by d'Aquino \cite{DAquino2005}, and is also used by \nmag \cite{??ds private communication? nmag paper?} ??ds and probabaly by femme and magpar but this needs checking.
 He used a quasi-Newton method where the dense contribution was simply left out of the Jacobian matrix.
 This greatly slows down the convergence of the non-linear solve: in the example given in the paper 10-14 iterations were needed (compared to $\sim2$ with a full Newton-Raphson method).
 However, in the general case it is not clear that this quasi-Newton method will converge at all!
