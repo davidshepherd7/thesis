@@ -34,7 +34,9 @@ We call the region of magnetic material $\magd$, it's boundary $\boundd$ and the
 When working with equations in dimensional form we always use S.I. units, although almost all equations are written in non-dimensional form after this form is derived in \cref{sec:normalisations-appendix}.
 In general we will not make dependencies on $\xv$ and $t$ explicit.
 
-
+For a scalar function $f$ and a vector function $\gv$ in three dimensions we use the standard definitions of the gradient, divergence and Laplacian operators: $\grad f = (\pd{f}{x}, \pd{f}{y}, \pd{f}{z})$, $\div \gv = \pd{g_x}{x} + \pd{g_y}{y} + \pd{g_z}{z}$, and $\lap f = \spd{f}{x} + \spd{f}{y} + \spd{f}{z}$ respectively.
+We also write the vector Laplacian as $\lap \gv = (\lap g_x,\lap g_y, \lap g_z )$.
+In less than three dimensions the obvious extensions are used.
 
 
 \section{The energy of a magnetic body}
@@ -44,11 +46,13 @@ A number of energy terms are included in standard micromagnetic models: the magn
 We begin by providing a description of each of these energies.
 Other effects which are sometimes important include temperature (thermal effects) and magnetostriction (the change in magnetic behaviour due to stretching or compressing the magnet).
 
-The energy due to an external applied field (sometimes called the Zeeman energy) is
+The energy due to an external applied field, $\Happ$, (sometimes called the Zeeman energy) is
 \begin{equation}
   \label{eq:42}
   \Eapp = - \mu_0 \int_{\magd} \Mv \cdot \Happ \d \magd.
 \end{equation}
+
+% ??ds check this in more detail, should we be using energy density? Add definition of variational derivative? -- Andrew
 
 By inverting \cref{eq:42} we can obtain an ``effective field'' $\Hv$ for any energy term $E$:
 \begin{equation}
@@ -71,8 +75,9 @@ This can be approximated by a classical expression for exchange energy \cite{Aha
 \end{equation}
 where $\Exchc$ is the material dependent exchange constant representing the strength of the exchange coupling.
 
-We write the vector Laplacian as $\lap \Mv = (\lap M_x,\lap M_y, \lap M_z )$.
-Then the exchange effective field is given by
+% ??ds could add better derivation or a citation? -- Andrew, check the M_s factors: should this be \mv?
+
+The exchange effective field is given by
 \begin{equation}
   \label{eq:Hex}
   \Hex = \frac{2 \Exchc}{ \mu_0 M_s} \lap \Mv.
@@ -104,6 +109,8 @@ For completeness we note that single magnetic charges (magnetic monopoles) are a
 % \end{equation}
 % where $\ruv_i$ is the unit vector pointing from $\xv_i$ to $\xv$.
 
+
+% ??ds include derivation all the way from Maxwell's equations, if so add curl above -- Andrew
 
 When the magnetic field is produced only by magnets and not by electric currents (\ie the magnetic field is irrotational) it is possible to express the field in terms of a scalar potential, $\phim$: % \cite{Coey2010}
 \begin{equation}
@@ -142,15 +149,15 @@ Here we focus on only the most technologically relevant case: in magnetic data r
 
 The first order approximation for the energy contribution of a perpendicular uniaxial anisotropy is given by
 \begin{equation}
-  \Eca = -K_u \int_\magd \left( \frac{\Mv}{M_s} \cdot \ev \right)^2 \d \magd,
+  \Eca = -K_1 \int_\magd \left( \frac{\Mv}{M_s} \cdot \ev \right)^2 \d \magd,
   \label{eq:36}
 \end{equation}
-where $\ev$ is the easy axis and $K_u$ is the material dependent first order anisotropy energy density coefficient.\footnote{It is possible to define many different forms for this energy. Note that the choice of definition changes the meaning of $K_u$.}
+where $\ev$ is the easy axis and $K_1$ is the material dependent first order anisotropy energy density coefficient.\footnote{It is possible to define many different forms for this energy. Note that the choice of definition changes the meaning of $K_1$.}
 The first order approximation is valid for most magnetic materials of interest \cite{Coey2010}.
 
 The effective field corresponding to this case is
 \begin{equation}
-  \Hca = \frac{2 K_u}{\mu_0 M_s} \left( \frac{\Mv}{M_s} \cdot \ev \right) \; \ev.
+  \Hca = \frac{2 K_1}{\mu_0 M_s} \left( \frac{\Mv}{M_s} \cdot \ev \right) \; \ev.
   \label{eq:Hca}
 \end{equation}
 
@@ -167,12 +174,12 @@ In this thesis we are concerned only with dynamic models.
 Such dynamic models calculate the time evolution of the magnetisation using a differential equation.
 Dynamic models are often advantageous even when only the final state of the system is required because a magnetic system typically has multiple local energy minima and (standard) energy models cannot distinguish which of these minima the system will reach.
 
-Starting with the quantum mechanical angular momentum of an electron, and converting from a single spin to a continuous magnetisation gives the differential equation \cite{Coey2010}
+Starting with the quantum mechanical angular momentum of an electron, and converting from a single spin to a continuous magnetisation gives the differential equation \cite[306]{Coey2010}
 \begin{equation}
   \label{eq:38}
   \dMdt = - \gymagc \Mv \times \Heff,
 \end{equation}
-where $\Hv$ is the total effective field
+where $\gamma \approx 1.761 \E{11} s^{-1} T^{-1}$ is the electron gyromagnetic ratio and $\Heff$ is the total effective field
 \begin{equation}
   \Heff = \Happ + \Hca + \Hex + \Hms.
   \label{eq:Heff}
@@ -200,7 +207,7 @@ There is a similar equation introduced by Gilbert \cite{Gilbert2004}, called the
   \label{eq:Gilbert}
   \dMdt = - \gymagc \Mv \times \Hv + \frac{\dampc}{M_s} (\Mv \times \dMdt),
 \end{equation}
-where $\dampc \neq \dampc_L$. \Cref{eq:Gilbert} can be rearranged into the same form as \cref{eq:LL}, giving
+where $\dampc \neq \dampc_L$. \Cref{eq:Gilbert} can be rearranged into the same form \cite[181]{Aharoni1996} as \cref{eq:LL}, giving
 \begin{equation}
   \label{eq:LLG}
   \dMdt = \frac{-\gymagc}{1 + \dampc^2} \Big[ (\MxH) + \frac{\dampc}{M_s} \Big(\Mv \times (\MxH) \Big) \Big],
@@ -265,7 +272,7 @@ We start from the Landau-Lifshitz-Gilbert equation with the magnetostatic, appli
 \begin{align}
   \pd{\Mv^*}{t^*} &= - \gymagc \Mv^* \times \Hv^* + \frac{\alpha}{M_s} \Mv^* \times \pd{\Mv^*}{t^*},
                     \label{eqn:llgnd} \\
-  \Hv^* &= \Happ^* - \grad^* \phi^* + \frac{2\Exchc^*}{\mu_0 M_s} \nabla^{*2} \mv + \frac{2\Kone^*}{\mu_0 M_s} (\mv \cdot \ev) \ev,
+  \Hv^* &= \Happ^* - \grad^* \phi^* + \frac{2\Exchc^*}{\mu_0 M_s} \nabla^{*2} \mv + \frac{2\Kone^*}{\mu_0 M_s} (\frac{\Mv^*}{M_s} \cdot \ev) \ev,
           \label{eqn:effnd} \\
   \nabla^{*2} \phi^* &= \grad^* \cdot \Mv^*,
                        \label{eqn:phind}
@@ -403,7 +410,7 @@ We substitute definitions~\cref{eqn:nddefs,eqn:l-normalisation,k-normalisation} 
   \eex &=  \frac{\mu_0 M_s^2 l^2}{2} \frac{l^d}{l^2} \frac{1}{\nE} \int_{\magd} (\grad \mv)^2 \d \magd
   = \frac{1}{2} \int_{\magd} (\grad \mv)^2 \d \magd,
     \label{eq:nd-e-ex} \\
-  \eca &= - \frac{\mu_0 M_s^2}{2 } l^d \kone \frac{1}{\nE} \int_\magd (\mv \cdot \ev)^2 \d \magd
+  \eca &= - \frac{\mu_0 M_s^2}{2 } l^d \kone \frac{1}{\nE} \int_\magd (\frac{\Mv^*}{M_s} \cdot \ev)^2 \d \magd
   = \frac{-\kone}{2} \int_\magd (\mv \cdot \ev)^2 \d \magd.
   \label{eq:nd-e-ca}
 \end{align}
@@ -433,7 +440,7 @@ We will also need the identity
 \end{equation}
 which is true for all inner products $\ip{\cdot\;}{\cdot}$ because $\av \times \bv$ is perpendicular to $\av$ by the definition of the cross product.
 We refer to this identity as the triple product identity.
-In particular, it is true for the dot product of two vectors (also known as scalar multiplication) and for the $\ltwo$ inner product of two vector functions $\av$, $\bv$:
+In particular, it is true for the dot product of two vectors\footnote{Although the dot product is an inner product we follow convention and write it as $\av \cdot \bv$ rather than in the bracket notation used for other inner products.} (also known as scalar multiplication) and for the $\ltwo$ inner product of two vector functions $\av$, $\bv$:
 \begin{equation}
   \ltip{\av}{\bv} = \intd{\av \cdot \bv}.
 \end{equation}

@@ -20,7 +20,7 @@ The function space $C^n(\magd)$ is the set of all functions $f$ such that $f$ an
 
 The function space $L^{2}(\magd)$ consists of all functions $g$ such that the norm $\norm{g}_\ltwo = \sqrt{\intd{\abs{g(x)}^{2}}}$ is finite, this can be thought of as the set of functions such that their squares are integrable.
 
-The $n$-th Sobolev space, $\sob^n(\magd)$, is the space of all functions $g$ such that $g$ and all its first $n$ derivatives are in $L^2(\magd)$, \eg for real valued functions on the interval the second Sobolev space is
+The $n$-th Sobolev space, $\sob^n(\magd)$, is the space of all functions $g$ such that $g$ and all its first $n$ derivatives are in $L^2(\magd)$, \eg for real valued functions on the interval $[0,1]$ the second Sobolev space is
 \begin{equation}
   \label{eq:H1}
   \sob^2([0,1]) = \setst{ g : [0,1] \rightarrow \mathbb{R} }{ g, \pd{g}{x}, \pd{^2g}{x^2} \in L^2([0,1])}.
@@ -42,7 +42,7 @@ In a slight abuse of notation we sometimes write the Jacobian of a vector functi
 The following simple problem is used to illustrate the finite element method:
 Find $\phim(x)\in C^{2}(0,1)$ such that
 \begin{equation}
-  -\phim''(x) = f(x) \qquad x \in [0,1],
+  -\phim''(x) = f(x), \qquad x \in [0,1],
   \label{eq:poisson1}
 \end{equation}
 with boundary conditions
@@ -233,8 +233,8 @@ In 2D square or triangle elements are typically used and nodes are placed at eve
 In 3D ``brick'' or tetrahedral elements are used in the same way.
 In both cases the polynomial basis functions are replaced by higher dimensional ones with equivalent properties.
 
-The method can also be generalised to higher order polynomials, although more nodes are required inside each element in order to provide enough values to fully define the polynomials.
-The use of higher order polynomials increases the order of accuracy at the cost of speed: the resulting linear systems become more dense as the order of the polynomials is increased due to more basis functions overlapping with each other.
+The method can also be generalised to higher order polynomials, although more nodes are required inside each element in order to provide enough values to fully define the polynomials, the use of higher order polynomials increases the order of accuracy.
+However there is a trade-off: the resulting linear systems become more dense as the order of the polynomials is increased due to more basis functions overlapping with each other.
 
 To calculate the matrix $\Am$ and the vector $\bv$ from \cref{eq:Aij_bj} we first calculate the local contributions from each element: $\Am^{(e)}$ and $\bv^{(e)}$.
 We then assemble the global $\Am$ and $\bv$ by summing the appropriate local contributions.

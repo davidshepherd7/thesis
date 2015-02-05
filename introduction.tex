@@ -32,7 +32,8 @@ It is extremely desirable to be able to accurately model the behaviour of magnet
 However the use of models based on quantum mechanics (such as density functional theory) to predict the behaviour of magnetic systems is extremely computationally expensive due to the length scales required.
 Instead a theory known as \emph{micromagnetics} is typically employed \cite{Aharoni1996}.
 In micromagnetics a continuum approximation of the ferromagnet's magnetisation is used -- it is  assumed that the magnetisation can be modelled as a continuous functions of space and time (\ie the contribution due to individual atoms is averaged out).
-This is a good approximation for many cases because of the smoothing effect of ferromagnetic exchange.
+The continuum approximation is good if the length scale over which the magnetisation varies is significantly larger than the inter-atomic distance.
+This is usually the case ferromagnetic materials because of the smoothing effect of ferromagnetic exchange.
 Additionally a semi-classical approach is used: the various important quantum mechanical effects are approximated by classical representations.
 The result of these approximations is a powerful framework for theoretical and computational predictions of the behaviour of magnetic materials.
 
@@ -47,8 +48,8 @@ The very closely related Landau–Lifshitz–Slonczewski equation can be used to
 
 In this thesis we study numerical methods with the final goal of finding more reliable and computationally efficient methods for dynamic micromagnetics simulations.
 In particular we focus on methods which improve the efficiency of so-called ``geometric integration'' schemes.
-Geometric integration schemes are numerical methods which are able to retain important \emph{qualitative} properties of a differential equation in an approximate solution.
-In other areas of computational physics such methods have been shown to greatly reduce the overall accumulation of numerical errors \cite[77]{Iserles2009}.
+Geometric integration schemes are numerical methods which are able to retain important \emph{qualitative} properties of a differential equation in an approximate solution, such as conservation of energy in non-dissipative systems.
+In other areas of computational physics\footnote{Some examples are: the field of celestial mechanics \cite{Gladman1991} and the solution of highly oscillatory differential equations such as the Airy equation \cite[98]{Iserles2009}.} geometric integration methods have been shown to greatly reduce the overall accumulation of numerical errors \cite[77]{Iserles2009}.
 This allows more accurate results at the same computational cost (or a reduction in the computational cost to obtain the same accuracy).
 In particular we focus mainly on a widely known time integration scheme with geometric integration properties when applied to dynamic micromagnetics calculations: the implicit midpoint rule.
 
@@ -72,7 +73,7 @@ This algorithm is not specific to the LLG, and to our knowledge is the first suc
 The same chapter also contains numerous numerical experiments demonstrating the selection of appropriate time steps for a number of ordinary differential equations (ODEs), and demonstrating the geometric integration properties when applied to an ODE form of the LLG.
 
 In \cref{cha:numer-experiments} we present a number of numerical experiments using combinations of the methods developed in this thesis.
-The methods are validated against a number of examples: a wave-like problem with an analytical solution, relaxation under a non-uniform field, and the \mumag standard problem \#4.
+The methods are validated against a number of examples: a wave-like problem with an analytical solution, relaxation under a non-uniform field, and the \mumag standard problem \#4 \cite{mumag-website}.
 Additionally the convergence and geometric integration properties of a variety of time integration schemes are compared.
 
 Finally, in \cref{cha:stiffn-llg-equat} the comparative efficiency of two classes of time integration schemes (implicit and explicit) are compared for an example problem across a range of spatial discretisations.

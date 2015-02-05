@@ -28,9 +28,6 @@ Additionally in micromagnetic modelling the calculation of the magnetostatic fie
 If the integral form given in \cref{eq:Hmsint} is used then an additional integral evaluation method is needed to handle it.
 Alternatively, if the equivalent potential formulation given in \cref{eq:Hms,eq:cont-phi-bound} is used then the magnetostatic field calculation simply requires solving additional PDEs, although there are some issues with the application of the boundary condition at infinity which are discussed in \cref{sec:magstat-field-calc-pote}.
 
-It should be noted that not all methods fit into this framework of applying separate methods for each part of the problem, see \eg \cite{Alouges2006}.
-
-
 
 \subsection{Desirable properties of a numerical method}
 \label{sec:desir-prop-numer}
@@ -96,8 +93,8 @@ Also the assumption that each grain has uniform magnetisation can reduce the num
 Closely related to macrospin models are atomistic models \cite{Evans2014}.
 In these models the assumption of a continuous magnetisation $\mv(\xv, t)$ is dropped in favour of an assumption that each atom is the location of a single macrospin.
 As such they allow the modelling of some systems that are inaccessible using micromagnetics, such as anti-ferromagnetic materials.
-However, the required spatial resolution for an atomistic model comes with a large increase in computational cost.
-Additionally  such methods are only accurate for materials where the magnetic moment is localised to an atom, which is not always the case.
+However, the required spatial resolution for an atomistic model comes with an increase of a few orders of magnitude in the computational cost.
+Additionally such methods are only accurate for materials where the magnetic moment is localised to an atom, which is not always the case.
 
 
 \subsection{Finite Difference Methods}
@@ -127,6 +124,8 @@ An additional advantage is that the size of elements, and thus the accuracy of t
 The choice of element size can be done automatically using \emph{adaptive mesh refinement}: after each calculation an error estimate is calculated.
 If the error is determined to be too high anywhere the mesh is refined near that region and the calculation is repeated (and similarly if the error is very low the mesh can be unrefined).
 Hence, given the desired error and a method to estimate the error, a mesh giving an efficient and accurate approximation can be automatically generated \cite{Schrefl1999}.
+
+% ??ds this can also be done in FD, but if you do it there you lose a lot of the advantages which come from having a regular mesh...
 
 The major downside of finite element models is that the underlying mathematics is more complex than that required for other methods.
 Also the set up time and memory usage can be greater because of the additional ``bookkeeping'' required to keep track of the more complex meshes.
@@ -187,6 +186,7 @@ Instead, more advanced techniques are used which treat the large number of integ
 
 The fast Fourier transform method (FFT) is a simple and efficient method for calculating the magnetostatic field when the discrete magnetisations are positioned on a regular lattice.
 
+% ??ds more detail "convolution" -- Andrew
 The calculation of $\Hms$ in \cref{eq:Hmsint} can be thought of as applying a convolution to the list of discretised $\mv$ values.
 The matrix corresponding to this convolution is only dependent on the geometry, hence it can be precomputed and its Fourier transform precalculated.
 Then all that is needed to calculate the magnetostatic field is to apply a Fourier transform to $\Mv$, compute the convolution and transform the result back into the time domain by applying the inverse Fourier transform.
@@ -204,7 +204,7 @@ In such ``non-uniform FFT'' methods distant discrete magnetisations are approxim
 \label{sec:fast-mult-meth}
 
 An alternative method of calculation of the magnetostatic field is the fast multipole method (FMM) \cite{Beatson1997}.
-The fast multipole method takes advantage of the fact that distant magnetic charge has a much smaller contribution to the total field at a point than a nearby magnetic charge due to the $\frac{1}{(\xv - \xv')^2}$ scaling in \cref{eq:Hmsint2}..
+The fast multipole method takes advantage of the fact that distant magnetic charge has a much smaller contribution to the total field at a point than a nearby magnetic charge due to the $\frac{1}{(\xv - \xv')^2}$ scaling in \cref{eq:Hmsint2}.
 Hence much less accuracy is needed in the calculation of these distant contributions.
 
 For the field calculation at a specific point the full calculation is only performed for nearby discrete magnetisations.
@@ -272,12 +272,14 @@ This removes the need to truncate or discretise the infinite external domain.
 The name comes from the close relationship between the use of a dipole layer and the boundary element method, and the fact that the standard finite element method is used to calculate the required potentials in the bulk.
 The full details of the method applied to magnetostatic calculations is discussed in \cref{sec:hybr-finit-elem}.
 
+% ??ds quantify how much worse  -- Andrew
+
 A comparison by Bottauscio \cite{Bottauscio2008} found that using the FEM/BEM method was more accurate than applying asymptotic boundary conditions (ABCs) for a calculation of the time evolution of the magnetisation of a sphere with zero exchange coupling.
 Even with a truncation distance of four times the size of the magnetic sphere (the total domain was $4$ times larger then the sphere) the accuracy when using asymptotic boundary conditions was worse and did not improve between truncation distances of three and four times the magnetic sphere radius.
 Even when exchange coupling was added (giving an easier test) the ABC method was worse than the FEM/BEM method.
 
 The main downside of the FEM/BEM method is that it involves dense matrix of size $N_b \times N_b$ where where $N_b$ is the number of boundary nodes (see \cref{sec:hybr-finit-elem} for details).
-This matrix must be stored in memory, and multiplied by a vector for the calculation of the boundary conditions.
+This matrix must be stored in memory\footnote{In theory individual regions of the matrix could be recomputed on the fly when needed but the computational cost would be inordinately high.}, and multiplied by a vector for the calculation of the boundary conditions.
 The speed of calculation of the boundary values in the method is limited by the dense matrix multiplication which, the cost of which is $\order{N_b^2}$.
 Similarly, the memory usage is $\order{N_b^2}$, which can limit the size of problems.
 The use of hierarchical matrix techniques can reduce both the speed and the memory usage to $\order{N_b \log(N_b)}$ \cite{Knittel2009}.
@@ -400,7 +402,7 @@ It can be calculated by substituting $\yv_n = \yv(t_n)$, $\yv_{n-1} = \yv(t_{n-1
   \label{eq:60}
   \lte = \yv(t_{n+1}) - \hat{\yv}_{n+1},
 \end{equation}
-where the history values ($\yv_{n}, \yv_{n-1}, \ldots$) used to calculate $\hat{\yv}_{n+1}$ are exact.
+where $\hat{\yv}_{n+1}$ is the approximation to $\yv$ at time $t_{n+1}$ given when the exact solution is used for all history values (\ie using $\yv_{n} = \yv(t_n)$, $\yv_{n-1} = \yv(t_{n-1})$, $\ldots$).
 For example the local truncation error of IMR is
 \begin{equation}
   \lte^\imr =  \yv(t_{n+1}) - \yv(t_n) - \dtn \ffv{\thf, \frac{\yv(t_n) + \yv_{n+1}^\imr}{2}}.
@@ -462,7 +464,7 @@ Similarly, the expansion at $t_n$ about $\thf$ is
 Substituting \cref{eq:taylornp1,eq:taylorn} into \cref{eq:trunc-start} gives\footnote{If we had chosen to Taylor expand about $t_n$ there would be an additional term in $\yv_n''$ in \cref{eq:trunc-mid}.}
 \begin{equation}
   \lte^\imr = \underbrace{\frac{\dtn^3}{24} \yvhf[''']}_{\text{I}}
-  + \underbrace{\dtn\bigs{ \yvhf['] - \ffv{\thf, \frac{\yv(t_n) + \yv_{n+1}}{2}} }}_{\text{II}}
+  + \underbrace{\dtn\bigs{ \yvhf['] - \ffv{\thf, \frac{\yv(t_n) + \yv_{n+1}^\imr}{2}} }}_{\text{II}}
   + \order{\dtn^4}.
   \label{eq:trunc-mid}
 \end{equation}
@@ -518,7 +520,7 @@ It should be noted that A-stable implicit Runge-Kutta methods of higher order do
 Some time integration methods create additional, non-physical damping in approximate solutions, even when none exists in the true solution.
 This can be problematic for the modelling of highly oscillatory ODEs, such as the LLG with low damping.
 
-In the solution of the ODE \cref{eq:ode-test-f} with $\lambda = i\omega$, $\abs{y}$ should not decrease over time.
+In the solution of the ODE \cref{eq:ode-test-f} with $\lambda = i\omega$ (and $\omega \in \real$), $\abs{y}$ should not decrease over time.
 If $\abs{y_n}$ decreases over time in the approximate solution given by a time integration scheme, then we say that the scheme causes spurious damping.
 
 For example, for IMR:
@@ -748,6 +750,8 @@ Notice that the only requirement in the derivation of \cref{eq:63} is to use the
 The derivation does not make any assumption about how the effective field is approximated.
 This explains why various semi-implicit modifications to IMR which use explicit calculations of effective fields also conserve the magnetisation length.
 
+% ??ds explain what various semi-implicit modifications to IMR are  -- Andrew
+
 
 \subsection{Energy conservation/decay}
 \label{sec:energy-cons}
@@ -851,7 +855,8 @@ where
     \label{eq:52}
   \end{aligned}
 \end{equation}
-Finally, we insert the results of \cref{eq:50,eq:76,eq:52} into \cref{eq:54} to find
+% ??ds Check this derivation, factors of 2?  -- Andrew
+Finally, we insert the results of \cref{eq:50,eq:76,eq:52} into \cref{eq:54} to find that the change in the total energy is
 \begin{equation}
   \begin{aligned}
     \frac{\e_{n+1} - \e_n}{\dtn} = &-\dampc \ltnorm{\mpdmdt}^2
@@ -1062,6 +1067,7 @@ Effective iterative solvers are usually problem specific but can be much more ef
 Direct methods for the solution of linear systems seek exact solutions using methods based on Gaussian elimination.
 The direct method most commonly used in the solution of systems resulting from discretised PDEs is LU decomposition.
 
+% ??ds Citation for this?  -- Andrew
 The main advantage of direct methods is their robustness: given a well-scaled, non-singular linear system a well designed direct solver will be able to provide an answer.
 As such direct solvers are usually the first approach tried when solving a system of equations.
 
@@ -1094,7 +1100,7 @@ The details of what is meant by ``orthogonal'' and ``optimal'' depends on the me
 
 The key difference between the two methods is that CG is only applicable to symmetric positive definite matrices, whereas GMRES is applicable to general matrices.
 However, CG is the more efficient of the two: it takes only $\order{\nrow}$ computation time for each step of the solve, whereas GMRES takes $\order{\nrow k}$ time for the $k$-th step (and similarly for the memory requirements).
-This is because CG uses the Lanczos algorithm (which can be represented as a 3-term recurrence relationship) for the orthogonalisation of the search directions, while GMRES uses Arnoldi's method.
+This is because CG uses the Lanczos algorithm (which can be represented as a 3-term recurrence relationship) for the orthogonalisation of the search directions, while GMRES uses Arnoldi's method \cite[153]{Saad2000}.
 This limitation of GMRES can be avoided by restarting the method after some number of steps with the current approximation as the new initial guess, or by using an alternative Krylov solver such as BiCGStab \cite[172]{HowardElmanDavidSilvester2006}.
 However, these methods lose some of the convergence guarantees of GMRES and CG, hence we avoid using them in this thesis.
 

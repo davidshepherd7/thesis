@@ -1,5 +1,4 @@
 * Hans' simple corrections
-**
 "The idea of the name being that h~1/n? Might be good to state that." But
 at this point we aren't talking about elements, so there is no "h".
 
@@ -103,3 +102,9 @@ a slide from M. Donahue...
 
 ** Renormalisation by projection onto sphere
 Again, is there a paper?
+
+
+
+* Other questions
+
+** Do (naive) energy models end up stuck at energy maxima?
