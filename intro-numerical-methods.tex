@@ -123,9 +123,7 @@ The main advantage of the finite element method is that it can cheaply and accur
 An additional advantage is that the size of elements, and thus the accuracy of the approximation, can be varied arbitrarily as needed to give better accuracy in more complex or important regions.
 The choice of element size can be done automatically using \emph{adaptive mesh refinement}: after each calculation an error estimate is calculated.
 If the error is determined to be too high anywhere the mesh is refined near that region and the calculation is repeated (and similarly if the error is very low the mesh can be unrefined).
-Hence, given the desired error and a method to estimate the error, a mesh giving an efficient and accurate approximation can be automatically generated \cite{Schrefl1999}.
-
-% ??ds this can also be done in FD, but if you do it there you lose a lot of the advantages which come from having a regular mesh...
+Hence, given the desired error and a method to estimate the error, a mesh giving an efficient and accurate approximation can be automatically generated \cite{Schrefl1999}.\footnote{Adaptive mesh refinement can also be done in finite difference methods, but as it results in a non-uniform mesh this removes their main advantage of simplicity and uniformity.}
 
 The major downside of finite element models is that the underlying mathematics is more complex than that required for other methods.
 Also the set up time and memory usage can be greater because of the additional ``bookkeeping'' required to keep track of the more complex meshes.
@@ -272,11 +270,9 @@ This removes the need to truncate or discretise the infinite external domain.
 The name comes from the close relationship between the use of a dipole layer and the boundary element method, and the fact that the standard finite element method is used to calculate the required potentials in the bulk.
 The full details of the method applied to magnetostatic calculations is discussed in \cref{sec:hybr-finit-elem}.
 
-% ??ds quantify how much worse  -- Andrew
-
 A comparison by Bottauscio \cite{Bottauscio2008} found that using the FEM/BEM method was more accurate than applying asymptotic boundary conditions (ABCs) for a calculation of the time evolution of the magnetisation of a sphere with zero exchange coupling.
-Even with a truncation distance of four times the size of the magnetic sphere (the total domain was $4$ times larger then the sphere) the accuracy when using asymptotic boundary conditions was worse and did not improve between truncation distances of three and four times the magnetic sphere radius.
-Even when exchange coupling was added (giving an easier test) the ABC method was worse than the FEM/BEM method.
+Even with a truncation distance of four times the size of the magnetic sphere (the total domain was $4$ times larger then the sphere) the accuracy when using asymptotic boundary conditions was worse\footnote{After one precession cycle the relative error in $M_x$ obtained using ABC method was around 1, compared to around $0.1$ for FEM/BEM.} and did not improve between truncation distances of three and four times the magnetic sphere radius.
+Even when exchange coupling was added (giving an easier test) the ABC method was worse\footnote{A relative error of around $0.2$.} than the FEM/BEM method.
 
 The main downside of the FEM/BEM method is that it involves dense matrix of size $N_b \times N_b$ where where $N_b$ is the number of boundary nodes (see \cref{sec:hybr-finit-elem} for details).
 This matrix must be stored in memory\footnote{In theory individual regions of the matrix could be recomputed on the fly when needed but the computational cost would be inordinately high.}, and multiplied by a vector for the calculation of the boundary conditions.

@@ -89,7 +89,11 @@ The exchange effective field is given by
 
 Magnetic materials generate a magnetic field, which in turn affects the magnetic material emitting the field.
 This field is also known as the demagnetising field as it tends to oppose the magnetisation of the body.
-The magnetostatic field, $\Hms$, can be written in two ways: an integral form or a differential (potential) form.
+When the rate of change of the electric field is small (\ie there are no rapidly changing electric currents, which is typically the case in micromagnetic problems \cite{??ds}) the magnetic field is well approximated by the magnetostatic equations.
+The magnetostatic equations can be derived from Maxwell's equations by setting $\pd{\Ev}{t} = 0$ \cite{??ds}.
+
+We call the resulting field the magnetostatic field, $\Hms$.
+The magnetostatic field can be written in two ways: an integral form or a differential (potential) form.
 % These methods are discussed in \cref{sec:magstat-field-calc-inte} and \ref{sec:magstat-field-calc-pote} respectively.
 
 The integral form of the magnetostatic field at a point $\xv \in \real^3$ due to the magnetic body $\magd$ with boundary $\boundd$ can be given in terms of magnetisation $\Mv$ by an integral over all volume and surface ``magnetic charges'' ($\div \Mv$ and $\Mv \cdot \nv$ respectively) as
@@ -110,9 +114,7 @@ For completeness we note that single magnetic charges (magnetic monopoles) are a
 % where $\ruv_i$ is the unit vector pointing from $\xv_i$ to $\xv$.
 
 
-% ??ds include derivation all the way from Maxwell's equations, if so add curl above -- Andrew
-
-When the magnetic field is produced only by magnets and not by electric currents (\ie the magnetic field is irrotational) it is possible to express the field in terms of a scalar potential, $\phim$: % \cite{Coey2010}
+In terms of a scalar potential, $\phim$, the magnetostatic field is: % \cite{Coey2010}
 \begin{equation}
   \begin{aligned}
     \label{eq:Hms}
