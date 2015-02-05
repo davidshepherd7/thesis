@@ -43,7 +43,7 @@ CheckIterationLLG seems to be the main llg function (called inside loop in main.
 uses modified LLG function (cite Hans priv. comm.)
 
 ** oommf
-*** Uses either renorm onto sphere (for euler) or renorm after each step (for RK4).
+*** Uses either renorm onto sphere (for euler) or renorm after each step (for RK4) [same as me, add this to thesis].
 *** Options for other methods in new releases.
 *** cite M Donahue priv. comm., store the email here?
 
@@ -78,3 +78,28 @@ Uses d'Aquino's approach (cite Hans priv. comm.)
 
 ** femme:
 Unknown, probably works in the same way as magpar, ask someone?
+
+
+* Renormalisation methods
+
+** Modified LLG
+Is there a paper? Only things I've got are the unpublished nmag paper and
+a slide from M. Donahue...
+
+*** Does it affect non-linear solvers? 
+**** modified equation is "quite" a bit more non-linear, could require additional Newton steps
+**** on the other hand Newton's method converges so fast it might not matter
+
+*** Does it affect linear solvers? 
+**** The Jacobian is modified, so probably
+**** Adds a diagonal term which should always be v. small (so little effect)
+**** But also adds a large tensor product term, ruins skew symmetry?
+
+*** Does it affect the energy balance equations? 
+**** In the continuous case obviously not: the added term is zero
+**** In the discrete case: maybe...
+
+*** How should the leading coefficient be chosen?
+
+** Renormalisation by projection onto sphere
+Again, is there a paper?
