@@ -433,6 +433,7 @@ The weak form of the LLG residual is
 \end{equation}
 The problem is solved by $\mv \in \sob^2(\magd)$ such that $\rllgv(\mv, \test) = \zerov$ $\forall \test \in \sob^0(\magd)$.
 
+% ??ds "Probably need to be careful about linear independence"  -- Andrew
 Note that in \cref{res:contllg} the residual is a vector.
 However, we can also express the requirement for each component of \cref{res:contllg} to be zero as
 \begin{equation}
@@ -444,11 +445,13 @@ Clearly $\rllg(\mv, (\test, 0, 0)) = \bigs{\rllgv(\mv, \test)}_x$, and similarly
 To see the inverse relationship note that if $\rllg(\mv, \test) = 0\; \forall \test \in \sob^0(\magd)$ then each term of every dot product in $\rllg(\mv, \testv)$ is zero, implying that the total residual is zero $\forall \testv \in (\sob^0(\magd))^3$.
 The use of vector test functions makes certain manipulations simpler so, for the remainder of \thisref{sec:weak-form-residuals}, we will work with vector test functions.
 
+\newcommand{\Iex}{I_\text{ex}}
+
 We again wish to reduce the order of the required derivatives, this time on $\mv$ in the exchange term.
 First we rearrange to find that
 \begin{equation}
   \begin{aligned}
-    I &= \intd{\lap \mv \cdot (\testv \times \mv)}, \\
+    \Iex &= \intd{\lap \mv \cdot (\testv \times \mv)}, \\
       &= \intd{\lap \mv \cdot \bv}, \\
       &= \sum_{i=1}^3 \intd{ b_i (\lap m_i)},
   \end{aligned}
@@ -457,7 +460,7 @@ First we rearrange to find that
 where $\bv = (\testv \times \mv)$.
 Note that each term of the sum in \cref{eq:73} is very similar to \cref{eqn:phires1}, and so we follow the same procedure to obtain
 \begin{equation}
-  I = \sum_{i=1}^3 \bigs{\intb{b_i (\grad m_i \cdot \nv)} - \intd{\grad b_i \cdot \grad m_i}}.
+  \Iex = \sum_{i=1}^3 \bigs{\intb{b_i (\grad m_i \cdot \nv)} - \intd{\grad b_i \cdot \grad m_i}}.
 \label{eq:75}
 \end{equation}
 Rearranging the first term of \cref{eq:75} we find that
@@ -486,7 +489,7 @@ On opposite boundaries $\nv$ becomes $-\nv$ but the geometry and $\mv$ values mu
 and the result is identical to the Neumann condition.
 
 Next we need an expression for $\grad b_i$.
-To avoid the requirement for tensor notation it is helpful to define, for a vector $\av$
+To avoid the requirement for tensor index notation it is helpful to define, for a vector $\av$
 \begin{equation}
 \gradv \av = \threevec{\grad a_0}{\grad a_1}{\grad a_2}.
 \end{equation}
@@ -497,11 +500,10 @@ Then using the product rule, we have
     & = (\gradv \testv) \times \mv + \testv \times (\gradv \mv).
   \end{aligned}
 \end{equation}
-Using this notation we can write
+Using this notation we can write \cref{eq:75} as
 \begin{equation}
-  I =  \\,
-  - \intd{\gradv \mv : \bigb{\gradv \testv \times \mv}}
-      - \intd{\gradv \mv : \bigb{\testv \times \gradv \mv}},
+  \Iex = - \intd{\gradv \mv : \bigb{\gradv \testv \times \mv}}
+         - \intd{\gradv \mv : \bigb{\testv \times \gradv \mv}},
       \label{eq:72}
 \end{equation}
 where ``$:$'' is the component-wise scalar product, \ie $\gradv \av : \gradv \cv = \grad a_0 \cdot \grad b_0 + \grad a_1 \cdot \grad b_1 + \grad a_2 \cdot \grad b_2$.
@@ -1074,6 +1076,7 @@ After reducing the norm of the discrete LLG residual to tolerance $\ntol$ we hav
 \end{equation}
 where $\norm{\cdot}$ is the norm used to assess the convergence of the linearisation method (in our implementation this is $\norm{\cdot}_\infty$) and $\tbfv_j$ is the vector test basis function corresponding to node $j$.
 Hence, by writing any test function $\testv$ as a linear combination of the basis functions and then using the linearity of $\tbfv$ in \cref{eq:81} and the triangle inequality, we have
+% ??ds Check "which" triangle inequality, also this uses a different tri. ineq. to the other one  -- Andrew
 \begin{equation}
   \norm{\intd{ \bigs{\dmdth + \mvh \times \bigb{\hv - \dampc \dmdth}} \cdot \testv + \bigb{\mvh \times \grad \mvh} : \grad \testv}} < \ntol  \sumbasiscoeff,
   \label{eq:82}
@@ -1205,6 +1208,10 @@ Also note that for the test function given in \cref{eq:84} the value of $\sumbas
 \end{equation}
 and so the bound may be lose for very large numbers of nodes.
 However this a pessimistic bound, the actual error is not likely to be this large.
+% ??ds Why is this a pessimistic bound, evidence  -- Andrew
+% because it essentially assumes that none of the coefficients of the basis functions will cancel each other out, ie all positive or all negative. In reality this would only occur in extremely symmetric cases.
+% might need to remove?
+
 
 The restriction of $\testv \in \sob_h^2(\magd)$ introduced at the start of this section can be relaxed by considering an implicitly defined discrete Laplacian operator defined for $\av \in \sob^1(\magd)$, $\bv \in \ts$ as
 \begin{equation}
@@ -1266,7 +1273,7 @@ where $a,b,c,d$ are the values of basis functions at the knots and $\alpha, \bet
 So given any $m_{0}$ we can solve the above expression to find an $m_{1}$ that satisfies the constraint.
 Since we have chosen $\mv = (0, 0, m)$ this means we can vary the magnetisation length at node 0 arbitrarily while still satisfying the constraint.
 
-Finally, it is interesting to note that if the magnetisation is constant in space at times $t_n$ and $t_{n+1}$ then the integral condition in \cref{eq:23} \emph{is} sufficient to give conservation of the magnetisation length at nodes.
+Finally, we note that if the magnetisation is constant in space at times $t_n$ and $t_{n+1}$ then the integral condition in \cref{eq:23} \emph{is} sufficient to give conservation of the magnetisation length at nodes.
 
 
 

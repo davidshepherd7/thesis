@@ -207,7 +207,9 @@ We have the following results from potential theory:
     \phim^\inte(\xv) = (1 - \gamma(\xv)) \mu(\xv) + \phim(\xv).
     \label{eq:22}
   \end{equation}
-  Note that the angle $\alpha$ at a ``smooth'' (\ie Lyapunov surface) point on the surface is $\pi$ in 2D (or $2\pi$ in 3D).
+  Note that the angle $\alpha$ at a ``smooth'' point\footnote{The surface must be a Lyapunov surface at the point.
+This means that ??ds
+\cite{??ds}} on the surface is $\pi$ in 2D (or $2\pi$ in 3D).
   So in these cases $\gamma(\xv) = \frac{\alpha(\xv)}{\alpha_{\text{max}}} = \frac{1}{2}$.
 
 \item If $\mu$ is continuous and has continuous first and second derivatives along the boundary (\ie $\mu(\xv) \in C^2(\boundd)$) then the limits $\pd{\phim^\inte(\xv)}{\nv}$ and $\pd{\phim^\exte(\xv)}{\nv}$ exist and are equal \cite[145-153]{Sternberg1946}.
@@ -242,9 +244,8 @@ Also note that $\phim = \phione + \phitwo$ everywhere, so
 \begin{equation}
   \begin{aligned}
     \label{eq:18}
-    \phim^\inte(\xv) &= \bmop \big[ \phione^\inte(\xv) \big] \\
-    &=
-    - \int_{\boundd} \phione^\inte(\yv) \pd{\Green}{\nv(\yv)} \d \yv
+    \phim^\inte(\xv)
+    &= - \int_{\boundd} \phione^\inte(\yv) \pd{\Green}{\nv(\yv)} \d \yv
     + \gamma(\xv) \phione^\inte(\xv).
   \end{aligned}
 \end{equation}
@@ -297,7 +298,7 @@ We let
   \phione = \sum_\ibasisb \phione_{\ibasisb} \tbfone_{\ibasisb}(\xv),
   \label{eq:25}
 \end{equation}
-where $\tbf_i$ are the same linear polynomial basis functions as used in the finite element method of \cref{sec:galerk-meth-llg}.
+where $\tbf_i$ are the same polynomial basis functions as used in the finite element method of \cref{sec:galerk-meth-llg}.
 
 Substituting \cref{eq:25} into \cref{eq:18} we have
 \begin{equation}
@@ -319,7 +320,7 @@ Since the integrands are continuous functions on $\boundd$, we can exchange the 
 At this point we could apply the Galerkin method (as described in \cref{sec:intr-finite-ele-diff}): by multiplying \cref{eq:27} by a test function and integrating.
 This would result in a system of linear equations $\Mm \phimdis = \bm' \phionedis$ (where $\bm'$ is the Galerkin discrete form of $\bmop$) which could be solved for $\phimdis$.
 However this would require calculating a double integral for each entry in $\bm'$.
-Instead we apply a collocation method.
+Instead we apply a standard collocation method.
 Collocation methods enforce pointwise relationships in contrast to the Galerkin method which enforces relationships in a weighted integral form.
 The collocation method is the conventional choice of discretisation approach for the BEM operator in micromagnetics.
 
@@ -349,6 +350,7 @@ where
    + \gamma(\xv_\ibasis)\delta_{\ibasis\ibasisb}.
 \end{equation}
 
+% ??ds this might be wrong in powers in denom.. check  -- Andrew
 We now convert the normal derivative of the Green's function into a more tangible form.
 In 3D
 \begin{equation}
@@ -410,6 +412,7 @@ For all points $\yv$ in the element this term is zero by the definition of $\nv$
 For the case when $\xv_i$ is outside the element this is not necessarily true.
 In particular: elements near sharp corners of a domain may be very close to a node that is not in the plane of the element (\ie such that $\nv(\yv) \cdot (\yv - \xv_i) \neq 0$), resulting in a \emph{near}-singular integral.
 This means that care must be taken in order to evaluate the integrals accurately.
+% ??ds what kind of near singular integral?  -- Andrew  I didn't know there were kinds... leave this alone?
 
 
 \subsection{Analytical solutions}
@@ -516,6 +519,7 @@ However, it is very useful when testing code to be able to run 2D simulations si
 It is also sometimes useful to be able to use structured quadrilateral meshes for simple geometries and for testing purposes.
 For such meshes an adaptive numerical quadrature able to accurately integrate $\bmint$ is appropriate.
 It is likely that similar analytical results could be derived for each of these cases, but it is simpler and more general to use a numerical approach instead.
+% ??ds Has this been done? Ref? -- Andrew No idea... hard to find references for stuff this old and obscure...
 
 As discussed in \cref{sec:bem-singularity} the integral $\bmint$ is non-singular, so no special techniques are needed for its integration (other than what is needed to attain good accuracy).
 As such an adaptive quadrature method can effectively calculate the integrals.
@@ -533,10 +537,12 @@ We use a simple adaptive quadrature algorithm as follows:
 The choice to double the quadrature order after each non-convergence in line~\ref{algo:next-quad} means that little time is wasted attempting to evaluate near-singular integrals with low order quadratures.
 
 It is possible to optimise this process by using a quadrature scheme which reuses the knots (\ie evaluation points) from the lower order calculations in the more accurate calculations, such as the Clenshaw-Curtis quadrature \cite{Trefethen2008}.
-However, for simplicity, we have not done this.
+However, for simplicity, we have not implemented the reuse of knot values.
 
+% ??ds first draft
 The implementation of this algorithm in \oomph uses standard Gaussian quadrature (as mentioned in \cref{sec:numer-eval-integrals}) with $\tolq = 10^{-8}$, starting orders of $n_1=2$, $n_2=4$, and a maximum order of $256$.
-These parameters performed well, so we did not spend much time optimising these values.
+These parameters gave accuracies of ??ds when compared with the analytical formula and gave sufficiently fast computation times that the time spent computing these integrals is not a major component of the overall computation time.
+As such we did not spend much time optimising these values.
 
 
 \section{Conclusions}
@@ -550,7 +556,7 @@ There is a large scope for improving the efficiency of the adaptive numerical qu
 However, such optimisations were not investigated because the evaluation of the boundary matrix is not a performance critical component of the coupled LLG-magnetostatics problem because it only needs to be evaluated once for a given mesh.
 
 While we have followed the convention in computational micromagnetics of using a collocation approach to discretise the BEM operator, a Galerkin approach may be more appropriate.
-In particular, we note that the authors of \hlib recommend a Galerkin approach.
+In particular, we note that the authors of \hlib use \cite{Borm2003} and recommend \cite{??ds priv. comm?} a Galerkin approach.
 
 %%% Local Variables:
 %%% mode: Latex

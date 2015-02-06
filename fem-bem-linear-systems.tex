@@ -158,7 +158,7 @@ The linear system to be solved at each Newton step is (see \cref{sec:newt-raph})
 where $\resi$ is the vector of the current discrete Newton residuals for $\mv$, $\phim$ and $\phione$; and we need to find the Newton update $\corr = [\corr\mvdis, \corr\phimdis, \corr\phionedis]^T$.
 
 
-\subsection{The semi-implicit approach}
+\subsection{The semi-implicit (decoupled) approach}
 \label{sec:semi-implicit-bem}
 
 One approach, which avoids solving the complete non-linear system, is to break the monolithic system into multiple coupled but simpler problems.
@@ -211,7 +211,7 @@ The linear and non-linear systems resulting from the application of this algorit
 \label{sec:fully-implicit-bem}
 
 The alternative to the semi-implicit approach described above is to find an efficient way to solve the full system \cref{eq:16,eq:87}, this is referred to as a fully coupled or monolithic approach.
-The major difficulty is that the system contains a dense block, meaning that any operations (\eg LU decomposition, multiplication) on J will be significantly slower than for a sparse Jacobian.
+The major difficulty is that the system contains a dense block, meaning that any operations (\eg LU decomposition, multiplication) on J will be significantly slower than for a sparse Jacobian.\footnote{Dense matrix multiplication takes $\order{\nrow^2}$ operations, while LU decomposition takes $\order{\nrow^3}$ operations \cite{??ds Iserles? doulble check power}.}
 We use a combination of techniques to reduce this negative effect of the BEM block.
 
 The first and most important technique is the use of a Krylov solver, this has two benefits.
@@ -274,9 +274,10 @@ The first preconditioner is very simple: we use a direct solve (using LU decompo
 This preconditioner, while much more efficient than a direct solve including the dense block, still suffers from all the usual problems associated with a direct solver (\ie expensive in both memory and computation time when $\Nn$ is large).
 However, we are interested in its properties as a test of the effectiveness of dropping the $\Gm'$ block from the preconditioner.
 
+% ??ds not sure this is correct actually
 A number of other FEM/BEM based models use an approach similar to preconditioner $\preca$ \cite{Suess2002}, except that the preconditioner is applied using an inner Krylov solver rather than an LU decomposition.
 This makes the computational cost feasible for realistic problems, but has two issues:
-The first is that technically an inner Krylov solve cannot be used as a preconditioner because it does not apply the same operation at each step of the outer solve \cite{Saad1993}.
+The first is that technically an inner Krylov solve cannot be used as a preconditioner because it does not apply the same operation at each step of the outer solve (since they iterate to convergence rather than using a fixed number of steps) \cite{Saad1993}.
 This issue can be resolved by using an outer Krylov solver known as Flexible GMRES which accounts for this.
 The second issue is that a full inner Krylov solve is run at \emph{every iteration} of the outer Krylov solve, which is computationally expensive compared to more standard preconditioning approaches (but still cheaper than a direct solve for sufficiently large problems).
 However we are only interested in $\preca$ as a test of the effect of dropping the dense matrix on the iteration counts, hence we do not pursue this further.
@@ -368,7 +369,7 @@ A test of the accuracy and stability of the monolithic and semi-implicit approac
 
 In order to perform these experiments we need a representative example problem.
 We do not use the \mumag standard problem \#4 because the hybrid FEM/BEM method for magnetostatic calculations is particularly ill-suited for such thin film problems (as discussed in \cref{sec:bound-elem-meth}).
-Hence the performance on the standard problem would be irrelevant for realistic problems using this method and the computational cost would be unnecessarily large.
+Hence the performance on the standard problem would be irrelevant for typical problems using this method and the computational cost would be unnecessarily large.
 
 Since the majority of practical FEM micromagnetics calculations are in three dimensions our test case should also be 3D.
 It also must have sharp corners or edges, in order to include any effect of near singular integrals in the FEM/BEM method.
@@ -385,7 +386,12 @@ The problem geometry and initial conditions are illustrated in \cref{fig:cube-in
 \begin{figure}
   \centering
   \includegraphics[width=0.8\textwidth]{images/itsacube}
-  \caption{The test problem used for the linear solvers in the state at time $t=0$.}
+  \caption{The test problem used for the linear solvers in the state at time $t=0$.
+    The arrows represent the magnetisation direction at each node of the finite element mesh.
+    Colour represents the magnitude of $m_x$.
+    The semi-transparent pale green grid shows the finite element mesh.
+    % ??ds Add axis labels in the plot -- Andrew
+  }
   \label{fig:cube-initial-condition}
 \end{figure}
 
@@ -419,10 +425,13 @@ One V(1,1) cycle with Gauss-Seidel smoothing, CLJP coarsening and a connection s
 The ILU preconditioner used for LLG matrices/blocks is \hypre's Euclid with one level of fill in and no drop tolerance (ILU without fill-in was also tried but was extremely ineffective).
 
 
-All experiments are run in serial on a desktop computer with an Intel Core i7-3820 processor running at 3.6GHz and 16GB of RAM.
+All experiments are run on a single core (\ie no parallelism is used) of a desktop computer with an Intel Core i7-3820 processor running at 3.6GHz and 16GB of RAM.
 
 
 \subsection{Results}
+
+%??ds lots to do in this section, need to replace plots by means + stddev for one thing.
+
 
 \Cref{fig:its-ilu-decoupled} shows the mean (over a single Newton solve) number of GMRES iterations required to solve the LLG-only system, \cref{eq:llg-jacobian}, using ILU(1) preconditioning (\ie with magnetostatics handled by the semi-implicit approach).
 As is expected for a general-purpose preconditioner it is effective for small matrix sizes, but becomes less effective for large problems and as the time step size increases.
@@ -507,7 +516,7 @@ The legend indicates the preconditioner and quadrature scheme used.
 
 Finally we show iteration counts for the fully-inexact preconditioners $\inexact{\precb}$ and $\inexact{\precc}$ where the $\Fm$ block is approximated using ILU(1).
 We cannot expect $\Nn$-independent results here, since even the simpler case of the solution of the $\Fm$ block alone with GMRES preconditioned by ILU(1) does not display such behaviour.
-The iteration counts shown in \cref{fig:its-p23-ilu1}, are as expected: low at first but becoming ineffective for large number of nodes $\Nn$.
+The iteration counts shown in \cref{fig:its-p23-ilu1}, are as expected: low at first but ineffective for large number of nodes $\Nn$.
 In particular, for the largest number of nodes GMRES did not converge within 400 iterations for any of the parameter sets.
 Also of note is the much larger variation of the iteration counts with the problem parameters even for the same problem size.
 However the preconditioner setup times, as shown in \cref{fig:times-p23-ilu1} are much better than when using the LU decomposition of the $\Fm$ block.
@@ -555,6 +564,7 @@ As an aside: the mass matrix blocks on the diagonal of $\Fm$ ($\Mm$ of \cref{eq:
 Additionally the skew symmetric structure of \cref{eq:llg-jacobian} can be exploited so that the calculation of $\Km_x$ is reused for $-\Km_x$, and similarly for $\Km_y$ and $\Km_z$.
 Applying these additional optimisations reduces the Jacobian calculations to the assembly of three $\Nn \times \Nn$ Jacobian blocks and the magnetocrystalline anisotropy block (which will typically be either a single $\Nn \times \Nn$ block or empty, see \cref{sec:llg-jacobian}).
 
+% ??ds How much smaller?  -- Andrew
 In practice the Newton residual assembly time is extremely small compared to the solve and Jacobian assembly times.
 So the computation time difference due to assembling additional $\phim$ and $\phione$ residual components in Newton steps after the first can be ignored.
 
@@ -565,12 +575,13 @@ Since GMRES requires a more computationally expensive orthogonalisation process 
 This increase could possibly be reduced by using BiCGStab or a restarted GMRES method instead of GMRES.
 Finally it is likely that the monolithic method will require more Krylov iterations to converge, but with a good preconditioner for the $\Fm$ block this difference should be fairly small.
 
-Based on all these factors we can estimate that, with an effective preconditioner, the computational time for a monolithic time step should easily be within a factor of 2 of the time for a semi-implicit step.
+Based on all these factors we speculate that, with an effective preconditioner for the LLG block, the computational time for a monolithic time step should be within a factor of 2 of the time for a semi-implicit step.
 
 
 \section{Conclusions and future work}
 
 Monolithic (fully implicit) solvers are required for the energy property of IMR, as well as for other properties of implicit time integration schemes including stability and properties important in stochastic problems.
+% ??ds Not really demonstrated this, remove statement?  -- Andrew
 We have demonstrated that a monolithic LLG-magnetostatics solver using GMRES with an effective preconditioner can have a computational cost per linear solve close to that of a semi-implicit method.
 The partially-inexact preconditioners $\parinexact{\precb}$ and $\parinexact{\precc}$ are able to reduce the iteration count of GMRES extremely effectively and almost independently of the number of nodes, but the set up cost is high for large matrices.
 However the fully-inexact equivalents, $\inexact{\precb}$ and  $\inexact{\preca}$, which use ILU(1) to approximate the LLG block are ineffective for more than a few thousand nodes (\ie matrices of size $\sim 10,000$).
