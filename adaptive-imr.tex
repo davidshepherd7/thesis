@@ -97,6 +97,7 @@ In order to perform the algebraic rearrangements to obtain the LTE using a Milne
 However the term can only appear in the LTE expression for a time integrator which uses the midpoint approximation for $\yv$.
 It turns out that the only such second order time integrator is IMR itself.
 So other techniques would be needed to approximate this error term in the context of a Milne-device-like method.
+% ??ds could be wrong, see notes in thesis -- "general linear methods"
 
 An alternative approach, commonly used in Runge-Kutta time integrators, is to repeat the calculation using a higher order method and compare the two answers to directly obtain an LTE estimate \cite[165]{HairerWanner}.
 However evaluations of the derivative function ($\fv$ in \cref{eq:43}) are expensive, and the calculation of a single step of a high order Runge-Kutta method requires a number of such evaluations.
@@ -117,7 +118,7 @@ The eBDF3 method is not widely used because it does not have the basic property 
   \lim_{\dtn \rightarrow 0} \bigb{ \max_n \norm{\yv_{n} - \yv(t_n)}} = 0,
   \label{eq:104}
 \end{equation}
-which is known variously as ``stability'' \cite[378]{HairerNorsettWanner} or ``convergence'' \cite[6]{Iserles2009}.
+for large $n$ which is known variously as ``stability'' \cite[378]{HairerNorsettWanner} or ``convergence'' \cite[6]{Iserles2009}.
 However, for our usage the IMR history values are used as input for a \emph{single} step of eBDF3, hence the stability is irrelevant.\footnote{This could also be thought of as an extrapolation to the value of $\yv$ at $t_{n+1}$ using the previous IMR-generated values and a derivative.}
 The variable time step version of eBDF3 does not appear in the literature, so we derive the method below in \cref{sec:variable-step-ebdf3} .
 
@@ -130,7 +131,7 @@ However, in contrast to eBDF3, AB3 has the basic property \cref{eq:104} which co
 \label{sec:variable-step-ebdf3}
 
 The explicit BDF methods are explicit time integration methods derived using the same techniques as the widely used implicit BDF methods.
-The idea is to write down a divided difference representation of an interpolating polynomial, $\pv(t)$, through $\yv_{n+1}$ and the appropriate history values of $\yv$ (simple backward differences can be used for constant time steps, hence the name).
+The idea is to write down a divided difference representation of an interpolating polynomial, $\pv(t)$, through $\yv_{n+1}$ and the appropriate history values of $\yv$ (the simpler backward difference representation can be used for the derivation of fixed step methods, hence the name).
 The derivative of the polynomial is then set equal to the derivative function $\ffv{t, \yv}$ at one of the discrete time steps \cite[400]{HairerNorsettWanner}.
 Setting $\pv'(t_{n+1}) = \ffv{t_{n+1}, \yv_{n+1}}$ gives the widely used implicit BDF methods.
 If we instead set $\pv'(t_{n}) = \ffv{t_{n}, \yv_{n}}$ we obtain the explicit BDF methods \cite[364]{HairerNorsettWanner}.
@@ -393,6 +394,7 @@ The adaptive algorithm should produce time steps that oscillate in time with the
   \label{fig:imr-osc-example}
 \end{figure}
 
+% ??ds should maybe add derivation of y''' ? or even just write it in?
 The ODE was solved with parameters $\omega = 2 \pi$ and $\beta = 0.5$, the results are shown in \cref{fig:imr-osc-example}.
 All three methods have similar errors and time step sizes.
 The IMR method chooses slightly smaller steps than TR (which explains the slightly lower error magnitudes).
@@ -492,7 +494,7 @@ This is because we are not increasing $\lambda$ as we decrease $\toltt$, so we a
 
 \FloatBarrier % Don't allow floats from last section into this one
 
-\section{Numerical experiments with an ODE form of the LLG}
+\section[Numerical experiments with the ODE LLG]{Numerical experiments with an ODE form of the LLG}
 \label{sec:imr-ode-llg-numer-exper}
 \sectionmark{ODE LLG experiments}
 
@@ -530,7 +532,7 @@ The exact solution is best expressed in spherical polar notation:
 where $\theta$ is the angle between $\mv$ and the $+z$-direction.
 The time for a reversal, $\tau$, from the initial value $\theta_0$ to $\theta$ is given by
 \begin{equation}
-  \tau(\theta) = t_0 + \frac{\dampc^2 +1}{H \dampc}
+  \tau(\theta) = \frac{\dampc^2 +1}{H \dampc}
   \ln \bigb{ \frac{\tan(\theta/2)}{\tan(\theta_0/2)} }.
   \label{eq:74}
 \end{equation}

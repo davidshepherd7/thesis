@@ -134,6 +134,8 @@ The boundary conditions on $\phim$ are
 \end{equation}
 where $\phim^\inte$ and $\phim^\exte$ are respectively the values of $\phim$ just inside and outside the domain $\magd$.
 These conditions come from the requirement for continuity in the potential, the boundary conditions on the magnetic field ($\Bv^\text{int} \cdot \nv = \Bv^\text{ext} \cdot \nv$) and the requirement for finite total energy respectively.
+Note that \cref{eq:cont-phi-bound} implies continuity but not smoothness of the magnetic potential $\phim$ across $\boundd$.
+This can be thought of as the effect of (fictional) surface monopole charges.
 
 The corresponding energy contribution is given by
 \begin{equation}
@@ -230,7 +232,7 @@ However the exchange effective field and magnetostatic field usually contain spa
 \subsection{Boundary conditions}
 \label{sec:magn-bound-cond}
 
-By far the most commonly used boundary conditions on the magnetisation $\Mv$ are \cite[178, 181]{Aharoni1996}:
+By far the most commonly used boundary conditions on the magnetisation $\Mv$ are \cite[178, 181]{Aharoni1996} \cite{Rado1959}:
 \begin{equation}
   \label{eq:llg-bc}
   \Mv \times \dMdn = \zerov.
@@ -432,9 +434,8 @@ In \thisref{sec:prop-cont-llg} we demonstrate some geometric properties of the L
 For this purpose it is convenient to write the non-dimensional LLG equation in the form
 \begin{equation}
   \label{eq:llg-prop-form}
-  \dmdt = - \mv \times( \hv - \dampc \dmdt),
+  \dmdt = - \mv \times( \hv - \dampc \dmdt).
 \end{equation}
-where $\hv$ is the effective field including various effects depending on the system being modelled.
 
 We will also need the identity
 \begin{equation}

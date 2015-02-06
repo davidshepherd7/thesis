@@ -74,7 +74,7 @@ So as the solution space we choose
   \end{aligned}
 \end{equation}
 \ie the space of functions that are sufficiently smooth for the integrals to be finite and that satisfy the boundary conditions.
-Since the boundary conditions are automatically enforced by the choice of $V_s$ we can choose test functions that are zero on the boundary, then an appropriate test function space is:
+Since the boundary conditions are automatically enforced by the choice of $V_s$ we can choose test functions that are zero on the boundary, so an appropriate test function space is:
 \begin{equation}
   \label{eq:28}
   \begin{aligned}
@@ -220,7 +220,7 @@ The relationship between the local and global test functions is illustrated in \
 \begin{figure}
   \center
   \includegraphics[width=0.8\textwidth]{./images/local_global_functions}
-  \caption{The local and global piecewise polynomial basis functions and numbering schemes for a one-dimensional finite element model.
+  \caption{The local and global piecewise polynomial basis functions and numbering schemes for a one-dimensional finite element method.
   }
   \label{fig:local_global_functions}
 \end{figure}
@@ -358,7 +358,7 @@ We define $\boundd_\Dir$ and $\boundd_\Neu$ respectively to represent the part o
 \end{equation}
 where $\nv(\xv)$ is the outward unit normal.
 If the boundary conditions are purely Neumann then this problem is actually singular: the solution can vary by an arbitrary constant.
-This has no effect on the magnetostatic field and can be dealt with, for example, by pinning a single value of $\phim$.
+This constant has no effect on the magnetostatic field and so the singularity can be dealt with, for example, by fixing the value of $\phim$ to zero at some point in the domain.
 
 From \cref{eq:103} we have that the boundary condition on the magnetisation is
 \begin{equation}
@@ -775,7 +775,7 @@ Due to the linearity of the skew operator we can write the Jacobian of a cross p
     &= \sum_k \sbf_k \pd{}{\mvdis_l} \bigb{\skewm{\mvdis_k} \bv},
   \end{aligned}
 \end{equation}
-then using the fact that $\pd{\mvdis_l}{\mv_{k}} = \delta_{lk}$ we get
+then using the fact that $\pd{\mvdis_k}{\mvdis_{l}} = \delta_{lk}$ we see that the summation can be dropped, leaving
 \begin{equation}
   \pd{}{\mvdis_l} \bigb{\skewm{\mvh} \bv}  = \sbf_l \pd{}{\mvdis_l} \bigb{\skewm{\mvdis_l} \cdot \bv}.
 \end{equation}
@@ -884,10 +884,11 @@ Then combining \cref{eq:68,eq:70} gives
   \begin{aligned}
     \Cm_{n,l} &= \pd{}{\mvdis_l} \intd{ \skewm{\mvh} \cdot \hca  \tbf_n}, \\
     &= \underbrace{\intd{ -\tbf_n \sbf_l\skewm{\hca} }}_{\Cm'_{n,l}}
-    + \underbrace{\kone \intd{ \tbf_n \sbf_l \skewm{\mvh} \; (\ev  \tensorprod \ev) }}_{\Jmca_{,n,l}}.
+    + \underbrace{\kone \intd{ \tbf_n \sbf_l \skewm{\mvh} \; (\ev  \tensorprod \ev) }}_{\Jmca_{,n,l}},
     \label{eq:hca-jacobian}
   \end{aligned}
 \end{equation}
+where $\av \tensorprod \bv$ is the tensor product of $\av$ and $\bv$.
 Note that $\Cm'$ is of the same form as $\Dm$ and $\Jmca$ is a $3\times3$ block matrix with no empty blocks in the general case.
 However, if $\ev$ is aligned with any of the Cartesian axes (as is typical) then only one entry of the matrix $(\ev \tensorprod \ev)$ is non-zero and only one block of $\Jmca$ is non-empty.
 
@@ -996,7 +997,7 @@ where $\Jmca$ is appropriately zero padded.
 
 
 
-\section{Geometric integration with the finite element method}
+\section[Geometric integration with the FEM]{Geometric integration with the finite element method}
 \label{sec:nodal-integration}
 
 In weak form based methods it turns out that the magnetisation length conservation property of the IMR does not automatically apply.
@@ -1079,7 +1080,7 @@ Hence, by writing any test function $\testv$ as a linear combination of the basi
   \norm{\intd{ \bigs{\dmdth + \mvh \times \bigb{\hv - \dampc \dmdth}} \cdot \testv + \bigb{\mvh \times \grad \mvh} : \grad \testv}} < \ntol  \sumbasiscoeff,
   \label{eq:82}
 \end{equation}
-for all $\testv \in (\ts)^3$ where $\sumbasiscoeff = \sum_j  \abs{c_{x,j}} + \abs{c_{y,j}} + \abs{c_{z,j}}$ is the sum of all coefficients in the basis representation of $\testv$.
+for all $\testv \in (\ts)^3$ where $\sumbasiscoeff = \sumbasiscoeff(\testv) = \sum_j  \abs{c_{x,j}} + \abs{c_{y,j}} + \abs{c_{z,j}}$ is the sum of all coefficients in the basis representation of $\testv$.
 
 \newcommand{\mvmp}[1][j]{\mv_{{#1},\half}}
 \newcommand{\hvmp}[1][j]{\hv_{{#1},\half}}
@@ -1232,8 +1233,7 @@ This means that we can replace the Laplacian operator everywhere in the derivati
 \label{sec:non-cons-gaussian}
 
 We now show (by a counterexample) that the conservation result does not hold with a standard quadrature scheme.
-To obtain our result we examine the case where $\testv = \mvh$.
-Note that $\mvh \in (\ts)^3$ because we are using identical test and solution function spaces and each component of $\mvh$ is a linear combination of solution basis functions.
+To obtain our result we examine the case where $\testv = \mvh$ (recall that $\mvh \in (\ts)^3$ because we are using identical test and solution function spaces and each component of $\mvh$ is a linear combination of solution basis functions).
 
 For \thisref{sec:non-cons-gaussian} we assume that the non-linear solver has converged to a tolerance of exactly zero for simplicity, \ie $\ntol = 0$.
 By substituting $\testv = \mvh$ and $\ntol = 0$ into \cref{eq:82} then using the triple product identities we obtain
@@ -1257,7 +1257,7 @@ Dropping the constant factor of $2\dtn$ and assuming that $\abs{\mvh_{,n}} = 1$ 
     \label{eq:83}
   \end{aligned}
 \end{equation}
-\Cref{eq:83} can be satisfied without the requirement that all $\abs{\mv_{k, n+1}} = 1$ $\forall k$.
+\Cref{eq:83} can be satisfied without the requirement that $\abs{\mv_{k, n+1}} = 1$ $\forall k$.
 For example if we set the number of nodes to two (\ie a 1D problem with linear basis functions) and assume magnetisation only along the $z$-axis (\ie  $\mvh_{,n+1} = (0, 0, m)$) then condition \cref{eq:83} becomes (dropping the subscript $n+1$):
 \begin{equation}
   \begin{aligned}

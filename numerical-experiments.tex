@@ -8,7 +8,7 @@ The first case examined is a 2D problem without magnetostatics where there is a 
 This allows us to test the convergence of the various discretisation approaches when applied to the LLG with the exchange effective field (\ie the PDE form).
 It also allows us to test the geometric integration properties of the IMR for a simple PDE problem.
 
-The second problem is another simple case, but with no analytical solution: a non-uniform applied field is used to induce non-uniform dynamics in a 2D problem without magnetostatics.
+The second problem is another simple case, this time with no analytical solution: a non-uniform applied field is used to induce non-uniform dynamics in a 2D problem without magnetostatics.
 This allows us to test geometric integration properties of the IMR in the absence of an analytical solution.
 
 Finally we show results for the \mumag standard problem \#4 \cite{mumag-website}, which is widely used to test dynamic micromagnetic codes.
@@ -280,7 +280,7 @@ We use a uniform initial condition $\mv = [1, 1, 0]/\sqrt{2}$ with a non-uniform
 \end{equation}
 As before we use $\dampc = 0.01$ except for energy conservation experiments where we use $\dampc = 0$.
 
-The dynamics occurring in this problem are quite simple: the magnetisation in the region of the domain $x<1$ moves towards $\mv = [0, 0, 1]$ by the applied field.
+The dynamics occurring in this problem are quite simple: the magnetisation in the region of the domain $x<1$ moves towards $\mv = [0, 0, 1]$ due to the applied field.
 Exchange interactions force the rest of the domain to move towards the same field, albeit much more slowly, until eventually the entire domain is in a uniform state.
 
 The implementation details of this example are exactly as described in \cref{sec:impl-deta}, except that we also use meshes of triangular elements.
@@ -350,7 +350,7 @@ However it should be noted that the non-conservation effects are small enough th
   {plots/nonuniform-h-triangles-energy-error/absofenergychangevstimes.pdf}
   \caption{
     Evolution of the error in energy
-    with various time integration schemes, quadratures, and element shapes
+    with IMR, both quadratures, and both element shapes
     for the undamped 2D nonuniform field problem.
   }
   \label{fig:energy-error-triangle-mesh}
@@ -365,7 +365,9 @@ We have also shown an example problem where our implementation of IMR with nodal
 
 % Don't allow floats from last section into this one
 \FloatBarrier
-\section{The \mumag standard problem \#4}
+
+% In headers the roman mu used in \mumag comes out as "M", so use maths mu...
+\section[The $\mu$mag standard problem \#4]{The \mumag standard problem \#4}
 \label{sec:mumag-stand-probl}
 
 The \mumag standard problem \#4 \cite{mumag-website} is the benchmark problem most widely used to test implementations of dynamic micromagnetic models.
@@ -414,7 +416,7 @@ Our unit time is
 We use the FEM to spatially discretise the LLG equation and the Newton-Raphson method to solve the resulting non-linear systems as described in \cref{sec:galerk-meth-llg}.
 The hybrid FEM/BEM method, described in \cref{sec:hybr-finit-elem}, is used for magnetostatic calculations.
 For the coupling of the LLG equation with the magnetostatic calculations we use both the monolithic and semi-implicit methods discussed in \cref{sec:solution-strategies}.
-The solution of the monolithic linear system is done using the fully iterative preconditioner $\inexact{\precc}$, it turns out that for thin film problems the ILU(1) approximation to the LLG block, $\Fm$, is effective.
+The solution of the monolithic linear system is done using the fully iterative preconditioner $\inexact{\precc}$, it turns out that for thin film problems the ILU(1) approximation to the LLG block is effective.
 The decoupled systems resulting from the semi-implicit method are solved using the methods described in \cref{sec:llg-only-system}.
 Both methods use the parameters described in \cref{sec:linear-systems-probl-spec}.
 

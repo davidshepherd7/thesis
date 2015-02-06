@@ -102,7 +102,6 @@ Finally we have the condition that
   \phim(\xv) \rightarrow 0 \qquad \text{ as } \abs{\xv} \rightarrow \infty.
   \label{eq:48}
 \end{equation}
-Note that \cref{eqn:dphibound,eqn:phibound} imply continuity but not smoothness of the magnetic potential $\phim$ across $\boundd$. This effect can be thought of as the effect of (fictional) surface monopole charges.
 
 The key observation for this part of the derivation is that \cref{eq:2,eq:48,eqn:dphibound,eqn:phibound} are linear, \ie if $\phim = \phione + \phitwo$ then $\lap \phim = \lap \phione + \lap \phitwo$ and similarly for the boundary conditions.
 Based on this observation we define a new potential $\phione$ which satisfies
@@ -172,7 +171,7 @@ The double layer potential at a point $\xv \in \real^d$ (including $\xv \in \bou
   \label{eq:3}
   \phim(\xv) = \int_{\boundd} \mu(\yv) \pd{\Green}{\nv(\yv)} \d \yv,
 \end{equation}
-where $G$ is the Green's function for a Laplacian operator and $\nv(\yv)$ is the outward unit normal at $\yv \in \boundd$.
+where $G$ is the Green's function for the Laplacian operator and $\nv(\yv)$ is the outward unit normal at $\yv \in \boundd$.
 For $d=2$
 \begin{equation}
   \Green = \dfrac{-1}{2\pi}\ln(\abs{\xv - \yv}),
@@ -550,7 +549,7 @@ However, it involves a dense matrix of size proportional to the number of bounda
 
 We have also described general methods for the evaluation of the resulting integrals using numerical quadrature and a less general method for a common case using an analytical formula.
 There is a large scope for improving the efficiency of the adaptive numerical quadrature described here.
-However, such optimisations were not investigated because the evaluation of the boundary matrix is not a performance critical component of the coupled LLG-magnetostatics problem because it only needs to be evaluated once for a given mesh.
+However, such optimisations were not investigated because the evaluation of the boundary matrix is not a performance critical component of the coupled LLG-magnetostatics problem since it only needs to be evaluated once for a given mesh.
 
 While we have followed the convention in computational micromagnetics of using a collocation approach to discretise the BEM operator, a Galerkin approach may be more appropriate.
 In particular, we note that the authors of \hlib use a Galerkin approach \cite{Borm2003}.

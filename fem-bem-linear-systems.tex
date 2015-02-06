@@ -29,9 +29,9 @@ Such methods are important building blocks for the solution of the coupled syste
 Firstly we consider the two linear systems solved in the magnetostatic field calculations: these are both Poisson systems (see \cref{eq:phi-bem-continuous} and \cref{eq:poisson-jacobian}), which are well studied.
 One efficent and robust method for solving Poisson systems on unstructured grids is to use the method of conjugate gradients (CG) with algebraic multigrid (AMG) as a preconditioner \cite{Henson2002}.
 
-Note that the Poisson blocks $\Am$ do not depend on $\phim$, $\phione$ or $\mv$ (\ie the Poisson problems are linear).
+Note that the matrices involved in the Poisson systems do not depend on $\phim$, $\phione$ or $\mv$ (\ie the Poisson problems are linear).
 This means that when solving these parts of the problem the Newton-Raphson iteration is not required (or if used it will converge in a single iteration assuming that the linear solve is sufficiently accurate).
-Also the $\Am$ matrices only depend on the geometry and so can be computed once and stored for reuse throughout the duration of the simulation (and similarly for the coarsening information required by the AMG preconditioner).
+Also the Poisson matrices only depend on the geometry and so can be computed once and stored for reuse throughout the duration of the simulation (and similarly for the coarsening information required by the AMG preconditioner).
 
 
 Now we focus on the sequence of linear systems resulting from solving the LLG equation with the Newton-Raphson method, \cref{eq:llg-jacobian}.
@@ -51,7 +51,7 @@ Hence this method is not expected to scale optimally to fine meshes or to be ver
 % Unfortunately we have not had time to research more effective solvers for the LLG system.
 % maybe write something abount what these might be? block based AMG smoothers (as used for fixed point)? block preconditioners with AMG underlying? [Milan/Matthias: what's the big difference?]
 
-\section{Solution of the coupled LLG-magnetostatics system}
+\section[Solution of the coupled system]{Solution of the coupled LLG-magnetostatics system}
 \label{sec:solut-coupl-syst}
 
 We now consider the solution of the combined LLG and FEM/BEM magnetostatics system.
@@ -67,7 +67,7 @@ We present a novel solver which consists of a Krylov solver combined with a prec
 This approach has the benefit that all of the properties of the original time integration schemes carry over to the coupled problem.
 In particular when using this approach the IMR retains the energy property described in \cref{sec:proof-energy-prop}, which is the most interesting of its geometrical integration properties.\footnote{A number of integration schemes can obtain length conservation: Cayley transform methods \cite{Lewis2003}, semi-analytical methods \cite{Wiele2010} and various types of semi-implicit midpoint rule methods \cite{Spargo2003,Mentink2010} (including the one described in \cref{sec:semi-implicit-bem}).}
 Additionally it may be useful for stochastic problems (\ie when thermal fields are involved, see \cref{sec:temperature-effects}), since in this case only a few time integration schemes are known to converge to the correct solution.
-The implicit midpoint rule is one of these schemes, but the semi-implicit modification is likely to remove this property \cite{DAquino2006}.
+The implicit midpoint rule is one of these schemes, but any semi-implicit modification is likely to remove this property \cite{DAquino2006}.
 
 Before describing these approaches in more detail, we briefly discuss the implementation of the monolithic coupling between the LLG and magnetostatic problems, and the structure of the resulting Jacobian.
 
@@ -161,7 +161,7 @@ where $\resi$ is the vector of the current discrete Newton residuals for $\mv$, 
 \subsection{The semi-implicit (decoupled) approach}
 \label{sec:semi-implicit-bem}
 
-One approach, which avoids solving the complete non-linear system, is to break the monolithic system into multiple coupled but simpler problems.
+One approach, which avoids solving the complete non-linear system, is to break the monolithic system into three coupled but simpler problems.
 This can be achieved by using implicit calculations for the LLG parts as normal, but treating the magnetostatic calculations explicitly.
 The resulting scheme then only requires independent calculations of the magnetostatic field and the magnetisation as described in \cref{sec:llg-only-system}.
 Since the magnetostatic fields are typically much weaker than the exchange field we hope that the stability of the scheme will not be greatly reduced.
@@ -193,7 +193,7 @@ replacing differences in time with the appropriate time steps gives:
   \label{eq:66}
   \hat{\phim}_{n+1} = \frac{-\dtx{n+1}}{\dtn} \phim_{n-1} + \frac{\dtx{n+1} + \dtn}{\dtn} \phim_n.
 \end{equation}
-Note that if we are using the implicit midpoint rule we need to extrapolate $\phim$ to the midpoint rather than $t_{n+1}$, hence we use $\dtx{n+1} = \dtx{n+1} /2$ in the above equation.
+Note that if we are using the implicit midpoint rule we need to extrapolate $\phim$ to the midpoint rather than $t_{n+1}$, hence in this case we replace $\dtx{n+1}$ by $\dtx{n+1} /2$ in the above equation.
 
 %  write out LTE for this scheme somehow?
 
@@ -569,7 +569,7 @@ In practice the Newton residual assembly time is extremely small compared to the
 So the computation time difference due to assembling additional $\phim$ and $\phione$ residual components in Newton steps after the first can be ignored.
 
 We now examine the cost per Krylov iteration (or per set of Krylov iterations for the decoupled case).
-The monolithic approach has more non-zeros in the Jacobian (the P, Q, G blocks), giving approx $4 \Nn$ extra matrix elements, compared to a base of $11 \Nn$, hence approximately one third as much time again is taken for each Krylov step.
+The monolithic approach has more non-zeros in the Jacobian (the P, Q, G blocks), giving approximately $4 \Nn$ extra matrix elements, compared to a base of $11 \Nn$, hence approximately one third as much time again is taken for each Krylov step.
 Also our fully coupled method uses GMRES for all blocks rather than GMRES for $\Fm$ and CG for the two Poisson blocks.
 Since GMRES requires a more computationally expensive orthogonalisation process than CG this will increase the cost of the monolithic approach as compared to the semi-implicit approach.
 This increase could possibly be reduced by using BiCGStab or a restarted GMRES method instead of GMRES.
