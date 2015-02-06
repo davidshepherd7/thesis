@@ -211,7 +211,7 @@ The linear and non-linear systems resulting from the application of this algorit
 \label{sec:fully-implicit-bem}
 
 The alternative to the semi-implicit approach described above is to find an efficient way to solve the full system \cref{eq:16,eq:87}, this is referred to as a fully coupled or monolithic approach.
-The major difficulty is that the system contains a dense block, meaning that any operations (\eg LU decomposition, multiplication) on J will be significantly slower than for a sparse Jacobian.\footnote{Dense matrix-vector multiplication takes $\order{\nrow^2}$ operations (since all $\nrow^2$ matrix entries are used), while LU decomposition takes $\order{\nrow^3}$ operations \cite[223]{Iserles}.}
+The major difficulty is that the system contains a dense block, meaning that any operations (\eg LU decomposition, multiplication) on J will be significantly slower than for a sparse Jacobian.\footnote{Dense matrix-vector multiplication takes $\order{\nrow^2}$ operations (since all $\nrow^2$ matrix entries are used), while LU decomposition takes $\order{\nrow^3}$ operations \cite[223]{Iserles2009}.}
 We use a combination of techniques to reduce this negative effect of the BEM block.
 
 The first and most important technique is the use of a Krylov solver, this has two benefits.
