@@ -320,6 +320,8 @@
 \newcommand{\dampc}{\alpha}
 \newcommand{\dampeff}{\alpha_\mathrm{eff}}
 \newcommand{\gymagc}{{\abs{\gamma_{\mathrm{\tiny{L}}}}}}
+\newcommand{\scc}{\beta} % The constant in front of the self-correcting LLG
+                         % term
 
 
 % SI magnetic units
@@ -337,7 +339,7 @@
 
 \newcommand{\MxH}{\Mv \times \Hv} % define M x H
 \newcommand{\mxh}{\mv \times \hv}
-\newcommand{\mxmxh}{\mv \left(\mv \times \hv \right)}
+\newcommand{\mxmxh}{\mv \times \bigb{\mv \times \hv}}
 \newcommand{\MxdMdt}{\Mv \times \dMdt}
 \newcommand{\mxdmdt}{\mv \times \dmdt}
 \newcommand{\llg}{\dmdt = -(\mxh) + \dampc (\mxdmdt)}
