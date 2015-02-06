@@ -266,7 +266,7 @@ Since all methods except for BDF2 showed some geometric integration properties t
 In \thisref{sec:non-uniform-applied} we construct a problem which is non-uniform in space without the involvement of the magnetostatic field by applying a non-uniform applied field.
 This will allow us to examine whether the anomalous geometric integration properties observed in the previous section are related to the analytical solution.
 
-This experiment also reveals some odd behaviour on meshes of triangular elements.
+This experiment also reveals some reduction in the effectiveness of the geometric integration on meshes of triangular elements.
 
 \subsection{Problem definition}
 
@@ -325,10 +325,10 @@ The same is true for the energy conservation with zero damping, as shown in \cre
 \subsection{Triangular meshes}
 \label{sec:triangular-meshes}
 
-Finally we show some anomalous results when a mesh of triangular elements is used.
+Finally we show some results when a mesh of triangular elements is used.
 The evolution of $\abs{\mv}$ is shown in \cref{fig:ml-error-triangle-mesh}.
-We see that the $\abs{\mv}$ conservation property of IMR with nodal quadrature fails on triangular elements.
-Similarly the conservation of energy (with $\dampc = 0$) fails, as shown in \cref{fig:energy-error-triangle-mesh}.
+We see that the error in $\abs{\mv}$ when using IMR with nodal quadrature is significantly larger on triangular elements than on square elements.
+Similarly the error in the energy (with $\dampc = 0$) is significantly larger, as shown in \cref{fig:energy-error-triangle-mesh}.
 Other experiments show this issue for a variety of other cases including 3D problems with tetrahedral elements, but not for the wave-like example above.
 
 We do not have an explanation for this effect.
@@ -362,7 +362,7 @@ However it should be noted that the non-conservation effects are small enough th
 
 We have confirmed that the wave-like example is in some sense ``too easy'' and does not provide a rigorous test of geometric integration properties: IMR with Gaussian quadrature and TR do not conserve energy or $\abs{\mv}$ in general.
 
-We have also shown an example problem where our implementation of IMR with nodal quadrature unexpectedly \emph{does not} conserve energy or $\abs{\mv}$ when used with a mesh of triangular elements.
+We have also shown an example problem where our implementation of IMR with nodal quadrature unexpectedly gives significantly worse conservation of energy and $\abs{\mv}$ when used with a mesh of triangular elements, as compared to square elements.
 
 
 % Don't allow floats from last section into this one
@@ -647,7 +647,7 @@ The use of GMRES preconditioned by $\inexact{\precc}$ from \cref{sec:bem-solver-
 In this chapter we have demonstrated the effectiveness of the methods described and developed throughout this thesis on micromagnetic problems with spatial variations.
 
 We observed that our adaptive IMR algorithm selects appropriate time steps even for complex problems involving exchange and magnetostatics.
-We have shown that IMR with nodal quadrature retains its magnetisation length conservation property on a number of problems, but that it fails on certain meshes of triangular elements.
+We have shown that IMR with nodal quadrature retains its magnetisation length conservation property on a number of problems, but also that it is less effective on certain meshes of triangular elements.
 Similarly IMR (with nodal quadrature) provides energy conservation for problems without FEM/BEM magnetostatics, but that the energy conservation fails when collocation FEM/BEM magnetostatics calculations are included.
 This issue is likely due to the asymmetry of the discrete BEM operator and could be avoided by using an alternative formulation and/or discretisation of the BEM problem.
 

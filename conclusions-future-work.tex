@@ -27,7 +27,7 @@ We also found that the introduction of FEM/BEM magnetostatics calculations incre
 
 
 In the course of our numerical experiments we uncovered some issues with the geometrical integration properties of our complete model.
-Firstly we found that the magnetisation length conservation property of IMR with FEM and nodal quadrature did not work when applied to meshes of triangular elements, at least in our implementation.
+Firstly we found that the conservation properties of IMR with FEM and nodal quadrature was much less effective when applied to meshes of triangular elements, at least in our implementation.
 This effect is fairly small and is not contradicted by any numerical results in the literature that we are aware of due to the common use of comparatively loose linearisation tolerances.
 An alternative implementation of IMR with FEM and nodal quadrature should be used with a tight linearisation tolerance in order to find out if this effect is an artefact of our implementation or a real issue.
 
