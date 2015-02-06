@@ -123,7 +123,7 @@ The variable time step version of eBDF3 does not appear in the literature, so we
 
 Alternatively a 3rd order Adams-Bashforth scheme (AB3) could be used, but this would require three previous derivative values instead of $y$ values making the initialisation of the scheme a little more complex and expensive.
 Additionally, the calculation of coefficients for the variable step Adams-Bashforth schemes is more complex \cite[400]{HairerNorsettWanner}.
-However, in contrast to eBDF3, AB3 has the basic stability property \cref{eq:104} which could simplify the process of testing an implementation.
+However, in contrast to eBDF3, AB3 has the basic property \cref{eq:104} which could simplify the process of testing an implementation.
 
 
 \subsection{The variable step eBDF3 method}
@@ -132,7 +132,7 @@ However, in contrast to eBDF3, AB3 has the basic stability property \cref{eq:104
 The explicit BDF methods are explicit time integration methods derived using the same techniques as the widely used implicit BDF methods.
 The idea is to write down a divided difference representation of an interpolating polynomial, $\pv(t)$, through $\yv_{n+1}$ and the appropriate history values of $\yv$ (simple backward differences can be used for constant time steps, hence the name).
 The derivative of the polynomial is then set equal to the derivative function $\ffv{t, \yv}$ at one of the discrete time steps \cite[400]{HairerNorsettWanner}.
-Setting $\pv'(t_{n+1}) = \ffv{t_{n+1}, \yv_{n+1}}$ gives the familiar implicit BDF methods.
+Setting $\pv'(t_{n+1}) = \ffv{t_{n+1}, \yv_{n+1}}$ gives the widely used implicit BDF methods.
 If we instead set $\pv'(t_{n}) = \ffv{t_{n}, \yv_{n}}$ we obtain the explicit BDF methods \cite[364]{HairerNorsettWanner}.
 We now derive the first three eBDF methods.
 % The derivation of the implicit BDF methods is shown in \cref{cha:deriv-impl-backw} and may be useful for comparison.
@@ -483,7 +483,7 @@ Hence we expect to see the adaptive IMR perform similarly to BDF1, and to select
 To test this we also run the experiment with an adaptive BDF1 (backwards Euler) method using Milne's device (with forward Euler) for adaptivity \cite[270]{GreshoSani}.
 
 The results are shown in \cref{fig:imr-order-reduction-example}.
-As expected the implicit midpoint rule selects time step sizes similarly to the first order BDF1 method due to order reduction.
+As expected the implicit midpoint rule selects time step sizes very similar to the first order BDF1 method due to order reduction.
 This allows it to retain similar accuracies to the TR and BDF2 methods at the cost of requiring many more time steps.
 
 The convergence of the solution as the adaptive integrator tolerance, $\toltt$, is reduced with fixed $\lambda = 100$ is shown in \cref{fig:imr-order-reduction-convergence}.
@@ -497,7 +497,7 @@ This is because we are not increasing $\lambda$ as we decrease $\toltt$, so we a
 \sectionmark{ODE LLG experiments}
 
 
-Having demonstrated the excellent performance of the adaptive IMR algorithm for simple ODEs we now present numerical experiments on an ODE LLG problem.
+In \thisref{sec:imr-ode-llg-numer-exper} we present numerical experiments in which we apply the adaptive implicit midpoint rule algorithm to an ODE LLG problem.
 As in \cref{sec:aimr-testing} we compare the performance of the adaptive IMR algorithm developed in \thisref{sec:adaptive-imr} with the adaptive TR and BDF2 algorithms (both with and without re-normalisation of the magnetisation after each step).
 Experiments with PDE LLG problems are postponed until \cref{cha:numer-experiments}.
 

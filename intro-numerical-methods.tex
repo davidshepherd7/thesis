@@ -655,6 +655,7 @@ Note that this is not related to the spurious damping discussed in \cref{sec:num
 
 A simple method of dealing with the constraint is to re-normalise each value of $\mv$ after some number of time steps, or when the error in $\abs{\mv}$ exceeds some tolerance \cite{Fidler2000}.
 However this approach fundamentally changes the system of equations being solved in a non-linear and unpredictable manner \cite{Lewis2003}.
+Renormalisation after a tolerance is used in \magpar \cite{magpar-source-code}\footnote{The function of interest is in the file \texttt{src/util/renormvec.c}, it is called by ??ds double check. The tolerance is user specified but defaults to $\E{-2}$.}, while renormalisation after every step is used in \oommf's 4th order Runge-Kutta scheme \cite{fangor-donahue-priv-comm}.
 
 Another way to avoid this problem is to use a spherical polar coordinate system $(r,\theta,\phi)$ for the magnetisation.
 In these coordinates \cref{eq:LLG} can be expressed in terms of only the angles $(\theta,\phi)$ representing the direction of $\mv$ and the length constraint is automatically enforced since
@@ -665,12 +666,36 @@ In these coordinates \cref{eq:LLG} can be expressed in terms of only the angles 
 However problems occur with this approach when the polar angle, $\theta$, approaches zero because $\pd{m_{\phi}}{t} \propto \frac{1}{\sin(\theta)}$ \cite{Fukushima2005} and so the derivative becomes singular.
 Also the calculation of the sum of the effective field vectors is much more complex in spherical polar coordinates (involving trigonometric identities), resulting in more complex non-linear/linear systems when using implicit time integration schemes.
 
+A third approach is to use Lagrange multipliers to constrain the solution such that $\abs{\mv}$ is constant \cite{Szambolics2008a}.
+The main problem with this method is that an additional degree of freedom is needed for every value of $\mv$ in space.
+
+Two more approaches that are currently used in mainstream models are: the use a modified LLG equation with a self-correcting term; and renormalisation by projection ??ds onto sphere?
+These approaches are discussed in more detail \cref{sec:sc-llg} and \cref{sec:renorm-to-sphere} respectively.
+
 Geometric time integration schemes aim to solve the issue of length conservation by constructing a scheme that naturally preserves the value of $\abs{\mv}$.
 Some examples of such schemes are based on IMR \cite{DAquino2005}, or a semi-implicit extension of IMR using extrapolations of the effective field \cite{Spargo2003,Serpico2001}.
 Alternatively, geometric integration methods based on Cayley transforms can be used \cite{Lewis2003,Bottauscio2011}.
 
-A third approach is to use Lagrange multipliers to constrain the solution such that $\abs{\mv}$ is constant \cite{Szambolics2008a}.
-The main problem with this method is that an additional degree of freedom is needed for every value of $\mv$ in space.
+\subsubsection{The self-correcting modified LLG}
+\label{sec:sc-llg}
+
+instead solve the equation
+\begin{equation}
+  \label{sc-ll}
+  \dmdt = \mxh + \mxmxh + \scc \mv \bigb{1 - \abs{\mv}^2}.
+\end{equation}
+The motivation behind this is that if, after a step, $\abs{\mv} > 1$ then during the next step there will be a an additional term in $\dmdt$ of $-\scc \mv \abs{1 - \abs{\mv}^2}$.
+This additional term will push the magnetisation length back towards $\abs{\mv} = 1$.
+Similarly if $\abs{\mv} < 1$ there is a small additional change in the direction of $+\mv$.
+
+This method is used by \nmag \cite{fangor-donahue-priv-comm} \cite{Fischbacher2009}.
+
+
+\subsubsection{??ds projection to sphere}
+\label{sec:renorm-to-sphere}
+
+This method is used by \oommf's forward Euler scheme \cite{fangor-donahue-priv-comm}.
+
 
 \subsubsection{Conservation of $\abs{\mv}$ by IMR in a macrospin model}
 \label{sec:proof-magn-length-ode-imr-llg}
