@@ -211,7 +211,7 @@ The linear and non-linear systems resulting from the application of this algorit
 \label{sec:fully-implicit-bem}
 
 The alternative to the semi-implicit approach described above is to find an efficient way to solve the full system \cref{eq:16,eq:87}, this is referred to as a fully coupled or monolithic approach.
-The major difficulty is that the system contains a dense block, meaning that any operations (\eg LU decomposition, multiplication) on J will be significantly slower than for a sparse Jacobian.\footnote{Dense matrix multiplication takes $\order{\nrow^2}$ operations, while LU decomposition takes $\order{\nrow^3}$ operations \cite{??ds Iserles? doulble check power}.}
+The major difficulty is that the system contains a dense block, meaning that any operations (\eg LU decomposition, multiplication) on J will be significantly slower than for a sparse Jacobian.\footnote{Dense matrix-vector multiplication takes $\order{\nrow^2}$ operations (since all $\nrow^2$ matrix entries are used), while LU decomposition takes $\order{\nrow^3}$ operations \cite[223]{Iserles}.}
 We use a combination of techniques to reduce this negative effect of the BEM block.
 
 The first and most important technique is the use of a Krylov solver, this has two benefits.
@@ -431,6 +431,7 @@ All experiments are run on a single core (\ie no parallelism is used) of a deskt
 \subsection{Results}
 
 %??ds lots to do in this section, need to replace plots by means + stddev for one thing.
+% ??ds when you do this remember to also change the plots in ch. 8
 
 
 \Cref{fig:its-ilu-decoupled} shows the mean (over a single Newton solve) number of GMRES iterations required to solve the LLG-only system, \cref{eq:llg-jacobian}, using ILU(1) preconditioning (\ie with magnetostatics handled by the semi-implicit approach).
@@ -564,8 +565,7 @@ As an aside: the mass matrix blocks on the diagonal of $\Fm$ ($\Mm$ of \cref{eq:
 Additionally the skew symmetric structure of \cref{eq:llg-jacobian} can be exploited so that the calculation of $\Km_x$ is reused for $-\Km_x$, and similarly for $\Km_y$ and $\Km_z$.
 Applying these additional optimisations reduces the Jacobian calculations to the assembly of three $\Nn \times \Nn$ Jacobian blocks and the magnetocrystalline anisotropy block (which will typically be either a single $\Nn \times \Nn$ block or empty, see \cref{sec:llg-jacobian}).
 
-% ??ds How much smaller?  -- Andrew
-In practice the Newton residual assembly time is extremely small compared to the solve and Jacobian assembly times.
+In practice the Newton residual assembly time is extremely small compared to the solve and Jacobian assembly times ($\sim 99 \%$ of the time in the non-linear solver is spent in the Jacobian assembly and linear solves).
 So the computation time difference due to assembling additional $\phim$ and $\phione$ residual components in Newton steps after the first can be ignored.
 
 We now examine the cost per Krylov iteration (or per set of Krylov iterations for the decoupled case).

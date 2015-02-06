@@ -433,16 +433,15 @@ The weak form of the LLG residual is
 \end{equation}
 The problem is solved by $\mv \in \sob^2(\magd)$ such that $\rllgv(\mv, \test) = \zerov$ $\forall \test \in \sob^0(\magd)$.
 
-% ??ds "Probably need to be careful about linear independence"  -- Andrew
 Note that in \cref{res:contllg} the residual is a vector.
 However, we can also express the requirement for each component of \cref{res:contllg} to be zero as
 \begin{equation}
   \rllg(\mv, \testv) = \int_\magd \Big( \ldots  \Big) \cdot \testv \d\magd = 0,
 \end{equation}
 where $\testv \in (\sob^0(\magd))^3$ and the bracketed term is exactly the same as in \cref{res:contllg}.
-To see that $\rllg(\mv, \testv) = 0\; \forall \testv \in (\sob^0(\magd))^3$ implies $\rllgv(\mv, \test) = 0 \; \forall \test \in \sob^0(\magd)$ consider the vector test function $(\test, 0, 0)$.
+To see that $\rllg(\mv, \testv) = 0\; \forall \testv \in (\sob^0(\magd))^3$ implies $\rllgv(\mv, \test) = \zerov \; \forall \test \in \sob^0(\magd)$ consider the vector test function $(\test, 0, 0)$.
 Clearly $\rllg(\mv, (\test, 0, 0)) = \bigs{\rllgv(\mv, \test)}_x$, and similarly for the $y$ and $z$ cases.
-To see the inverse relationship note that if $\rllg(\mv, \test) = 0\; \forall \test \in \sob^0(\magd)$ then each term of every dot product in $\rllg(\mv, \testv)$ is zero, implying that the total residual is zero $\forall \testv \in (\sob^0(\magd))^3$.
+To see the inverse relationship note that if $\rllgv(\mv, \test) = \zerov\; \forall \test \in \sob^0(\magd)$ then each term of every dot product in $\rllg(\mv, \testv)$ is zero, implying that the total residual is zero $\forall \testv \in (\sob^0(\magd))^3$.
 The use of vector test functions makes certain manipulations simpler so, for the remainder of \thisref{sec:weak-form-residuals}, we will work with vector test functions.
 
 \newcommand{\Iex}{I_\text{ex}}
@@ -1076,7 +1075,6 @@ After reducing the norm of the discrete LLG residual to tolerance $\ntol$ we hav
 \end{equation}
 where $\norm{\cdot}$ is the norm used to assess the convergence of the linearisation method (in our implementation this is $\norm{\cdot}_\infty$) and $\tbfv_j$ is the vector test basis function corresponding to node $j$.
 Hence, by writing any test function $\testv$ as a linear combination of the basis functions and then using the linearity of $\tbfv$ in \cref{eq:81} and the triangle inequality, we have
-% ??ds Check "which" triangle inequality, also this uses a different tri. ineq. to the other one  -- Andrew
 \begin{equation}
   \norm{\intd{ \bigs{\dmdth + \mvh \times \bigb{\hv - \dampc \dmdth}} \cdot \testv + \bigb{\mvh \times \grad \mvh} : \grad \testv}} < \ntol  \sumbasiscoeff,
   \label{eq:82}
@@ -1182,7 +1180,7 @@ Hence we proceed similarly to \cref{sec:proof-energy-prop}: we substitute  \cref
       &- \ltip{\happerror}{\frac{\mvh_{,n+1} - \mvh_{,n}}{\dtn}} \Bigg|\Bigg| \quad < \ntol \sumbasiscoeff.
   \end{aligned}
 \end{equation}
-Finally, by using the triangle inequality, we have
+Finally, by using the triangle inequality\footnote{The standard triangle inequality is $\norm{x + y} \leq \norm{x} + \norm{y}$, by choosing $y=-a$ we see that $\norm{x - a} \leq \norm{x} + \norm{-a} = \norm{x} + \norm{a}$ giving the form used here.}, we have
 \begin{equation}
   \begin{aligned}
     &\norm{ \frac{\e_{n+1} - \e_n}{\dtn} + \dampc \ltnorm{\frac{\mvh_{,n+1} - \mvh_{,n}}{\dtn}}^2 + \ltip{\frac{\happ(t_{n+1}) + \happ(t_n)}{\dtn}}{\frac{\mvh_{,n+1} + \mvh_{,n}}{2}} } \\

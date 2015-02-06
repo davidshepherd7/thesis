@@ -655,7 +655,7 @@ Note that this is not related to the spurious damping discussed in \cref{sec:num
 
 A simple method of dealing with the constraint is to re-normalise each value of $\mv$ after some number of time steps, or when the error in $\abs{\mv}$ exceeds some tolerance \cite{Fidler2000}.
 However this approach fundamentally changes the system of equations being solved in a non-linear and unpredictable manner \cite{Lewis2003}.
-Renormalisation after a tolerance is used in \magpar \cite{magpar-source-code}\footnote{The function of interest is in the file \texttt{src/util/renormvec.c}, it is called by ??ds double check. The tolerance is user specified but defaults to $\E{-2}$.}, while renormalisation after every step is used in \oommf's 4th order Runge-Kutta scheme \cite{fangor-donahue-priv-comm}.
+Renormalisation after a tolerance is used in \magpar \cite{magpar-source-code}\footnote{The function of interest is in the file \texttt{src/util/renormvec.c}, it is called by \texttt{CheckIterationLLG} (which is the standard LLG solver iteration function) with tolerance \texttt{renormtol}.} with a default tolerance of $\E{-2}$, while renormalisation after every step is used in \oommf's 4th order Runge-Kutta scheme \cite{fangor-donahue-priv-comm}.
 
 Another way to avoid this problem is to use a spherical polar coordinate system $(r,\theta,\phi)$ for the magnetisation.
 In these coordinates \cref{eq:LLG} can be expressed in terms of only the angles $(\theta,\phi)$ representing the direction of $\mv$ and the length constraint is automatically enforced since
@@ -1127,9 +1127,7 @@ Direct methods for the solution of linear systems seek exact solutions using met
 The direct method most commonly used in the solution of systems resulting from discretised PDEs is LU decomposition.
 
 % ??ds Citation for this?  -- Andrew
-The main advantage of direct methods is their robustness: given a well-scaled, non-singular linear system a well designed direct solver will be able to provide an answer.
-As such direct solvers are usually the first approach tried when solving a system of equations.
-
+The main advantage of direct methods is their robustness: for reasonably non-singular systems and given enough time a direct solver will be able to solve the system.
 However as matrix sizes become large direct solvers become increasingly demanding in both time and memory.
 The problem is that the factors of a typical sparse matrix can be significantly more dense than the original matrix, \ie there is some amount of fill-in.
 This means that the time and memory requirements for the solution rarely scale as $\order{\nrow}$ except for very specific matrices.

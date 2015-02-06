@@ -207,16 +207,14 @@ We have the following results from potential theory:
     \phim^\inte(\xv) = (1 - \gamma(\xv)) \mu(\xv) + \phim(\xv).
     \label{eq:22}
   \end{equation}
-  Note that the angle $\alpha$ at a ``smooth'' point\footnote{The surface must be a Lyapunov surface at the point.
-This means that ??ds
-\cite{??ds}} on the surface is $\pi$ in 2D (or $2\pi$ in 3D).
+  Note that the angle $\alpha$ at any smooth point on the surface (\ie not at an infinitely sharp corner) is $\pi$ in 2D (or $2\pi$ in 3D).
   So in these cases $\gamma(\xv) = \frac{\alpha(\xv)}{\alpha_{\text{max}}} = \frac{1}{2}$.
 
 \item If $\mu$ is continuous and has continuous first and second derivatives along the boundary (\ie $\mu(\xv) \in C^2(\boundd)$) then the limits $\pd{\phim^\inte(\xv)}{\nv}$ and $\pd{\phim^\exte(\xv)}{\nv}$ exist and are equal \cite[145-153]{Sternberg1946}.
 
 \end{enumerate}
 
-Note that some derivations of the results above rely on the surface being a Lyapunov surface which imposes a number of smoothness conditions on the surface, in particular excluding surfaces with corners.
+Note that some derivations of the results above rely on the surface being a ``Lyapunov surface'' which imposes a number of smoothness conditions on the surface, in particular excluding surfaces with corners.
 The proofs given in \cite{Sternberg1946} allow a finite number of sharp corners, \ie a polygonal domain.
 
 \subsection{Application to Magnetostatic Calculations}
@@ -350,7 +348,6 @@ where
    + \gamma(\xv_\ibasis)\delta_{\ibasis\ibasisb}.
 \end{equation}
 
-% ??ds this might be wrong in powers in denom.. check  -- Andrew
 We now convert the normal derivative of the Green's function into a more tangible form.
 In 3D
 \begin{equation}
@@ -366,12 +363,12 @@ Obviously $\frac{1}{r}$ has no angular dependence so only the derivative with re
 \end{equation}
 \begin{equation}
   \label{eq:13}
-  \pd{\Green}{\nv} = \frac{\nv \cdot (\yv - \xv)}{4 \pi \abs{\yv - \xv} ^2} .
+  \pd{\Green}{\nv} = \frac{\nv \cdot (\yv - \xv)}{4 \pi \abs{\yv - \xv} ^3} .
 \end{equation}
 Similarly, in 2D we find
 \begin{equation}
   \label{eq:14}
-  \pd{\Green}{\nv} = \frac{-1}{2 \pi} \pd{}{\nv} (\Gtwod) = \frac{\nv \cdot (\yv - \xv)}{2 \pi \abs{\yv - \xv}}.
+  \pd{\Green}{\nv} = \frac{-1}{2 \pi} \pd{}{\nv} (\Gtwod) = \frac{\nv \cdot (\yv - \xv)}{2 \pi \abs{\yv - \xv}^2}.
 \end{equation}
 
 \newcommand{\bminta}{I}
@@ -385,7 +382,7 @@ So the boundary element matrix in $d=2,3$ dimensions has the entries
 \end{equation}
 where
 \begin{equation}
-  \bmint = \int_{\boundd_\ibasisb} \tbfone_{\ibasisb}(\yv) \frac{\nv(\yv) \cdot (\yv - \xv_\ibasis)}{\abs{\yv - \xv_\ibasis} ^{d-1}} \d \yv.
+  \bmint = \int_{\boundd_\ibasisb} \tbfone_{\ibasisb}(\yv) \frac{\nv(\yv) \cdot (\yv - \xv_\ibasis)}{\abs{\yv - \xv_\ibasis} ^d} \d \yv.
 \label{eq:bmint}
 \end{equation}
 
@@ -556,7 +553,7 @@ There is a large scope for improving the efficiency of the adaptive numerical qu
 However, such optimisations were not investigated because the evaluation of the boundary matrix is not a performance critical component of the coupled LLG-magnetostatics problem because it only needs to be evaluated once for a given mesh.
 
 While we have followed the convention in computational micromagnetics of using a collocation approach to discretise the BEM operator, a Galerkin approach may be more appropriate.
-In particular, we note that the authors of \hlib use \cite{Borm2003} and recommend \cite{??ds priv. comm?} a Galerkin approach.
+In particular, we note that the authors of \hlib use a Galerkin approach \cite{Borm2003}.
 
 %%% Local Variables:
 %%% mode: Latex

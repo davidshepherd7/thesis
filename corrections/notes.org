@@ -12,6 +12,21 @@ We have eliminated any parameters which affect the time scales, so we don't need
 I think the question is: "Should the Newton divided differences really have an increasing number of arguments as the order of the derivative increases?", in which case the answer is yes: more points are needed to compute higher order derivatives. Also yes this is the conventional notation (see e.g. the reference below the definition).
 ** 184-1: The comment just says "Q:"
 
+* Andrew's simple corrections
+
+** Said that we need to worry about lin. dep. for vector vs. non-vec test fns
+pg. 87 
+
+I don't think know where he means but everything works even with all v
+directions the same..
+
+** Having trouble finding a citation that direct methods are more robust... 
+should I just remove that statement? I'm pretty sure it's true in the
+context that I'm working in but no one has proved it I guess...
+
+similarly for fill-in (can show it for structured meshes but no citations)
+
+
 * Finding a citation for order of direct methods
 
 ** Seems to be hard, no one gives concrete numbers!
@@ -102,7 +117,6 @@ a slide from M. Donahue...
 
 ** Renormalisation by projection onto sphere
 Again, is there a paper?
-
 
 
 * Other questions

@@ -652,10 +652,14 @@ The behaviour of the magnetisation length over time is shown in \cref{fig:ml-aim
 The maximum error when IMR is used is $\errml \approx 10^{-12}$, which is consistent with the Newton tolerance.
 In contrast the error in the magnetisation length with the TR and BDF2 schemes reaches $\sim 10^{-2}$.
 
-%??paper -- pull in explanation from later of why I use mean(min(residual))?
-To investigate the effects of parameters on the magnetisation length conservation the experiment was run with varying $\dampc=1, 0.1, 0.01$, $\toltt = 5\times 10^{-3}, 10^{-3}, 5\times10^{-4}, 10^{-4}, 5\times10^{-5}, 10^{-5}$ and $\ntol=10^{-12}, 10^{-10}, 10^{-8}, 10^{-6}$.
+As mentioned in \cref{sec:weak-cons-absmv} we would expect to see some effect on the conservation properties when the accuracy of the linearisation method is varied.
+In our implementation the Newton-Raphson method is used for linearisation, so the relevant measure of accuracy is the Newton tolerance, $\ntol$.
+The obvious experiment to carry out would be to vary the Newton tolerance and examine how the error in $\abs{\mv}$ is affected.
+However the Newton-Raphson method converges extremely quickly meaning that the final residual is often many orders of magnitude smaller than the tolerance, this would hide any correlation between the tolerance and the error.
+Instead we plot the error against the \emph{actual} converged residual norm (specifically: the mean over all time steps of $\norm{\rv}_\infty$ after the Newton method has converged for that time step).
+In order to generate a variety of converged residual norms we run the experiment with a range of parameters:  $\dampc=1, 0.1, 0.01$, $\toltt = 5\times 10^{-3}, 10^{-3}, 5\times10^{-4}, 10^{-4}, 5\times10^{-5}, 10^{-5}$ and $\ntol=10^{-12}, 10^{-10}, 10^{-8}, 10^{-6}$.
 A scatter plot showing the error in the length against the mean (over time) of the converged Newton residual norm is shown in \cref{fig:ml-aimr-newton}.
-We see that the magnetisation length conservation behaviour of IMR is well controlled by setting the Newton tolerance even with large variations in the adaptive time integrator tolerance and the damping parameter.
+We see that the magnetisation length conservation behaviour of IMR is well controlled by the Newton tolerance even with large variations in the adaptive time integrator tolerance and the damping parameter.
 
 \begin{figure}
   \centering
@@ -672,9 +676,9 @@ We see that the magnetisation length conservation behaviour of IMR is well contr
 \end{figure}
 
 The behaviour of the maximum error in the energy when $\dampc = 0$ as the adaptive step tolerance is reduced is shown in \cref{fig:energy-aimr-ode}.
-The energy error for BDF2 without normalisation is very small (around the Newton tolerance), but when re-normalisation is used the error in energy increases drastically.
+The energy error for BDF2 without normalisation is around the Newton tolerance, but when re-normalisation is used the error in energy increases drastically.
 This is due to the injection/removal of energy when the magnetisation length is modified.
-The energy error when using the TR/IMR algorithm (recall that in this example TR and IMR are identical) is below the minimum value that can be calculated using floating point arithmetic.
+The energy error when using the TR/IMR algorithm (recall that in this example TR and IMR are identical and renormalisation is not needed for either method due to the geometric integration properties) is below the minimum value that can be calculated using floating point arithmetic.
 This is not surprising as we expect it to be significantly smaller than the energy error of BDF2, which is $\sim 10^{-14}$ and it is calculated as the difference of two values of $\order{1}$ (so it cannot be calculated if it is smaller than $\sim 10^{-16}$).
 
 % I also tried it with larger precession (ie m further from z) to see if we can get big enough errors to see something interesting but nothing changes, leave it like this for simplicity.
@@ -705,7 +709,7 @@ Adaptive TR and BDF2 algorithms both with and without re-normalisation of the ma
 each step are shown, along with the adaptive IMR algorithm developed in \thisref{sec:adaptive-imr}.
 
 
-In \cref{fig:llg-ode-convergence-swtime} the convergence (in $\swtimeerr$) rates for TR and IMR are flat as would be expected from the asymptotic predictions, BDF2 does not attain this asymptotic convergence state until a comparatively small time step.
+In \cref{fig:llg-ode-convergence-swtime} the convergence (in $\swtimeerr$) rates for TR and IMR are flat consistent with the asymptotic predictions, in contrast BDF2 does not attain this asymptotic convergence state until a comparatively small time step.
 The maximum errors are around $1000$ time units, a relative error of $\sim 100\%$.
 The errors of TR and IMR are extremely similar for a given mean time step size.
 Once the asymptotic convergence regime is reached BDF2 has roughly three times the error of the other methods.
@@ -741,7 +745,7 @@ We have implemented an efficient algorithm for adaptive time step selection with
 The algorithm has been tested on a number of ODEs and found to follow the correct theoretically predicted step selection behaviour, and to behave similarly to other second-order adaptive time integrators.
 We have also demonstrated robustness in stiff problems and correct behaviour even when order reduction phenomena are encountered.
 
-When applied to an ODE form of the LLG the adaptive IMR algorithm conserves $\abs{\mv}$ as expected for a wide variety of parameters, but the example used here may be too simple for the energy property to be studied.
+When applied to an ODE form of the LLG the adaptive IMR algorithm conserves $\abs{\mv}$ as expected for a wide variety of parameters, but the example used here may be too simple for the energy property to be studied properly\footnote{Without damping the ODE form of the LLG is linear in $\mv$ and $t$ so TR and IMR are equivalent.}.
 It also appears to give smaller global error norms than would be expected from its local truncation error, this may be due to the geometric integration properties.
 Any effects of these geometric integration properties would be expected to be greatly amplified when solving ODE problems with many interacting spins or PDE problems.
 This scenario will be tested in \cref{cha:numer-experiments} where the adaptive IMR algorithm is combined with the PDE methods discussed in other chapters.

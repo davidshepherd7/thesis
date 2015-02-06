@@ -70,7 +70,7 @@ Over time the wave moves in the $[-1,-1]$ direction and is simultaneously damped
   \centering
   \includegraphics[width=0.8\textwidth]{images/2d_wave_picture_t0p1.pdf}
   \caption{Snapshot of the approximate solution for the 2D wave problem at $t=0.1$ time units obtained using adaptive IMR with nodal integration.
-    Colour indicates the value of $m_x$.
+    Arrows indicate the nodal values of $\mv$, colour indicates the value of $m_x$, and the pale green area is the finite element mesh used.
     The $z$-component of the magnetisation is constant over the domain with $m_z = 0.958$.}
   \label{fig:2d-wave-snapshot}
 \end{figure}
@@ -213,12 +213,9 @@ This is likely due to some special property of the exact solution, and does not 
 \subsection{Effect of Newton tolerance}
 \label{sec:effect-newt-toler-m-conservation}
 
-As mentioned in \cref{sec:nodal-integration} we would expect to see some effect on the conservation properties when the accuracy of the linearisation method is varied.
+In \cref{sec:nodal-integration} relationships between the conservation properties and the accuracy of the linearisation method were derived.
 In our implementation the Newton-Raphson method is used for linearisation, so the relevant measure of accuracy is the Newton tolerance, $\ntol$.
-
-The obvious experiment to carry out would be to vary the Newton tolerance and examine how the error in $\abs{\mv}$ is affected.
-However the Newton-Raphson method converges extremely quickly meaning that the final residual is often many orders of magnitude smaller than the tolerance, this would hide any correlation between the tolerance and the error.
-Instead we plot the error against the \emph{actual} converged residual norm (specifically: the mean over all time steps of $\norm{\rv}_\infty$ after the Newton method has converged for that time step).
+As was described in \cref{sec:aimr-llgode-numerical-results} we study this effect by plotting the error against the \emph{actual} converged residual norm.
 In order to generate a variety of converged residual norms we run the experiment with a range of parameters: $\ntol = 10^{-8}, 10^{-9}, 10^{-10}, 10^{-11}, 10^{-12}$; $\toltt = 10^{-3}, 10^{-4}, 10^{-5}$; $\dampc = 1, 0.001, 0$; and $h = 0.05, 0.025, 0.0125$.
 We only integrate in time over the shorter interval $T = [0, 1]$ due to the volume of computations required.
 The results are shown in \cref{fig:ml-error-2d-nodal-newton-tests}, there is a clear correlation between the magnitudes of the final residuals and the error in $\abs{\mv}$.
@@ -342,6 +339,7 @@ However it should be noted that the non-conservation effects are small enough th
     Evolution of $\errml$
     with IMR, both quadratures, and both element shapes
     for the 2D nonuniform field problem.
+    % ??ds fix y axis label!
 }
   \label{fig:ml-error-triangle-mesh}
 \end{figure}
@@ -429,7 +427,7 @@ No coupling with the FEM/BEM calculations is required for this explicit step bec
 
 A structured mesh consisting of cuboid elements is used due to the simple geometry of the problem and the fact that we have observed issues with geometric integration on tetrahedral elements (see \cref{sec:triangular-meshes}).
 In the $z$ direction (out of the thin film plane) a single layer of elements is used at all refinements.
-This is a standard approach, and is expected to give acceptable resolution because the exchange length of the material (the length scale over which the magnetisation can vary strongly) is around twice the thickness.
+This is a standard approach, and is expected to give acceptable resolution because the exchange length of the material (the length scale over which the magnetisation can vary strongly) is around twice the thickness of the film. % ??ds Citation needed  -- Andrew
 The number of elements along the $x$ and $y$ axes, denoted $n_x$ and $n_y$, is varied but the ratio is fixed at $n_x = (500/125) n_y$ so that the element edge lengths in each direction are identical.
 We use $n_x=75,100,125$, which gives edge lengths of 1.17, 0.89 and 0.70 exchange lengths respectively.
 
@@ -624,7 +622,7 @@ The various other example problems covered in this chapter required similar numb
 
 
 We do not explore the total solve times of the various methods for this example.
-The solve times are dominated by the calculations involving the BEM matrix due to the fact that we have not used a hierarchical matrix representation of the dense block and the extremely large number of boundary nodes.
+The solve times are dominated by the calculations involving the BEM matrix due to the fact that we have not used a hierarchical matrix representation of the dense block (because \hlib is only compatible with triangular elements) and the extremely large number of boundary nodes.
 Hence any timing results would be meaningless for practical problems in which the FEM/BEM method is appropriate.
 
 
