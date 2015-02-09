@@ -390,12 +390,12 @@ The adaptive algorithm should produce time steps that oscillate in time with the
 
 \begin{figure}
   \centering \includegraphics[width=1\textwidth]{plots/aimr_odes_traces/damped_oscillation-errornormsvs-dtsvs-tracevaluesvstimes}
-  \caption{Absolute error, time step size and computed solutions for the oscillatory, damped example ODE with exact solution $y(t) = e^{-0.5t} \sin(2\pi t)$.}
+  \caption{Absolute error, time step size and computed solutions for the oscillatory, damped example ODE with exact solution $y(t) = e^{-\beta t} \sin(\omega t)$.}
   \label{fig:imr-osc-example}
 \end{figure}
 
 % ??ds should maybe add derivation of y''' ? or even just write it in?
-The ODE was solved with parameters $\omega = 2 \pi$ and $\beta = 0.5$, the results are shown in \cref{fig:imr-osc-example}.
+The ODE was solved with parameters $\omega = 2$ and $\beta = 0.5$, the results are shown in \cref{fig:imr-osc-example}.
 All three methods have similar errors and time step sizes.
 The IMR method chooses slightly smaller steps than TR (which explains the slightly lower error magnitudes).
 BDF2 has the worst errors as expected because the coefficient of the main LTE term is the largest (see \cref{sec:deriv-local-trunc}).
