@@ -683,45 +683,60 @@ An interesting technique to maintain the condition $\abs{\mv} = 1$ was introduce
 The idea is that instead of solving the standard LLG equation we solve the modified ``self-correcting'' equation
 \begin{equation}
   \label{eq:sc-ll}
-  (1 + \dampc^2) \dmdt = -\mxh  -\dampc \mxmxh + \scc \mv \bigb{1 - \abs{\mv}^2},
+  \dmdt = -\frac{1}{(1 + \dampc^2)}\mxh  -\frac{\dampc}{(1 + \dampc^2)} \mxmxh
+  + \scc \mv \bigb{1 - \abs{\mv}^2},
 \end{equation}
 where the final term has been added, and $\scc$ is some constant which must be chosen.
 The motivation behind this is that if, after a step, $\abs{\mv} > 1$ then during the next step there will be a an additional term in $\dmdt$ of $-\scc \mv \abs{1 - \abs{\mv}^2}$.
 As this additional term is in the direction $-\mv$ it modifies the magnetisation length in the direction of $\abs{\mv} = 1$.
 Similarly if $\abs{\mv} < 1$ there is a small additional term in the direction of $+\mv$.
 
-%??ds move derivation to LL/LLG section and only reference it from here?
-Note that \cref{eq:sc-ll} uses the Landau-Lifshitz form of the LLG.
-We can derive the equivalent self correcting term for the LLG form as follows.
-We begin with the ansatz (\ie a guess)
-\begin{equation}
-  \dmdt = - \mv \times \hv + \dampc \mv \times \dmdt + \scc \mv \bigb{1 - \abs{\mv}^2},
-  \label{eq:sc-llg}
-\end{equation}
-then, following the standard, derivation for converting from the LLG form to the LL form \cite[181]{Aharoni1996}, we take $\mv \times$ on both sides of \cref{eq:sc-llg} to find
-\begin{equation}
-  \mv \times \dmdt = - \mv \times \bigb{\mv \times \hv}
-  + \dampc \mv \times \bigb{\mv \times \dmdt}
-  + \scc \bigb{\mv \times \mv} \bigb{1 - \abs{\mv}^2}.
-  \label{eq:106}
-\end{equation}
-The final term in \cref{eq:106} is zero by the definition of the cross product.
-Using the double cross product identity $ \av \times \bigb{\bv \times \cv} = \bv (\av \cdot \cv) - \cv (\av \cdot \bv)$ and the fact that $\dmdt \cdot \mv = 0$ the second term becomes
-\begin{equation}
-  \label{eq:107}
-  \dampc \mv \times \bigb{\mv \times \dmdt}
-  = \dampc \mv (\mv \cdot \dmdt) - \dampc\dmdt (\mv \cdot \mv)
-  = -\dampc \dmdt.
-\end{equation}
-Hence by combining \cref{eq:105,eq:106,eq:107} we obtain
-\begin{equation}
-  \dmdt = - \mv \times \hv
-  - \dampc \mv \times \bigb{\mv \times \hv} -\dampc^2 \dmdt
-  + \scc \mv \bigb{1 - \abs{\mv}^2},
-\end{equation}
-which is exactly \cref{eq:sc-ll} so \cref{eq:sc-llg} and \cref{eq:sc-ll} are equivalent.
+The potential advantage of this method over the standard renormalisation is that the time integration scheme ``knows'' about the renormalisation, and so could potentially provide more accurate error estimates ??ds avoids the need to restart? (but I've never needed to restart anyway...)
 
-??ds but this is only for the case when m is conserved! Which is obvious since we are adding a zero term to both equations...
+A potential downside is that the resulting system is ``more'' non-linear than the standard LL/LLG.
+This could mean that additional steps are needed for the non-linear solver to converge and could have a fairly large impact on computation times.
+
+Another downside is that this is more complex to implement than the standard renormalisation method: it requires the discretisation of an additional term, as well as the derivation of its Jacobian contribution.
+
+A third issue is the selection of an appropriate value for the additional parameter $\scc$ must be chosen.
+Too large and it may cause non-physical oscillations, reduced non-linear solver convergence and other issuse.
+Too small and the benefits of renormalisation are lost.
+There is no research on appropriate values for $\scc$. % ??ds show some in appendix?
+
+
+
+% %??ds move derivation to LL/LLG section and only reference it from here?
+% Note that \cref{eq:sc-ll} uses the Landau-Lifshitz form of the LLG.
+% We can derive the equivalent self correcting term for the LLG form as follows.
+% We begin with the ansatz (\ie a guess)
+% \begin{equation}
+%   \dmdt = - \mv \times \hv + \dampc \mv \times \dmdt + \scc \mv \bigb{1 - \abs{\mv}^2},
+%   \label{eq:sc-llg}
+% \end{equation}
+% then, following the standard, derivation for converting from the LLG form to the LL form \cite[181]{Aharoni1996}, we take $\mv \times$ on both sides of \cref{eq:sc-llg} to find
+% \begin{equation}
+%   \mv \times \dmdt = - \mv \times \bigb{\mv \times \hv}
+%   + \dampc \mv \times \bigb{\mv \times \dmdt}
+%   + \scc \bigb{\mv \times \mv} \bigb{1 - \abs{\mv}^2}.
+%   \label{eq:106}
+% \end{equation}
+% The final term in \cref{eq:106} is zero by the definition of the cross product.
+% Using the double cross product identity $ \av \times \bigb{\bv \times \cv} = \bv (\av \cdot \cv) - \cv (\av \cdot \bv)$ and the fact that $\dmdt \cdot \mv = 0$ the second term becomes
+% \begin{equation}
+%   \label{eq:107}
+%   \dampc \mv \times \bigb{\mv \times \dmdt}
+%   = \dampc \mv (\mv \cdot \dmdt) - \dampc\dmdt (\mv \cdot \mv)
+%   = -\dampc \dmdt.
+% \end{equation}
+% Hence by combining \cref{eq:105,eq:106,eq:107} we obtain
+% \begin{equation}
+%   \dmdt = - \mv \times \hv
+%   - \dampc \mv \times \bigb{\mv \times \hv} -\dampc^2 \dmdt
+%   + \scc \mv \bigb{1 - \abs{\mv}^2},
+% \end{equation}
+% which is exactly \cref{eq:sc-ll} so \cref{eq:sc-llg} and \cref{eq:sc-ll} are equivalent.
+
+% ??ds but this is only for the case when m is conserved! Which is obvious since we are adding a zero term to both equations...
 
 
 This method is used by \nmag \cite{fangor-donahue-priv-comm} \cite{Fischbacher2009}.
