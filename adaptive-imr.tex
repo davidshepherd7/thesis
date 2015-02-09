@@ -255,6 +255,7 @@ So the cost of \cref{eqn:ebdf-coeffs} is trivial by comparison with, for example
 
 
 \subsection{Computing the next step size}
+\label{sec:computing-next-step}
 
 We use a standard method \cite[268]{GreshoSani} for computing the next step size from the ratio of the LTE estimate and a target local truncation error $\toltt$
 \begin{equation}
@@ -270,7 +271,7 @@ We also impose some additional constraints to handle extreme cases.
 If the ratio $\frac{\dtx{n+1}}{\dtn}$ is too small, \ie if the step just taken was much too large to attain the desired accuracy, then we reduce the step size by a factor of 2 and repeat the $n$-th step.
 We limit $\frac{\dtx{n+1}}{\dtn}$ to 4 to help improve stability.
 
-Note that some alternative strategies try to minimise the number of modifications to the time step size \cite[Chap. 6]{Iserles2009}, in particular this strategy is used in the CVODE library \cite[Sec. 2.1]{cvode-manual}.
+Note that some alternative strategies try to minimise the number of modifications to the time step size \cite[Chap. 6]{Iserles2009}, in particular this strategy is used in the \cvode library \cite[Sec. 2.1]{cvode-manual}.
 The motivation for this is the use of a modified Newton-Raphson method where the Jacobian is not recalculated at each Newton step.
 In the case of ODE solvers this is extremely beneficial, because the Jacobian is usually dense and direct methods are used to solve it -- by keeping the Jacobian constant the number of solves and Jacobian assemblies are greatly reduced.
 The downside is a reduction in the convergence speed of the Newton method.
@@ -340,6 +341,9 @@ One effect of this is that the baseline numerical error as seen by the time inte
 Unless otherwise specified all examples in \thisref{sec:aimr-testing} use an absolute Newton tolerance of $\ntol = 10^{-8}$, an initial time step of $\dtx{0} = 10^{-5}$, and an adaptive integrator tolerance of $\toltt = 10^{-4}$.
 Any initial conditions required are calculated from the exact solutions.
 
+The BDF2 algorithm used here is extremely similar to the method used by the \cvode library for stiff problems when the order is set to 2\footnote{By default \cvode allows the order of the method to vary.
+  However previous research has shown that for micromagnetic problems it is beneficial to always use the second order method \cite{Suess2002}.} \cite{cvode-manual}.
+The key difference is in the step selection, \cvode keeps the step size fixed where possible as described in \cref{sec:computing-next-step}.
 
 \subsection{A polynomial example}
 \label{sec:imr-polynomial-example}
@@ -414,6 +418,20 @@ The consistent decrease in the error norms indicates that all of the adaptive me
   \caption{Behaviour of the global error norm with varying tolerance for the oscillatory, damped example ODE with exact solution $y(t) = e^{-\beta t} \sin(\omega t)$.}
   \label{fig:imr-osc-example-scatter}
 \end{figure}
+
+% ??ds first draft
+Finally in \cref{fig:vode-osc-example} we compare the time step selections used by \oomph's implementation of the adaptive BDF2 algorithm with \vode's implementation.
+As noted previously \vode prefers to keep time steps constant where possible which results in irregular discontinuous changes in the step size.
+Despite this difference it can be seen that the amplitude and period of the oscillations in the selected time steps is the same.
+\begin{figure}[ht]
+  \centering
+  \includegraphics[width=\textwidth]{plots/scipyode/vode-bdf2}
+  \caption{Comparison of the \oomph and \vode implementations of BDF2 for the oscillatory, damped example ODE with exact solution $y(t) = e^{-\beta t} \sin(\omega t)$.
+with beta = 0.1, omega = 2 ??ds make them the same in the two examples
+    Absolute error, time step size and computed solutions against time are shown.}
+  \label{fig:vode-osc-example}
+\end{figure}
+
 
 \subsection{A stiff example}
 \label{sec:imr-stiff-example}
