@@ -182,8 +182,7 @@ Instead, more advanced techniques are used which treat the large number of integ
 
 The fast Fourier transform method (FFT) is a simple and efficient method for calculating the magnetostatic field when the discrete magnetisations are positioned on a regular lattice.
 
-% ??ds more detail "convolution" -- Andrew
-The calculation of $\Hms$ in \cref{eq:Hmsint} can be thought of as applying a convolution to the list of discretised $\mv$ values.
+The calculation of $\Hms$ in \cref{eq:Hmsint} can be thought of as applying a convolution to the list of discretised $\mv$ values in the frequency domain.
 The matrix corresponding to this convolution is only dependent on the geometry, hence it can be precomputed and its Fourier transform precalculated.
 Then all that is needed to calculate the magnetostatic field is to apply a Fourier transform to $\Mv$, compute the convolution and transform the result back into the time domain by applying the inverse Fourier transform.
 Because of the regularity, applying the convolution in the frequency domain is very fast and hence the complexity of the calculation is limited by the complexity of a fast Fourier transform.
@@ -653,7 +652,7 @@ Note that this is not related to the spurious damping discussed in \cref{sec:num
 
 A simple method of dealing with the constraint is to re-normalise each value of $\mv$ after some number of time steps, or when the error in $\abs{\mv}$ exceeds some tolerance \cite{Fidler2000}.
 However this approach fundamentally changes the system of equations being solved in a non-linear and unpredictable manner \cite{Lewis2003}.
-Renormalisation after a tolerance is used in \magpar \cite{magpar-source-code}\footnote{The function of interest is in the file \texttt{src/util/renormvec.c}, it is called by \texttt{CheckIterationLLG} (which is the standard LLG solver iteration function) with tolerance \texttt{renormtol}.} with a default tolerance of $\E{-2}$, while renormalisation after every step is used in \oommf's 4th order Runge-Kutta scheme \cite{fangor-donahue-email}.
+Renormalisation after a tolerance is used in \magpar\footnote{Based on the source code of version 0.9. The function of interest is in the file \texttt{src/util/renormvec.c}, it is called by \texttt{CheckIterationLLG} (which is the standard LLG solver iteration function) with tolerance \texttt{renormtol}.} with a default tolerance of $\E{-2}$, while renormalisation after every step is used in \oommf's 4th order Runge-Kutta scheme \cite{fangor-donahue-email}.
 
 Another way to avoid this problem is to use a spherical polar coordinate system $(r,\theta,\phi)$ for the magnetisation.
 In these coordinates \cref{eq:LLG} can be expressed in terms of only the angles $(\theta,\phi)$ representing the direction of $\mv$ and the length constraint is automatically enforced since
@@ -672,7 +671,7 @@ Two more approaches that are currently used in mainstream models are: the use a 
 These approaches are discussed in more detail \cref{sec:sc-llg} and \cref{sec:renorm-to-sphere} respectively.
 
 Geometric time integration schemes aim to solve the issue of length conservation by constructing a scheme that naturally preserves the value of $\abs{\mv}$.
-Some examples of such schemes are based on IMR \cite{DAquino2005}, or a semi-implicit extension of IMR using extrapolations of the effective field \cite{Spargo2003,Serpico2001}.
+Some examples of such schemes are based on IMR \cite{DAquino2005}, or a semi-implicit modification of the IMR using explicit extrapolations of some or all effective field terms \cite{Spargo2003,Serpico2001,Mentink2010}.
 Alternatively, geometric integration methods based on Cayley transforms can be used \cite{Lewis2003,Bottauscio2011}.
 
 % ??ds first draft
@@ -820,9 +819,7 @@ For example, in the case of BDF1 we have
 
 Notice that the only requirement in the derivation of \cref{eq:63} is to use the midpoint approximation of magnetisation in the LLG itself.
 The derivation does not make any assumption about how the effective field is approximated.
-This explains why various semi-implicit modifications to IMR which use explicit calculations of effective fields also conserve the magnetisation length.
-
-% ??ds explain what various semi-implicit modifications to IMR are  -- Andrew
+This explains why various semi-implicit modifications to IMR \cite{Spargo2003,Serpico2001,Mentink2010} which use explicit calculations of effective fields also conserve the magnetisation length.
 
 
 \subsection{Energy conservation/decay}
@@ -831,7 +828,7 @@ This explains why various semi-implicit modifications to IMR which use explicit 
 Another geometrical property of the Landau-Lifshitz-Gilbert equation, also discussed in \cref{sec:prop-cont-llg}, is the conservation or monotonic decay of energy depending on the value of the damping constant $\dampc$ (and the applied field $\happ$).
 
 IMR also conserves energy when $\dampc = 0$ and it ensures that the energy is a decreasing function of time when $\dampc > 0$ and $\happ$ is constant \cite{DAquino2005}, a proof of this property is given in the next section.
-The other geometric integration schemes mentioned in \cref{sec:ensuring-constant-mv}, and in particular the semi-implicit modifications of IMR, do not have this property.
+The other geometric integration schemes mentioned in \cref{sec:ensuring-constant-mv}, and in particular the semi-implicit modifications of IMR \cite{Spargo2003,Serpico2001,Mentink2010}, do not have this property.
 
 
 \subsubsection{Proof of energy property for the IMR discretised macrospin model}
@@ -1292,7 +1289,7 @@ This is the tolerance of the linearisation method used if the problem is non-lin
 
 Additionally the derivations in \cref{sec:proof-magn-length-ode-imr-llg,sec:proof-energy-prop} assume that all fields are calculated at the midpoint without any additional approximations, \ie that we are using a fully implicit (monolithic) method.
 In contrast to this, some models use an explicit approximation to the magnetostatic field in order to avoid a dense contribution due to the long-range magnetostatic interactions\footnote{At least a dense sub-block arises from all accurate and commonly used magnetostatic calculation methods, in particular: FEM/BEM, FFT and FMM. See \cref{sec:magn-field-calc} for more details.} in the non-linear solve.
-Unfortunately, in this case the energy properties will be lost due to the replacement of $\hopb{\mpm}$ by an alternative approximation (in a similar way to the semi-implicit modification of IMR).
+Unfortunately, in this case the energy properties will be lost due to the replacement of $\hopb{\mpm}$ by an alternative approximation (in a similar way to the semi-implicit modifications of IMR).
 However, the magnetisation length property will be retained because it only relies on $\mv$ itself being calculated implicitly, and not the effective field.
 
 One way to allow a completely implicit treatment of the magnetostatic field without a dense contribution was explored by d'Aquino \etal \cite{DAquino2005}, and is also used by \nmag \cite{fangor-in-viva} and ??ds femme and magpar?.

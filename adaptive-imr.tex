@@ -97,7 +97,7 @@ In order to perform the algebraic rearrangements to obtain the LTE using a Milne
 However the term can only appear in the LTE expression for a time integrator which uses the midpoint approximation for $\yv$.
 It turns out that the only such second order time integrator is IMR itself.
 So other techniques would be needed to approximate this error term in the context of a Milne-device-like method.
-% ??ds could be wrong, see notes in thesis -- "general linear methods"
+% maybe could actually be other such methods, see notes in paper copy of thesis -- "general linear methods"
 
 An alternative approach, commonly used in Runge-Kutta time integrators, is to repeat the calculation using a higher order method and compare the two answers to directly obtain an LTE estimate \cite[165]{HairerWanner}.
 However evaluations of the derivative function ($\fv$ in \cref{eq:43}) are expensive, and the calculation of a single step of a high order Runge-Kutta method requires a number of such evaluations.
@@ -398,7 +398,6 @@ The adaptive algorithm should produce time steps that oscillate in time with the
   \label{fig:imr-osc-example}
 \end{figure}
 
-% ??ds should maybe add derivation of y''' ? or even just write it in?
 The ODE was solved with parameters $\omega = 2$ and $\beta = 0.5$, the results are shown in \cref{fig:imr-osc-example}.
 All three methods have similar errors and time step sizes.
 The IMR method chooses slightly smaller steps than TR (which explains the slightly lower error magnitudes).

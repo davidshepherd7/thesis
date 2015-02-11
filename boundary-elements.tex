@@ -408,7 +408,8 @@ For all points $\yv$ in the element this term is zero by the definition of $\nv$
 For the case when $\xv_i$ is outside the element this is not necessarily true.
 In particular: elements near sharp corners of a domain may be very close to a node that is not in the plane of the element (\ie such that $\nv(\yv) \cdot (\yv - \xv_i) \neq 0$), resulting in a \emph{near}-singular integral.
 This means that care must be taken in order to evaluate the integrals accurately.
-% ??ds what kind of near singular integral?  -- Andrew  I didn't know there were kinds... leave this alone?
+% what kind of near singular integral? -- Andrew. Well, it depends on the
+% type of the singularity, as described in the previous section.
 
 
 \subsection{Analytical solutions}
@@ -515,7 +516,10 @@ However, it is very useful when testing code to be able to run 2D simulations si
 It is also sometimes useful to be able to use structured quadrilateral meshes for simple geometries and for testing purposes.
 For such meshes an adaptive numerical quadrature able to accurately integrate $\bmint$ is appropriate.
 It is likely that similar analytical results could be derived for each of these cases, but it is simpler and more general to use a numerical approach instead.
-% ??ds Has this been done? Ref? -- Andrew No idea... hard to find references for stuff this old and obscure...
+% Has this been done? Ref? -- Andrew No idea, but from looking through my
+% BEM textbooks it looks like analytical solutions are only well known for
+% constant elements (mentioned in Wrobel2002, chapter on numerical
+% integration).
 
 As discussed in \cref{sec:bem-singularity} the integral $\bmint$ is non-singular, so no special techniques are needed for its integration (other than what is needed to attain good accuracy).
 As such an adaptive quadrature method can effectively calculate the integrals.
@@ -537,7 +541,7 @@ However, for simplicity, we have not implemented the reuse of knot values.
 
 % ??ds first draft
 The implementation of this algorithm in \oomph uses standard Gaussian quadrature (as mentioned in \cref{sec:numer-eval-integrals}) with $\tolq = 10^{-8}$, starting orders of $n_1=2$, $n_2=4$, and a maximum order of $256$.
-These parameters gave accuracies of ??ds when compared with the analytical formula and gave sufficiently fast computation times that the time spent computing these integrals is not a major component of the overall computation time.
+These parameters gave good accuracy\footnote{Errors of around $\tolq$ when compared with the analytical formula for triangular elements.} and gave sufficiently fast computation times that the time spent computing these integrals is not a major component of the overall computation time.
 As such we did not spend much time optimising these values.
 
 

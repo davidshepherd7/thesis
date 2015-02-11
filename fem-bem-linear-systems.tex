@@ -65,7 +65,7 @@ However it also means that we are no longer using the time integration methods d
 The second approach, described in \cref{sec:fully-implicit-bem}, is to construct a linear solver which can efficiently handle the dense block.
 We present a novel solver which consists of a Krylov solver combined with a preconditioner and an efficient representation of the BEM block.
 This approach has the benefit that all of the properties of the original time integration schemes carry over to the coupled problem.
-In particular when using this approach the IMR retains the energy property described in \cref{sec:proof-energy-prop}, which is the most interesting of its geometrical integration properties.\footnote{A number of integration schemes can obtain length conservation: Cayley transform methods \cite{Lewis2003}, semi-analytical methods \cite{Wiele2010} and various types of semi-implicit midpoint rule methods \cite{Spargo2003,Mentink2010} (including the one described in \cref{sec:semi-implicit-bem}).}
+In particular when using this approach the IMR retains the energy property described in \cref{sec:proof-energy-prop}, which is the most interesting of its geometrical integration properties.\footnote{A number of integration schemes can obtain length conservation: Cayley transform methods \cite{Lewis2003}, semi-analytical methods \cite{Wiele2010} and various types of semi-implicit midpoint rule methods \cite{Spargo2003,Serpico2001,Mentink2010} (including the one described in \cref{sec:semi-implicit-bem}).}
 Additionally it may be useful for stochastic problems (\ie when thermal fields are involved, see \cref{sec:temperature-effects}), since in this case only a few time integration schemes are known to converge to the correct solution.
 The implicit midpoint rule is one of these schemes, but any semi-implicit modification is likely to remove this property \cite{DAquino2006}.
 
@@ -274,7 +274,6 @@ The first preconditioner is very simple: we use a direct solve (using LU decompo
 This preconditioner, while much more efficient than a direct solve including the dense block, still suffers from all the usual problems associated with a direct solver (\ie expensive in both memory and computation time when $\Nn$ is large).
 However, we are interested in its properties as a test of the effectiveness of dropping the $\Gm'$ block from the preconditioner.
 
-% ??ds not sure this is correct actually
 A number of other FEM/BEM based models use an approach similar to preconditioner $\preca$ \cite{Suess2002}, except that the preconditioner is applied using an inner Krylov solver rather than an LU decomposition.
 This makes the computational cost feasible for realistic problems, but has two issues:
 The first is that technically an inner Krylov solve cannot be used as a preconditioner because it does not apply the same operation at each step of the outer solve (since they iterate to convergence rather than using a fixed number of steps) \cite{Saad1993}.
@@ -431,7 +430,7 @@ All experiments are run on a single core (\ie no parallelism is used) of a deskt
 \subsection{Results}
 
 %??ds lots to do in this section, need to replace plots by means + stddev for one thing.
-% ??ds when you do this remember to also change the plots in ch. 8
+% When you do this remember to also change the plots in ch. 8
 
 
 \Cref{fig:its-ilu-decoupled} shows the mean (over a single Newton solve) number of GMRES iterations required to solve the LLG-only system, \cref{eq:llg-jacobian}, using ILU(1) preconditioning (\ie with magnetostatics handled by the semi-implicit approach).
@@ -581,8 +580,7 @@ Based on all these factors we speculate that, with an effective preconditioner f
 \section{Conclusions and future work}
 
 Monolithic (fully implicit) solvers are required for the energy property of IMR, as well as for other properties of implicit time integration schemes including stability and properties important in stochastic problems.
-% ??ds Not really demonstrated this, remove statement?  -- Andrew
-We have demonstrated that a monolithic LLG-magnetostatics solver using GMRES with an effective preconditioner can have a computational cost per linear solve close to that of a semi-implicit method.
+We have demonstrated that a monolithic LLG-magnetostatics solver using GMRES with an effective preconditioner can result in a reasonable computational cost per linear solve.
 The partially-inexact preconditioners $\parinexact{\precb}$ and $\parinexact{\precc}$ are able to reduce the iteration count of GMRES extremely effectively and almost independently of the number of nodes, but the set up cost is high for large matrices.
 However the fully-inexact equivalents, $\inexact{\precb}$ and  $\inexact{\preca}$, which use ILU(1) to approximate the LLG block are ineffective for more than a few thousand nodes (\ie matrices of size $\sim 10,000$).
 Hence cheap, effective and mesh independent preconditioning methods for the LLG block, $\Fm$, are still needed for the monolithic block-preconditioned method discussed here to be effective on general large problems.
