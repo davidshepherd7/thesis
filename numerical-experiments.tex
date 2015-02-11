@@ -429,7 +429,7 @@ No coupling with the FEM/BEM calculations is required for this explicit step bec
 
 A structured mesh consisting of cuboid elements is used due to the simple geometry of the problem and the fact that we have observed issues with geometric integration on tetrahedral elements (see \cref{sec:triangular-meshes}).
 In the $z$ direction (out of the thin film plane) a single layer of elements is used at all refinements.
-This is a standard approach, and is expected to give acceptable resolution because the exchange length of the material (the length scale over which the magnetisation can vary strongly) is around twice the thickness of the film. % ??ds Citation needed  -- Andrew
+This is the standard approach \cite{mumag-website}, and is expected to give acceptable resolution because the exchange length of the material (the length scale over which the magnetisation can vary strongly) is around twice the thickness of the film.
 The number of elements along the $x$ and $y$ axes, denoted $n_x$ and $n_y$, is varied but the ratio is fixed at $n_x = (500/125) n_y$ so that the element edge lengths in each direction are identical.
 We use $n_x=75,100,125$, which gives edge lengths of 1.17, 0.89 and 0.70 exchange lengths respectively.
 

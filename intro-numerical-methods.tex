@@ -653,7 +653,7 @@ Note that this is not related to the spurious damping discussed in \cref{sec:num
 
 A simple method of dealing with the constraint is to re-normalise each value of $\mv$ after some number of time steps, or when the error in $\abs{\mv}$ exceeds some tolerance \cite{Fidler2000}.
 However this approach fundamentally changes the system of equations being solved in a non-linear and unpredictable manner \cite{Lewis2003}.
-Renormalisation after a tolerance is used in \magpar \cite{magpar-source-code}\footnote{The function of interest is in the file \texttt{src/util/renormvec.c}, it is called by \texttt{CheckIterationLLG} (which is the standard LLG solver iteration function) with tolerance \texttt{renormtol}.} with a default tolerance of $\E{-2}$, while renormalisation after every step is used in \oommf's 4th order Runge-Kutta scheme \cite{fangor-donahue-priv-comm}.
+Renormalisation after a tolerance is used in \magpar \cite{magpar-source-code}\footnote{The function of interest is in the file \texttt{src/util/renormvec.c}, it is called by \texttt{CheckIterationLLG} (which is the standard LLG solver iteration function) with tolerance \texttt{renormtol}.} with a default tolerance of $\E{-2}$, while renormalisation after every step is used in \oommf's 4th order Runge-Kutta scheme \cite{fangor-donahue-email}.
 
 Another way to avoid this problem is to use a spherical polar coordinate system $(r,\theta,\phi)$ for the magnetisation.
 In these coordinates \cref{eq:LLG} can be expressed in terms of only the angles $(\theta,\phi)$ representing the direction of $\mv$ and the length constraint is automatically enforced since
@@ -739,13 +739,13 @@ There is no research on appropriate values for $\scc$. % ??ds show some in appen
 % ??ds but this is only for the case when m is conserved! Which is obvious since we are adding a zero term to both equations...
 
 
-This method is used by \nmag \cite{fangor-donahue-priv-comm} \cite{Fischbacher2009}.
+This method is used by \nmag \cite{fangor-donahue-email} \cite{Fischbacher2009}.
 
 % ??ds first draft
 \subsubsection{??ds projection to sphere}
 \label{sec:renorm-to-sphere}
 
-This method is used by \oommf's forward Euler scheme \cite{fangor-donahue-priv-comm}.
+This method is used by \oommf's forward Euler scheme \cite{fangor-donahue-email}.
 
 
 \subsubsection{Conservation of $\abs{\mv}$ by IMR in a macrospin model}
@@ -1295,7 +1295,7 @@ In contrast to this, some models use an explicit approximation to the magnetosta
 Unfortunately, in this case the energy properties will be lost due to the replacement of $\hopb{\mpm}$ by an alternative approximation (in a similar way to the semi-implicit modification of IMR).
 However, the magnetisation length property will be retained because it only relies on $\mv$ itself being calculated implicitly, and not the effective field.
 
-One way to allow a completely implicit treatment of the magnetostatic field without a dense contribution was explored by d'Aquino \etal \cite{DAquino2005}, and is also used by \nmag \cite{??ds private communication? nmag paper?} ??ds and probabaly by femme and magpar but this needs checking.
+One way to allow a completely implicit treatment of the magnetostatic field without a dense contribution was explored by d'Aquino \etal \cite{DAquino2005}, and is also used by \nmag \cite{fangor-in-viva} and ??ds femme and magpar?.
 They used a quasi-Newton method where the dense contribution was simply left out of the Jacobian matrix.
 This greatly slows down the convergence of the non-linear solve: in the example given in the paper 10-14 iterations were needed (compared to $\sim2$ with a full Newton-Raphson method).
 However, in the general case it is not clear that this quasi-Newton method will converge at all!
