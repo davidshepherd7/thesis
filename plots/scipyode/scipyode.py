@@ -23,20 +23,19 @@ def y_exact(t, omega, beta):
     return sp.exp(-beta*t) * sp.sin(omega*t)
 
 initial_dt = 0.1
-tol = 5e-5 # 5* oomph's tol to account for safety factor in VODE
-omega = 2
-beta = 0.1
+tol = 1e-5
+omega= 2
+beta = 0.5
 y0 = 0
 tmax = 20
 
 
-# This is kind of useless because it can't output step sizes...
 def main_ode():
 
     r = spode(f)
     r.set_integrator("vode",
-                     rtol=tol,
-                     # atol=1e-14, # No atol
+                     rtol=0,
+                     atol=tol,
                      method="bdf",
                      with_jacobian=False,
                      first_step=initial_dt,
@@ -97,7 +96,7 @@ def main_ode():
                 pad_inches=0.0,
                 transparent=True)
 
-    # plt.show()
+    plt.show()
 
     return 0
 

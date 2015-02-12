@@ -419,14 +419,16 @@ The consistent decrease in the error norms indicates that all of the adaptive me
 \end{figure}
 
 % ??ds first draft
-Finally in \cref{fig:vode-osc-example} we compare the time step selections used by \oomph's implementation of the adaptive BDF2 algorithm with \vode's implementation.
-As noted previously \vode prefers to keep time steps constant where possible which results in irregular discontinuous changes in the step size.
-Despite this difference it can be seen that the amplitude and period of the oscillations in the selected time steps is the same.
+Finally in \cref{fig:vode-osc-example} we compare the time step selections used by \oomph's implementation of the adaptive BDF2 algorithm with \vode's implementation\footnote{\vode is an older implementation of \cvode in Fortran rather than C.
+We use \vode rather than \cvode because it is easily callable from scipy.
+The newer \cvode has support for iterative linear solvers and parallelism, but uses the same time integration algorithms \cite[1]{cvode-manual}.
+}.
+As noted in \cref{sec:computing-next-step} \vode prefers to keep time steps constant where possible which results in irregular discontinuous changes in the step size.
+Despite this difference it can be seen that the amplitude and period of the oscillations in the selected time steps is identical, and the overall trend to increasing step size is very similar.
 \begin{figure}[ht]
   \centering
   \includegraphics[width=\textwidth]{plots/scipyode/vode-bdf2}
-  \caption{Comparison of the \oomph and \vode implementations of BDF2 for the oscillatory, damped example ODE with exact solution $y(t) = e^{-\beta t} \sin(\omega t)$.
-with beta = 0.1, omega = 2 ??ds make them the same in the two examples
+  \caption{Comparison of the \oomph and \vode implementations of adaptive BDF2 for the oscillatory, damped example ODE with exact solution $y(t) = e^{-\beta t} \sin(\omega t)$.
     Absolute error, time step size and computed solutions against time are shown.}
   \label{fig:vode-osc-example}
 \end{figure}
