@@ -924,7 +924,7 @@ where
     \label{eq:52}
   \end{aligned}
 \end{equation}
-% ??ds Check this derivation, factors of 2?  -- Andrew
+% ??ds fix Check this derivation, factors of 2?  -- Andrew
 Finally, we insert the results of \cref{eq:50,eq:76,eq:52} into \cref{eq:54} to find that the change in the total energy is
 \begin{equation}
   \begin{aligned}
@@ -1138,7 +1138,7 @@ Effective iterative solvers are usually problem specific but can be much more ef
 Direct methods for the solution of linear systems seek exact solutions using methods based on Gaussian elimination.
 The direct method most commonly used in the solution of systems resulting from discretised PDEs is LU decomposition.
 
-% ??ds Citation for this?  -- Andrew
+% ??ds fix Citation for robustness?  -- Andrew
 The main advantage of direct methods is their robustness: for reasonably non-singular systems and given enough time a direct solver will be able to solve the system.
 However as matrix sizes become large direct solvers become increasingly demanding in both time and memory.
 The problem is that the factors of a typical sparse matrix can be significantly more dense than the original matrix, \ie there is some amount of fill-in.
@@ -1292,7 +1292,7 @@ In contrast to this, some models use an explicit approximation to the magnetosta
 Unfortunately, in this case the energy properties will be lost due to the replacement of $\hopb{\mpm}$ by an alternative approximation (in a similar way to the semi-implicit modifications of IMR).
 However, the magnetisation length property will be retained because it only relies on $\mv$ itself being calculated implicitly, and not the effective field.
 
-One way to allow a completely implicit treatment of the magnetostatic field without a dense contribution was explored by d'Aquino \etal \cite{DAquino2005}, and is also used by \nmag \cite{fangor-in-viva} and ??ds femme and magpar?.
+One way to allow a completely implicit treatment of the magnetostatic field without a dense contribution was explored by d'Aquino \etal \cite{DAquino2005}, and is also used by \nmag \cite{fangor-in-viva} and ??ds fix femme and magpar?.
 They used a quasi-Newton method where the dense contribution was simply left out of the Jacobian matrix.
 This greatly slows down the convergence of the non-linear solve: in the example given in the paper 10-14 iterations were needed (compared to $\sim2$ with a full Newton-Raphson method).
 However, in the general case it is not clear that this quasi-Newton method will converge at all!

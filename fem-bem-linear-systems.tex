@@ -46,7 +46,7 @@ This method is expected to be efficient for medium sized problems and/or small t
 However the effectiveness is strongly dependent on the diagonal dominance of the matrix.
 As the volume of the elements decreases or the time step size increases the matrix becomes less diagonally dominant and the effectiveness of the preconditioner will decrease.
 Hence this method is not expected to scale optimally to fine meshes or to be very robust with respect to varying parameters.
-% ??ds Hans wants to add note that this is what nmag, and probably magpar + femme do, find citations?!
+% ??ds fix Hans wants to add note that this is what nmag, and probably magpar + femme do, find citations?!
 
 % Unfortunately we have not had time to research more effective solvers for the LLG system.
 % maybe write something abount what these might be? block based AMG smoothers (as used for fixed point)? block preconditioners with AMG underlying? [Milan/Matthias: what's the big difference?]
@@ -389,7 +389,7 @@ The problem geometry and initial conditions are illustrated in \cref{fig:cube-in
     The arrows represent the magnetisation direction at each node of the finite element mesh.
     Colour represents the magnitude of $m_x$.
     The semi-transparent pale green grid shows the finite element mesh.
-    % ??ds Add axis labels in the plot -- Andrew
+    % ??ds fix Add axis labels in the plot -- Andrew
   }
   \label{fig:cube-initial-condition}
 \end{figure}
@@ -429,7 +429,7 @@ All experiments are run on a single core (\ie no parallelism is used) of a deskt
 
 \subsection{Results}
 
-%??ds lots to do in this section, need to replace plots by means + stddev for one thing.
+%??ds fix lots to do in this section, need to replace plots by means + stddev for one thing.
 % When you do this remember to also change the plots in ch. 8
 
 
