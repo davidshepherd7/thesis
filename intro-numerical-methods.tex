@@ -1143,10 +1143,22 @@ The main advantage of direct methods is their robustness: for reasonably non-sin
 However as matrix sizes become large direct solvers become increasingly demanding in both time and memory.
 The problem is that the factors of a typical sparse matrix can be significantly more dense than the original matrix, \ie there is some amount of fill-in.
 This means that the time and memory requirements for the solution rarely scale as $\order{\nrow}$ except for very specific matrices.
-The exact level of fill-in depends on the sparsity pattern of the initial matrix, but the final computational complexity is typically between $\order{\nrow^{3/2}}$ and $\order{\nrow^2}$ \cite{??ds: need citation for this for corrections, Iserles?}.
+However the exact level of fill-in depends on the sparsity pattern of the initial matrix, and so a single simple complexity estimate cannot be given.
 
-For three dimensional PDE problems there are significantly more non-zero entries in each row than in two dimensions due to the increased connectivity of the discrete points.
-Hence the performance of a direct solver on three dimensional problems is much worse than for comparable problems in two dimensions, even if $\nrow$ remains the same.
+% ??ds first draft
+The total computational complexity of LU decomposition for a banded matrix is $\order{s^2 \nrow}$, where $s$ is the bandwidth (\ie $s$ such that the matrix entries $a_{kl} = 0$ if $\abs{k - l} > s$) \cite[236]{Iserles2009}.
+As an example we consider the complexity for the system resulting from the discretisation of a PDE in two dimensions on an $a \times a$ grid by the finite element or finite difference method.
+In this case $s \propto a$ because there is an interaction between nodes in neighbouring rows and there are $a$ nodes per row.
+Since $a \propto \sqrt{\nrow}$ the overall complexity is $\order{\nrow^2}$.
+
+% ??ds first draft
+For three dimensional PDE problems there are significantly more non-zero entries in each row due to the increased connectivity of the nodes.
+For the three dimensional equivalent of the above example (an $a \times a \times a$ grid) $s \propto a^2$ and $a \propto \nrow^{1/3}$, hence the complexity is $\order{\nrow^{7/3}}$.
+So the performance of a direct solver on three dimensional problems is much worse than for comparable problems in two dimensions, even if $\nrow$ remains the same.
+
+% ??ds first draft
+For general unstructured meshes the derivation would be much more complex.
+For higher order finite element methods the bandwidth of the resulting matrices increases.
 
 \subsection{Krylov solvers}
 \label{sec:krylov-solvers}
