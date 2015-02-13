@@ -1206,10 +1206,8 @@ Also note that for the test function given in \cref{eq:84} the value of $\sumbas
   \end{aligned}
 \end{equation}
 and so the bound may be lose for very large numbers of nodes.
-However this a pessimistic bound, the actual error is not likely to be this large.
-% ??ds Why is this a pessimistic bound, evidence  -- Andrew
-% because it essentially assumes that none of the coefficients of the basis functions will cancel each other out, ie all positive or all negative. In reality this would only occur in extremely symmetric cases.
-% might need to remove?
+However this a pessimistic bound because it assumes that every coefficient of the basis expansion has the same sign, \ie all effective fields are in the same direction over all of $\magd$, and $\dmdt$ is in the opposite direction over all of $\magd$.
+The actual error is not likely to be this large except in extremely symmetric cases.
 
 
 The restriction of $\testv \in \sob_h^2(\magd)$ introduced at the start of this section can be relaxed by considering an implicitly defined discrete Laplacian operator defined for $\av \in \sob^1(\magd)$, $\bv \in \ts$ as
