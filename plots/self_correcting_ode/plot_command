@@ -1,1 +1,0 @@
-/home/david/oomph-lib/user_drivers/micromagnetics/control_scripts/parse.py experiments/parameter_sweeps/ode_sc_ll --skip-failed --thesis --save-to-dir /home/david/Dropbox/phd/reports/ongoing-writeup/plots/self_correcting_ode -p ml-only-log -p energy-only-log -l=-sc-beta --not-filter '("-ts", "imr")' --not-filter '("-renormalise", 1)' -s=-damping -v mean-newt

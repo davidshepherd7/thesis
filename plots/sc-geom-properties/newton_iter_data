@@ -1,0 +1,14 @@
+Run command:
+
+parse /mnt/data/optoomph/user_drivers/micromagnetics/experiments/parameter_sweeps/ode_llg_sc_gi -v mean-newt -f '("-damping", 0.01)' -l=-ts -l=-sc-beta
+
+Gives:
+
+-ts; -sc-beta; mean_of_nonzeros of "n_newton_iters"; 
+bdf2; 0; 1.99983330555; 
+bdf2; 0.1; 2.0; 
+bdf2; 1; 2.46307717953; 
+bdf2; 10; 2.68344724121; 
+bdf2; 100; 3.13352225371; 
+bdf2; 1000; 3.11774744027; 
+imr; 0; 2.0; 

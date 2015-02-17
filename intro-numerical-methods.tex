@@ -363,6 +363,7 @@ All three are implicit schemes for reasons of stability, as mentioned in \cref{s
 
 The \emph{second order backwards difference formula} (BDF2) is \cite[715]{GreshoSani}:
 \begin{equation}
+  \label{eq:bdf2-definition}
   \frac{\yv_{n+1} - \yv_n}{\dtn} = \frac{\dtn}{2\dtn + \dtx{n-1}} \frac{\yv_n - \yv_{n-1}}{\dtx{n-1}}
   + \frac{\dtn + \dtx{n-1}}{2\dtn + \dtx{n-1}} \fv(t_{n+1}, \yv_{n+1}).
 \end{equation}

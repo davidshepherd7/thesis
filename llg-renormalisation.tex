@@ -8,11 +8,21 @@ We compare renormalisation after every step with the methods used to achieve con
 
 We use fixed step BDF2 with step sizes of $\dtn = 0.1$ and a Newton-Raphson tolerance of $\ntol = 10^{-8}$ unless otherwise specified.
 We choose BDF2 for these experiments because TR is equivalent to IMR for the undamped ODE LLG problem, and so could be expected to show some geometric integration properties.
+In addition re-normalising the history values of TR, as described in \cref{sec:containing-renorm-impl} is more difficult as one of the stored values is a derivative (in our implementation, see \cref{eq:impl-tr}) which would need to be recalculated using the newly re-normalised magnetisation values.
 
 \subsection{Renormalisation after a tolerance}
 \label{sec:renorm-after-toler}
 
 \newcommand{\mltol}{\epsilon_{\mathrm{ml}}}
+
+If the error in the magnetisation length, $\errml$, is less than the tolerance, $\mltol$, then nothing is done and the integration continues.
+On the other hand if $\errml > \mltol$ then we set the current value of the magnetisation, $\mv_{n+1}$ to $\mv_{n+1}/\abs{\mv_{n+1}}$, additionally we perform the same renormalisation for each of the history values required by BDF2 (\ie $\mv_n$ and $\mv_{n-1}$).
+\label{sec:containing-renorm-impl}
+
+
+Note that all values are output after any renormalisation has taken place.
+??ds should/could I change this?
+
 
 \begin{figure}
   \centering
@@ -44,7 +54,7 @@ In both the damped and undamped cases, the use of the intermediate tolerance val
 In the undamped case with $\mltol = 10^{-2}$ the error in the magnetisation length never reaches the tolerance, and so the behaviour is identical to no renormalisation.
 In the damped case $\mltol = 10^{-2}$ is reached and the behaviour is similar to that of $\mltol = 10^{-6}$, except that the oscillations begin at a later time.
 
-??ds why are there oscillations? Renorm induces so much error that it swings right back up? Possibly we should be doing something to the history values as well?
+Note that for $\mltol = 10^{-6}$ and times $t \gtrsim 280$ the magnetisation is renormalised after almost every step (hence the small error values).
 
 \begin{figure}
   \centering
@@ -80,7 +90,7 @@ When $\mltol = 10^{-6}$ we see an error similar to that for the always renormali
 Finally in \cref{fig:tol-renorm-convergence} we show the convergence of the method (in terms of the error in the switching time) for the damped case as the step size is reduced.
 It can be seen that the $\mltol=10^{-2}$ or no renormalisation gives slightly worse errors for large step sizes than the tighter magnetisation length tolerances.
 
-??ds add more intermediate tolerances?
+??ds add more intermediate tolerances? But we need to output values before renormalising to see anything in this case... I think intermediate tols (less than e-6) are basically the same as always renorm.
 
 
 \subsection{The self-correcting LLG}
@@ -88,12 +98,12 @@ It can be seen that the $\mltol=10^{-2}$ or no renormalisation gives slightly wo
 
 The self correcting parameter $\scc = 0, 0.1, 1, 10, 100, 1000$, larger values were not used because the Newton-Raphson method began to fail to converge within ten steps.
 
-For comparison we also show plots using IMR, with Newton tolerance $\ntol=10^{-12}$ (recall that a sharp linearisation tolerance is required for IMR to attain good geometric integration properties).
+% For comparison we also show plots using IMR, with Newton tolerance $\ntol=10^{-12}$ (recall that a sharp linearisation tolerance is required for IMR to attain good geometric integration properties).
 
 
 \begin{figure}
   \centering
-  \includegraphics[width=0.8\textwidth]{{{plots/self_correcting_ode/0.01-mlengtherrormaxesvstimes}}}
+  \includegraphics[width=0.8\textwidth]{{{plots/sc-geom-properties/0.01-mlengtherrormaxesvstimes}}}
   \caption{
     Error in magnetisation length against time
     for the ODE self-correcting LLG problem
@@ -106,7 +116,7 @@ For comparison we also show plots using IMR, with Newton tolerance $\ntol=10^{-1
 
 \begin{figure}
   \centering
-  \includegraphics[width=0.8\textwidth]{plots//self_correcting_ode/0-mlengtherrormaxesvstimes.pdf}
+  \includegraphics[width=0.8\textwidth]{plots//sc-geom-properties/0-mlengtherrormaxesvstimes.pdf}
   \caption{
     Error in magnetisation length against time for the ODE self-correcting LLG problem with
     $\dampc = 0$.
@@ -117,7 +127,7 @@ For comparison we also show plots using IMR, with Newton tolerance $\ntol=10^{-1
 
 \begin{figure}
   \centering
-  \includegraphics[width=0.8\textwidth]{plots/self_correcting_ode/0-absofenergychangevstimes.pdf}
+  \includegraphics[width=0.8\textwidth]{plots/sc-geom-properties/0-absofenergychangevstimes.pdf}
   \caption{
     Error in energy against time
     for the ODE self-correcting LLG problem
@@ -128,18 +138,44 @@ For comparison we also show plots using IMR, with Newton tolerance $\ntol=10^{-1
 \end{figure}
 
 
-Also show IMR iters?
-\begin{figure}
-  \centering
-  % \includegraphics[width=0.8\textwidth]{plots/self_correcting_ode/??ds}
-  \caption{
-    Number of Newton-Raphson iterations to converge to $\ntol = 10^{-8}$ against the parameter $\scc$
-    for the ODE self-correcting LLG problem
-    with $\dampc = 0.01$.
-    Also shown is the number of iterations to converge to $\ntol = 10^{-12}$ with IMR. ??ds
-  }
-  \label{fig:sc-newt-iters}
-\end{figure}
+\begin{table}
+  \begin{subtable}[t]{.5\textwidth}
+    \centering
+    \begin{tabular}{ll}
+      $\scc$ & Mean Newton iterations \\
+      \hline
+      0 & 2.0 \\
+      0.1 & 2.0 \\
+      1 & 2.46 \\
+      10 & 2.68 \\
+      100 & 3.13 \\
+      1000 & 3.12 \\
+    \end{tabular}%
+    \caption{Solved with BDF2 and $\ntol = 10^{-8}$}
+  \end{subtable}%
+  \begin{subtable}[t]{.5\textwidth}
+    \centering
+    \begin{tabular}{ll}
+      $\scc$ & Mean Newton iterations \\
+      \hline
+      0 & 2.0 \\
+      0.1 & - \\
+      1 & - \\
+      10 & - \\
+      100 & - \\
+      1000 & - \\
+    \end{tabular}%
+    \vfill
+      \caption{Solved with IMR and $\ntol = 10^{-12}$}
+    \end{subtable}%
+    \caption{
+      Mean (over all time steps) number of Newton iterations for convergences
+      for the ODE self-correcting LLG problem with
+      $\dampc = 0.01$.
+      The numerical methods used are indicated in the sub-captions.
+      Values of $\scc \neq 0$ are not considered when using IMR because no self-correcting term is needed to conserve $\abs{\mv}$.
+    }
+\end{table}
 
 Show error or switching time error?
 \begin{figure}

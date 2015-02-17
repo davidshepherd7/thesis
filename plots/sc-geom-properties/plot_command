@@ -1,0 +1,1 @@
+/home/david/oomph-lib/user_drivers/micromagnetics/control_scripts/parse.py /mnt/data/optoomph/user_drivers/micromagnetics/experiments/parameter_sweeps/ode_llg_sc_gi -p ml-only-log -l=-sc-beta -f '("-ts", "bdf2")' -p energy-only-log -s=-damping --thesis --save-to-dir /home/david/Dropbox/phd/reports/ongoing-writeup/plots/sc-geom-properties
