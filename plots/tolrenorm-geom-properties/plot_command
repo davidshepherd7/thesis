@@ -1,0 +1,1 @@
+/home/david/oomph-lib/user_drivers/micromagnetics/control_scripts/parse.py /mnt/data/optoomph/user_drivers/micromagnetics/experiments/parameter_sweeps/ode_llg_renorm_gi -p ml-only-log -p energy-only-log -l=-renorm-tol -s=-damping --thesis --save-to-dir /home/david/Dropbox/phd/reports/ongoing-writeup/plots/tolrenorm-geom-properties --not-filter '("-renorm-tol", 1e-10)'
