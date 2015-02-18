@@ -1,29 +1,55 @@
-
-%??ds caption consistency?, but make captions "better" as per comments
-
-\section{Magnetisation renormalisation methods}
-\label{sec:magn-renorm-meth}
-
-We compare renormalisation after every step with the methods used to achieve constant $\abs{\mv}$ in \nmag and \magpar.
-
-We use fixed step BDF2 with step sizes of $\dtn = 0.1$ and a Newton-Raphson tolerance of $\ntol = 10^{-8}$ unless otherwise specified.
-We choose BDF2 for these experiments because TR is equivalent to IMR for the undamped ODE LLG problem, and so could be expected to show some geometric integration properties.
-In addition re-normalising the history values of TR, as described in \cref{sec:containing-renorm-impl} is more difficult as one of the stored values is a derivative (in our implementation, see \cref{eq:impl-tr}) which would need to be recalculated using the newly re-normalised magnetisation values.
-
-\FloatBarrier
-\subsection{Renormalisation after a tolerance}
-\label{sec:renorm-after-toler}
-
 \newcommand{\mltol}{\epsilon_{\mathrm{ml}}}
 
-If the error in the magnetisation length, $\errml$, is less than the tolerance, $\mltol$, then nothing is done and the integration continues.
-On the other hand if $\errml > \mltol$ then we set the current value of the magnetisation, $\mv_{n+1}$ to $\mv_{n+1}/\abs{\mv_{n+1}}$, additionally we perform the same renormalisation for each of the history values required by BDF2 (\ie $\mv_n$ and $\mv_{n-1}$).
-\label{sec:containing-renorm-impl}
+
+%??ds caption consistency?, but make captions "better" as per comments
+\FloatBarrier
+\chapter{Alternative magnetisation re-normalisation methods}
+\label{sec:magn-renorm-meth}
+\chaptermark{Alternative re-normalisation}
+
+In this \thisref{sec:magn-renorm-meth} we experimentally compare the simplest method of ensuring constant $\abs{\mv}$: re-normalisation after every time step with the methods used in \nmag and \magpar.
+\nmag uses the self-correcting LLG, described in \cref{sec:sc-llg}.
+The \magpar package uses re-normalisation, but only re-normalises after the maximum error in the magnetisation length reaches a certain tolerance.
+
+As our example problem we use the relaxing nano-sphere as described in \cref{sec:imr-ode-llg-numer-exper}.
 
 
-Note that all values are output after any renormalisation has taken place.
-??ds should/could I change this?
+\section{Implementation details}
 
+As in \cref{sec:impl-deta-ode-llg} we use the Landau-Lifshitz form of the LLG.
+The Newton-Raphson method is used for linearisation with the Jacobian calculated analytically and solved using a direct solver.
+The Newton-Raphson tolerance set to $\ntol = 10^{-8}$.
+We use BDF2 for these experiments because we need a time integrator with no geometric integration properties in order to fully test the re-normalisation methods (TR is equivalent to IMR for the undamped ODE LLG problem so it has the same geometric integration properties in this case, see \cref{sec:aimr-llgode-numerical-results}).
+The time step size is fixed at $\dtn = 0.1$.
+
+Re-normalisation after a tolerance is implemented as follows:
+if the error in the magnetisation length, $\errml = \abs{1 - \abs{\mv}}$, is less than the tolerance, $\mltol$, then nothing is done and the integration continues.
+On the other hand if $\errml > \mltol$ then we set $\mv_{i}$ to $\mv_{i}/\abs{\mv_{i}}$ for the values of the magnetisation at all times stored by the time integrator (for BDF2 this corresponds to $i=n+1, n, n-1$).
+Note that re-normalising the history values of TR is more complex because one of them is a derivative (at least in our implementation, see \cref{eq:impl-tr}), which would need to be recalculated using the newly re-normalised magnetisation values for consistency.
+
+We use tolerance values of $\mltol = 0, 10^{-6}, 10^{-2}, 10^{200}$.
+Note that $\mltol \gg 1$ corresponds to no re-normalisation, while $\mltol = 0$ corresponds to re-normalisation after every time step.
+The default value used in \magpar\footnote{Based on the source code of version 0.9, the relevant function is \texttt{CheckIterationLL\_Init}.} is $\mltol = 10^{-2}$.
+
+The self correcting LLG is implemented by replacing the standard residual, $\rv_{\mathrm{ll}}$ given in \cref{eq:r-ode-llg}, with the modified residual
+\begin{equation}
+  \rv = \rv_{\mathrm{ll}}  - \scc \mv \bigb{1 - \abs{\mv}^2}.
+\end{equation}
+The Jacobian of the modified residual is given by
+\begin{equation}
+  \label{eq:J-ode-sc-llg}
+  \Jm = \Jm_{\mathrm{ll}} + 2\scc \bigb{\mv \tensorprod \mv} - \scc \bigb{1 - \abs{\mv}^2} \Idm ,
+\end{equation}
+where $\Jm_{\mathrm{ll}}$ is given in \cref{eq:J-ode-llg}.
+
+We experiment with a range of parameter values: $\scc = 0, 0.1, 1, 10, 100, 1000$.
+Larger values were not used because the Newton-Raphson method often failed to converge within ten steps for $\scc \gtrsim 1000$.
+
+Note that, due to implementation details, values are output \emph{after} any re-normalisation for that step has taken place.
+
+
+\section{Results: re-normalisation after a tolerance}
+\label{sec:renorm-after-toler}
 
 \begin{figure}
   \centering
@@ -49,13 +75,12 @@ Note that all values are output after any renormalisation has taken place.
   \label{fig:renorm-tol-ml-err-undamped}
 \end{figure}
 
-In \cref{fig:renorm-tol-ml-err,fig:renorm-tol-ml-err-undamped} we show the error in the magnetisation length over time for various values of $\mltol$ for the damped and undamped problems respectively.
-Note that $\mltol = 10^{200}$ results in no renormalisation being carried out ever, while $\mltol = 0$ results in re-normalisation after every time step.
+In \cref{fig:renorm-tol-ml-err,fig:renorm-tol-ml-err-undamped} we show the error in the magnetisation length over time for various values of $\mltol$ and $\dampc=0.01, 0$ respectively.
+The small error values for the damped case with $\mltol = 10^{-6}$ at $t \gtrsim 280$ are caused by the magnetisation being re-normalised after (almost) every step.
 In both the damped and undamped cases, the use of the intermediate tolerance value, $\mltol = 10^{-6}$, results in oscillations of the magnetisation length.
-In the undamped case with $\mltol = 10^{-2}$ the error in the magnetisation length never reaches the tolerance, and so the behaviour is identical to no renormalisation.
-In the damped case $\mltol = 10^{-2}$ is reached and the behaviour is similar to that of $\mltol = 10^{-6}$, except that the oscillations begin at a later time.
+For $\mltol = 10^{-2}$ in the undamped case the error in the magnetisation length never reaches the tolerance and the behaviour is identical to no re-normalisation.
+In the damped case the tolerance $\mltol = 10^{-2}$ is reached and the behaviour is similar to that of $\mltol = 10^{-6}$, except that the oscillations begin at a later time.
 
-Note that for $\mltol = 10^{-6}$ and times $t \gtrsim 280$ the magnetisation is renormalised after almost every step (hence the small error values).
 
 \begin{figure}
   \centering
@@ -71,7 +96,7 @@ Note that for $\mltol = 10^{-6}$ and times $t \gtrsim 280$ the magnetisation is 
 
 In \cref{fig:renorm-tol-energy-err} the errors in the energy for the undamped case are shown.
 As noted previously, $\mltol= 10^{-2}$ behaves as the non-renormalised case for this example.
-When $\mltol = 10^{-6}$ we see an error similar to that for the always renormalised case, except with additional oscillations in the energy corresponding to times where a renormalisation is carried out.
+When $\mltol = 10^{-6}$ we see an error similar to that for the always re-normalised case, except with additional oscillations in the energy corresponding to times where a re-normalisation is carried out.
 
 
 \begin{figure}
@@ -88,18 +113,13 @@ When $\mltol = 10^{-6}$ we see an error similar to that for the always renormali
   \label{fig:tol-renorm-convergence}
 \end{figure}
 
-Finally in \cref{fig:tol-renorm-convergence} we show the convergence of the method (in terms of the error in the switching time) for the damped case as the step size is reduced.
-It can be seen that the $\mltol=10^{-2}$ or no renormalisation gives slightly worse errors for large step sizes than the tighter magnetisation length tolerances.
-
-??ds add more intermediate tolerances? But we need to output values before renormalising to see anything in this case... I think intermediate tols (less than e-6) are basically the same as always renorm.
+Finally in \cref{fig:tol-renorm-convergence} we show the convergence of the method (in terms of the error in the switching time) as the step size is reduced for the damped case.
+The use of $\mltol=10^{-2}$ or no re-normalisation ($\mltol=10^{200}$) gives slightly worse errors than the tighter tolerances.
 
 
 \FloatBarrier
-\subsection{The self-correcting LLG}
+\section{Results: the self-correcting LLG}
 \label{sec:self-correcting-llg-results}
-
-The self correcting parameter $\scc = 0, 0.1, 1, 10, 100, 1000$, larger values were not used because the Newton-Raphson method began to fail to converge within ten steps.
-
 
 \begin{figure}
   \centering
@@ -125,13 +145,10 @@ The self correcting parameter $\scc = 0, 0.1, 1, 10, 100, 1000$, larger values w
   \label{fig:sc-ml-err-undamped}
 \end{figure}
 
-In \cref{fig:sc-ml-err,fig:sc-ml-err-undamped} we show the errors in magnetisation length over time for various values of the parameter $\scc$ for the damped and undamped problems respectively.
-As would be expected larger values of $\scc$ improve (reduce) the error in both cases.
+In \cref{fig:sc-ml-err,fig:sc-ml-err-undamped} we show the errors in magnetisation length over time with various values of the parameter $\scc$ for the damped and undamped problems respectively.
+As would be expected larger values of $\scc$ reduce the error in both cases.
 %??ds what's up with that initial transient...
-
 Note that in the damped case (\cref{fig:sc-ml-err}) with $\scc = 1000$ the curve stops at $t \sim 480$, this is due to the failure of the Newton-Raphson method to converge within the ten steps allowed.
-Larger values of $\scc$ resulted in a large number of instances of non-convergence.
-Details of the impact of $\scc$ on the Newton-Raphson method will be discussed later.
 
 \begin{figure}
   \centering
@@ -147,7 +164,7 @@ Details of the impact of $\scc$ on the Newton-Raphson method will be discussed l
 \end{figure}
 
 In \cref{fig:sc-energy-err} we show the error in the energy for the undamped ODE LLG problem with various values of $\scc$.
-We see that any $\scc > 0$ causes an error in the energy similarly to the renormalisation approaches shown in \cref{fig:renorm-tol-energy-err}.
+We see that any $\scc > 0$ causes an error in the energy similar to that caused by the various re-normalisation approaches shown in \cref{fig:renorm-tol-energy-err}.
 
 
 \begin{figure}
@@ -165,10 +182,10 @@ We see that any $\scc > 0$ causes an error in the energy similarly to the renorm
 \end{figure}
 
 In \cref{fig:sc-convergence} we show the convergence of the maximum error in the switching time against the time step size $\dtn$ with two values of $\scc$.
-For comparison we also show the results with $\scc = 0$ and re-normalisation after every step (\ie $\mltol = 0$).
+For comparison we also show the results when re-normalisation after every step is used instead of the self correcting term (\ie $\mltol = 0$ and $\scc = 0$).
 We see that the resulting errors are essentially identical for all three cases.
 
-\FloatBarrier % force latex to place all the figures before this table (hacky...)
+% \FloatBarrier % force latex to place all the figures before this table (hacky...)
 \begin{table}
   \begin{subtable}{.5\textwidth}
     \centering
@@ -180,7 +197,7 @@ We see that the resulting errors are essentially identical for all three cases.
       1 & 2.46 \\
       10 & 2.68 \\
       100 & 3.13 \\
-      1000 & 3.12 \\
+      1000 & 3.12* \\
     \end{tabular}%
     \caption{Solved with BDF2 and $\ntol = 10^{-8}$}
   \end{subtable}%
@@ -205,35 +222,34 @@ We see that the resulting errors are essentially identical for all three cases.
     $\dampc = 0.01$.
     The numerical methods used are indicated in the sub-captions.
     Values of $\scc \neq 0$ are not considered when using IMR because no self-correcting term is needed to conserve $\abs{\mv}$.
+    Note that with $\scc = 1000$ the Newton-Raphson method fails to converge at $t \sim 480$.
   }
   \label{tab:sc-newton-iters}
 \end{table}
 
 
-In \cref{tab:sc-newton-iters} we show the number of Newton-Raphson iterations required for convergence.
-For comparison we also show plots using IMR, with Newton tolerance $\ntol=10^{-12}$ (recall that a sharp linearisation tolerance is required for IMR to attain good geometric integration properties).
+Finally in \cref{tab:sc-newton-iters} we show the number of Newton-Raphson iterations required for convergence for each value of $\scc$.
+For comparison we also show the result when using IMR with Newton tolerance $\ntol=10^{-12}$ (recall that a sharp linearisation tolerance is required for IMR to attain good geometric integration properties).
 We see that for larger values of $\scc$ additional iterations are required.
 In addition we see that the tighter tolerance required for geometric integration with IMR has no effect on the number of iterations.
 
-Since $\scc \geq 100$ is required to control $\errml$ to even the fairly loose level of $10^{-6}$ in the (very simple) example of the damped ODE problem, we can conclude that use of the self correcting term will require at least one additional Newton-Raphson iteration.
-
+Since $\scc \geq 100$ is required to control $\errml$ to even the fairly loose level of $10^{-6}$ the use of the self correcting LLG requires at least one additional Newton-Raphson iteration.
 As the majority of the computation time for a time step is spent within the Newton-Raphson method, this increased the cost of each step by a factor of approximately $3/2$.
-Since the use of the self-correcting method does not provide any improvement in the overall accuracy over always re-normalising (so the same $\dtn$ is required to obtain the same accuracy), this increases the overall cost of the method by the same factor.
+Since the use of the self correcting LLG does not provide any improvement in the overall accuracy over re-normalising after every step (so the same $\dtn$ is required to obtain the same accuracy), this increases the overall cost of the method by the same factor.
 
 
+\section{Conclusions}
 
-\subsection{Conclusions}
+By design, the use of re-normalisation after a tolerance allows larger errors in $\abs{\mv}$ than re-normalisation after every step.
+It also introduces spurious oscillations in $\abs{\mv}$ and in the error in the energy for the undamped case.
+It has a slight negative effect on convergence when compared to re-normalisation after every step, and no effect on the computational cost of the re-normalisation.
+Hence there is no reason to prefer re-normalisation after a tolerance over re-normalisation after every step.
 
-Renormalisation after a tolerance allows larger errors in $\abs{\mv}$ than renorm after each step (by definition).
-It also introduces spurious oscillations in $\abs{\mv}$.
-It has a slight negative effect on convergence when compared to re-normalisation after every step.
-In terms of computational cost: checking whether renormalisation is needed has roughly the same cost as actually re-normalising.
-Hence there is no reason to prefer renormalisation after a tolerance.
-
-Self correcting LLG is always worse in controlling GI errors than renorm after each step: energy errors the same, m errors much larger.
-It also takes additional newton step(s) (typically one more step is needed, increasing the computational time for the simulation by a factor of $\sim 3/2$).
+The self correcting LLG is worse at controlling errors in $\abs{\mv}$ than re-normalisation after each step, and gives very similar errors in the energy.
 It gives essentially identical convergence properties as re-normalisation after every step.
-As such there is no reason to use the self-correcting LLG over renormalisation after each step.
+Finally it requires additional step(s) of the Newton-Raphson method convergence (typically one more step is needed, increasing the computational time for the simulation by a factor of $\sim 3/2$).
+As such there is no reason to use the self-correcting LLG over re-normalisation after each step.
+
 
 %%% Local Variables:
 %%% mode: latex

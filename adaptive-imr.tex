@@ -605,22 +605,29 @@ Note that with $\dampc = 0$ \cref{eqn:nd-ode-llg} becomes simply $\dmdt = - \mv 
 
 
 \subsection{Implementation details}
+\label{sec:impl-deta-ode-llg}
 
 The implementation of the three time integration algorithms without the re-normalisation of $\mv$ is exactly as discussed in \cref{sec:aimr-implementation}.
 We also test the performance of the TR and BDF2 methods with an added re-normalisation step to enforce constant $\abs{\mv}$.
-The re-normalisation is done by simply replacing $\mv$ by $\mv/\abs{\mv}$, and is carried out at after every step (after the selection of the next time step to avoid complicating the step selection process).
+
+% ??ds first draft
+In \cref{sec:magn-renorm-meth} we compare re-normalisation after every step with two other methods used by open source micromagnetics codes (the self correcting LLG and re-normalisation only after a certain error in the magnetisation length is reached).
+We find that there is no reason to prefer these alternative methods, hence the re-normalisation is performed after every step (after the selection of the next time step to avoid complicating the step selection process).
+It is carried out by simply replacing $\mv_{n+1}$ by $\mv_{n+1}/\abs{\mv_{n+1}}$.
 In the experiments we compare the performance with and without re-normalisation where appropriate.
 
 In the experiments below the Landau-Lifshitz form \cref{eq:ll-nd-llglike} of the LLG is used for ease of implementation.
 Linearisation is carried out using the Newton-Raphson method.
 Using the skew operator notation from \cref{sec:llg-jacobian} the Newton-Raphson residual for the Landau-Lifshitz form of the LLG is is
 \begin{equation}
+  \label{eq:r-ode-llg}
   \rv = (1 + \dampc^2) \dmdt + \skewm{\mv} \cdot \hv + \dampc \skewm{\mv}\skewm{\mv} \cdot \hv.
 \end{equation}
 The corresponding Jacobian can be easily derived using the methods discussed in \cref{sec:llg-jacobian} (note that here $\hv \neq \hv(\mv)$) and is given by
 \begin{equation}
   \Jm = \pd{\rv}{\mv} = (1 + \dampc^2) J_{ts} \Idm_3 - \skewm{\hv} - \dampc \skewm{ \mv \times \hv }
   - \dampc \skewm{\mv} \skewm{\hv}.
+  \label{eq:J-ode-llg}
 \end{equation}
 
 The $3 \times 3$ Jacobian is calculated analytically and inverted using a direct solve.
