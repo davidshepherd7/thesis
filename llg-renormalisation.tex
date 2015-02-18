@@ -1,7 +1,6 @@
-\newcommand{\mltol}{\epsilon_{\mathrm{ml}}}
 
-
-%??ds caption consistency?, but make captions "better" as per comments
+% ??ds caption consistency with ODE LLG section, but make captions "better" as per comments
+%% ??ds define the errors properly Refer to ODE LLG section.
 \FloatBarrier
 \chapter{Alternative magnetisation re-normalisation methods}
 \label{sec:magn-renorm-meth}
@@ -75,7 +74,11 @@ Note that, due to implementation details, values are output \emph{after} any re-
   \label{fig:renorm-tol-ml-err-undamped}
 \end{figure}
 
-In \cref{fig:renorm-tol-ml-err,fig:renorm-tol-ml-err-undamped} we show the error in the magnetisation length over time for various values of $\mltol$ and $\dampc=0.01, 0$ respectively.
+In \cref{fig:renorm-tol-ml-err,fig:renorm-tol-ml-err-undamped} we show the error in the magnetisation length over time
+\begin{equation}
+  \errml = \abs{\abs{\mv} - 1}
+\end{equation}
+for various values of $\mltol$ and $\dampc=0.01, 0$ respectively.
 The small error values for the damped case with $\mltol = 10^{-6}$ at $t \gtrsim 280$ are caused by the magnetisation being re-normalised after (almost) every step.
 In both the damped and undamped cases, the use of the intermediate tolerance value, $\mltol = 10^{-6}$, results in oscillations of the magnetisation length.
 For $\mltol = 10^{-2}$ in the undamped case the error in the magnetisation length never reaches the tolerance and the behaviour is identical to no re-normalisation.
@@ -185,7 +188,6 @@ In \cref{fig:sc-convergence} we show the convergence of the maximum error in the
 For comparison we also show the results when re-normalisation after every step is used instead of the self correcting term (\ie $\mltol = 0$ and $\scc = 0$).
 We see that the resulting errors are essentially identical for all three cases.
 
-% \FloatBarrier % force latex to place all the figures before this table (hacky...)
 \begin{table}
   \begin{subtable}{.5\textwidth}
     \centering
