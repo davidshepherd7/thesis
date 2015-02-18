@@ -10,6 +10,7 @@ We use fixed step BDF2 with step sizes of $\dtn = 0.1$ and a Newton-Raphson tole
 We choose BDF2 for these experiments because TR is equivalent to IMR for the undamped ODE LLG problem, and so could be expected to show some geometric integration properties.
 In addition re-normalising the history values of TR, as described in \cref{sec:containing-renorm-impl} is more difficult as one of the stored values is a derivative (in our implementation, see \cref{eq:impl-tr}) which would need to be recalculated using the newly re-normalised magnetisation values.
 
+\FloatBarrier
 \subsection{Renormalisation after a tolerance}
 \label{sec:renorm-after-toler}
 
@@ -93,12 +94,11 @@ It can be seen that the $\mltol=10^{-2}$ or no renormalisation gives slightly wo
 ??ds add more intermediate tolerances? But we need to output values before renormalising to see anything in this case... I think intermediate tols (less than e-6) are basically the same as always renorm.
 
 
+\FloatBarrier
 \subsection{The self-correcting LLG}
 \label{sec:self-correcting-llg-results}
 
 The self correcting parameter $\scc = 0, 0.1, 1, 10, 100, 1000$, larger values were not used because the Newton-Raphson method began to fail to converge within ten steps.
-
-% For comparison we also show plots using IMR, with Newton tolerance $\ntol=10^{-12}$ (recall that a sharp linearisation tolerance is required for IMR to attain good geometric integration properties).
 
 
 \begin{figure}
@@ -113,21 +113,30 @@ The self correcting parameter $\scc = 0, 0.1, 1, 10, 100, 1000$, larger values w
   \label{fig:sc-ml-err}
 \end{figure}
 
-
 \begin{figure}
   \centering
   \includegraphics[width=0.8\textwidth]{plots//sc-geom-properties/0-mlengtherrormaxesvstimes.pdf}
   \caption{
-    Error in magnetisation length against time for the ODE self-correcting LLG problem with
-    $\dampc = 0$.
+    Error in magnetisation length against time
+    for the ODE self-correcting LLG problem
+    with $\dampc = 0$.
     The legend indicates the values of $\scc$.
   }
   \label{fig:sc-ml-err-undamped}
 \end{figure}
 
+In \cref{fig:sc-ml-err,fig:sc-ml-err-undamped} we show the errors in magnetisation length over time for various values of the parameter $\scc$ for the damped and undamped problems respectively.
+As would be expected larger values of $\scc$ improve (reduce) the error in both cases.
+%??ds what's up with that initial transient...
+
+Note that in the damped case (\cref{fig:sc-ml-err}) with $\scc = 1000$ the curve stops at $t \sim 480$, this is due to the failure of the Newton-Raphson method to converge within the ten steps allowed.
+Larger values of $\scc$ resulted in a large number of instances of non-convergence.
+Details of the impact of $\scc$ on the Newton-Raphson method will be discussed later.
+
 \begin{figure}
   \centering
-  \includegraphics[width=0.8\textwidth]{plots/sc-geom-properties/0-absofenergychangevstimes.pdf}
+  \includegraphics[width=0.8\textwidth]
+  {{{plots/sc-geom-properties/0-absofenergychangevstimes}}}
   \caption{
     Error in energy against time
     for the ODE self-correcting LLG problem
@@ -137,9 +146,31 @@ The self correcting parameter $\scc = 0, 0.1, 1, 10, 100, 1000$, larger values w
   \label{fig:sc-energy-err}
 \end{figure}
 
+In \cref{fig:sc-energy-err} we show the error in the energy for the undamped ODE LLG problem with various values of $\scc$.
+We see that any $\scc > 0$ causes an error in the energy similarly to the renormalisation approaches shown in \cref{fig:renorm-tol-energy-err}.
 
+
+\begin{figure}
+  \centering
+  \includegraphics[width=0.8\textwidth]
+  {{{plots/self_correcting_llg_ode_convergence/maxofswitchingtimeerrorvsmeanofdts}}}
+  \caption{
+    Convergence of the maximum (over all steps) of the error in the switching time
+    against step size
+    for the ODE self-correcting LLG problem with
+    $\dampc = 0.01$.
+    The legend indicates, respectively, the values of $\scc$ and the tolerance after which the magnetisation is re-normalised.
+  }
+  \label{fig:sc-convergence}
+\end{figure}
+
+In \cref{fig:sc-convergence} we show the convergence of the maximum error in the switching time against the time step size $\dtn$ with two values of $\scc$.
+For comparison we also show the results with $\scc = 0$ and re-normalisation after every step (\ie $\mltol = 0$).
+We see that the resulting errors are essentially identical for all three cases.
+
+\FloatBarrier % force latex to place all the figures before this table (hacky...)
 \begin{table}
-  \begin{subtable}[t]{.5\textwidth}
+  \begin{subtable}{.5\textwidth}
     \centering
     \begin{tabular}{ll}
       $\scc$ & Mean Newton iterations \\
@@ -153,7 +184,7 @@ The self correcting parameter $\scc = 0, 0.1, 1, 10, 100, 1000$, larger values w
     \end{tabular}%
     \caption{Solved with BDF2 and $\ntol = 10^{-8}$}
   \end{subtable}%
-  \begin{subtable}[t]{.5\textwidth}
+  \begin{subtable}{.5\textwidth}
     \centering
     \begin{tabular}{ll}
       $\scc$ & Mean Newton iterations \\
@@ -166,44 +197,43 @@ The self correcting parameter $\scc = 0, 0.1, 1, 10, 100, 1000$, larger values w
       1000 & - \\
     \end{tabular}%
     \vfill
-      \caption{Solved with IMR and $\ntol = 10^{-12}$}
-    \end{subtable}%
-    \caption{
-      Mean (over all time steps) number of Newton iterations for convergences
-      for the ODE self-correcting LLG problem with
-      $\dampc = 0.01$.
-      The numerical methods used are indicated in the sub-captions.
-      Values of $\scc \neq 0$ are not considered when using IMR because no self-correcting term is needed to conserve $\abs{\mv}$.
-    }
-\end{table}
-
-Show error or switching time error?
-\begin{figure}
-  \centering
-  \includegraphics[width=0.8\textwidth]{plots/self_correcting_llg_ode_convergence/maxofswitchingtimeerrorvsmeanofdts}
+    \caption{Solved with IMR and $\ntol = 10^{-12}$}
+  \end{subtable}%
   \caption{
-    Convergence of the maximum (over all steps) of the error in the switching time
-    against step size
+    Mean (over all time steps) number of Newton iterations for convergences
     for the ODE self-correcting LLG problem with
     $\dampc = 0.01$.
-    The legend indicates, respectively, the values of $\scc$ and the tolerance after which the magnetisation is re-normalised.
+    The numerical methods used are indicated in the sub-captions.
+    Values of $\scc \neq 0$ are not considered when using IMR because no self-correcting term is needed to conserve $\abs{\mv}$.
   }
-  \label{fig:sc-convergence}
-\end{figure}
+  \label{tab:sc-newton-iters}
+\end{table}
+
+
+In \cref{tab:sc-newton-iters} we show the number of Newton-Raphson iterations required for convergence.
+For comparison we also show plots using IMR, with Newton tolerance $\ntol=10^{-12}$ (recall that a sharp linearisation tolerance is required for IMR to attain good geometric integration properties).
+We see that for larger values of $\scc$ additional iterations are required.
+In addition we see that the tighter tolerance required for geometric integration with IMR has no effect on the number of iterations.
+
+Since $\scc \geq 100$ is required to control $\errml$ to even the fairly loose level of $10^{-6}$ in the (very simple) example of the damped ODE problem, we can conclude that use of the self correcting term will require at least one additional Newton-Raphson iteration.
+
+As the majority of the computation time for a time step is spent within the Newton-Raphson method, this increased the cost of each step by a factor of approximately $3/2$.
+Since the use of the self-correcting method does not provide any improvement in the overall accuracy over always re-normalising (so the same $\dtn$ is required to obtain the same accuracy), this increases the overall cost of the method by the same factor.
+
+
 
 \subsection{Conclusions}
 
 Renormalisation after a tolerance allows larger errors in $\abs{\mv}$ than renorm after each step (by definition).
 It also introduces spurious oscillations in $\abs{\mv}$.
-Effect on convergence ??ds
-In terms of computational cost: checking whether renormalisation is needed has roughly the same cost as actually renormalising.
+It has a slight negative effect on convergence when compared to re-normalisation after every step.
+In terms of computational cost: checking whether renormalisation is needed has roughly the same cost as actually re-normalising.
 Hence there is no reason to prefer renormalisation after a tolerance.
-
 
 Self correcting LLG is always worse in controlling GI errors than renorm after each step: energy errors the same, m errors much larger.
 It also takes additional newton step(s) (typically one more step is needed, increasing the computational time for the simulation by a factor of $\sim 3/2$).
-Effect on convergence? ??ds
-As such there appears to be no reason to use the self-correcting LLG over renormalisation after each step.
+It gives essentially identical convergence properties as re-normalisation after every step.
+As such there is no reason to use the self-correcting LLG over renormalisation after each step.
 
 %%% Local Variables:
 %%% mode: latex
