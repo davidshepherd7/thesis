@@ -539,10 +539,10 @@ The choice to double the quadrature order after each non-convergence in line~\re
 It is possible to optimise this process by using a quadrature scheme which reuses the knots (\ie evaluation points) from the lower order calculations in the more accurate calculations, such as the Clenshaw-Curtis quadrature \cite{Trefethen2008}.
 However, for simplicity, we have not implemented the reuse of knot values.
 
-% ??ds first draft
+% ???ds second draft
 The implementation of this algorithm in \oomph uses standard Gaussian quadrature (as mentioned in \cref{sec:numer-eval-integrals}) with $\tolq = 10^{-8}$, starting orders of $n_1=2$, $n_2=4$, and a maximum order of $256$.
-These parameters gave good accuracy\footnote{Errors of around $\tolq$ when compared with the analytical formula for triangular elements.} and gave sufficiently fast computation times that the time spent computing these integrals is not a major component of the overall computation time.
-As such we did not spend much time optimising these values.
+These parameters gave good accuracy\footnote{Errors of below $\tolq$ when compared with the analytical formula for triangular elements.} and sufficiently fast computation time such that the time spent computing these integrals is not a major component of the overall computation time.
+As such we did not experiment with varying these values.
 
 
 \section{Conclusions}

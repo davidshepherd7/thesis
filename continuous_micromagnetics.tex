@@ -88,22 +88,22 @@ The exchange effective field is given by
 \label{sec:magnetostatic-field}
 % \newcommand{\jv}{\myvector{j}}
 
-% ??ds first draft
+% ???ds second draft
 Magnetic materials generate a magnetic field, which in turn affects the magnetic material emitting the field.
 This field is also known as the demagnetising field as it tends to oppose the magnetisation of the body.
 When there are no changing electric fields the magnetic field can be calculated using only two equations rather than the full four Maxwell's equations, this case is known as magnetostatics.
-The first is Ampere's law \cite[33]{Coey2010}
+The first equation needed is Ampere's law \cite[33]{Coey2010}
 \begin{equation}
   \curl \Hv = \jv_c,
 \end{equation}
 where $\jv_c$ is the ``free current'': the conduction current in electrical circuits (\ie not including the current due to electron spin).
-The second is \cite[34]{Coey2010}
+The second equation needed is \cite[34]{Coey2010}
 \begin{equation}
   \div \Hv = - \div \Mv.
 \end{equation}
 These two equations can be derived from Maxwell's equations by setting $\pd{\mathbf{E}}{t} = 0$.
 We call the resulting field the magnetostatic field and label it $\Hms$.
-The magnetostatic field can be calculated in two ways: via an integral form or a differential (potential) form.
+The solutions to these equations are typically calculated in one of two ways: using an integral method or by solving a simplified differential equation in terms of a potential.
 
 The integral form of the magnetostatic field at a point $\xv \in \real^3$ due to the magnetic body $\magd$ with boundary $\boundd$ can be given in terms of magnetisation $\Mv$ by an integral over all volume and surface ``magnetic charges'' ($\div \Mv$ and $\Mv \cdot \nv$ respectively) as
 \begin{equation}
@@ -115,7 +115,7 @@ The integral form of the magnetostatic field at a point $\xv \in \real^3$ due to
 where $\nabla'$ denotes the grad operator with respect to the $\xv'$ coordinate and $\nv(\xv)$ is the outer unit normal of $\magd$ at $\xv$.
 For completeness we note that single magnetic charges (magnetic monopoles) are a useful mathematical tool but have not been observed in nature.
 
-When the magnetostatic field is produced only by magnets, and not by electric currents, then it is possible to express it in terms of a scalar potential, $\phim$ \cite[46]{Coey2010}\footnote{This is because Ampere's law reduces to $\nabla \times \Hv = 0$, meaning that it is satisfied by $\Hv = \nabla \phi$ for any scalar $\phi$.}
+When the magnetostatic field is produced only by magnets, and not by electric currents (\ie $\jv_c = 0$), then it is possible to express the field in terms of a scalar potential, $\phim$ \cite[46]{Coey2010}\footnote{This is because Ampere's law reduces to $\nabla \times \Hv = 0$, meaning that it is satisfied by $\Hv = \nabla \phi$ for any scalar $\phi$.}
 \begin{equation}
   \begin{aligned}
     \label{eq:Hms}
