@@ -652,10 +652,11 @@ However, in the approximations given by numerical methods this property is often
 Note that this is not related to the spurious damping discussed in \cref{sec:numerical-damping}: in that section the key property was the conservation of the amplitude of \emph{oscillations}.
 
 % ??ds first draft
-A simple method of dealing with the constraint is to re-normalise each value of $\mv$ after some number of time steps, or when the error in $\abs{\mv}$ exceeds some tolerance \cite{Fidler2000}.
-However this approach fundamentally changes the system of equations being solved in a non-linear and unpredictable manner \cite{Lewis2003}.
+A simple method of dealing with the constraint is to re-normalise each value of $\mv$ after every time step.
+A simple extension of this method is to re-normalise the magnetisation when the error in $\abs{\mv}$ exceeds some tolerance \cite{Fidler2000}, we refer to this method as \emph{tolerance-based renormalisation}.
+Note that the computational cost of computing the errors in $\abs{\mv}$ is roughly the same as performing the re-normalisation\footnote{Both require computing $\abs{\mv}$ and performing some simple operation with it for every discrete value of the magnetisation.}, hence tolerance-based re-normalisation provides no reduction in the computational cost.
 Renormalisation after a tolerance is used in \magpar\footnote{Based on the source code of version 0.9. The function of interest is in the file \texttt{src/util/renormvec.c}, it is called by \texttt{CheckIterationLLG} (which is the standard LLG solver iteration function) with tolerance \texttt{renormtol}.} with a default tolerance of $10^{-2}$, while renormalisation after every step is used in \oommf's 4th order Runge-Kutta scheme \cite{fangor-donahue-email}.
-Note that the computational cost of computing the errors in $\abs{\mv}$ is roughly the same as performing the re-normalisation\footnote{Both require computing $\abs{\mv}$ and performing some simple operation with it for every discrete value of the magnetisation.}, hence re-normalising after a tolerance provides no reduction in the computational cost.
+However both of these approaches fundamentally change the system of equations being solved in a non-linear and unpredictable manner \cite{Lewis2003}.
 
 
 Another way to avoid this problem is to use a spherical polar coordinate system $(r,\theta,\phi)$ for the magnetisation.
@@ -689,10 +690,12 @@ The idea is that instead of solving the standard LLG equation we solve the modif
   \dmdt = -\frac{1}{(1 + \dampc^2)}\mxh  -\frac{\dampc}{(1 + \dampc^2)} \mxmxh
   + \scc \mv \bigb{1 - \abs{\mv}^2},
 \end{equation}
-where the final term has been added, and $\scc$ is some constant which must be chosen.
+where the final term has been added, and $\scc$ is some parameter which must be chosen.
 The motivation behind this is that if, after a step, $\abs{\mv} > 1$ then during the next step there will be a an additional term in $\dmdt$ of $-\scc \mv \abs{1 - \abs{\mv}^2}$.
 As this additional term is in the direction $-\mv$ it modifies the magnetisation length in the direction of $\abs{\mv} = 1$.
 Similarly if $\abs{\mv} < 1$ there is a small additional term in the direction of $+\mv$.
+
+For large $\scc$... small... ??ds fill in
 
 The potential advantage of this method over the standard renormalisation is that the time integration scheme ``knows'' about the renormalisation, and so could potentially provide more accurate error estimates ??ds avoids the need to restart? (but I've never needed to restart anyway...)
 
