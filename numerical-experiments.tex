@@ -144,6 +144,8 @@ This error norm measures the level of over/under damping caused by the approxima
 The convergence results for the time integral of the error norm $\errmz$ are shown in \cref{fig:convergence-long-time-mz-norm}.
 We again see second order convergence behaviour for all methods.
 The BDF2 method requires additional refinement to reach the asymptotic convergence behaviour, and has around an order of magnitude larger error than the other methods once convergence is reached.
+% ??ds first draft ??cpu-correction
+This difference in error means that the IMR and TR methods are able to take time steps an order of magnitude larger while still attaining the same error, resulting in an order of magnitude speed-up (assuming that the error norm considered here is important for the application).
 Also note that there is no significant difference between IMR with nodal quadrature (which conserves $\abs{\mv}$) and IMR with Gaussian quadrature (in which $\mv$ is re-normalised), indicating that geometric integration offers no significant benefits in this case.
 \begin{figure}
   \centering
@@ -245,7 +247,9 @@ A similar result is seen in \cref{fig:energy-error-2d-nodal-newton-tests} for th
 \subsection{Conclusions}
 
 We have shown that the methods we tested have the expected convergence and time step selection properties.
-We also observed that the asymptotic accuracy of the BDF2 method is lower than the TR or IMR methods by a moderately sized constant factor.
+% ??ds first draft ??cpu-correction
+We also observed that the asymptotic accuracy of the BDF2 method is lower than the TR or IMR methods by around one order of magnitude.
+Due to this effect the TR and IMR methods can take roughly ten times larger time steps while attaining the same error, resulting in shorter computation times.
 
 We have also shown that the geometric integration properties of IMR are preserved in a weak form FEM model with a nodal quadrature scheme.
 As predicted in \cref{sec:nodal-integration} these properties are linked to the accuracy of the non-linear solver.
