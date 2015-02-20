@@ -1,0 +1,29 @@
+({
+    '-driver' : ['llgode'],
+    '-exact' : ['mallinson'],
+
+    '-tmax' : [600],
+    '-damping' : [0.01],
+
+    '-fd-jacobian' : 0,
+
+    "-disable-mm-opt" : [True],
+
+    '-ts' : ["bdf2"],
+    '-tol' : [1e-4, 3e-5, 1e-5, 3e-6, 1e-6, 3e-7, 1e-7, 1e-8],
+    '-newton-tol' : [1e-8],
+
+},
+[
+    # re-normalised
+    {
+        '-renorm-tol' : [0],
+        '-sc-beta' : [0],
+    },
+
+    # self correcting
+    {
+        '-renorm-tol' : [1e200],
+        '-sc-beta' : [0.1, 1e3],
+    },
+])

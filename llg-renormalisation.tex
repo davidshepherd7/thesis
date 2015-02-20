@@ -3,7 +3,6 @@
 % ??ds same y-axis on ml error plots?
 % ??ds add a table of # renormalisations?
 
-% ??ds I should test effect of SC on LTE estimates
 % ??ds what's up with that initial transient in the ml err of sc-llg?
 
 \FloatBarrier
@@ -246,7 +245,7 @@ We see that the resulting errors are essentially identical for all three cases.
 \end{table}
 
 
-Finally in \cref{tab:sc-newton-iters} we show the number of Newton-Raphson iterations required for convergence for each value of $\scc$.
+In \cref{tab:sc-newton-iters} we show the number of Newton-Raphson iterations required for convergence for each value of $\scc$.
 For comparison we also show the result when using IMR with Newton tolerance $\ntol=10^{-12}$ (recall that a sharp linearisation tolerance is required for IMR to attain good geometric integration properties).
 We see that as $\scc$ is increased the mean number of Newton iterations to converge also increases.
 In addition we see that the tighter tolerance required for geometric integration with IMR has no effect on the number of iterations required.
@@ -254,6 +253,27 @@ In addition we see that the tighter tolerance required for geometric integration
 Since $\scc \geq 100$ is required to control $\errml$ to even the fairly loose tolerance of $10^{-6}$, the use of the self correcting LLG requires, on average, at least one additional Newton-Raphson iteration per time step.
 As the majority of the computation time for a time step is spent within the Newton-Raphson method, this increases the cost of each step by approximately $50\%$.
 Since the use of the self correcting LLG does not provide any improvement in the overall accuracy or energy error over re-normalising after every step (so the same $\dtn$ is required to obtain the same accuracy), this increases the overall cost of the method by the same factor.
+
+\begin{figure}
+  \centering
+  \includegraphics[width=\textwidth]{{{plots/sc-adaptivity/maxofswitchingtimeerrorvsmeanofdts}}}
+  \caption{
+    Convergence of the maximum (over all steps) of the error in the switching time
+    against step size
+    for the relaxing nano-sphere problem with
+    $\dampc = 0.01$
+    solved using adaptive BDF2.
+    Magnetisation length is enforced by use of the self-correcting LLG or re-normalisation after every step (\ie tolerance based renormalisation with $\mltol = 0$).
+    The legend indicates, respectively, the values of $\scc$ and the tolerance $\mltol$.
+  }
+  \label{fig:sc-adaptivity-convergence}
+\end{figure}
+
+Finally we study the effect of the use of the self-correcting LLG on adaptive time integration.
+Since the self correcting term is part of the differential equation (as opposed to standard renormalisation, which is carried out separately) we might expect adaptive time integration methods to be able to better predict the error, and choose more appropriate step sizes.
+In \cref{fig:sc-adaptivity-convergence} we show the convergence behaviour when using adaptive BDF2 (as described in \cref{sec:aimr-implementation}) with tolerances of $\toltt = 10^{-4}, 3\E{-5}, 10^{-5}, 3\E{-6}, 10^{-6}, 3\E{-7}, 10^{-7}, 10^{-8}$ with various values of $\scc$.
+For comparison we also show the convergence behaviour when the magnetisation is re-normalised after every step.
+If the use of the self-correcting LLG is beneficial we would expect to see lower errors for the same average step size, but the plots are indistinguishable.
 
 
 \section{Conclusions}
