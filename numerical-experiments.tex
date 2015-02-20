@@ -580,6 +580,29 @@ Alternatively a standard Galerkin BEM discretisation combined with the single-la
 
 In this section we examine the effectiveness of the iterative linear and non-linear solvers for the monolithic method introduced in \cref{sec:fully-implicit-bem} as applied to the \mumag standard problem \#4.
 
+% ??ds fix does this really belong here?
+% ??ds first draft ??mem-cpu-solver-correction
+First however we describe how these iteration counts affect the cpu time and memory usage of the overall method.
+When using implicit time integration schemes almost all of the computation time is spent within the Newton-Raphson solve, hence the speed is critical.
+The Newton-Raphson solve time, $T_\mathrm{Newton}$, is roughly given by
+\begin{equation}
+  \begin{aligned}
+    T_\mathrm{total} &\propto \cdot N_\mathrm{TimeSteps} \cdot T_\mathrm{Newton}, \\
+                     &\propto N_\mathrm{TimeSteps} \cdot N_\mathrm{NewtonIterations} \cdot \bigb{ T_\mathrm{JacobianSolve} + T_\mathrm{JacobianAssembly}}.
+  \end{aligned}
+\end{equation}
+In our computations the linear (Jacobian) solve time typically dominates, except where highly effective solvers are available (\ie small two dimensional problems).
+In turn the linear solve time is proportional to the number of linear solver iterations, as well as to the total number of nodes $N$.
+So the total performance obeys a relationship of the form
+\begin{equation}
+  T_\mathrm{total} \propto N_\mathrm{TimeSteps} \cdot N_\mathrm{NewtonIterations} \cdot N_\mathrm{LinearIterations} \cdot N.
+\end{equation}
+
+% ??ds first draft ??mem-cpu-solver-correction
+In terms of memory usage the relationships are much simpler: neither the number of time steps or Newton iterations affects it.
+If GMRES is used then additional linear solver iterations increases memory usage as described in \cref{sec:krylov-solvers}.
+However, in FEM/BEM problems the boundary element matrix typically dominates the memory usage to the extent that this is irrelevant \cite{Suess2002}.
+
 The mean number of iterations required for the convergence of the linear solver against the number of nodes in the problem is shown in \cref{fig:mumag4-solver-iterations}.
 Note that while the iteration count increases with the number of nodes, $\Nn$, it remains reasonable for the problem sizes required for good accuracy in this example.
 The time taken to set up the preconditioner is displayed in \cref{fig:mumag4-solver-time}.

@@ -428,9 +428,6 @@ All experiments are run on a single core (\ie no parallelism is used) of a deskt
 
 \subsection{Results}
 
-%??ds fix lots to do in this section, need to replace plots by means + stddev for one thing.
-% When you do this remember to also change the plots in ch. 8
-
 
 \Cref{fig:its-ilu-decoupled} shows the mean (over a single Newton solve) number of GMRES iterations required to solve the LLG-only system, \cref{eq:llg-jacobian}, using ILU(1) preconditioning (\ie with magnetostatics handled by the semi-implicit approach).
 As is expected for a general-purpose preconditioner it is effective for small matrix sizes, but becomes less effective for large problems and as the time step size increases.
