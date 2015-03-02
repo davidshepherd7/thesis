@@ -38,17 +38,16 @@ For a scalar function $f$ and a vector function $\gv$ in three dimensions we use
 We also write the vector Laplacian as $\lap \gv = (\lap g_x,\lap g_y, \lap g_z )$.
 In less than three dimensions the obvious extensions are used.
 
-
-% ??ds first draft
-We are often concerned with energies that depend on the values of the function $\Mv$ over all space, \ie $E$ is a \emph{functional} of $\Mv$ and we write $E = E[\Mv(\xv)]$.
-For such a functional we define the first variation as
+% ??ds second draft
+We are often concerned with energies that depend on the values of the function $\Mv$ over all space, \ie $E[\Mv(\xv)]$ is a \emph{functional} of $\Mv$.
+For such a functional we define its first variation as
 \begin{equation}
   \begin{aligned}
     \variation E[\Mv] &= E[\Mv + \variation\Mv] - E[\Mv],
   \end{aligned}
 \end{equation}
 for some ``small'' arbitrary function $\variation\Mv$.
-The functional (or variational) derivative $\vd{E}{\Mv}$ can then be defined such that
+The functional (or variational) derivative, $\vd{E}{\Mv}$, is defined as the functional such that
 \begin{equation}
   \variation E  = \intd{\vd{E}{\Mv} \cdot \variation \Mv}.
   \label{eq:106}
@@ -68,7 +67,7 @@ The energy due to an external applied field, $\Happ$, (sometimes called the Zeem
   \Eapp = - \mu_0 \int_{\magd}  \Happ \cdot \Mv \d \magd.
 \end{equation}
 
-% ??ds first draft
+% ??ds second draft
 The first variation of this energy with respect to $\Mv$ is
 \begin{equation}
   \begin{aligned}
@@ -83,7 +82,7 @@ and so by \cref{eq:106}
   \label{eq:105}
   \Happ = \frac{-1}{\mu_0} \vd{\Eapp}{\Mv}.
 \end{equation}
-Motivated by \cref{eq:105} we define an ``effective field'' $\Hv$ for any energy term $E$:
+Motivated by \cref{eq:105} we define an ``effective field'' $\Hv$ for \emph{any} energy term $E$:
 \begin{equation}
   \Hv = \frac{-1}{\mu_0} \frac{\variation E}{\variation \Mv}.
   \label{eq:62}
@@ -101,7 +100,7 @@ This can be approximated by a classical expression for exchange energy \cite{Aha
 \end{equation}
 where $\Exchc$ is the material dependent exchange constant representing the strength of the exchange coupling.
 
-% ??ds first draft
+% ??ds second draft
 It can be shown \cite{Aharoni1996}\cite[46]{BrownMicromagnetics}\footnote{
   Briefly: use the fact that $\delta \grad \Mv = \grad \delta \Mv$ and apply \cref{eqn:grad-divergence} (assuming that the boundary condition \cref{{eq:llg-bc}} holds) to shift the both derivatives onto the $\Mv$ term.
 } that
@@ -110,7 +109,7 @@ It can be shown \cite{Aharoni1996}\cite[46]{BrownMicromagnetics}\footnote{
     \variation \Eex &= \frac{2\Exchc}{M_s^2} \intd{
         (\nabla M_x) \cdot \variation (\nabla M_x)
       + (\nabla M_y) \cdot \variation (\nabla M_y)
-      + (\nabla M_z) \cdot \variation (\nabla M_z)} \\
+      + (\nabla M_z) \cdot \variation (\nabla M_z)}, \\
     &= \frac{-2 \Exchc}{M_s^2} \intd{(\lap \Mv) \cdot \variation \Mv}.
   \end{aligned}
 \end{equation}
