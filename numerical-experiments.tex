@@ -248,7 +248,8 @@ A similar result is seen in \cref{fig:energy-error-2d-nodal-newton-tests} for th
 \subsection{Conclusions}
 
 We have shown that the methods we tested have the expected convergence and time step selection properties.
-% ??ds first draft ??cpu-correction
+% ??ds first draft
+\label{cpu-correction-2}
 We also observed that the asymptotic accuracy of the BDF2 method is lower than the TR or IMR methods by around one order of magnitude.
 Due to this effect the TR and IMR methods can take larger time steps while attaining the same error, resulting in shorter computation times.
 
@@ -582,7 +583,8 @@ Alternatively a standard Galerkin BEM discretisation combined with the single-la
 In this section we examine the effectiveness of the iterative linear and non-linear solvers for the monolithic method introduced in \cref{sec:fully-implicit-bem} as applied to the \mumag standard problem \#4.
 
 % ??ds fix does this really belong here?
-% ??ds first draft ??mem-cpu-solver-correction
+% ??ds first draft
+\label{mem-cpu-solver-correction}
 First however we describe how these iteration counts affect the cpu time and memory usage of the overall method.
 When using implicit time integration schemes almost all of the computation time is spent within the Newton-Raphson solve, hence the speed is critical.
 The Newton-Raphson solve time, $T_\mathrm{Newton}$, is roughly given by
@@ -599,7 +601,7 @@ So the total performance obeys a relationship of the form
   T_\mathrm{total} \propto N_\mathrm{TimeSteps} \cdot N_\mathrm{NewtonIterations} \cdot N_\mathrm{LinearIterations} \cdot N.
 \end{equation}
 
-% ??ds first draft ??mem-cpu-solver-correction
+% ??ds first draft
 In terms of memory usage the relationships are much simpler: neither the number of time steps or Newton iterations affects it.
 If GMRES is used then additional linear solver iterations increases memory usage as described in \cref{sec:krylov-solvers}.
 However, in FEM/BEM problems the boundary element matrix typically dominates the memory usage to the extent that this is irrelevant \cite{Suess2002}.
@@ -670,6 +672,7 @@ The use of GMRES preconditioned by $\inexact{\precc}$ from \cref{sec:bem-solver-
 
 
 \section{Conclusions}
+\label{sec:numer-experiments-conclusions}
 
 In this chapter we have demonstrated the effectiveness of the methods described and developed throughout this thesis on micromagnetic problems with spatial variations.
 

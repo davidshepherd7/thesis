@@ -652,6 +652,7 @@ However, in the approximations given by numerical methods this property is often
 Note that this is not related to the spurious damping discussed in \cref{sec:numerical-damping}: in that section the key property was the conservation of the amplitude of \emph{oscillations}.
 
 % ???ds second draft
+\label{alt-ml-renorm-intro} % page reference for letter
 One simple method of dealing with the constraint is to re-normalise each value of $\mv$ after every time step.
 An extension of this method is to re-normalise the magnetisation only when the error in $\abs{\mv}$ exceeds some tolerance \cite{Fidler2000}, we refer to this method as \emph{tolerance-based renormalisation}.
 Note that the computational cost of computing the errors in $\abs{\mv}$ is roughly the same as performing the re-normalisation\footnote{Both require computing $\abs{\mv}$ and performing some simple operation with it for every discrete value of the magnetisation.}, hence tolerance-based re-normalisation does not provide any gain in efficiency.
