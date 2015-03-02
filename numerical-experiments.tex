@@ -144,7 +144,7 @@ This error norm measures the level of over/under damping caused by the approxima
 The convergence results for the time integral of the error norm $\errmz$ are shown in \cref{fig:convergence-long-time-mz-norm}.
 We again see second order convergence behaviour for all methods.
 The BDF2 method requires additional refinement to reach the asymptotic convergence behaviour, and has around an order of magnitude larger error than the other methods once convergence is reached.
-% ??ds first draft
+% ??ds second draft
 \label{cpu-correction-1}
 This difference in error means that the IMR and TR methods are able to take time steps roughly $\sqrt{10} \sim 3$ times larger while still attaining the same global error, resulting in a factor of three speed-up (assuming that the error norm considered here is important for the application).
 Also note that there is no significant difference between IMR with nodal quadrature (which conserves $\abs{\mv}$) and IMR with Gaussian quadrature (in which $\mv$ is re-normalised), indicating that geometric integration offers no significant benefits in this case.
@@ -248,7 +248,7 @@ A similar result is seen in \cref{fig:energy-error-2d-nodal-newton-tests} for th
 \subsection{Conclusions}
 
 We have shown that the methods we tested have the expected convergence and time step selection properties.
-% ??ds first draft
+% ??ds second draft
 \label{cpu-correction-2}
 We also observed that the asymptotic accuracy of the BDF2 method is lower than the TR or IMR methods by around one order of magnitude.
 Due to this effect the TR and IMR methods can take larger time steps while attaining the same error, resulting in shorter computation times.
@@ -582,28 +582,29 @@ Alternatively a standard Galerkin BEM discretisation combined with the single-la
 
 In this section we examine the effectiveness of the iterative linear and non-linear solvers for the monolithic method introduced in \cref{sec:fully-implicit-bem} as applied to the \mumag standard problem \#4.
 
-% ??ds fix does this really belong here?
-% ??ds first draft
+% ??ds second draft
 \label{mem-cpu-solver-correction}
-First however we describe how these iteration counts affect the cpu time and memory usage of the overall method.
-When using implicit time integration schemes almost all of the computation time is spent within the Newton-Raphson solve, hence the speed is critical.
-The Newton-Raphson solve time, $T_\mathrm{Newton}$, is roughly given by
+Before showing the results we describe how the number of iterations required by the linear and non-linear solvers affect the CPU time and memory usage of the overall method.
+When using implicit time integration schemes almost all of the computation time is spent within the non-linear (\ie Newton-Raphson) solve in each time step, hence the speed and number of these solves is critical to performance.
+Within a Newton-Raphson solve the linear (Jacobian) solve time typically dominates the time taken,\footnote{When highly effective solvers are available, \ie small two dimensional problems, the Jacobian assembly time can become important.
+However, our current Jacobian assembly code is not well optimised \eg an order of magnitude speed-up could be easily obtained by caching constant (linear) blocks as described in \cref{sec:bem-jacobian-structure}.}
+the number of Jacobian solves that are required is equal to the number of Newton-Raphson iterations.
+Writing these relationships mathematically we have
 \begin{equation}
   \begin{aligned}
     T_\mathrm{total} &\propto \cdot N_\mathrm{TimeSteps} \cdot T_\mathrm{Newton}, \\
-                     &\propto N_\mathrm{TimeSteps} \cdot N_\mathrm{NewtonIterations} \cdot \bigb{ T_\mathrm{JacobianSolve} + T_\mathrm{JacobianAssembly}}.
+                     &\propto N_\mathrm{TimeSteps} \cdot N_\mathrm{NewtonIterations} \cdot T_\mathrm{JacobianSolve}.
   \end{aligned}
 \end{equation}
-In our computations the linear (Jacobian) solve time typically dominates, except where highly effective solvers are available (\ie small two dimensional problems).
-In turn the linear solve time is proportional to the number of linear solver iterations, as well as to the total number of nodes $N$.
-So the total performance obeys a relationship of the form
+When using GMRES the linear solve time is proportional to the square of the number of linear solver iterations (see \cref{sec:krylov-solvers}), as well as to the total number of nodes $N$ (because the number of non-zero entries in the Jacobian is proportional to the number of nodes).
+Hence the total CPU time obeys a relationship of the form
 \begin{equation}
-  T_\mathrm{total} \propto N_\mathrm{TimeSteps} \cdot N_\mathrm{NewtonIterations} \cdot N_\mathrm{LinearIterations} \cdot N.
+  T_\mathrm{total} \propto N_\mathrm{TimeSteps} \cdot N_\mathrm{NewtonIterations} \cdot N_\mathrm{LinearIterations}^2 \cdot N.
 \end{equation}
 
-% ??ds first draft
-In terms of memory usage the relationships are much simpler: neither the number of time steps or Newton iterations affects it.
-If GMRES is used then additional linear solver iterations increases memory usage as described in \cref{sec:krylov-solvers}.
+% ??ds second draft
+In terms of memory usage the relationships are much simpler: neither the number of time steps or Newton iterations affects the memory used.
+If GMRES is used then additional linear solver iterations increase the memory usage linearly as described in \cref{sec:krylov-solvers}.
 However, in FEM/BEM problems the boundary element matrix typically dominates the memory usage to the extent that this is irrelevant \cite{Suess2002}.
 
 The mean number of iterations required for the convergence of the linear solver against the number of nodes in the problem is shown in \cref{fig:mumag4-solver-iterations}.
