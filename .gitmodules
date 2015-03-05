@@ -1,0 +1,3 @@
+[submodule "latex-commands"]
+	path = latex-commands
+	url = ./latex-commands
