@@ -82,9 +82,11 @@ As such there does not seem to be any reason to experiment with the alternative 
   Additionally, in chapter 8, I have described how the number of Newton-Raphson iterations and linear solver iterations affect the memory (via reduced maximum Krylov subspace size) and CPU time (page \pageref{mem-cpu-solver-correction}).
 
 % ??ds first draft
-\item ??ds TODO
-I agree that the comparison with finite difference methods is potentially misleading and so I have added a comparison with \nmag's results for the \mumag standard problem \#4.
+\item While I agree that the comparison with finite difference methods is potentially harsher than necessary I believe that it is extremely important to verify the model by comparing against results for some standard problem.
+Since the \mumag problem \#4 is the only such standard problem for dynamic micromagnetics, and since all available data for the solution are computed using finite difference methods there is no better choice for this comparison.
+As such I would strongly prefer to leave the comparison in my thesis.
 
+% ??ds first draft
 I have also added additional plots comparing with the results when using TR and BDF2.
 A straightforward comparison of the results and the time steps selected has been added on page \pageref{more-mumag4-correction-1}.
 On page \pageref{more-mumag4-correction-2} I have added some results comparing the accuracy of the nodal and Gaussian quadrature schemes (this is very relevant to the ``comparison of different integrator techniques'' because geometric integration requires both IMR and a nodal quadrature scheme).
