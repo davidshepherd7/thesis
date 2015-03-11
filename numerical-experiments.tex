@@ -439,7 +439,7 @@ The number of elements along the $x$ and $y$ axes, denoted $n_x$ and $n_y$, is v
 We use $n_x=75,100,125$, which gives edge lengths of 1.17, 0.89 and 0.70 exchange lengths respectively.
 
 The Newton tolerance is set to $\ntol = 10^{-11}$, the adaptive integrator tolerance is $\toltt = 10^{-5}$ and the initial time step is $\dtx{0} = 10^{-4}$.
-% We cap the time step at $\dtx{\text{max}} = 4.5$ to avoid issues with linear and solver converge at extremely large time steps.
+We cap the time step at $\dtx{\text{max}} = 4.5$ to avoid issues with linear and solver convergence with extremely large time steps.
 
 
 To generate the initial S-state we run the simulation for 300 time units starting from the state $\mv=[1,1,1]$ with $\dampc = 1.0$ and the applied field
@@ -533,6 +533,25 @@ The dynamics are very similar, but the monolithic method is able to take larger 
     Evolution of the mean magnetisation for the \mumag problem \#4 with field 2 using IMR with nodal quadrature and monolithic (implicit) or semi-implicit (decoupled) coupling to the magnetostatics problem.
   }
   \label{fig:mumag4-implicit-decoupled}
+\end{figure}
+
+% ??ds first draft
+\label{more-mumag4-correction-1}
+In \cref{fig:mumag-ts-comparison} we show a comparison of the three time integration schemes (with Gaussian quadrature, monolithic magnetostatics and the highest spatial refinement) for field 2.
+We can see that all three of the schemes give similar magnetisation values.
+However IMR takes significantly smaller time steps during the initial relaxation phase, this is likely due to the order reduction effect (see \cref{sec:order-reduction}):
+since the field is initially very large, the Jacobian will contain similarly large terms, resulting in a reduction of accuracy for IMR.
+The adaptive time integration scheme detects and accounts for this effect.
+\begin{figure}
+  \centering
+  \includegraphics[width=0.8\textwidth]{{{plots/mumag4_ts_comparison/meanmxsvs-meanmysvs-meanmzsvs-dtsvstimes}}}
+  \caption{Evolution of the mean magnetisation for the \mumag problem \#4 with field 2
+    using various time integration schemes,
+Gaussian quadrature,
+monolithic coupling,
+and $n_x=100$.
+  }
+  \label{fig:mumag-ts-comparison}
 \end{figure}
 
 \subsection{Geometric integration properties}
