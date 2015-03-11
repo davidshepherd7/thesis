@@ -81,12 +81,13 @@ As such there does not seem to be any reason to experiment with the alternative 
 \item I have added additional passages to chapters 7 and 8 (pages \pageref{cpu-correction-1}, \pageref{cpu-correction-2}) detailing how differences in the accuracy of the time integration method affect the CPU time via the ability to take larger time steps.
   Additionally, in chapter 8, I have described how the number of Newton-Raphson iterations and linear solver iterations affect the memory (via reduced maximum Krylov subspace size) and CPU time (page \pageref{mem-cpu-solver-correction}).
 
+% ??ds first draft
 \item ??ds TODO
 I agree that the comparison with finite difference methods is potentially misleading and so I have added a comparison with \nmag's results for the \mumag standard problem \#4.
 
-??ds TODO
 I have also added additional plots comparing with the results when using TR and BDF2.
-A straightforward comparison of the time steps selected has been added on page \pageref{more-mumag4-correction-1}.
+A straightforward comparison of the results and the time steps selected has been added on page \pageref{more-mumag4-correction-1}.
+On page \pageref{more-mumag4-correction-2} I have added some results comparing the accuracy of the nodal and Gaussian quadrature schemes (this is very relevant to the ``comparison of different integrator techniques'' because geometric integration requires both IMR and a nodal quadrature scheme).
 
 \item I have rewritten the discussion of energy conservation with triangular elements in a more positive manner as requested (pages \pageref{sec:triangular-meshes}, \pageref{sec:numer-experiments-conclusions}, \pageref{sec:future-work}).
 

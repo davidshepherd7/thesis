@@ -593,6 +593,30 @@ A symmetric discrete BEM operator could be obtained by applying a \emph{symmetri
 Alternatively a standard Galerkin BEM discretisation combined with the single-layer-potential formulation described by Garc\'{i}a-Cervera and Roma \cite{Garcia-Cervera2006} \cite[19]{Knittel2011} would result in a symmetric discrete operator without the requirement to evaluate hyper-singular integrals.
 
 
+% ??ds first draft
+\subsection{Effect of nodal quadrature scheme on spatial convergence}
+\label{more-mumag4-correction-2}
+
+In this section we compare the results when using nodal quadrature and Gaussian quadrature.
+We focus on field 2 and monolithic magnetostatics.
+In \cref{fig:mumag4-nodal-quadrature-comparison} we show the results for a range of mesh refinements and integration schemes at the time when they start to deviate.
+If we assume that the results with Gaussian quadrature and the highest refinement level are the most accurate, then we can see that the use of nodal quadrature results in lower accuracy for a given refinement.
+
+\begin{figure}
+  \centering
+  \includegraphics[width=0.8\textwidth]{{{plots/mumag4_nodal_quadrature/meanmysvstimes}}}
+  \caption{Mean $y$ component of the magnetisation for the \mumag problem 4 with field 2, IMR, monolithic coupling, both quadrature schemes and varying spatial resolution.
+    The number in the legend indicates $n_x/5$.}
+  \label{fig:mumag4-nodal-quadrature-comparison}
+\end{figure}
+
+Varying the tolerance of the adaptive integrator ($\toltt = 10^{-3}, 10^{-4}, 10^{-5}$) has almost no effect on these results.
+In addition the use of TR and BDF2 give similar results.
+
+Hence we can conclude that the reduced spatial accuracy of nodal quadrature is responsible for the deviations seen.
+So nodal quadrature can have a major negative effect on the overall accuracy of the scheme.
+However recall that our implementation of IMR with magnetostatics does not conserve energy, so these results are not necessarily representative of the accuracy of an energy-conserving implementation.
+
 
 \subsection{Effectiveness of the linear and non-linear solver}
 \label{sec:effect-line-non}
