@@ -535,12 +535,12 @@ The dynamics are very similar, but the monolithic method is able to take larger 
   \label{fig:mumag4-implicit-decoupled}
 \end{figure}
 
-% ??ds first draft
+% ??ds second draft
 \label{more-mumag4-correction-1}
-In \cref{fig:mumag-ts-comparison} we show a comparison of the three time integration schemes (with Gaussian quadrature, monolithic magnetostatics and the highest spatial refinement) for field 2.
-We can see that all three of the schemes give similar magnetisation values.
+In \cref{fig:mumag-ts-comparison} we show a comparison of the three time integration schemes (with Gaussian quadrature, monolithic magnetostatics and $n_x= 100$) for field 2.
+We can see that all three of the schemes give very similar magnetisation values.
 However IMR takes significantly smaller time steps during the initial relaxation phase, this is likely due to the order reduction effect (see \cref{sec:order-reduction}):
-since the field is initially very large, the Jacobian will contain similarly large terms, resulting in a reduction of accuracy for IMR.
+since the field is initially very large, the Jacobian will contain large terms resulting in a reduction of accuracy for IMR.
 The adaptive time integration scheme detects and accounts for this effect.
 \begin{figure}
   \centering
@@ -593,29 +593,27 @@ A symmetric discrete BEM operator could be obtained by applying a \emph{symmetri
 Alternatively a standard Galerkin BEM discretisation combined with the single-layer-potential formulation described by Garc\'{i}a-Cervera and Roma \cite{Garcia-Cervera2006} \cite[19]{Knittel2011} would result in a symmetric discrete operator without the requirement to evaluate hyper-singular integrals.
 
 
-% ??ds first draft
 \subsection{Effect of nodal quadrature scheme on spatial convergence}
 \label{more-mumag4-correction-2}
 
 In this section we compare the results when using nodal quadrature and Gaussian quadrature.
-We focus on field 2 and monolithic magnetostatics.
-In \cref{fig:mumag4-nodal-quadrature-comparison} we show the results for a range of mesh refinements and integration schemes at the time when they start to deviate.
-If we assume that the results with Gaussian quadrature and the highest refinement level are the most accurate, then we can see that the use of nodal quadrature results in lower accuracy for a given refinement.
+We focus on the case of field 2 and use monolithic magnetostatics.
+In \cref{fig:mumag4-nodal-quadrature-comparison} we show the mean $y$ component of the magnetisation for a range of mesh refinements and integration schemes around the time when the results begin to deviate from each other.
+Varying the tolerance of the adaptive integrator ($\toltt = 10^{-3}, 10^{-4}, 10^{-5}$) or the time integration scheme has almost no effect on these results.
+Hence we can assume that the results with Gaussian quadrature and the highest refinement level are the most accurate.
+Based on this we can see that the use of nodal quadrature results in lower accuracy for the same level of spatial refinement.
+
+Therefore we conclude that nodal quadrature can have a negative effect on the overall accuracy of the scheme.
+However, recall that our implementation of IMR with magnetostatics does not conserve energy.
+So these results are not necessarily representative of the accuracy of an energy-conserving implementation.
 
 \begin{figure}
   \centering
   \includegraphics[width=0.8\textwidth]{{{plots/mumag4_nodal_quadrature/meanmysvstimes}}}
-  \caption{Mean $y$ component of the magnetisation for the \mumag problem 4 with field 2, IMR, monolithic coupling, both quadrature schemes and varying spatial resolution.
+  \caption{Mean $y$ component of the magnetisation for the \mumag problem 4 with field 2 solved using IMR, monolithic coupling, both quadrature schemes and varying spatial resolutions.
     The number in the legend indicates $n_x/5$.}
   \label{fig:mumag4-nodal-quadrature-comparison}
 \end{figure}
-
-Varying the tolerance of the adaptive integrator ($\toltt = 10^{-3}, 10^{-4}, 10^{-5}$) has almost no effect on these results.
-In addition the use of TR and BDF2 give similar results.
-
-Hence we can conclude that the reduced spatial accuracy of nodal quadrature is responsible for the deviations seen.
-So nodal quadrature can have a major negative effect on the overall accuracy of the scheme.
-However recall that our implementation of IMR with magnetostatics does not conserve energy, so these results are not necessarily representative of the accuracy of an energy-conserving implementation.
 
 
 \subsection{Effectiveness of the linear and non-linear solver}
