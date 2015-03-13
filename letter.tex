@@ -53,49 +53,48 @@ nameinlink % Make the name (eg Section) part of the hyperlink
 \input{latex-commands/commands.tex}
 
 
-\title{Corrections}
+\title{Thesis Corrections}
 \author{David Shepherd}
 
 \begin{document}
 \maketitle
 
+
 \begin{enumerate}
 \item I have implemented the minor corrections.
 
-\item I have compared scipy's \vode BDF2 integrator against \oomph's BDF2 integrator for an ODE problem and, as would be expected, the results are almost identical. The results and some discussion are included in the chapter on adaptive implicit midpoint rule (page \pageref{fig:vode-osc-example}).
+\item I have compared scipy's \vode BDF2 integrator against \oomph's BDF2 integrator for an ODE problem and, as would be expected, the new results are almost identical. The results and some discussion are included in the chapter on the adaptive implicit midpoint rule (on page \pageref{fig:vode-osc-example}).
 
-It should also be noted that \oomph's BDF2 integrator was not implemented by me, it is the main time integration scheme of \oomph.
-It has been thoroughly tested over the past $\sim 10$ years ??ds - Matthias how old is this code? and used has been used in numerous published papers.
+It should also be noted that \oomph's BDF2 integrator was not implemented by me, in fact it is the main time integration scheme of \oomph.
+It has been thoroughly tested over the past $\sim 10$ years [??ds - Matthias how old is the BDF2 code?] and used has been used in numerous papers and theses.
 
 \item The self-correcting LLG and a tolerance-based renormalisation approach are now introduced in section \ref{sec:ensuring-constant-mv} (Magnetisation length conservation) which begins on page \pageref{alt-ml-renorm-intro}.
 
-  On the subject of the normalisation to the orbit of precession I have not been able to find any information in the literature beyond the bullet points in the presentation.
-I asked Mike Donahue for more information and he was unable to help ??ds - double check..
+  On the subject of the ``normalisation to the orbit of precession'' method I have not been able to find any information in the literature beyond the bullet points in the presentation.
+I have asked Mike Donahue for more information but he was unable to provide any.
 As such I have not been able to introduce this method.
 
-\item I have carried out detailed experiments comparing the alternative normalisation methods with the basic method of re-normalisation after every step for the example ODE LLG problem.
+\item I have carried out detailed experiments comparing the tolerance base renormalisation and self-correcting LLG methods with the basic method of re-normalisation after every step for the example ODE LLG problem.
   These experiments are documented in a new 9 page appendix (appendix \ref{sec:magn-renorm-meth} on page \pageref{sec:magn-renorm-meth}).
-The conclusion is that the basic re-normalisation method (re-normalise the magnetisation after every step) is clearly superior to the alternative methods.
+The conclusion is that the basic re-normalisation method is clearly superior to the alternative methods, and there is no reason to expect that these results would change for other problems.
 As such there does not seem to be any reason to experiment with the alternative methods for other example problems.
 
-\item I have added additional passages to chapters 7 and 8 (pages \pageref{cpu-correction-1}, \pageref{cpu-correction-2}) detailing how differences in the accuracy of the time integration method affect the CPU time via the ability to take larger time steps.
-  Additionally, in chapter 8, I have described how the number of Newton-Raphson iterations and linear solver iterations affect the memory (via reduced maximum Krylov subspace size) and CPU time (page \pageref{mem-cpu-solver-correction}).
+\item I have added additional passages to chapters 7 and 8 (on pages \pageref{cpu-correction-1}, \pageref{cpu-correction-2}) detailing how differences in the accuracy of the time integration method affect the CPU time via the ability to take larger time steps.
+  Additionally, in chapter 8, I have described how the number of Newton-Raphson iterations and linear solver iterations affect the memory (via reduced maximum Krylov subspace size) and CPU time (on page \pageref{mem-cpu-solver-correction}).
 
-% ??ds first draft
-\item While I agree that the comparison with finite difference methods is potentially harsher than necessary I believe that it is extremely important to verify the model by comparing against results for some standard problem.
+\item While I agree that the comparison with finite difference methods is potentially harsher than necessary, I still believe that it is important to verify the model by comparing against results for some standard problem.
 Since the \mumag problem \#4 is the only such standard problem for dynamic micromagnetics, and since all available data for the solution are computed using finite difference methods there is no better choice for this comparison.
 As such I would strongly prefer to leave the comparison in my thesis.
 
-% ??ds first draft
-I have also added additional plots comparing with the results when using TR and BDF2.
-A straightforward comparison of the results and the time steps selected has been added on page \pageref{more-mumag4-correction-1}.
-On page \pageref{more-mumag4-correction-2} I have added some results comparing the accuracy of the nodal and Gaussian quadrature schemes (this is very relevant to the ``comparison of different integrator techniques'' because geometric integration requires both IMR and a nodal quadrature scheme).
+However, I have still added additional results for the \mumag problem \#4 solved with alternative time integration methods as requested.
+A straightforward comparison of TR, BDF2 and IMR in terms of the magnetisation values and the time steps selected has been added on page \pageref{more-mumag4-correction-1}.
+On page \pageref{more-mumag4-correction-2} I have added some results comparing the accuracy of the nodal and Gaussian quadrature schemes (this is very relevant to the ``comparison of different integrator techniques'' which was requested because geometric integration requires both IMR and a nodal quadrature scheme).
 
 \item I have rewritten the discussion of energy conservation with triangular elements in a more positive manner as requested (pages \pageref{sec:triangular-meshes}, \pageref{sec:numer-experiments-conclusions}, \pageref{sec:future-work}).
 
 \end{enumerate}
 
-Were the plots in chapter 6 included as a correction or just a suggestion for the future? They don't appear in either of the typed lists of corrections and there is only a question note on Andrew's handwritten copy?
+% Were the plots in chapter 6 included as a correction or just a suggestion for the future? They don't appear in either of the typed lists of corrections and there is only a question on Andrew's handwritten copy?
 % The possible correction was to replace plots by means + stddev. When you
 % do this remember to also change the plots in ch. 8
 
