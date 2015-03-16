@@ -124,15 +124,14 @@ nameinlink % Make the name (eg Section) part of the hyperlink
     interesting to better understand where a benefit/disadvantage comes
     from.
   \end{quotation}
-  Since the value of the IMR method is likely to come from a reduction in the global (temporal) error norm I have added additional passages to chapters 7 and 8 (on pages \pageref{cpu-correction-1}, \pageref{cpu-correction-2}) detailing how differences in this error norm of the time integration method affect the CPU time via the ability to take larger time steps.
+  Since the value of the IMR method is likely to come from a reduction in the global (temporal) error norm I have added additional passages to chapters 7 and 8 (on pages \pageref{cpu-correction-0}, \pageref{cpu-correction-1}, \pageref{cpu-correction-2}) detailing how differences in this error norm affect the CPU time via the ability to take larger time steps.
 
-It would be extremely time consuming to create figures showing this reduction in CPU time directly: in order to fairly compare the CPU time used by a time integration scheme one would have to somehow ensure that the global error norms for the results were almost identical.
-Essentially this could only be done by trial and error, and due to the non-linearity of the problem it may be impossible.
+It would be difficult and time consuming to create figures showing this reduction in CPU time directly: in order to fairly compare the CPU time used by a time integration scheme one would have to somehow ensure that the global error norms for the results were almost identical.
+Essentially this could only be done by trial and error, and may be impossible due to the non-linearity of the problem.
 
   Plots of the numbers of iterations are already shown for the example problems where novel solvers are used.
 However, I have added descriptions of how the number of Newton-Raphson iterations and linear solver iterations affect the memory (via reduced maximum Krylov subspace size) and CPU time on page \pageref{mem-cpu-solver-correction}.
 
-% ??ds first draft
 \item
   \begin{quotation}
     In the mumag standard problem 4 study, we suggest not to compare
@@ -148,8 +147,8 @@ However, I have added descriptions of how the number of Newton-Raphson iteration
     computational framework for everything else).
   \end{quotation}
   I have added additional results for the \mumag problem \#4 solved with alternative time integration methods as requested.
-  A straightforward comparison of TR, BDF2 and IMR in terms of the magnetisation values and the time steps selected has been added on page \pageref{more-mumag4-correction-1}.
-  On page \pageref{more-mumag4-correction-2} I have added some results comparing the accuracy of the nodal and Gaussian quadrature schemes (this is very relevant to the ``comparison of different integrator techniques'' which was requested because geometric integration requires both IMR and a nodal quadrature scheme).
+  A comparison of TR, BDF2 and IMR in terms of the magnetisation values and the time steps selected has been added on page \pageref{more-mumag4-correction-1}.
+  On page \pageref{more-mumag4-correction-2} I have added some results comparing the accuracy of the nodal and Gaussian quadrature schemes (this is relevant to the ``comparison of different integrator techniques'' because geometric integration requires both IMR and a nodal quadrature scheme).
 
   However, while I agree that the comparison with finite difference methods is potentially harsher than necessary, I still believe that it is important to verify the model by comparing against other models for some standard problem.
   Since the \mumag problem \#4 is the only such standard problem for dynamic micromagnetics, and since all available data for the solution are computed using finite difference methods there is no better choice for this comparison.
