@@ -52,7 +52,6 @@ nameinlink % Make the name (eg Section) part of the hyperlink
 
 \input{latex-commands/commands.tex}
 
-
 \title{Thesis Corrections}
 \author{David Shepherd}
 
@@ -86,13 +85,13 @@ nameinlink % Make the name (eg Section) part of the hyperlink
 
 \item
   \begin{quotation}
-    Introduce methods [renormalization to orbit of precession],
-    [self-correcting LLG] and [tolerance based renormalisation], somewhere
+    Introduce methods [re-normalisation to orbit of precession],
+    [self-correcting LLG] and [tolerance based re-normalisation], somewhere
     in the thesis (for example section 3.4.8) as practical "state of the
     art" approaches that have been proposed in the community to ensure
     magnetisation length conservation.
   \end{quotation}
-  The self-correcting LLG and a tolerance-based renormalisation approach are now introduced in section \ref{sec:ensuring-constant-mv} (Magnetisation length conservation) which begins on page \pageref{alt-ml-renorm-intro}.
+  The self-correcting LLG and a tolerance-based re-normalisation approach are now introduced in section \ref{sec:ensuring-constant-mv} (Magnetisation length conservation) which begins on page \pageref{alt-ml-renorm-intro}.
 
   On the subject of the ``normalisation to the orbit of precession'' method I have not been able to find any information in the literature beyond the bullet points in the presentation.
   I have asked Mike Donahue for more information but he was unable to provide any.
@@ -102,12 +101,12 @@ nameinlink % Make the name (eg Section) part of the hyperlink
   \begin{quotation}
     Review section 7.4 and 8, using the above re-normalisation techniques
     to provide better context for the IMR method. In more detail: repeat
-    the computational examples with [the methods] and compare with the IMR.
-    It seems sensible to keep the current data on (i) no renormalisation
+    the computational examples with [the re-normalisation methods] and compare with the IMR.
+    It seems sensible to keep the current data on (i) no re-normalisation
     and (ii) re-normalisation after every step to provide a comprehensive
     overview of the different possible approaches.
   \end{quotation}
-  I have carried out detailed experiments comparing the tolerance based renormalisation and self-correcting LLG methods with the basic method of re-normalisation after every step for the example ODE LLG problem.
+  I have carried out detailed experiments comparing the tolerance based re-normalisation and self-correcting LLG methods with the basic method of re-normalisation after every step for the example ODE LLG problem.
   These experiments are documented in a new 9 page appendix (appendix \ref{sec:magn-renorm-meth} on page \pageref{sec:magn-renorm-meth}).
   The conclusion is that the basic re-normalisation method is clearly superior to the alternative methods, and there is no reason to expect that these results would change for other problems.
   As such there does not seem to be any reason to experiment with the alternative methods for other example problems.
@@ -141,8 +140,8 @@ However, I have added descriptions of how the number of Newton-Raphson iteration
     calculations and very likely to introduce different dynamical behaviour
     due to the different computation of demag and the other fields.
     Instead, repeat the simulation with the different integrator
-    techniques, i.e IMR, and [the three alternative renormalisation
-    methods], where [each renormalisation method] can each be combined with
+    techniques, i.e IMR, and [the three alternative re-normalisation
+    methods], where [each re-normalisation method] can each be combined with
     TR, BDF2 and - if desired - the CVODE approach. This will allow you to
     look at the changes in great detail and any difference is guaranteed to
     originate from the integration routine (as you use the same
