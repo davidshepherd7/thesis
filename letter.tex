@@ -61,36 +61,103 @@ nameinlink % Make the name (eg Section) part of the hyperlink
 
 
 \begin{enumerate}
-\item I have implemented the minor corrections.
+\item
+  \begin{quotation}
+    Implement minor corrections (typos etc) as provided through
+    separate list or marked up in thesis from both examiners.
+  \end{quotation}
+  I have implemented the minor corrections.
 
-\item I have compared scipy's \vode BDF2 integrator against \oomph's BDF2 integrator for an ODE problem and, as would be expected, the new results are almost identical. The results and some discussion are included in the chapter on the adaptive implicit midpoint rule (on page \pageref{fig:vode-osc-example}).
+\item
+  \begin{quotation}
+    Chapter 7: Extend the list of methods tested to include one easily
+    available library functions, such as scipy's VODE (both for 7 and
+    8.1). Given the many libraries that are easily available, the
+    practitioner will ask whether it is worth using (and implementing) the
+    IMR method. Thus the direct comparison will embed the new IMR results
+    into the research context. Furthermore, comparison of the methods
+    coded by yourself with established library code will instill further
+    trust in the correctness of your coding and the results.
+  \end{quotation}
+  I have compared scipy's \vode BDF2 integrator against \oomph's BDF2 integrator for an ODE problem and, as would be expected, the new results are almost identical. The results and some discussion are included in the chapter on the adaptive implicit midpoint rule (on page \pageref{fig:vode-osc-example}).
 
-It should also be noted that \oomph's BDF2 integrator was not implemented by me, in fact it is the main time integration scheme of \oomph.
-It has been thoroughly tested over the past $\sim 10$ years [??ds - Matthias how old is the BDF2 code?] and used has been used in numerous papers and theses.
+  It should also be noted that \oomph's BDF2 integrator was not implemented by me, in fact it is the main time integration scheme of \oomph.
+  It has been thoroughly tested over the past $\sim 10$ years and used has been used in numerous papers and theses.
 
-\item The self-correcting LLG and a tolerance-based renormalisation approach are now introduced in section \ref{sec:ensuring-constant-mv} (Magnetisation length conservation) which begins on page \pageref{alt-ml-renorm-intro}.
+\item
+  \begin{quotation}
+    Introduce methods [renormalization to orbit of precession],
+    [self-correcting LLG] and [tolerance based renormalisation], somewhere
+    in the thesis (for example section 3.4.8) as practical "state of the
+    art" approaches that have been proposed in the community to ensure
+    magnetisation length conservation.
+  \end{quotation}
+  The self-correcting LLG and a tolerance-based renormalisation approach are now introduced in section \ref{sec:ensuring-constant-mv} (Magnetisation length conservation) which begins on page \pageref{alt-ml-renorm-intro}.
 
   On the subject of the ``normalisation to the orbit of precession'' method I have not been able to find any information in the literature beyond the bullet points in the presentation.
-I have asked Mike Donahue for more information but he was unable to provide any.
-As such I have not been able to introduce this method.
+  I have asked Mike Donahue for more information but he was unable to provide any.
+  As such I have not been able to introduce this method.
 
-\item I have carried out detailed experiments comparing the tolerance base renormalisation and self-correcting LLG methods with the basic method of re-normalisation after every step for the example ODE LLG problem.
+\item
+  \begin{quotation}
+    Review section 7.4 and 8, using the above re-normalisation techniques
+    to provide better context for the IMR method. In more detail: repeat
+    the computational examples with [the methods] and compare with the IMR.
+    It seems sensible to keep the current data on (i) no renormalisation
+    and (ii) re-normalisation after every step to provide a comprehensive
+    overview of the different possible approaches.
+  \end{quotation}
+  I have carried out detailed experiments comparing the tolerance based renormalisation and self-correcting LLG methods with the basic method of re-normalisation after every step for the example ODE LLG problem.
   These experiments are documented in a new 9 page appendix (appendix \ref{sec:magn-renorm-meth} on page \pageref{sec:magn-renorm-meth}).
-The conclusion is that the basic re-normalisation method is clearly superior to the alternative methods, and there is no reason to expect that these results would change for other problems.
-As such there does not seem to be any reason to experiment with the alternative methods for other example problems.
+  The conclusion is that the basic re-normalisation method is clearly superior to the alternative methods, and there is no reason to expect that these results would change for other problems.
+  As such there does not seem to be any reason to experiment with the alternative methods for other example problems.
 
-\item I have added additional passages to chapters 7 and 8 (on pages \pageref{cpu-correction-1}, \pageref{cpu-correction-2}) detailing how differences in the accuracy of the time integration method affect the CPU time via the ability to take larger time steps.
+\item
+  \begin{quotation}
+    Consider a review of the choice of figures in chapter 8 to convey
+    the intended message(s) as clearly as possible; i.e. choose figures
+    that explain the value of the IMR method. Measures such as CPU time
+    used overall (or Wall clock time) and memory usage are particularly
+    attractive as these are key factors in day-to-day application of
+    micromagnetic modelling, in addition to measures to summarise the
+    accuracy of the methods. Numbers of required iterations etc are
+    interesting to better understand where a benefit/disadvantage comes
+    from.
+  \end{quotation}
+  I have added additional passages to chapters 7 and 8 (on pages \pageref{cpu-correction-1}, \pageref{cpu-correction-2}) detailing how differences in the accuracy of the time integration method affect the CPU time via the ability to take larger time steps.
   Additionally, in chapter 8, I have described how the number of Newton-Raphson iterations and linear solver iterations affect the memory (via reduced maximum Krylov subspace size) and CPU time (on page \pageref{mem-cpu-solver-correction}).
 
-\item While I agree that the comparison with finite difference methods is potentially harsher than necessary, I still believe that it is important to verify the model by comparing against results for some standard problem.
-Since the \mumag problem \#4 is the only such standard problem for dynamic micromagnetics, and since all available data for the solution are computed using finite difference methods there is no better choice for this comparison.
-As such I would strongly prefer to leave the comparison in my thesis.
+\item
+  \begin{quotation}
+    In the mumag standard problem 4 study, we suggest not to compare
+    against d'Aquino's data as this is based on finite difference
+    calculations and very likely to introduce different dynamical behaviour
+    due to the different computation of demag and the other fields.
+    Instead, repeat the simulation with the different integrator
+    techniques, i.e IMR, and [the three alternative renormalisation
+    methods], where [each renormalisation method] can each be combined with
+    TR, BDF2 and - if desired - the CVODE approach. This will allow you to
+    look at the changes in great detail and any difference is guaranteed to
+    originate from the integration routine (as you use the same
+    computational framework for everything else).
+  \end{quotation}
+  While I agree that the comparison with finite difference methods is potentially harsher than necessary, I still believe that it is important to verify the model by comparing against results for some standard problem.
+  Since the \mumag problem \#4 is the only such standard problem for dynamic micromagnetics, and since all available data for the solution are computed using finite difference methods there is no better choice for this comparison.
+  As such I would strongly prefer to leave the comparison in my thesis.
 
-However, I have still added additional results for the \mumag problem \#4 solved with alternative time integration methods as requested.
-A straightforward comparison of TR, BDF2 and IMR in terms of the magnetisation values and the time steps selected has been added on page \pageref{more-mumag4-correction-1}.
-On page \pageref{more-mumag4-correction-2} I have added some results comparing the accuracy of the nodal and Gaussian quadrature schemes (this is very relevant to the ``comparison of different integrator techniques'' which was requested because geometric integration requires both IMR and a nodal quadrature scheme).
+  However, I have still added additional results for the \mumag problem \#4 solved with alternative time integration methods as requested.
+  A straightforward comparison of TR, BDF2 and IMR in terms of the magnetisation values and the time steps selected has been added on page \pageref{more-mumag4-correction-1}.
+  On page \pageref{more-mumag4-correction-2} I have added some results comparing the accuracy of the nodal and Gaussian quadrature schemes (this is very relevant to the ``comparison of different integrator techniques'' which was requested because geometric integration requires both IMR and a nodal quadrature scheme).
 
-\item I have rewritten the discussion of energy conservation with triangular elements in a more positive manner as requested (pages \pageref{sec:triangular-meshes}, \pageref{sec:numer-experiments-conclusions}, \pageref{sec:future-work}).
+\item
+  \begin{quotation}
+    Rewrite the discussion of the energy conservation error for the
+    triangular elements to draw out the positives. Although the
+    conservation does not appear to be as good as quad elements, it is
+    still better than the current state-of-the-art using standard time
+    integration methods.
+  \end{quotation}
+  I have rewritten the discussion of energy conservation with triangular elements in a more positive manner as requested (pages \pageref{sec:triangular-meshes}, \pageref{sec:numer-experiments-conclusions}, \pageref{sec:future-work}).
 
 \end{enumerate}
 
