@@ -1,10 +1,4 @@
 
-% ??ds define the errors properly Refer to ODE LLG section.
-% ??ds same y-axis on ml error plots?
-% ??ds add a table of # renormalisations?
-
-% ??ds what's up with that initial transient in the ml err of sc-llg?
-
 \FloatBarrier
 \chapter{Alternative magnetisation re-normalisation methods}
 \label{sec:magn-renorm-meth}
@@ -107,7 +101,7 @@ In the damped case the tolerance $\mltol = 10^{-2}$ is reached and the behaviour
   \label{fig:renorm-tol-energy-err}
 \end{figure}
 
-In \cref{fig:renorm-tol-energy-err} the errors in the energy for the undamped case are shown.
+In \cref{fig:renorm-tol-energy-err} the errors in the energy (see \cref{sec:aimr-llg-problem-definition}) for the undamped case are shown.
 As noted previously, $\mltol= 10^{-2}$ behaves as the non-renormalised case for this example.
 When $\mltol = 10^{-6}$ we see an error similar to that for the always re-normalised case, except with additional oscillations in the energy corresponding to times where a re-normalisation is carried out.
 
@@ -126,7 +120,7 @@ When $\mltol = 10^{-6}$ we see an error similar to that for the always re-normal
   \label{fig:tol-renorm-convergence}
 \end{figure}
 
-Finally in \cref{fig:tol-renorm-convergence} we show the convergence of the method (in terms of the error in the switching time) as the step size is reduced for the damped case.
+Finally in \cref{fig:tol-renorm-convergence} we show the convergence of the method (in terms of the error in the switching time, \cref{eq:sw-time-error}) as the step size is reduced for the damped case.
 The use of $\mltol=10^{-2}$ or no re-normalisation ($\mltol=10^{200}$) gives slightly worse errors than the tighter tolerances.
 
 
