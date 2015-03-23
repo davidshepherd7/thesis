@@ -1269,7 +1269,7 @@ In contrast to this, some models use an explicit approximation to the magnetosta
 Unfortunately, in this case the energy properties will be lost due to the replacement of $\hopb{\mpm}$ by an alternative approximation (in a similar way to the semi-implicit modifications of IMR).
 However, the magnetisation length property will be retained because it only relies on $\mv$ itself being calculated implicitly, and not the effective field.
 
-One way to allow a completely implicit treatment of the magnetostatic field without a dense contribution was explored by d'Aquino \etal \cite{DAquino2005}, and is also used by \nmag \cite{fangor-in-viva} and ??ds fix femme and magpar?.
+One way to allow a completely implicit treatment of the magnetostatic field without a dense contribution was explored by d'Aquino \etal \cite{DAquino2005}, and is used by \nmag \cite{fangor-in-viva}.
 They used a quasi-Newton method where the dense contribution was simply left out of the Jacobian matrix.
 This greatly slows down the convergence of the non-linear solve: in the example given in the paper 10-14 iterations were needed (compared to $\sim2$ with a full Newton-Raphson method).
 However, in the general case it is not clear that this quasi-Newton method will converge at all!
