@@ -689,13 +689,14 @@ One interesting technique used to maintain the condition $\abs{\mv} = 1$ is to s
   \dmdt = -\frac{1}{(1 + \dampc^2)}\mxh  -\frac{\dampc}{(1 + \dampc^2)} \mxmxh
   + \scc \mv \bigb{1 - \abs{\mv}^2},
 \end{equation}
-where the final term is new, and $\scc$ is some parameter which must be chosen.
-The motivation behind this modification is as follows: if $\abs{\mv} > 1$ then during the next step there will be a an additional term in $\dmdt$ of $-\scc \mv \abs{1 - \abs{\mv}^2}$.
-As this additional term is in the direction $-\mv$ the magnetisation length will therefore be reduced.
-Similarly if $\abs{\mv} < 1$ there is a small additional term in the direction of $+\mv$ and the magnetisation length will increase.
-As the parameter $\scc$ is increased this effect will become stronger and so we expect a faster return to $\abs{\mv} = 1$.
+where $\scc$ is some parameter which must be chosen.
+\Cref{eq:sc-ll} differs from the standard LL form of the LLG, \cref{eq:ll-nd-llglike}, by the inclusion of the final term.
+The motivation behind this modification is as follows: if $\abs{\mv} > 1$ then during the next step there will be an additional term in $\dmdt$ of $-\scc \mv \abs{1 - \abs{\mv}^2}$.
+As this additional term is in the direction $-\mv$ the magnetisation length will be reduced.
+Similarly if $\abs{\mv} < 1$ there is a small additional term in the direction of $+\mv$ and the magnetisation length will be increased.
+For larger values of the parameter $\scc$ this effect is stronger and so we expect the condition $\abs{\mv} = 1$ to be restored more rapidly.
 
-The potential advantage of this method over the standard re-normalisation is that the re-normalisation is part of the differential equation.
+The potential advantage of this method over the standard re-normalisation is that the re-normalisation is part of the differential equation rather than a separate step.
 This means that the time integration scheme ``knows'' about the re-normalisation, and so could potentially provide more accurate local truncation error estimates.
 
 A potential downside is that the resulting system is more non-linear than the standard LL/LLG, particularly when $\scc$ is large.
@@ -704,11 +705,11 @@ This could mean that additional steps are needed for the non-linear solver to co
 Another downside is that the method is more complex to implement than re-normalisation after every step: it requires an additional term to be discretised, and adds additional terms to the Jacobian matrix.
 
 Also an appropriate value for the parameter $\scc$ must be selected somehow.
-To our knowledge there is no published research on appropriate values for $\scc$, we briefly study the effect of varying $\scc$ in \cref{sec:magn-renorm-meth}.
+To our knowledge there is no published research on the selection of appropriate values for $\scc$, we briefly study the effect of varying $\scc$ in \cref{sec:magn-renorm-meth}.
 
-Finally we note that the modification is only applicable to the LL form of the LLG, and there is no obvious extension to the LLG form\footnote{The obvious thing to do would be to would be to convert from one form to the other using a modification of the standard derivation of the LL form from the LLG form \cite{Aharoni1996}.
-However this derivation assumes that $\abs{\mv} = 1$ meaning that the self-correcting term is zero and rendering the result meaningless.}.
-This form can be more complex to work with for some calculations due to the triple cross-product.
+Finally we note that the modification is only applicable to the LL form of the LLG, and there is no obvious extension to the LLG form\footnote{The obvious way to proceed would be to establish a relationship between the modified LL form and the LLG form using the standard derivation of the LL form from the LLG form \cite{Aharoni1996}.
+However this derivation assumes that $\abs{\mv} = 1$, meaning that the self-correcting term is zero and rendering the result meaningless.}.
+The LL form can be more complex to work with for some calculations due to the triple cross-product.
 
 The self-correcting LLG method is used by \nmag \cite{fangor-donahue-email} \cite{Fischbacher2009}.
 
