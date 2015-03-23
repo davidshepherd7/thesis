@@ -651,12 +651,11 @@ As discussed in \cref{sec:prop-cont-llg}, the length of the magnetisation, $\abs
 However, in the approximations given by numerical methods this property is often lost, in which case it must be enforced separately.
 Note that this is not related to the spurious damping discussed in \cref{sec:numerical-damping}: in that section the key property was the conservation of the amplitude of \emph{oscillations}.
 
-% ???ds third draft
 \label{alt-ml-renorm-intro} % page reference for letter
 One simple method of dealing with the constraint is to re-normalise each value of $\mv$ after every time step.
 An extension of this method is to re-normalise the magnetisation only when the error in $\abs{\mv}$ exceeds some tolerance \cite{Fidler2000}, we refer to this method as \emph{tolerance-based renormalisation}.
 Note that the computational cost of computing the errors in $\abs{\mv}$ is roughly the same as performing the re-normalisation\footnote{Both require computing $\abs{\mv}$ and performing some simple operation with it for every discrete value of the magnetisation.}, hence tolerance-based re-normalisation does not provide any gain in efficiency.
-Tolerance-based re-normalisation is used in \magpar\footnote{See \texttt{src/util/renormvec.c} in the \magpar version 0.9 source code.} with a default tolerance of $10^{-2}$, while re-normalisation after every step is used in \oommf's 4th order Runge-Kutta scheme \cite{fangor-donahue-email}.
+Tolerance-based re-normalisation is used in \magpar\footnote{See \texttt{src/util/renormvec.c} in the source code of \magpar version 0.9.} with a default tolerance of $10^{-2}$, while re-normalisation after every step is used in \oommf's 4th order Runge-Kutta scheme \cite{fangor-donahue-email}.
 However both of these re-normalisation approaches fundamentally change the system of equations being solved in a non-linear and unpredictable manner \cite{Lewis2003}.
 
 Another approach, which is closely related to re-normalisation, is the use of a modified LLG equation with an additional term which dynamically corrects errors in the magnetisation length \cite{Porter2005} \cite{Fischbacher2009}.
@@ -678,11 +677,10 @@ Geometric time integration schemes aim to solve the issue of length conservation
 Some examples of such schemes are based on IMR \cite{DAquino2005}, or a semi-implicit modification of the IMR using explicit extrapolations of some or all effective field terms \cite{Spargo2003,Serpico2001,Mentink2010,Bottauscio2008}.
 Alternatively, geometric integration methods based on Cayley transforms can be used \cite{Lewis2003,Bottauscio2011}.
 
-% ???ds third draft
 \subsubsection{The self-correcting LLG}
 \label{sec:sc-llg}
 
-One interesting technique used to maintain the condition $\abs{\mv} = 1$ is to solve a modified ``self-correcting'' LLG equation \cite{Porter2005} \cite{Fischbacher2009} instead of the standard LL form of the LLG:
+One interesting technique used to maintain the condition $\abs{\mv} = 1$ is to solve a modified ``self-correcting'' LLG equation \cite{Porter2005} \cite{Fischbacher2009}:
 \begin{equation}
   \label{eq:sc-ll}
   \dmdt = -\frac{1}{(1 + \dampc^2)}\mxh  -\frac{\dampc}{(1 + \dampc^2)} \mxmxh
@@ -691,12 +689,12 @@ One interesting technique used to maintain the condition $\abs{\mv} = 1$ is to s
 where $\scc$ is some parameter which must be chosen.
 \Cref{eq:sc-ll} differs from the standard LL form of the LLG, \cref{eq:ll-nd-llglike}, by the inclusion of the final term.
 The motivation behind this modification is as follows: if $\abs{\mv} > 1$ then during the next step there will be an additional term in $\dmdt$ of $-\scc \mv \abs{1 - \abs{\mv}^2}$.
-As this additional term is in the direction $-\mv$ the magnetisation length will be reduced.
-Similarly if $\abs{\mv} < 1$ there is a small additional term in the direction of $+\mv$ and the magnetisation length will be increased.
+As this additional term is in the $-\mv$ direction the magnetisation length will be reduced.
+Similarly if $\abs{\mv} < 1$ there is a small additional term in the $+\mv$ direction and the magnetisation length will be increased.
 For larger values of the parameter $\scc$ this effect is stronger and so we expect the condition $\abs{\mv} = 1$ to be restored more rapidly.
 
 The potential advantage of this method over the standard re-normalisation is that the re-normalisation is part of the differential equation rather than a separate step.
-This means that the time integration scheme ``knows'' about the re-normalisation, and so could potentially provide more accurate local truncation error estimates.
+This means that the time integration scheme ``knows'' about the re-normalisation and so may be able to choose more appropriate time step sizes (see \cref{sec:adaptivity}).
 
 A potential downside is that the resulting system is more non-linear than the standard LL/LLG, particularly when $\scc$ is large.
 This could mean that additional steps are needed for the non-linear solver to converge, resulting in increased computation time.
@@ -1114,7 +1112,6 @@ As an example we consider the complexity for the system resulting from the discr
 In this case $s \propto a$ because there is an interaction between nodes in neighbouring rows and there are $a$ nodes per row.
 Since $a \propto \sqrt{\nrow}$ the overall complexity is $\order{\nrow^2}$.
 
-% ???ds third draft
 In three dimensional PDE problems there are typically more non-zero entries in each row due to the increased connectivity of the nodes, increasing the complexity of the method.
 For example, in the three dimensional equivalent of the example above (an $a \times a \times a$ grid) $s \propto a^2$ and $a \propto \nrow^{1/3}$, hence the complexity is $\order{\nrow^{7/3}}$.
 
