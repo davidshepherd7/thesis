@@ -330,7 +330,8 @@ Numerical experiments with the LLG equation are detailed in \cref{sec:imr-ode-ll
 We compare the adaptive IMR developed above with two commonly used adaptive implicit time integrators:
 \begin{itemize}
 \item The adaptive trapezoid rule (TR) with an error estimate constructed using Milne's device and the second order Adams-Bashforth method (AB2) \cite[707]{GreshoSani}.
-\item Adaptive BDF2, with the error estimate constructed using Milne's device and the variable-step leapfrog method (\ie explicit BDF2) \cite[715]{GreshoSani}.
+\item Adaptive BDF2, with the error estimate constructed using Milne's device and the variable-step leapfrog method (\ie explicit BDF2) \cite[715]{GreshoSani}.\footnote{This method is the default adaptive time integration scheme of \oomph and has been thoroughly tested over the past $\sim 10$ years.}
+\label{corrections-bdf2-well-established-note}
 \end{itemize}
 
 All three methods are implemented within the \oomph framework.
