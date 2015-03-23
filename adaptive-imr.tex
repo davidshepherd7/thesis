@@ -342,10 +342,9 @@ One effect of this is that the baseline numerical error as seen by the time inte
 Unless otherwise specified all examples in \thisref{sec:aimr-testing} use an absolute Newton tolerance of $\ntol = 10^{-8}$, an initial time step of $\dtx{0} = 10^{-5}$, and an adaptive integrator tolerance of $\toltt = 10^{-4}$.
 Any initial conditions required are calculated from the exact solutions.
 
-% ???ds second draft
 The BDF2 algorithm used here is extremely similar to the method used by the \cvode library for stiff problems when the order is set to 2 \cite{cvode-manual}\footnote{By default \cvode allows the order of the method to vary.
   However previous research has shown that for micromagnetic problems it is beneficial to fix the order to 2 \cite{Suess2002}.}.
-The key difference is in the step selection, \cvode keeps the step size fixed where possible as described in \cref{sec:computing-next-step}.
+The key difference is in the step selection: \cvode keeps the step size fixed where possible as described in \cref{sec:computing-next-step}.
 
 \subsection{A polynomial example}
 \label{sec:imr-polynomial-example}
@@ -613,7 +612,6 @@ Note that with $\dampc = 0$ \cref{eqn:nd-ode-llg} becomes simply $\dmdt = - \mv 
 The implementation of the three time integration algorithms without the re-normalisation of $\mv$ is exactly as discussed in \cref{sec:aimr-implementation}.
 We also test the performance of the TR and BDF2 methods with an added re-normalisation step to enforce constant $\abs{\mv}$.
 
-% ???ds second draft
 In \cref{sec:magn-renorm-meth} we compare re-normalisation after every step with two other re-normalisation methods (the self-correcting LLG and re-normalisation only after the error in the magnetisation length reaches a specified tolerance).
 We find that there is no reason to prefer these alternative methods.
 Hence for the rest of this thesis we use the re-normalisation after every step method when re-normalisation is required.
@@ -784,7 +782,6 @@ This scenario will be tested in \cref{cha:numer-experiments} where the adaptive 
 
 Finally, we have observed some interesting results on the suitability of certain time integration methods to the simulation of the LLG equation.
 We have found that the use of BDF2 results in significantly larger errors in the calculated switching time than when the TR or IMR methods are used, particularly when the precessional behaviour is not fully resolved.
-% ??ds second draft
 \label{cpu-correction-0}
 Assuming that a given level of error is required for an application this means that IMR and TR can take larger time steps (by a factor of $\sqrt{E_\bdf/E_\imr}$), resulting a proportional reduction in the computation time.
 We have also found that the process of re-normalising the magnetisation length after each time step in BDF2 methods greatly increases the error in the energy.

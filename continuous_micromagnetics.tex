@@ -38,8 +38,7 @@ For a scalar function $f$ and a vector function $\gv$ in three dimensions we use
 We also write the vector Laplacian as $\lap \gv = (\lap g_x,\lap g_y, \lap g_z )$.
 In less than three dimensions the obvious extensions are used.
 
-% ??ds second draft
-We are often concerned with energies that depend on the values of the function $\Mv$ over all space, \ie $E[\Mv(\xv)]$ is a \emph{functional} of $\Mv$.
+We are often concerned with energies $E$ that depend on the values of the function $\Mv$ over all space, \ie $E[\Mv(\xv)]$ is a \emph{functional} of $\Mv$.
 For such a functional we define its first variation as
 \begin{equation}
   \begin{aligned}
@@ -67,13 +66,12 @@ The energy due to an external applied field, $\Happ$, (sometimes called the Zeem
   \Eapp = - \mu_0 \int_{\magd}  \Happ \cdot \Mv \d \magd.
 \end{equation}
 
-% ??ds second draft
 The first variation of this energy with respect to $\Mv$ is
 \begin{equation}
   \begin{aligned}
     \label{eq:9}
-    \variation \Eapp &= -\mu_0 \intd{ \Happ \cdot \Mv + \Happ \cdot \variation \Mv
-      - \Happ \cdot \Mv}, \\
+    \variation \Eapp &= -\mu_0 \bigs{\intd{ \Happ \cdot \Mv + \Happ \cdot \variation \Mv}
+      - \intd{\Happ \cdot \Mv}}, \\
     &= -\mu_0 \intd{\Happ \cdot \variation \Mv},
   \end{aligned}
 \end{equation}
@@ -100,7 +98,6 @@ This can be approximated by a classical expression for exchange energy \cite{Aha
 \end{equation}
 where $\Exchc$ is the material dependent exchange constant representing the strength of the exchange coupling.
 
-% ??ds second draft
 It can be shown \cite{Aharoni1996}\cite[46]{BrownMicromagnetics}\footnote{
   Briefly: use the fact that $\delta \grad \Mv = \grad \delta \Mv$ and apply \cref{eqn:grad-divergence} (assuming that the boundary condition \cref{{eq:llg-bc}} holds) to shift the both derivatives onto the $\Mv$ term.
 } that
@@ -122,9 +119,7 @@ Hence the exchange effective field is given by
 
 \subsection{Magnetostatic energy}
 \label{sec:magnetostatic-field}
-% \newcommand{\jv}{\myvector{j}}
 
-% ???ds second draft
 Magnetic materials generate a magnetic field, which in turn affects the magnetic material emitting the field.
 This field is also known as the demagnetising field as it tends to oppose the magnetisation of the body.
 When there are no changing electric fields the magnetic field can be calculated using only two equations rather than the full four Maxwell's equations, this case is known as magnetostatics.
@@ -139,7 +134,7 @@ The second equation needed is \cite[34]{Coey2010}
 \end{equation}
 These two equations can be derived from Maxwell's equations by setting $\pd{\mathbf{E}}{t} = 0$.
 We call the resulting field the magnetostatic field and label it $\Hms$.
-The solutions to these equations are typically calculated in one of two ways: using an integral method or by solving a simplified differential equation in terms of a potential.
+The solutions to these equations are typically calculated in one of two ways: by using an integral method or by solving a simplified differential equation in terms of a potential.
 
 The integral form of the magnetostatic field at a point $\xv \in \real^3$ due to the magnetic body $\magd$ with boundary $\boundd$ can be given in terms of magnetisation $\Mv$ by an integral over all volume and surface ``magnetic charges'' ($\div \Mv$ and $\Mv \cdot \nv$ respectively) as
 \begin{equation}

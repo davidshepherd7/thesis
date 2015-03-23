@@ -144,7 +144,6 @@ This error norm measures the level of over/under damping caused by the approxima
 The convergence results for the time integral of the error norm $\errmz$ are shown in \cref{fig:convergence-long-time-mz-norm}.
 We again see second order convergence behaviour for all methods.
 The BDF2 method requires additional refinement to reach the asymptotic convergence behaviour, and has around an order of magnitude larger error than the other methods once convergence is reached.
-% ??ds second draft
 \label{cpu-correction-1}
 This difference in error means that the IMR and TR methods are able to take time steps roughly $\sqrt{10} \sim 3$ times larger while still attaining the same global error, resulting in a factor of three speed-up (assuming that the error norm considered here is relevant to the application).
 Also note that there is no significant difference between IMR with nodal quadrature (which conserves $\abs{\mv}$) and IMR with Gaussian quadrature (in which $\mv$ is re-normalised), indicating that geometric integration offers no significant benefits in this case.
@@ -248,9 +247,8 @@ A similar result is seen in \cref{fig:energy-error-2d-nodal-newton-tests} for th
 \subsection{Conclusions}
 
 We have shown that the methods we tested have the expected convergence and time step selection properties.
-% ??ds second draft
 \label{cpu-correction-2}
-We also observed that the asymptotic accuracy of the BDF2 method is lower than the TR or IMR methods by around one order of magnitude.
+We also observed that the accuracy of the BDF2 method is lower than the TR or IMR methods by around one order of magnitude.
 Due to this effect the TR and IMR methods can take larger time steps while attaining the same error, resulting in shorter computation times.
 
 We have also shown that the geometric integration properties of IMR are preserved in a weak form FEM model with a nodal quadrature scheme.
@@ -535,11 +533,10 @@ The dynamics are very similar, but the monolithic method is able to take larger 
   \label{fig:mumag4-implicit-decoupled}
 \end{figure}
 
-% ??ds second draft
 \label{more-mumag4-correction-1}
 In \cref{fig:mumag-ts-comparison} we show a comparison of the three time integration schemes (with Gaussian quadrature, monolithic magnetostatics and $n_x= 100$) for field 2.
 We can see that all three of the schemes give very similar magnetisation values.
-However IMR takes significantly smaller time steps during the initial relaxation phase ($t \sim -250$), this is likely due to the order reduction effect (see \cref{sec:order-reduction}):
+However, IMR takes significantly smaller time steps during the initial relaxation phase ($t \sim -250$). This is likely due to the order reduction effect (see \cref{sec:order-reduction}):
 since the field is initially very large, the Jacobian will contain large terms resulting in a reduction of accuracy for IMR.
 The adaptive time integration scheme detects and accounts for this effect by reducing the time step size.
 \begin{figure}
@@ -622,7 +619,6 @@ So these results are not necessarily representative of the accuracy of an energy
 
 In this section we examine the effectiveness of the iterative linear and non-linear solvers for the monolithic method introduced in \cref{sec:fully-implicit-bem} as applied to the \mumag standard problem \#4.
 
-% ??ds second draft
 \label{mem-cpu-solver-correction}
 Before showing the results we describe how the number of iterations required by the linear and non-linear solvers affect the CPU time and memory usage of the overall method.
 When using implicit time integration schemes almost all of the computation time is spent within the non-linear (\ie Newton-Raphson) solve in each time step, hence the speed and number of these solves is critical to performance.
@@ -642,7 +638,6 @@ Hence the total CPU time obeys a relationship of the form
   T_\mathrm{total} \propto N_\mathrm{TimeSteps} \cdot N_\mathrm{NewtonIterations} \cdot N_\mathrm{LinearIterations}^2 \cdot N.
 \end{equation}
 
-% ??ds second draft
 In terms of memory usage the relationships are much simpler: neither the number of time steps or Newton iterations affects the memory used.
 If GMRES is used then additional linear solver iterations increase the memory usage linearly as described in \cref{sec:krylov-solvers}.
 However, in FEM/BEM problems the boundary element matrix typically dominates the memory usage to the extent that this is irrelevant \cite{Suess2002}.

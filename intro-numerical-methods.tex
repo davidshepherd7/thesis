@@ -651,17 +651,16 @@ As discussed in \cref{sec:prop-cont-llg}, the length of the magnetisation, $\abs
 However, in the approximations given by numerical methods this property is often lost, in which case it must be enforced separately.
 Note that this is not related to the spurious damping discussed in \cref{sec:numerical-damping}: in that section the key property was the conservation of the amplitude of \emph{oscillations}.
 
-% ???ds second draft
+% ???ds third draft
 \label{alt-ml-renorm-intro} % page reference for letter
 One simple method of dealing with the constraint is to re-normalise each value of $\mv$ after every time step.
 An extension of this method is to re-normalise the magnetisation only when the error in $\abs{\mv}$ exceeds some tolerance \cite{Fidler2000}, we refer to this method as \emph{tolerance-based renormalisation}.
 Note that the computational cost of computing the errors in $\abs{\mv}$ is roughly the same as performing the re-normalisation\footnote{Both require computing $\abs{\mv}$ and performing some simple operation with it for every discrete value of the magnetisation.}, hence tolerance-based re-normalisation does not provide any gain in efficiency.
-Renormalisation after a tolerance is used in \magpar\footnote{Based on the source code of version 0.9. The function of interest is in the file \texttt{src/util/renormvec.c}, it is called by \texttt{CheckIterationLLG} (which is the standard LLG solver iteration function) with tolerance \texttt{renormtol}.} with a default tolerance of $10^{-2}$, while renormalisation after every step is used in \oommf's 4th order Runge-Kutta scheme \cite{fangor-donahue-email}.
-However both of these approaches fundamentally change the system of equations being solved in a non-linear and unpredictable manner \cite{Lewis2003}.
+Tolerance-based re-normalisation is used in \magpar\footnote{See \texttt{src/util/renormvec.c} in the \magpar version 0.9 source code.} with a default tolerance of $10^{-2}$, while re-normalisation after every step is used in \oommf's 4th order Runge-Kutta scheme \cite{fangor-donahue-email}.
+However both of these re-normalisation approaches fundamentally change the system of equations being solved in a non-linear and unpredictable manner \cite{Lewis2003}.
 
-% ???ds second draft
 Another approach, which is closely related to re-normalisation, is the use of a modified LLG equation with an additional term which dynamically corrects errors in the magnetisation length \cite{Porter2005} \cite{Fischbacher2009}.
-This method is used by \nmag \cite{Fischbacher2009} and is discussed in more detail in \cref{sec:sc-llg}.
+This method is used by \nmag \cite{Fischbacher2009} and is discussed in more detail later in this section.
 
 Another way to avoid this problem is to use a spherical polar coordinate system $(r,\theta,\phi)$ for the magnetisation.
 In these coordinates \cref{eq:LLG} can be expressed in terms of only the angles $(\theta,\phi)$ representing the direction of $\mv$ and the length constraint is automatically enforced since
@@ -679,7 +678,7 @@ Geometric time integration schemes aim to solve the issue of length conservation
 Some examples of such schemes are based on IMR \cite{DAquino2005}, or a semi-implicit modification of the IMR using explicit extrapolations of some or all effective field terms \cite{Spargo2003,Serpico2001,Mentink2010,Bottauscio2008}.
 Alternatively, geometric integration methods based on Cayley transforms can be used \cite{Lewis2003,Bottauscio2011}.
 
-% ???ds second draft
+% ???ds third draft
 \subsubsection{The self-correcting LLG}
 \label{sec:sc-llg}
 
@@ -1110,20 +1109,15 @@ The problem is that the factors of a typical sparse matrix can be significantly 
 This means that the time and memory requirements for the solution rarely scale as $\order{\nrow}$ except for very specific matrices.
 However the exact level of fill-in depends on the sparsity pattern of the initial matrix, and so a single simple complexity estimate cannot be given.
 
-% ???ds second draft
 The computational complexity of LU decomposition for a banded matrix is $\order{s^2 \nrow}$, where $s$ is the bandwidth (\ie $s$ such that the matrix entries $a_{kl} = 0$ if $\abs{k - l} > s$) \cite[236]{Iserles2009}.
 As an example we consider the complexity for the system resulting from the discretisation of a Poisson problem in two dimensions on an $a \times a$ grid (by the finite element or finite difference method).
 In this case $s \propto a$ because there is an interaction between nodes in neighbouring rows and there are $a$ nodes per row.
 Since $a \propto \sqrt{\nrow}$ the overall complexity is $\order{\nrow^2}$.
 
-% ???ds second draft
-For three dimensional PDE problems there are significantly more non-zero entries in each row due to the increased connectivity of the nodes.
-For the three dimensional equivalent of the above example (an $a \times a \times a$ grid) $s \propto a^2$ and $a \propto \nrow^{1/3}$, hence the complexity is $\order{\nrow^{7/3}}$.
-Note that the performance of a direct solver on three dimensional problems is worse than for comparable problems in two dimensions even if $\nrow$ remains the same.
+% ???ds third draft
+In three dimensional PDE problems there are typically more non-zero entries in each row due to the increased connectivity of the nodes, increasing the complexity of the method.
+For example, in the three dimensional equivalent of the example above (an $a \times a \times a$ grid) $s \propto a^2$ and $a \propto \nrow^{1/3}$, hence the complexity is $\order{\nrow^{7/3}}$.
 
-% % ???ds second draft
-% For general unstructured meshes the bandwid would be much more complex.
-% For higher order finite element methods the bandwidth of the resulting matrices increases.
 
 \subsection{Krylov solvers}
 \label{sec:krylov-solvers}
