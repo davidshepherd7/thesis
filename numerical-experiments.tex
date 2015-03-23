@@ -146,7 +146,7 @@ We again see second order convergence behaviour for all methods.
 The BDF2 method requires additional refinement to reach the asymptotic convergence behaviour, and has around an order of magnitude larger error than the other methods once convergence is reached.
 % ??ds second draft
 \label{cpu-correction-1}
-This difference in error means that the IMR and TR methods are able to take time steps roughly $\sqrt{10} \sim 3$ times larger while still attaining the same global error, resulting in a factor of three speed-up (assuming that the error norm considered here is important for the application).
+This difference in error means that the IMR and TR methods are able to take time steps roughly $\sqrt{10} \sim 3$ times larger while still attaining the same global error, resulting in a factor of three speed-up (assuming that the error norm considered here is relevant to the application).
 Also note that there is no significant difference between IMR with nodal quadrature (which conserves $\abs{\mv}$) and IMR with Gaussian quadrature (in which $\mv$ is re-normalised), indicating that geometric integration offers no significant benefits in this case.
 \begin{figure}
   \centering
@@ -539,9 +539,9 @@ The dynamics are very similar, but the monolithic method is able to take larger 
 \label{more-mumag4-correction-1}
 In \cref{fig:mumag-ts-comparison} we show a comparison of the three time integration schemes (with Gaussian quadrature, monolithic magnetostatics and $n_x= 100$) for field 2.
 We can see that all three of the schemes give very similar magnetisation values.
-However IMR takes significantly smaller time steps during the initial relaxation phase, this is likely due to the order reduction effect (see \cref{sec:order-reduction}):
+However IMR takes significantly smaller time steps during the initial relaxation phase ($t \sim -250$), this is likely due to the order reduction effect (see \cref{sec:order-reduction}):
 since the field is initially very large, the Jacobian will contain large terms resulting in a reduction of accuracy for IMR.
-The adaptive time integration scheme detects and accounts for this effect.
+The adaptive time integration scheme detects and accounts for this effect by reducing the time step size.
 \begin{figure}
   \centering
   \includegraphics[width=0.8\textwidth]{{{plots/mumag4_ts_comparison/meanmxsvs-meanmysvs-meanmzsvs-dtsvstimes}}}
@@ -550,11 +550,13 @@ The adaptive time integration scheme detects and accounts for this effect.
 Gaussian quadrature,
 monolithic coupling,
 and $n_x=100$.
+??ds minus signs have gone missing
   }
   \label{fig:mumag-ts-comparison}
 \end{figure}
 
 \subsection{Geometric integration properties}
+\label{sec:geom-integr-prop}
 
 The evolution of the maximum nodal error in the magnetisation length for the decoupled and implicit methods is shown in \cref{fig:imr-conservation}.
 As expected both coupling approaches conserve $\abs{\mv}$ to around the Newton tolerance.
@@ -597,20 +599,20 @@ Alternatively a standard Galerkin BEM discretisation combined with the single-la
 \label{more-mumag4-correction-2}
 
 In this section we compare the results when using nodal quadrature and Gaussian quadrature.
-We focus on the case of field 2 and use monolithic magnetostatics.
+We focus on the case of field 2 and the use of monolithic coupling.
 In \cref{fig:mumag4-nodal-quadrature-comparison} we show the mean $y$ component of the magnetisation for a range of mesh refinements and integration schemes around the time when the results begin to deviate from each other.
 Varying the tolerance of the adaptive integrator ($\toltt = 10^{-3}, 10^{-4}, 10^{-5}$) or the time integration scheme has almost no effect on these results.
 Hence we can assume that the results with Gaussian quadrature and the highest refinement level are the most accurate.
 Based on this we can see that the use of nodal quadrature results in lower accuracy for the same level of spatial refinement.
 
 Therefore we conclude that nodal quadrature can have a negative effect on the overall accuracy of the scheme.
-However, recall that our implementation of IMR with magnetostatics does not conserve energy.
+However, recall that our implementation of IMR with magnetostatics does not conserve energy (see \cref{sec:geom-integr-prop}).
 So these results are not necessarily representative of the accuracy of an energy-conserving implementation.
 
 \begin{figure}
   \centering
   \includegraphics[width=0.8\textwidth]{{{plots/mumag4_nodal_quadrature/meanmysvstimes}}}
-  \caption{Mean $y$ component of the magnetisation for the \mumag problem 4 with field 2 solved using IMR, monolithic coupling, both quadrature schemes and varying spatial resolutions.
+  \caption{Mean $y$ component of the magnetisation for the \mumag problem 4 with field 2 solved using IMR, monolithic coupling, both quadrature schemes and varying spatial resolution $n_x$.
     The number in the legend indicates $n_x/5$.}
   \label{fig:mumag4-nodal-quadrature-comparison}
 \end{figure}
@@ -625,7 +627,7 @@ In this section we examine the effectiveness of the iterative linear and non-lin
 \label{mem-cpu-solver-correction}
 Before showing the results we describe how the number of iterations required by the linear and non-linear solvers affect the CPU time and memory usage of the overall method.
 When using implicit time integration schemes almost all of the computation time is spent within the non-linear (\ie Newton-Raphson) solve in each time step, hence the speed and number of these solves is critical to performance.
-Within a Newton-Raphson solve the linear (Jacobian) solve time typically dominates the time taken,\footnote{When highly effective solvers are available, \ie small two dimensional problems, the Jacobian assembly time can become important.
+Within a Newton-Raphson step the linear (Jacobian) solve time typically dominates the time taken,\footnote{When highly effective solvers are available, \ie small two dimensional problems, the Jacobian assembly time can become important.
 However, our current Jacobian assembly code is not well optimised \eg an order of magnitude speed-up could be easily obtained by caching constant (linear) blocks as described in \cref{sec:bem-jacobian-structure}.}
 the number of Jacobian solves that are required is equal to the number of Newton-Raphson iterations.
 Writing these relationships mathematically we have

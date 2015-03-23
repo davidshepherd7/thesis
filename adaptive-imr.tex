@@ -783,7 +783,7 @@ Any effects of these geometric integration properties would be expected to be gr
 This scenario will be tested in \cref{cha:numer-experiments} where the adaptive IMR algorithm is combined with the PDE methods discussed in other chapters.
 
 Finally, we have observed some interesting results on the suitability of certain time integration methods to the simulation of the LLG equation.
-We have found that the use of BDF2 results in significantly larger errors in the calculated switching time than the TR or IMR methods, particularly when the full precessional behaviour is not resolved.
+We have found that the use of BDF2 results in significantly larger errors in the calculated switching time than when the TR or IMR methods are used, particularly when the precessional behaviour is not fully resolved.
 % ??ds second draft
 \label{cpu-correction-0}
 Assuming that a given level of error is required for an application this means that IMR and TR can take larger time steps (by a factor of $\sqrt{E_\bdf/E_\imr}$), resulting a proportional reduction in the computation time.
