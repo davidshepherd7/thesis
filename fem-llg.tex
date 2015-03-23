@@ -1272,54 +1272,6 @@ Since we have chosen $\mv = (0, 0, m)$ this means we can vary the magnetisation 
 Finally, we note that if the magnetisation is constant in space at times $t_n$ and $t_{n+1}$ then the integral condition in \cref{eq:23} \emph{is} sufficient to give conservation of the magnetisation length at nodes.
 
 
-
-% % ??ds remove?
-% \section{The self-correcting LLG term}
-% \label{sec:self-correcting-llg}
-
-% \newcommand{\Rsc}{\myvector{\mathcal{Q}}}
-% \newcommand{\rsc}{q}
-% \newcommand{\rscv}{\mathbf{q}}
-
-
-% In \cref{sec:sc-llg} an additional LLG term was introduced to automatically correct the magnetisation length.
-% To use this additional term in the finite element method the usual weak form, residual and Jacobian terms must be derived.
-
-% \subsection{Residual contribution}
-
-% % ??ds does this make sense for the LLG? or do we need to go to LL form? -- probably only LL
-% We start from the strong residual form of the self correcting LLG \cref{eq:sc-llg}:
-% \begin{equation}
-%   \begin{aligned}
-%     \Rllg'(\mv, \phim) &= \dmdt + \mv \times \hv - \dampc \mv \times \dmdt - \scc \mv \bigb{1 - \abs{\mv}^2},  \\
-%     &= \Rllg(\mv, \phim) - \Rsc(\mv),
-%   \end{aligned}
-% \end{equation}
-% where
-% \begin{equation}
-%   \Rsc(\mv) = \scc \mv \bigb{1 - \abs{\mv}^2}.
-% \end{equation}
-% Clearly the derivation of discrete weak-form terms resulting from $\Rllg$ is unchanged and we only need to add an extra term to the final discrete weak-form residual to account for the self-correcting term.
-
-% Converting $\Rsc$ to weak residual form, as in \cref{sec:weak-form-residuals}, gives
-% \begin{equation}
-%   \rscv(\mv, \test) = \intd{\scc \mv \bigb{1 - \abs{\mv}^2} \test},
-% \end{equation}
-% which must be zero for all $\test \in V$, where $V$ is as required for the rest of the residual (\ie $V = \tsinf$ due to the derivative transfer from the exchange term).
-
-% The final discrete form can then be obtained, as in \cref{sec:fully-discr-resid}, by substituting in $\mvh$ and $\testh$ to give
-% \begin{equation}
-%   \rscv_n = \intd{\scc \mvh \bigb{1 - \abs{\mvh}^2} \tbf_n},
-% \end{equation}
-% which is added to $\rllgv_n$ of \cref{res:llg-discrete}.
-
-% \subsection{Jacobian contribution}
-
-% We now derive the contribution of the self-correcting term to the Jacobian.
-
-
-% Note that the self-correcting term has no effect on the magnetostatics blocks of the Jacobian.
-
 %%% Local Variables:
 %%% mode: latex
 %%% TeX-master: "main"
