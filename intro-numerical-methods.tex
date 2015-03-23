@@ -1104,8 +1104,7 @@ Effective iterative solvers are usually problem specific but can be much more ef
 Direct methods for the solution of linear systems seek exact solutions using methods based on Gaussian elimination.
 The direct method most commonly used in the solution of systems resulting from discretised PDEs is LU decomposition.
 
-% ??ds fix Citation for robustness?  -- Andrew
-The main advantage of direct methods is their robustness: for reasonably non-singular systems and given enough time a direct solver will be able to solve the system.
+The main advantage of direct methods is their robustness: for reasonably non-singular systems and given enough time/memory a direct solver will be able to solve the system.
 However as matrix sizes become large direct solvers become increasingly demanding in both time and memory.
 The problem is that the factors of a typical sparse matrix can be significantly more dense than the original matrix, \ie there is some amount of fill-in.
 This means that the time and memory requirements for the solution rarely scale as $\order{\nrow}$ except for very specific matrices.
