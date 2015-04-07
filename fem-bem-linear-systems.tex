@@ -425,26 +425,43 @@ All experiments are run on a single core (\ie no parallelism is used) of a deskt
 
 \subsection{Results}
 
+Before presenting the results we note that, unless otherwise specified, all figures in this section show data points for all values of $\dtn$, $N$, $\dampc$ and $\kone$; both the nodal and Gaussian quadrature schemes; and both the dense and hierarchical $\Gm$ block formats.
+However, where there appear to be no interesting differences caused by a parameter we plot data points for all values of that parameter using the same symbol and colour.
+Also we note that occasionally data points overlap, giving the appearance of fewer points.
 
-\Cref{fig:its-ilu-decoupled} shows the mean (over a single Newton solve) number of GMRES iterations required to solve the LLG-only system, \cref{eq:llg-jacobian}, using ILU(1) preconditioning (\ie with magnetostatics handled by the semi-implicit approach).
+\Cref{fig:its-ilu-decoupled} shows the mean (over the linear solves required within a single Newton solve) number of GMRES iterations required to solve the LLG-only system, \cref{eq:llg-jacobian}, using ILU(1) preconditioning (\ie with magnetostatics handled by the semi-implicit approach).
 As is expected for a general-purpose preconditioner it is effective for small matrix sizes, but becomes less effective for large problems and as the time step size increases.
 % In fact for the largest $\Nn$ with the largest time steps ($\dtn = 1.0$) the solver does not converge with 400 iterations for some parameters.
-Note that, unless otherwise specified, all plots include all values of the physical parameters, both quadratures and both $\Gm$ block formats.
-These parameters do not appear to have a major impact on the effectiveness of the ILU(1) preconditioner in this example.
+The parameters $\dampc$ and $\kone$, along with the BEM block format and quadrature type do not appear to have a major impact on the effectiveness of the ILU(1) preconditioner in this example.
 The mean preconditioner setup times this preconditioner are shown in \cref{fig:times-ilu-decoupled}.
 As with the iteration counts, the setup times become significantly larger as $\Nn$ grows.
+
+\newcommand{\manydatapointsTimeStepLegend}{Data points for all values of $\dampc$ and $\kone$; both types of quadrature; and both formats of the BEM block are shown but are not distinguished.}
+\newcommand{\manydatapointsPrecLegend}{Data points for all values of $\dampc$, $\dtn$, and $\kone$; and for both formats of the BEM block are shown but are not distinguished.}
+
+\newcommand{\newtonmean}{Mean (over a single Newton solve) of the}
 
 \begin{figure}
   \centering
   \includegraphics[width=0.8\textwidth]{plots/linear_solvers/ilu-1decoupleddummy-meanofnsolveritersvsinitialnnode.pdf}
-  \caption{GMRES iterations to converge against problem size for the decoupled LLG preconditioned by ILU(1). The legend indicates the time step size.}
+  \caption{
+    \newtonmean{}
+    GMRES iterations to converge against problem size for the decoupled LLG preconditioned by ILU(1).
+    The legend indicates the time step size.
+    \manydatapointsTimeStepLegend{}
+  }
   \label{fig:its-ilu-decoupled}
 \end{figure}
 
 \begin{figure}
   \centering
   \includegraphics[width=0.8\textwidth]{plots/linear_solvers/ilu-1decoupleddummy-meanofpreconditionersetuptimesvsinitialnnode.pdf}
-  \caption{Time in seconds to set up an ILU(1) preconditioner against problem size for the decoupled LLG block. The legend indicates the time step size.}
+  \caption{
+    \newtonmean{}
+    time in seconds to set up an ILU(1) preconditioner against problem size for the decoupled LLG block.
+    The legend indicates the time step size.
+    \manydatapointsTimeStepLegend{}
+  }
   \label{fig:times-ilu-decoupled}
 \end{figure}
 
@@ -459,8 +476,11 @@ Note that some data for the largest $\Nn$ are missing, this is because the memor
 \begin{figure}
   \centering
   \includegraphics[width=0.8\textwidth]{plots/linear_solvers/som-main-exactimplicitdummy-meanofnsolveritersvsinitialnnode.pdf}
-  \caption{GMRES iterations to converge against problem size for the monolithic system preconditioned by $\preca$ (inverted by LU decomposition).
-The legend indicates the time step size.
+  \caption{
+    \newtonmean{}
+GMRES iterations to converge against problem size for the monolithic system preconditioned by $\preca$ (inverted by LU decomposition).
+    The legend indicates the time step size.
+    \manydatapointsTimeStepLegend{}
 Some data points for the largest $\Nn$ are missing due the LU factors requiring more than 16GB of memory.
 }
   \label{fig:its-p1-exact}
@@ -470,8 +490,11 @@ Some data points for the largest $\Nn$ are missing due the LU factors requiring 
 \begin{figure}
   \centering
   \includegraphics[width=0.8\textwidth]{plots/linear_solvers/som-main-exactimplicitdummy-meanofpreconditionersetuptimesvsinitialnnode.pdf}
-  \caption{Time in seconds to set up $\preca$ (inverted by LU decomposition) against problem size for the monolithic system.
+  \caption{
+    \newtonmean{}
+    time in seconds to set up $\preca$ (inverted by LU decomposition) against problem size for the monolithic system.
     The legend indicates the time step size.
+    \manydatapointsTimeStepLegend{}
     Some data points for the largest $\Nn$ are missing due the LU factors requiring more than 16GB of memory.
 }
   \label{fig:times-p1-exact}
@@ -491,8 +514,11 @@ Also of note is that, unlike $\preca$, the required LU decomposition fits within
 \begin{figure}
   \centering
   \includegraphics[width=0.8\textwidth]{plots/linear_solvers_p2p3/implicitexact-meanofnsolveritersvsinitialnnode.pdf}
-  \caption{GMRES iterations to converge against problem size for the monolithic system using the partially-inexact preconditioners $\parinexact{\precb}$, $\parinexact{\precc}$ with $\dtn=0.1$.
+  \caption{
+    \newtonmean{}
+    GMRES iterations to converge against problem size for the monolithic system using the partially-inexact preconditioners $\parinexact{\precb}$, $\parinexact{\precc}$ with $\dtn=0.1$.
 The legend indicates the preconditioner and quadrature scheme used.
+\manydatapointsTimeStepLegend{}
 }
   \label{fig:its-p23-exact}
 \end{figure}
@@ -500,8 +526,11 @@ The legend indicates the preconditioner and quadrature scheme used.
 \begin{figure}
   \centering
   \includegraphics[width=0.8\textwidth]{plots/linear_solvers_p2p3/implicitexact-meanofpreconditionersetuptimesvsinitialnnode.pdf}
-  \caption{Time in seconds to set up the partially-inexact preconditioners $\parinexact{\precb}$, $\parinexact{\precc}$ against problem size for the monolithic system with $\dtn=0.1$.
+  \caption{
+    \newtonmean{}
+    time in seconds to set up the partially-inexact preconditioners $\parinexact{\precb}$, $\parinexact{\precc}$ against problem size for the monolithic system with $\dtn=0.1$.
     The legend indicates the preconditioner and quadrature scheme used.
+    \manydatapointsTimeStepLegend{}
 }
   \label{fig:times-p23-exact}
 \end{figure}
@@ -519,8 +548,11 @@ However the preconditioner setup times, as shown in \cref{fig:times-p23-ilu1} ar
 \begin{figure}
   \centering
   \includegraphics[width=0.8\textwidth]{plots/linear_solvers_p2p3/implicitilu-1-meanofnsolveritersvsinitialnnode.pdf}
-  \caption{GMRES iterations to converge against problem size for the monolithic system using the inexact preconditioners $\inexact{\precb}$, $\inexact{\precc}$ with $\dtn=0.1$.
+  \caption{
+    \newtonmean{}
+    GMRES iterations to converge against problem size for the monolithic system using the inexact preconditioners $\inexact{\precb}$, $\inexact{\precc}$ with $\dtn=0.1$.
     The legend indicates the preconditioner and quadrature scheme used.
+    \manydatapointsTimeStepLegend{}
     Some data points are missing for the largest $\Nn$ due to a lack of convergence.
   }
   \label{fig:its-p23-ilu1}
@@ -530,8 +562,10 @@ However the preconditioner setup times, as shown in \cref{fig:times-p23-ilu1} ar
   \centering
   \includegraphics[width=0.8\textwidth]{plots/linear_solvers_p2p3/implicitilu-1-meanofpreconditionersetuptimesvsinitialnnode.pdf}
   \caption{
-    Time in seconds to set up the inexact preconditioners $\inexact{\precb}$, $\inexact{\precc}$ against problem size for the monolithic system with $\dtn=0.1$.
+    \newtonmean{}
+    time in seconds to set up the inexact preconditioners $\inexact{\precb}$, $\inexact{\precc}$ against problem size for the monolithic system with $\dtn=0.1$.
     The legend indicates the preconditioner and quadrature scheme used.
+    \manydatapointsTimeStepLegend{}
     Some data points are missing for the largest $\Nn$ due to a lack of convergence.
   }
   \label{fig:times-p23-ilu1}
