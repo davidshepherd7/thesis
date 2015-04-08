@@ -425,9 +425,9 @@ All experiments are run on a single core (\ie no parallelism is used) of a deskt
 
 \subsection{Results}
 
-Before presenting the results we note that, unless otherwise specified, all figures in this section show data points for all values of $\dtn$, $N$, $\dampc$ and $\kone$; both the nodal and Gaussian quadrature schemes; and both the dense and hierarchical $\Gm$ block formats.
-However, where there appear to be no interesting differences caused by a parameter we plot data points for all values of that parameter using the same symbol and colour.
-Also we note that occasionally data points overlap, giving the appearance of fewer points.
+Before presenting the results we note that, unless otherwise specified, all figures in this section show data points for all values of $\dtn$, $N$, $\dampc$ and $\kone$; both the nodal and Gaussian quadrature schemes; and both the dense and hierarchical BEM block formats.
+However, where there appear to be no interesting differences caused by a parameter we do not distinguish between data points with different values of that parameter (\ie we use the same symbol and colour).
+Also note that occasionally data points overlap, giving the appearance of fewer points.
 
 \Cref{fig:its-ilu-decoupled} shows the mean (over the linear solves required within a single Newton solve) number of GMRES iterations required to solve the LLG-only system, \cref{eq:llg-jacobian}, using ILU(1) preconditioning (\ie with magnetostatics handled by the semi-implicit approach).
 As is expected for a general-purpose preconditioner it is effective for small matrix sizes, but becomes less effective for large problems and as the time step size increases.
