@@ -437,7 +437,7 @@ The mean preconditioner setup times this preconditioner are shown in \cref{fig:t
 As with the iteration counts, the setup times become significantly larger as $\Nn$ grows.
 
 \newcommand{\manydatapointsTimeStepLegend}{Data points for all values of $\dampc$ and $\kone$; both types of quadrature; and both formats of the BEM block are shown but are not distinguished.}
-\newcommand{\manydatapointsPrecLegend}{Data points for all values of $\dampc$, $\dtn$, and $\kone$; and for both formats of the BEM block are shown but are not distinguished.}
+\newcommand{\manydatapointsPrecLegend}{Data points for all values of $\dampc$, $\kone$, and for both formats of the BEM block are shown but are not distinguished.}
 
 \newcommand{\newtonmean}{Mean (over a single Newton solve) of the}
 
@@ -518,7 +518,7 @@ Also of note is that, unlike $\preca$, the required LU decomposition fits within
     \newtonmean{}
     GMRES iterations to converge against problem size for the monolithic system using the partially-inexact preconditioners $\parinexact{\precb}$, $\parinexact{\precc}$ with $\dtn=0.1$.
 The legend indicates the preconditioner and quadrature scheme used.
-\manydatapointsTimeStepLegend{}
+\manydatapointsPrecLegend{}
 }
   \label{fig:its-p23-exact}
 \end{figure}
@@ -530,7 +530,7 @@ The legend indicates the preconditioner and quadrature scheme used.
     \newtonmean{}
     time in seconds to set up the partially-inexact preconditioners $\parinexact{\precb}$, $\parinexact{\precc}$ against problem size for the monolithic system with $\dtn=0.1$.
     The legend indicates the preconditioner and quadrature scheme used.
-    \manydatapointsTimeStepLegend{}
+    \manydatapointsPrecLegend{}
 }
   \label{fig:times-p23-exact}
 \end{figure}
@@ -552,7 +552,7 @@ However the preconditioner setup times, as shown in \cref{fig:times-p23-ilu1} ar
     \newtonmean{}
     GMRES iterations to converge against problem size for the monolithic system using the inexact preconditioners $\inexact{\precb}$, $\inexact{\precc}$ with $\dtn=0.1$.
     The legend indicates the preconditioner and quadrature scheme used.
-    \manydatapointsTimeStepLegend{}
+    \manydatapointsPrecLegend{}
     Some data points are missing for the largest $\Nn$ due to a lack of convergence.
   }
   \label{fig:its-p23-ilu1}
@@ -565,7 +565,7 @@ However the preconditioner setup times, as shown in \cref{fig:times-p23-ilu1} ar
     \newtonmean{}
     time in seconds to set up the inexact preconditioners $\inexact{\precb}$, $\inexact{\precc}$ against problem size for the monolithic system with $\dtn=0.1$.
     The legend indicates the preconditioner and quadrature scheme used.
-    \manydatapointsTimeStepLegend{}
+    \manydatapointsPrecLegend{}
     Some data points are missing for the largest $\Nn$ due to a lack of convergence.
   }
   \label{fig:times-p23-ilu1}
