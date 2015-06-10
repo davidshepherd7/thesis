@@ -232,7 +232,7 @@ We see that the resulting errors are essentially identical for all three cases.
     $\dampc = 0.01$.
     The time integration methods used are indicated in the sub-captions.
     Values of $\scc \neq 0$ are not considered when using IMR because no self-correcting term is needed to conserve $\abs{\mv}$.
-    Note that with $\scc = 1000$ the Newton-Raphson method fails to converge at $t \sim 480$.
+    *With $\scc = 1000$ the Newton-Raphson method fails to converge at $t \sim 480$.
   }
   \label{tab:sc-newton-iters}
 \end{table}
@@ -269,7 +269,7 @@ For comparison we also show the convergence behaviour when the magnetisation is 
 If the use of the self-correcting LLG is beneficial we would expect to see lower errors for the same average step size, but the plots are indistinguishable.
 
 
-\section{Conclusions}
+\section{Conclusions and future work}
 
 By design, the use of tolerance-based renormalisation allows larger errors to appear in $\abs{\mv}$ than re-normalisation after every step.
 It also introduces spurious oscillations in $\abs{\mv}$ and in the error in the energy for the undamped case.
@@ -282,6 +282,10 @@ Finally, it requires additional step(s) of the Newton-Raphson method convergence
 Hence there appears to be no obvious reason to prefer either tolerance-based renormalisation or the self correcting LLG over re-normalisation after every step for ODE problems.
 Since the methods used here match those used for PDE problems, except for the obvious lack of any spatial discretisation, this conclusion is likely to extend to PDE problems.
 
+Ideally we would also show wall-clock timing results for CVODE or VODE (two widely used ODE integration packages) when using these re-normalisation methods, and compare these results with adaptive IMR.
+However the VODE implementation used previously in this thesis uses a derivative function, $\fv$, written in python.
+This has a huge performance penalty: for the relaxing nano-sphere problem VODE is 500x slower than oomph-lib, so any timing results would be meaningless.
+Hopefully in the future adaptive IMR will be implemented in the CVODE/VODE framework and a fair comparison of the wall-clock timings can be made.
 
 %%% Local Variables:
 %%% mode: latex
